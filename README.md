@@ -3,9 +3,14 @@ gulp-bundle-wrangler
 
 Allows the management of a project via bundle configuration files (architected towards speed).
 
+## Basic Idea
+So the idea is as follows:
+  We have a `gulp-bundles` directory (could be named anything via the `gulp-bundles/*"bundle-wrangler"-config*` file)
+that contains "bundle-configuration" files which are used within "task proxies" to run a task.
+
 ### Todos
-- [ ] - Build out and come up with base functionality/classes.
-- [ ] - Build out the following Task proxies
+- [ ] Build out and come up with base functionality/classes.
+- [ ] Build out the following Task proxies
 	- [ ] - build
 	- [ ] - clean
 	- [ ] - cssp (compass, less etc.)
@@ -20,6 +25,9 @@ Allows the management of a project via bundle configuration files (architected t
 	- [ ] - prompt 
 	- [ ] - umd (requirejs, browserify etc.)
 	- [ ] - watch
-- [ ] - Allow the user to set his own task names/keys (this will efect even the
+- [ ] Allow the user to set his own task names/keys (this will efect even the
  keys listed in the bundle yaml/json files).  E.g., instead of `cssp` a user can
   use lets say `compass` instead or key of his choosing for the `cssp` (css preprocessor) task.
+- For `Bundle`:
+	- [ ] Should have `has*` methods or similiar (these methods will be auto 
+	populated at runtime based on the available task keys);  E.g., `bundle.hasCompass()`
