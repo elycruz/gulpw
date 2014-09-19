@@ -1,0 +1,10 @@
+.idea
+.project
+bundle-wrangler-config*
+gulp-bundles
+gulp-bundle-wrangler-config*
+nbproject
+node_modules
+
+
+
