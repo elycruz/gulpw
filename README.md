@@ -32,3 +32,4 @@ that contains "bundle-configuration" files which are used within "task proxies" 
 - For `Bundle`:
 	- [ ] Should have `has*` methods or similiar (these methods will be auto 
 	populated at runtime based on the available task keys);  E.g., `bundle.hasCompass()`
+- The `deploy` task via the watch task should only deploy changed file types not everything for a bundle (takes to long for bigger bundles definitions).
