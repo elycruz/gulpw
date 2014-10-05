@@ -22,7 +22,7 @@
     "url": "git://github.com/saksdirect/gulp-bundle-wrangler.git"
   },
   "author": "Ely De La Cruz <elycruz@elycruz.com>",
-  "license": "GNU v2+",
+  "license": "GNU v2+, MIT",
   "bugs": {
     "url": "https://github.com/saksdirect/gulp-bundle-wrangler/issues"
   },
