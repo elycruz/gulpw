@@ -33,3 +33,8 @@ that contains "bundle-configuration" files which are used within "task proxies" 
 	- [ ] Should have `has*` methods or similiar (these methods will be auto 
 	populated at runtime based on the available task keys);  E.g., `bundle.hasCompass()`
 - The `deploy` task via the watch task should only deploy changed file types not everything for a bundle (takes to long for bigger bundles definitions).
+
+### License(s):
+- MIT (http://opensource.org/licenses/MIT)
+- GNU v2+ (http://opensource.org/licenses/lgpl-2.1.php)
+- GNU v3 (http://opensource.org/licenses/gpl-3.0.html)
