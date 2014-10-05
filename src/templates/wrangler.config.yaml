@@ -1,18 +1,18 @@
 directories:
-  artifacts: ""
-    javascripts: ""
-    sass: ""
-    stylesheets: ""
-  bower_components: ""
-  bundles: ""
-  fe_templates: ""
-  fonts: ""
-  images: ""
-  javascripts: ""
-  node_modules: ""
-  sass: ""
-  stylesheets: ""
-  tests: ""
+  artifacts:
+    javascripts: distro/js/
+    sass: css/sass-compiled/
+    stylesheets: distro/css/
+  bower_components: bower_components/
+  bundles: bundles/
+  fe_templates: null
+  fonts: fonts/
+  images: images/
+  javascripts: js/
+  node_modules: node_modules/
+  sass: sass/
+  stylesheets: css/
+  test_paths: tests/**/*.js
 
 tasks:
   build: ""
