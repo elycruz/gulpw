@@ -36,5 +36,5 @@ that contains "bundle-configuration" files which are used within "task proxies" 
 
 ### License(s):
 - MIT (http://opensource.org/licenses/MIT)
-- GNU v2+ (http://opensource.org/licenses/lgpl-2.1.php)
-- GNU v3 (http://opensource.org/licenses/gpl-3.0.html)
+- GNU v2+ (http://www.gnu.org/licenses/gpl-2.0.html)
+- GNU v3 (http://www.gnu.org/licenses/gpl.html)
