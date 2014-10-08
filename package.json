@@ -2,7 +2,7 @@
   "name": "gulp-bundle-wrangler",
   "version": "0.0.0",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
-  "main": "gulpfile.js",
+  "main": "index.js",
   "dependencies": {
     "gulp": "~3.8.8",
     "gulp-bump": "~0.1.11",
@@ -22,7 +22,7 @@
     "url": "git://github.com/saksdirect/gulp-bundle-wrangler.git"
   },
   "author": "Ely De La Cruz <elycruz@elycruz.com>",
-  "license": "GNU v2+",
+  "license": "GNU v2+, MIT",
   "bugs": {
     "url": "https://github.com/saksdirect/gulp-bundle-wrangler/issues"
   },

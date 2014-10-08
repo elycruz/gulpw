@@ -4,13 +4,10 @@
 
 require('sjljs');
 
-module.exports = (function () {
+modules.export = (function () {
+    return sjl.Extendable.extend(function Bundle () {
 
-    var Bundle = sjl.Extendable.extend(function Bundle () {},
-        {}, {
-            bundles_path: ""
-        });
+    }, {
 
-    return Bundle;
-
-}());
+    });
+});
