@@ -12,14 +12,33 @@ modules.export = sjl.Extendable.extend(function GulpBundleWrangler (config) {
         bundles: {}
     };
 
-    sjl.extend(this, defaultOptions, config);
+    sjl.extend(true, this, defaultConfig, config);
+
 }, {
 
     init: function (gulp) {
-        var self = this,
-            bundle = self.addBundleFromConfig(config);
-        self.createTasksForBundle(gulp, bundle);
+        this.createTaskProxyObjects(gulp)
+            .createBundleObjects(gulp);
         return gulp;
+    },
+
+    createTaskProxyObjects: function (gulp) {
+        var self = this;
+        Object.keys(self.tasks).forEach(function (task) {
+
+//            var TaskClass = require('task-proxies/' + sjl.camelCase(task + '-proxy'));
+//            self.tasks[task] = new TaskClass(gulp);
+        });
+    },
+
+    createBundleObjects: function (gulp) {
+        var self = this;
+
+//        fs.readdirSync();
+
+        var bundle = self.addBundleFromConfig(config);
+
+        self.createTasksForBundle(gulp, bundle);
     },
 
     addBundleFromConfig: function (config) {
@@ -38,17 +57,6 @@ modules.export = sjl.Extendable.extend(function GulpBundleWrangler (config) {
             }
             self.tasks[task].registerBundle(bundle);
         });
-
-        // Get bundles location
-        // Loop through bundle location and create tasks for each bundle
-        // (will allow `gulp task-name:bundle-name` from cli)
-        // (didn't want to do it this way but since gulp doesn't let you hook
-            // into it's task calling mechanism, there really isn't another
-            // way to do this)
-    },
-
-    runTaskOnBundle: function (task, bundle) {
-
     }
 
 });

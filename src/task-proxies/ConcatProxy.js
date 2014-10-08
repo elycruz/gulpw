@@ -4,17 +4,15 @@
 require('sjljs');
 
 var TaskProxy = require('../TaskProxy'),
-    separator = wrangler.cli.separator;
+    separator = ':';
 
-module.exports = TaskProxy.extend(function ConcatProxy() {
-
-}, {
+module.exports = TaskProxy.extend("ConcatProxy", {
     registerBundle: function (bundle) {
         gulp.task('concat' + separator + bundle.name, function () {
-            gulp.src()
-                .pipe(concat('./file.js'))
-                .pipe(header('/**! file.js <%= (new Date()) %> **/'))
-                .pipe(gulp.dest('./destination'));
+//            gulp.src()
+//                .pipe(concat('./file.js'))
+//                .pipe(header('/**! file.js <%= (new Date()) %> **/'))
+//                .pipe(gulp.dest('./destination'));
         });
     }
 });
