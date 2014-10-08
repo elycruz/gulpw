@@ -3,7 +3,8 @@
  */
 
 var yaml = require('js-yaml'),
-    wrangler = new (require('gulp-bundle-wrangler')(yaml('gulp-bundles'))),
+    wranglerConfig = yaml.load('gulp-bundle-wrangler.config.yaml'),
+    wrangler = (new require('gulp-bundle-wrangler'))(wranglerConfig),
     gulp = wrangler.init(require('gulp'));
 
 var

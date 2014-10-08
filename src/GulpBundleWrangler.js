@@ -6,11 +6,13 @@ require('sjljs');
 var Bundle = require('Bundle');
 
 modules.export = sjl.Extendable.extend(function GulpBundleWrangler (config) {
-    var defaultConfig = {
-        tasks: {},
-        dirs: {},
-        bundles: {}
-    };
+    var taskProxyMap = yaml.load(require('task-proxy-map.yaml')),
+        defaultConfig = {
+            tasks: {},
+            dirs: {},
+            bundles: {},
+            taskProxyMap: taskProxyMap
+        };
 
     sjl.extend(true, this, defaultConfig, config);
 
@@ -19,26 +21,24 @@ modules.export = sjl.Extendable.extend(function GulpBundleWrangler (config) {
     init: function (gulp) {
         this.createTaskProxyObjects(gulp)
             .createBundleObjects(gulp);
+        console.log(this.taskProxyMap);
         return gulp;
     },
 
     createTaskProxyObjects: function (gulp) {
         var self = this;
         Object.keys(self.tasks).forEach(function (task) {
-
-//            var TaskClass = require('task-proxies/' + sjl.camelCase(task + '-proxy'));
-//            self.tasks[task] = new TaskClass(gulp);
+            var TaskClass = require(self.taskProxyMap[task]);
+            self.tasks[task] = new TaskClass(gulp);
         });
     },
 
     createBundleObjects: function (gulp) {
         var self = this;
-
-//        fs.readdirSync();
-
-        var bundle = self.addBundleFromConfig(config);
-
-        self.createTasksForBundle(gulp, bundle);
+        (fs.readdirSync(this.dirs.bundles)).forEach(function (item) {
+            var bundle = self.addBundleFromConfig(item);
+            self.createTasksForBundle(gulp, bundle);
+        });
     },
 
     addBundleFromConfig: function (config) {
