@@ -2,8 +2,9 @@
  * Created by edelacruz on 9/19/2014.
  */
 
-var wrangler = require('gulp-bundle-wrangler');
-    wrangler.init(require('gulp'));
+var yaml = require('js-yaml'),
+    wrangler = new (require('gulp-bundle-wrangler')(yaml('gulp-bundles'))),
+    gulp = wrangler.init(require('gulp'));
 
 var
     concat      = require('gulp-concat'),
