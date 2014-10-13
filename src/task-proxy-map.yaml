@@ -1,0 +1,15 @@
+clean: task-proxies/CleanProxy.js
+cssp: task-proxies/CssPProxy.js
+cssc: task-proxies/CssCProxy.js
+csslint: task-proxies/CssLintProxy.js
+cssmin: task-proxies/CssMinProxy.js
+deploy: task-proxies/DeployProxy.js
+documentjs: task-proxies/DocumentJsProxy.js
+fixmyjs: task-proxies/FixMyJsProxy.js
+jsbeautify: task-proxies/JsBeautifyProxy.js
+jslint: task-proxies/JsLintProxy.js
+jsmin: task-proxies/JsMinProxy.js
+templates: task-proxies/TemplatesProxy.js
+prompt: task-proxies/PromptProxy.js
+umd: task-proxies/UmdProxy.js
+watch: task-proxies/WatchProxy.js

@@ -2,7 +2,7 @@
   "name": "gulp-bundle-wrangler",
   "version": "0.0.0",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
-  "main": "gulpfile.js",
+  "main": "index.js",
   "dependencies": {
     "gulp": "~3.8.8",
     "gulp-bump": "~0.1.11",

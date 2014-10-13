@@ -1,0 +1,7 @@
+name: "name"
+version: "0.0.0"
+
+# Also runs these b
+runBundles:
+  - bundle1
+  - bundle2
