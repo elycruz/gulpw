@@ -8,6 +8,9 @@ So the idea is as follows:
   We have a `gulp-bundles` directory (could be named anything via the `gulp-bundles/*"bundle-wrangler"-config*` file)
 that contains "bundle-configuration" files which are used within "task proxies" to run a task.
 
+### UML Diagram
+[[UML Diagram of Bundle Wrangler] (http://www.gliffy.com/go/publish/6312461)]
+
 ### Todos
 
 - [ ] Build out and come up with base functionality/classes.
