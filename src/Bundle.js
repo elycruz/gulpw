@@ -6,10 +6,30 @@ require('sjljs');
 
 modules.export = (function () {
 
-    return sjl.Extendable.extend(function Bundle (config) {
+    /**
+     * Bundle constructor.
+     * @param options {Object} - Required
+     * @constructor
+     */
+    return sjl.Optionable.extend(function Bundle (options) {
         var self = this;
-        (sjl.extend(true, self, config))
-            .setupHasMethods(config, true);
+
+        // Call optionable and set the options from the config file
+        // merged with our defaults
+        sjl.Optionable.call(self, sjl.extend(true, {
+            name: "Name goes here.",
+            description: "Description goes here.",
+            version: "Semver version string goes here."
+        }, options));
+
+        // Set up "has*" methods
+        self.setupHasMethods(self.options, true);
+
+        // If has init function run it
+        if (self.hasOwnProperty('init') && sjl.classOfIs(self.init, 'Function')) {
+            self.init();
+        }
+
     }, {
 
         /**
@@ -37,7 +57,7 @@ modules.export = (function () {
 
                     // Add has method to bundle
                     self[methodName] = function () {
-                        return self.hasOwnProperty(key);
+                        return self.options.hasOwnProperty(key);
                     };
 
                     // If deep perform recursive setup of has methods
@@ -54,5 +74,4 @@ modules.export = (function () {
 
     }); // end of Bundle
 
-
-});
+}); // closure

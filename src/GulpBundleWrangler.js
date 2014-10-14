@@ -1,62 +1,68 @@
 /**
  * Created by Ely on 10/4/2014.
  */
-require('sjljs');
+require("sjljs");
 
-var Bundle = require('Bundle');
+var Bundle = require("Bundle");
 
-modules.export = sjl.Extendable.extend(function GulpBundleWrangler (config) {
-    var taskProxyMap = yaml.load(require('task-proxy-map.yaml')),
-        defaultConfig = {
-            tasks: {},
-            dirs: {},
+modules.export = sjl.Extendable.extend(function GulpBundleWrangler(config) {
+        var defaultOptions = yaml.safeLoad(require("../configs/default.wrangler.config.yaml")),
+            taskProxyMap = yaml.safeLoad(require("../configs/default.task.proxy.map.yaml"));
+
+        sjl.extend(true, this, {
             bundles: {},
-            taskProxyMap: taskProxyMap
-        };
-
-    sjl.extend(true, this, defaultConfig, config);
-
-}, {
-
-    init: function (gulp) {
-        this.createTaskProxyObjects(gulp)
-            .createBundleObjects(gulp);
-        console.log(this.taskProxyMap);
-        return gulp;
+            cwd: "",
+            dirs: {},
+            taskProxyMap: taskProxyMap,
+            taskStrSeparator: ":",
+            tasks: {}
+        }, defaultOptions, config);
     },
 
-    createTaskProxyObjects: function (gulp) {
-        var self = this;
-        Object.keys(self.tasks).forEach(function (task) {
-            var TaskClass = require(self.taskProxyMap[task]);
-            self.tasks[task] = new TaskClass(gulp);
-        });
-    },
+    {
+        init: function (gulp) {
+            this.createTaskProxies(gulp)
+                .createBundles(gulp);
+            return gulp;
+        },
 
-    createBundleObjects: function (gulp) {
-        var self = this;
-        (fs.readdirSync(this.dirs.bundles)).forEach(function (item) {
-            var bundle = self.addBundleFromConfig(item);
-            self.createTasksForBundle(gulp, bundle);
-        });
-    },
+        createTaskProxies: function (gulp) {
+            var self = this;
+            Object.keys(self.tasks).forEach(function (task) {
+                self.tasks[task] = self.createTaskProxy(gulp, task);
+            });
+        },
 
-    addBundleFromConfig: function (config) {
-        var bundle = new Bundle(config);
-        this.bundles[bundle.name] = bundle;
-        return bundle;
-    },
+        createTaskProxy: function (gulp, task) {
+            var self = this,
+                TaskClass = require(self.taskProxyMap[task]);
+            return new TaskClass(gulp);
+        },
 
-    createTasksForBundle: function (gulp, bundle) {
-        var self = this;
+        createBundles: function (gulp) {
+            var self = this;
+            (fs.readdirSync(this.dirs.bundles)).forEach(function (item) {
+                var bundle = self.createBundle(item);
+                self.createTasksForBundle(gulp, bundle);
+            });
+        },
 
-        // Register bundle with task so that user can call 'gulp task-name:bundle-name'
-        Object.keys(self.tasks).forEach(function (task) {
-            if (!bundle.hasOwnProperty(task)) {
-                return;
-            }
-            self.tasks[task].registerBundle(bundle);
-        });
-    }
+        createBundle: function (config) {
+            var bundle = new Bundle(config);
+            this.bundles[bundle.options.name] = bundle;
+            return bundle;
+        },
 
-});
+        createTasksForBundle: function (gulp, bundle) {
+            var self = this;
+
+            // Register bundle with task so that user can call "gulp task-name:bundle-name"
+            Object.keys(self.tasks).forEach(function (task) {
+                if (!bundle.options.hasOwnProperty(task)) {
+                    return;
+                }
+                self.tasks[task].registerBundle(bundle, gulp, self);
+            });
+        }
+
+    });

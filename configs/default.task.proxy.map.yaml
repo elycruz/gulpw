@@ -6,6 +6,7 @@ cssmin: task-proxies/CssMinProxy.js
 deploy: task-proxies/DeployProxy.js
 documentjs: task-proxies/DocumentJsProxy.js
 fixmyjs: task-proxies/FixMyJsProxy.js
+gulpfile: taks-proxies/GulpFileProxy.js
 jsbeautify: task-proxies/JsBeautifyProxy.js
 jslint: task-proxies/JsLintProxy.js
 jsmin: task-proxies/JsMinProxy.js
@@ -13,3 +14,4 @@ templates: task-proxies/TemplatesProxy.js
 prompt: task-proxies/PromptProxy.js
 umd: task-proxies/UmdProxy.js
 watch: task-proxies/WatchProxy.js
+wranglerfile: taks-proxies/WranglerFileProxy.js
