@@ -1,3 +1,5 @@
+defaultTaskStrSeparator: ":",
+
 dirs:
   artifacts:
     js: "build/js"

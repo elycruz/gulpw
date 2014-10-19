@@ -1,5 +1,8 @@
 dirs:
   artifacts:
+    js: "artifacts/js"
+    css: "artifacts/css"
+  build:
     js: "build/js"
     css: "build/css"
 
@@ -16,7 +19,7 @@ tasks:
 
   build:
     options:
-      js: true # calls requirejs, browserify, jsconcat, or/and jsmin tasks if they are defined for bundle.
+      js: true # calls requirejs, browserify, concat, or/and jsmin tasks if they are defined for bundle.
       css: true # calls preprocessor task first if defined for bundle.
 
   clean:

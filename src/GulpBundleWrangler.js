@@ -6,6 +6,7 @@ require("sjljs");
 var Bundle = require("Bundle");
 
 modules.export = sjl.Extendable.extend(function GulpBundleWrangler(config) {
+
         var defaultOptions = yaml.safeLoad(require("../configs/default.wrangler.config.yaml")),
             taskProxyMap = yaml.safeLoad(require("../configs/default.task.proxy.map.yaml"));
 
@@ -63,6 +64,19 @@ modules.export = sjl.Extendable.extend(function GulpBundleWrangler(config) {
                 }
                 self.tasks[task].registerBundle(bundle, gulp, self);
             });
+        },
+
+        getDirSafe: function (dir) {
+            var found = sjl.namespace(dir, this.dirs);
+            return sjl.classOfIs(found, 'String') ? found + '/' : '';
+        },
+
+        getTaskStrSeparator: function () {
+            var self = this,
+                separator = self.taskStrSeparator;
+            // Return the separator
+            return sjl.classOfIs(separator, 'String') && separator.length > 0
+                ? separator : self.defaultTaskStrSeparator;
         }
 
     });

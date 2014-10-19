@@ -11,19 +11,19 @@ modules.export = (function () {
      * @param options {Object} - Required
      * @constructor
      */
-    return sjl.Optionable.extend(function Bundle (options) {
+    return sjl.Attributable.extend(function Bundle (options) {
         var self = this;
 
         // Call optionable and set the options from the config file
         // merged with our defaults
-        sjl.Optionable.call(self, sjl.extend(true, {
+        sjl.Attributable.call(self, sjl.extend(true, {
             name: "Name goes here.",
             description: "Description goes here.",
             version: "Semver version string goes here."
         }, options));
 
         // Set up "has*" methods
-        self.setupHasMethods(self.options, true);
+        self.setupHasMethods(options, true);
 
         // If has init function run it
         if (self.hasOwnProperty('init') && sjl.classOfIs(self.init, 'Function')) {
