@@ -1,5 +1,6 @@
 clean: task-proxies/CleanProxy.js
-cssp: task-proxies/CssPProxy.js
+compass: task-proxies/CompassProxy.js
+concat: task-proxies/Concat.js
 cssc: task-proxies/CssCProxy.js
 csslint: task-proxies/CssLintProxy.js
 cssmin: task-proxies/CssMinProxy.js
@@ -9,7 +10,7 @@ fixmyjs: task-proxies/FixMyJsProxy.js
 gulpfile: taks-proxies/GulpFileProxy.js
 jsbeautify: task-proxies/JsBeautifyProxy.js
 jslint: task-proxies/JsLintProxy.js
-jsmin: task-proxies/JsMinProxy.js
+uglify: task-proxies/UglifyProxy.js
 templates: task-proxies/TemplatesProxy.js
 prompt: task-proxies/PromptProxy.js
 umd: task-proxies/UmdProxy.js
