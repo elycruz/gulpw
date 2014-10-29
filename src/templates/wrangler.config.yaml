@@ -6,7 +6,7 @@ dirs:
     js: "build/js"
     css: "build/css"
 
-banner: |
+header: |
   /*!
    * Company Name
    * http://www.company-website.com

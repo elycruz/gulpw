@@ -23,7 +23,7 @@ module.exports = TaskProxy.extend("ConcatProxy", {
         gulp.task('concat' + separator + bundle.name, function () {
 
             // Check for sections on bundle that can be concatenated
-            ['js', 'css'].forEach(function (ext) {
+            ['js', 'css', 'html'].forEach(function (ext) {
                 var section = bundle[ext];
 
                 // If section is empty or not an array exit the function
@@ -34,7 +34,7 @@ module.exports = TaskProxy.extend("ConcatProxy", {
                 // Give gulp the list of sources to process
                 gulp.src(bundle[ext])
 
-                    // Concatenate current source in the artifacts/ext directory
+                    // Concatenate current source in the {artifacts}/ext directory
                     .pipe(concat(wrangler.getDirSafe('artifacts.' + ext) + bundle.name + '.' + ext))
 
                     // Add file header
@@ -48,4 +48,5 @@ module.exports = TaskProxy.extend("ConcatProxy", {
         }); // end of concat task
 
     } // end of `registerBundle`
-});
+
+}); // end of export
