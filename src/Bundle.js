@@ -4,19 +4,17 @@
 
 require('sjljs');
 
-modules.export = (function () {
-
-    /**
-     * Bundle constructor.
-     * @param options {Object} - Required
-     * @constructor
-     */
-    return sjl.Attributable.extend(function Bundle (options) {
+/**
+ * Bundle constructor.
+ * @param options {Object} - Required
+ * @constructor
+ */
+module.exports = sjl.Optionable.extend(function Bundle(options) {
         var self = this;
 
         // Call optionable and set the options from the config file
         // merged with our defaults
-        sjl.Attributable.call(self, sjl.extend(true, {
+        sjl.Optionable.call(self, sjl.extend(true, {
             name: "Name goes here.",
             description: "Description goes here.",
             version: "Semver version string goes here."
@@ -40,9 +38,9 @@ modules.export = (function () {
          * @param levelsLimit {Integer} - Optional, passed automatically when using the `deep` param/option.
          * @param currentLevel {Integer} - Optional, passed automatically when using the `deep` param/option (no need to set this param on initial call).
          */
-        setupHasMethods: function (config, deep, levelsLimit, currentLevel) {
+        setupHasMethods: function (config, deep, levelsLimit, currentLevel, currentLimit) {
             levelsLimit = sjl.isset(levelsLimit) && sjl.classOfIs(levelsLimit, 'Number') ? levelsLimit : 0;
-            currentLevel = sjl.isset(currentLimit) && sjl.classOfIs(levelsLimit, 'Number') ? currentLimit  + 1 : 0;
+            currentLevel = sjl.isset(currentLimit) && sjl.classOfIs(levelsLimit, 'Number') ? currentLimit + 1 : 0;
             deep = sjl.isset(deep) ? deep : false;
 
             var self = this;
@@ -74,4 +72,3 @@ modules.export = (function () {
 
     }); // end of Bundle
 
-}); // closure

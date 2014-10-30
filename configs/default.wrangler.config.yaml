@@ -1,78 +1,96 @@
-defaultTaskStrSeparator: ":",
-
-dirs:
-  artifacts:
-    js: "build/js"
-    css: "build/css"
-
-banner: |
-  /*!
-   * Company Name
-   * http://www.company-website.com
-   *
-   * <%= bundle.name %> <%= bundle.version %>
-   * <%= bundle[section-name].md5 %>
-   */
-
 tasks:
 
+  concat:
+    header: |
+      /*!
+       * Company Name http://www.company-website.com
+       * <%= bundle.name %>.js <%= bundle.version %>
+       * <%= bundle[section-name].md5 %>
+       */
+    cssBuildDir: some/path/to/build/path
+    jsBuildDir: some/path/to/build/path
+    htmlBuildDir: some/path/to/build/path
+
+  min:
+    header: |
+      /*! Company Name http://www.company-website.com <%= bundle.name %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
+    cssBuildDir: some/path/to/build/path
+    htmlBuildDir: some/path/to/build/path
+    jsBuildDir: some/path/to/build/path
+    cssPreSuffix: ""
+    htmlPreSuffix: ""
+    jsPreSuffix: ".min"
+
+  # Build Task
   build:
-    options:
-      js: true # calls requirejs, browserify, jsconcat, or/and jsmin tasks if they are defined for bundle.
-      css: true # calls preprocessor task first if defined for bundle.
 
-  clean:
-    options:
-      force: true
-      nowrite: false
+    # Tasks to run if task is not overwritten by flag (see flags below)
+    tasks:
+      - jslint
+      - csslint
+      - htmllint
+      - browserify
+      - requirejs
+      - concat
+      - min
 
-  compass:
-    options:
+    # This is a global lint flag that is used if there is a lint task specified for a section
+    lintBeforeBuild: true
 
-  cssc:
-    options:
+    # Concatenate files if files exists
+    concat: true
 
-  cssconcat: ""
+    # Minify files if files exists and no `--dev` flag has been specefied on run
+    min: true
+
+    # Runs require js section if exists
+    requirejs: true
+
+    # Runs browserify section if exists
+    browserify: true
+
+  # Deploy Task
+  deploy:
+
+    # Files to be deployed
+    files: []
+
+    # Global deploy artifacts flag (used if no `deployArtifact` field is found for a section in this config
+    deployArtifacts: true
+
+    # Whether or not to deploy artifact files that aren't minified or that do not have the ".min" pre-suffix
+    deployPreArifacts: false
+
+    # Flag which determines whether or not to automatically deploy file arrays
+    deployFiles: false
+
+    # Should files be linted before deploy
+    lintBeforeDeploy: false
+
+  # Watch Task Defaults
+  watch:
+
+    # Tasks to run on file changes ** Note ** only tasks that match changed file types will be run
+    tasks:
+      - compass
+      - build
+      - deploy
+
+    # Flags that can be passed to the watch task ** Note ** These flags are available to tasks as they run via the `gulp` object
+    flags:
+
+      # This flag specifies that minification should not occur
+      dev: false
+
+  # RequireJs Defaults
+  requirejs: null
+
+  # Browserify Defaults
+  browserify: null
+
   csslint:
-    options:
 
-  cssmin: ""
+  jslint:
 
-  deploy: # If there is a key for a key in deploy in dirs.artifacts then that path is used for deployment instead.
-    options:
-      js: true
-      css: true
-      fonts: true
-      images: true
+  htmllint:
 
-  documentjs: ""
-
-  documentcss: ""
-
-  fixmyjs:
-    options:
-
-  jasmine:
-    options:
-
-  jsbeautify: ""
-
-  jsbeautifier:
-    options:
-
-  jshint:
-    options:
-
-#  jslint: ""
-#  jsmin: ""
-#  prompt: ""
-#  templates: ""
-#  requirejs: ""
-#  browserify: ""
-#  watch: ""
-
-  uglify:
-    options:
-
-  mustache:
-    options:

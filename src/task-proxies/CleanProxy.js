@@ -5,7 +5,7 @@
 require('sjljs');
 
 var del = require('del'),
-    TaskProxy = require('../TaskProxy.js');
+    TaskProxy = require('./../src/TaskProxy.js');
 
 module.exports = TaskProxy.extend(function CleanProxy(options) {
     TaskProxy.call(this, options);

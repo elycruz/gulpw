@@ -3,7 +3,7 @@
  */
 require('sjljs');
 
-modules.export = new sjl.Extendable.extend(function TaskProxy(options) {
+module.exports = new sjl.Extendable.extend(function TaskProxy(options) {
         sjl.extend(true, this, {
             name: "Task's cli name goes here.",
             description: "Task's description goes here.",
