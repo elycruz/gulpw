@@ -26,6 +26,7 @@ tasks:
 
     # Tasks to run if task is not overwritten by flag (see flags below)
     tasks:
+      - compass
       - jslint
       - csslint
       - htmllint
@@ -72,7 +73,6 @@ tasks:
 
     # Tasks to run on file changes ** Note ** only tasks that match changed file types will be run
     tasks:
-      - compass
       - build
       - deploy
 
@@ -88,9 +88,11 @@ tasks:
   # Browserify Defaults
   browserify: null
 
-  csslint:
+  compass: null
 
-  jslint:
+  csslint: null
 
-  htmllint:
+  jslint: null
+
+  htmllint: null
 

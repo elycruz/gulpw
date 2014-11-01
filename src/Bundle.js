@@ -47,7 +47,7 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
 
             // Loop through keys on this bundle
             Object.keys(config).forEach(function (key) {
-                var methodName = sjl.camelCase('has-' + key, true);
+                var methodName = sjl.camelCase('has-' + key);
 
                 // If bundle doesn't have has method, add it
                 if (!self.hasOwnProperty(methodName)

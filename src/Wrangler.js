@@ -3,12 +3,14 @@
  */
 require("sjljs");
 
-var Bundle = require("./../src/Bundle.js");
+var fs = require('fs'),
+    yaml = require('js-yaml'),
+    Bundle = require("./../src/Bundle.js");
 
-module.exports = sjl.Extendable.extend(function GulpBundleWrangler(config) {
+module.exports = sjl.Extendable.extend(function Wrangler(config) {
 
-        var defaultOptions = yaml.safeLoad(require("../configs/default.wrangler.config.yaml")),
-            taskProxyMap = yaml.safeLoad(require("../configs/default.task.proxy.map.yaml"));
+        var defaultOptions = yaml.safeLoad(fs.readFileSync("configs/default.wrangler.config.yaml")),
+            taskProxyMap = yaml.safeLoad(fs.readFileSync("configs/default.task.proxy.map.yaml"));
 
         sjl.extend(true, this, {
             bundles: {},
