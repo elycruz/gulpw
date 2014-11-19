@@ -1,14 +1,47 @@
-browserify: ./task-proxies/BrowserifyProxy
-build: ./task-proxies/BuildProxy
-clean: ./task-proxies/CleanProxy
-compass: ./task-proxies/CompassProxy
-concat: ./task-proxies/ConcatProxy
-csslint: ./task-proxies/CssLintProxy
-deploy: ./task-proxies/DeployProxy
-gulpfile: ./task-proxies/GulpFileProxy
-jslint: ./task-proxies/JsLintProxy
-htmllint: ./task-proxies/HtmlLintProxy
-minify: ./task-proxies/MinifyProxy
-requirejs: ./task-proxies/RequireJsProxy
-watch: ./task-proxies/WatchProxy
-wranglerfile: ./task-proxies/WranglerFileProxy
+browserify:
+  constructorLocation: ./task-proxies/BrowserifyProxy
+  dependencies: browserify
+  taskHelp: ""
+build:
+  constructorLocation: ./task-proxies/BuildProxy
+  taskHelp: ""
+clean:
+  constructorLocation: ./task-proxies/CleanProxy
+  dependencies: del
+  taskHelp: ""
+compass:
+  constructorLocation: ./task-proxies/CompassProxy
+  taskHelp: ""
+concat:
+  constructorLocation: ./task-proxies/ConcatProxy
+  dependencies:
+    - gulp-concat
+    - gulp-uglify
+  taskHelp: ""
+csslint:
+  constructorLocation: ./task-proxies/CssLintProxy
+  taskHelp: ""
+deploy:
+  constructorLocation: ./task-proxies/DeployProxy
+  taskHelp: ""
+gulpfile:
+  constructorLocation: ./task-proxies/GulpFileProxy
+  taskHelp: ""
+jslint:
+  constructorLocation: ./task-proxies/JsLintProxy
+  taskHelp: ""
+htmllint:
+  constructorLocation: ./task-proxies/HtmlLintProxy
+  taskHelp: ""
+minify:
+  constructorLocation: ./task-proxies/MinifyProxy
+  taskHelp: ""
+requirejs:
+  constructorLocation: ./task-proxies/RequireJsProxy
+  taskHelp: ""
+watch:
+  constructorLocation: ./task-proxies/WatchProxy
+  taskHelp: ""
+wranglerfile:
+  constructorLocation: ./task-proxies/WranglerFileProxy
+  taskHelp: ""

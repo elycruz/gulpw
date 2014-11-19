@@ -9,7 +9,6 @@ var fs = require('fs'),
     Bundle = require("./../src/Bundle.js");
 
 module.exports = sjl.Extendable.extend(function Wrangler(config) {
-
         var defaultOptions = yaml.safeLoad(fs.readFileSync("./configs/default.wrangler.config.yaml")),
             taskProxyMap = yaml.safeLoad(fs.readFileSync("./configs/default.task.proxy.map.yaml"));
 
@@ -24,12 +23,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(config) {
 
     {
         init: function (gulp) {
+            console.log("Gulp Bundle Wrangler initializing...");
             this.createTaskProxies(gulp)
                 .createBundles(gulp);
             return gulp;
         },
 
         createTaskProxies: function (gulp) {
+            // Creating task proxies message
+            console.log("  - Creating task proxies.");
             var self = this;
             Object.keys(self.tasks).forEach(function (task) {
                 self.tasks[task] = self.createTaskProxy(gulp, task);
@@ -38,14 +40,21 @@ module.exports = sjl.Extendable.extend(function Wrangler(config) {
         },
 
         createTaskProxy: function (gulp, task) {
-            console.log(task, this.taskProxyMap[task]);
+            // "Creating task ..." message
+            console.log("      Creating task \"" + task +
+                "\".  Constructor location: \"" +
+                    this.taskProxyMap[task] + "\"");
+
             var self = this,
                 src = self.taskProxyMap[task],
                 TaskClass = require(src);
+
             return new TaskClass(gulp);
         },
 
         createBundles: function (gulp) {
+            // Creating task proxies message
+            console.log("  - Creating bundles.");
             var self = this,
                 bundlesPath = this.bundlesPath;
             (fs.readdirSync(bundlesPath)).forEach(function (fileName) {
@@ -59,8 +68,18 @@ module.exports = sjl.Extendable.extend(function Wrangler(config) {
         },
 
         createBundle: function (config) {
+            // "Creating task ..." message
+            console.log('      Creating bundle "' + config.name + '"');
+
             var bundle = new Bundle(config);
+
+            // Created message
+            console.log('      "' + bundle.options.name + '" created successfully.');
+
+            // Store bundle
             this.bundles[bundle.options.name] = bundle;
+
+            // Return bundle
             return bundle;
         },
 
@@ -87,6 +106,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(config) {
             // Return the separator
             return sjl.classOfIs(separator, 'String') && separator.length > 0
                 ? separator : self.defaultTaskStrSeparator;
+        },
+
+        getTemplateFile: function (location) {
+            var obj = {}; // loaded file run through script renderer
+            return obj;
         }
 
     });

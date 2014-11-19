@@ -1,4 +1,4 @@
-bundlesPath: ./bundle-configs
+bundlesPath: ./frontend-bundles
 
 scriptRenderer: ejs
 
@@ -13,9 +13,9 @@ tasks:
        * <%= bundle.name %>.<%= fileExt %> <%= bundle.version %>
        * <%= bundle[section-name].md5 %>
        */
-    cssBuildDir: some/path/to/build/path
-    jsBuildDir: some/path/to/build/path
-    htmlBuildDir: some/path/to/build/path
+    cssBuildDir: ./public/css/
+    jsBuildDir: ./public/js/
+    htmlBuildDir: ./public/html/
     useVersionNumInFileName: false
 
   minify:
