@@ -1,0 +1,3 @@
+name: "bundle-name-goes-here" # Dash or underscore separated bundle name
+version: "0.0.0" # Semver version string
+description: "Description goes here" # description goes here

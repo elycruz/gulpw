@@ -1,0 +1,14 @@
+browserify: ./task-proxies/BrowserifyProxy
+build: ./task-proxies/BuildProxy
+clean: ./task-proxies/CleanProxy
+compass: ./task-proxies/CompassProxy
+concat: ./task-proxies/ConcatProxy
+csslint: ./task-proxies/CssLintProxy
+deploy: ./task-proxies/DeployProxy
+gulpfile: ./task-proxies/GulpFileProxy
+jslint: ./task-proxies/JsLintProxy
+htmllint: ./task-proxies/HtmlLintProxy
+minify: ./task-proxies/MinifyProxy
+requirejs: ./task-proxies/RequireJsProxy
+watch: ./task-proxies/WatchProxy
+wranglerfile: ./task-proxies/WranglerFileProxy

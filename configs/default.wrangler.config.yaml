@@ -1,0 +1,103 @@
+bundlesPath: ./frontend-bundles
+
+scriptRenderer: ejs
+
+bundleConfigFormat: yaml
+
+tasks:
+
+  concat:
+    header: |
+      /*!
+       * Company Name http://www.company-website.com
+       * <%= bundle.name %>.<%= fileExt %> <%= bundle.version %>
+       * <%= bundle[section-name].md5 %>
+       */
+    cssBuildDir: some/path/to/build/path
+    jsBuildDir: some/path/to/build/path
+    htmlBuildDir: some/path/to/build/path
+
+  minify:
+    header: |
+      /*! Company Name http://www.company-website.com <%= bundle.name %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
+    cssBuildDir: some/path/to/build/path
+    htmlBuildDir: some/path/to/build/path
+    jsBuildDir: some/path/to/build/path
+    cssPreSuffix: ".min"
+    htmlPreSuffix: ".min"
+    jsPreSuffix: ".min"
+
+  # Build Task
+  build:
+
+    # Tasks to run if task is not overwritten by flag (see flags below)
+    tasks:
+      - compass
+      - jslint
+      - csslint
+      - htmllint
+      - browserify
+      - requirejs
+      - concat
+      - minify
+
+    # This is a global lint flag that is used if there is a lint task specified for a section
+    lintBeforeBuild: true
+
+    # Concatenate files if files exists
+    concat: true
+
+    # Minify files if files exists and no `--dev` flag has been specefied on run
+    minify: true
+
+    # Runs require js section if exists
+    requirejs: true
+
+    # Runs browserify section if exists
+    browserify: true
+
+  # Deploy Task
+  deploy:
+
+    # Files to be deployed
+    files: []
+
+    # Global deploy artifacts flag (used if no `deployArtifact` field is found for a section in this config
+    deployArtifacts: true
+
+    # Whether or not to deploy artifact files that aren't minified or that do not have the ".min" pre-suffix
+    deployPreArifacts: false
+
+    # Flag which determines whether or not to automatically deploy file arrays
+    deployFiles: false
+
+    # Should files be linted before deploy
+    lintBeforeDeploy: false
+
+  # Watch Task Defaults
+  watch:
+
+    # Tasks to run on file changes ** Note ** only tasks that match changed file types will be run
+    tasks:
+      - build
+      - deploy
+
+    # Flags that can be passed to the watch task ** Note ** These flags are available to tasks as they run via the `gulp` object
+    flags:
+
+      # This flag specifies that minification should not occur
+      dev: false
+
+  # RequireJs Defaults
+  requirejs: {}
+
+  # Browserify Defaults
+  browserify: {}
+
+  compass: {}
+
+  csslint: {}
+
+  jslint: {}
+
+  htmllint: {}
