@@ -2,7 +2,7 @@
   "name": "gulpw",
   "version": "0.0.0",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
-  "main": "src/index.js",
+  "main": "example-index.js",
   "dependencies": {
     "ejs": "^1.0.0",
     "gulp": "~3.8.8",
