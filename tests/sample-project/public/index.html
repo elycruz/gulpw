@@ -12,9 +12,11 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/main.css">
-        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <!-- Global css file -->
+        <link rel="stylesheet" href="../frontend-dev/css/global.css">
+
+        <!-- Page specific css file -->
+        <link rel="stylesheet" href="../frontend-dev/css/page.css">
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -23,11 +25,6 @@
 
         <!-- Add your site or application content here -->
         <p>Hello world! This is HTML5 Boilerplate.</p>
-
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
-        <script src="js/plugins.js"></script>
-        <script src="js/main.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>
@@ -38,5 +35,11 @@
             r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
             ga('create','UA-XXXXX-X');ga('send','pageview');
         </script>
+
+        <!-- Globally included javascript vendor file(s) -->
+        <script src="js/vendors.js"></script>
+
+        <!-- Page specific javascript -->
+        <script src="js/page-script.js"></script>
     </body>
 </html>
