@@ -34,7 +34,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(config) {
             console.log("  - Creating task proxies.");
             var self = this;
             Object.keys(self.tasks).forEach(function (task) {
-                self.tasks[task] = self.createTaskProxy(gulp, task);
+                self.tasks[task].instance = self.createTaskProxy(gulp, task);
             });
             return self;
         },
@@ -43,10 +43,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(config) {
             // "Creating task ..." message
             console.log("      Creating task \"" + task +
                 "\".  Constructor location: \"" +
-                    this.taskProxyMap[task] + "\"");
+                    this.taskProxyMap[task].constructorLocation + "\"");
 
             var self = this,
-                src = self.taskProxyMap[task],
+                src = self.taskProxyMap[task].constructorLocation,
                 TaskClass = require(src);
 
             return new TaskClass(gulp);

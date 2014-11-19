@@ -1,4 +1,4 @@
-bundlesPath: ./bundle-configs
+bundlesPath: ./tests/sample-project/bundle-configs
 
 scriptRenderer: ejs
 

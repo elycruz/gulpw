@@ -32,5 +32,8 @@
   "bugs": {
     "url": "https://github.com/saksdirect/gulp-bundle-wrangler/issues"
   },
-  "homepage": "https://github.com/saksdirect/gulp-bundle-wrangler"
+  "homepage": "https://github.com/saksdirect/gulp-bundle-wrangler",
+  "directories": {
+    "test": "tests"
+  }
 }
