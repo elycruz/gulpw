@@ -4,13 +4,14 @@
 require("sjljs");
 
 var fs = require('fs'),
+    path = require('path'),
     yaml = require('js-yaml'),
     Bundle = require("./../src/Bundle.js");
 
 module.exports = sjl.Extendable.extend(function Wrangler(config) {
 
-        var defaultOptions = yaml.safeLoad(fs.readFileSync("configs/default.wrangler.config.yaml")),
-            taskProxyMap = yaml.safeLoad(fs.readFileSync("configs/default.task.proxy.map.yaml"));
+        var defaultOptions = yaml.safeLoad(fs.readFileSync("./configs/default.wrangler.config.yaml")),
+            taskProxyMap = yaml.safeLoad(fs.readFileSync("./configs/default.task.proxy.map.yaml"));
 
         sjl.extend(true, this, {
             bundles: {},
@@ -33,18 +34,26 @@ module.exports = sjl.Extendable.extend(function Wrangler(config) {
             Object.keys(self.tasks).forEach(function (task) {
                 self.tasks[task] = self.createTaskProxy(gulp, task);
             });
+            return self;
         },
 
         createTaskProxy: function (gulp, task) {
+            console.log(task, this.taskProxyMap[task]);
             var self = this,
-                TaskClass = require(self.taskProxyMap[task]);
+                src = self.taskProxyMap[task],
+                TaskClass = require(src);
             return new TaskClass(gulp);
         },
 
         createBundles: function (gulp) {
-            var self = this;
-            (fs.readdirSync(this.dirs.bundles)).forEach(function (item) {
-                var bundle = self.createBundle(item);
+            var self = this,
+                bundlesPath = this.bundlesPath;
+            (fs.readdirSync(bundlesPath)).forEach(function (fileName) {
+                var bundle = self.createBundle(
+                    yaml.safeLoad(
+                        fs.readFileSync(path.join(bundlesPath, fileName))
+                    )
+                );
                 self.createTasksForBundle(gulp, bundle);
             });
         },

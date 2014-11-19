@@ -6,7 +6,7 @@ require('sjljs');
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy');
 
-module.exports = TaskProxy.extend("UglifyProxy", {
+module.exports = TaskProxy.extend("MinifyProxy", {
 
     /**
      * Regsiters bundle with uglify gulp task.
@@ -20,7 +20,7 @@ module.exports = TaskProxy.extend("UglifyProxy", {
         var separator = wrangler.getTaskStrSeparator();
 
         // Create task for bundle
-        gulp.task('uglify' + separator + bundle.name, function () {
+        gulp.task('minify' + separator + bundle.name, function () {
 
             // Check for sections on bundle that can be uglifyenated
             ['js', 'css'].forEach(function (ext) {

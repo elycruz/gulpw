@@ -1,9 +1,10 @@
 {
-  "name": "gulp-bundle-wrangler",
+  "name": "gulpw",
   "version": "0.0.0",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
-  "main": "gulpfile.js",
+  "main": "src/index.js",
   "dependencies": {
+    "ejs": "^1.0.0",
     "gulp": "~3.8.8",
     "gulp-bump": "~0.1.11",
     "gulp-clip-empty-files": "~0.1.1",

@@ -1,18 +1,15 @@
 /**
- * Created by edelacruz on 10/8/2014.
- */
-/**
- * Created by edelacruz on 10/8/2014.
+ * Created by ElyDeLaCruz on 11/18/2014.
  */
 require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy');
 
-module.exports = TaskProxy.extend("CssLintProxy", {
+module.exports = TaskProxy.extend("HtmlLintProxy", {
 
     /**
-     *
+     * Regsiters bundle with `html` gulp task.
      * @param bundle {Bundle}
      * @param gulp {gulp}
      * @param wrangler {GulpBundleWrangler}
@@ -23,4 +20,5 @@ module.exports = TaskProxy.extend("CssLintProxy", {
         var separator = wrangler.getTaskStrSeparator();
 
     } // end of `registerBundle`
-});
+
+}); // end of export

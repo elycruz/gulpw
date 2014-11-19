@@ -35,7 +35,7 @@ module.exports = TaskProxy.extend("ConcatProxy", {
                 gulp.src(bundle[ext])
 
                     // Concatenate current source in the {artifacts}/ext directory
-                    .pipe(concat(wrangler.getDirSafe('artifacts.' + ext) + bundle.name + '.' + ext))
+                    .pipe(concat(wrangler[ext + 'BuildPath'] + bundle.name + '.' + ext))
 
                     // Add file header
                     .pipe(header('/**! <%= bundle.name %>.<%= ext %> <%= bundle.version %> <%= (new Date()) %> **/'))

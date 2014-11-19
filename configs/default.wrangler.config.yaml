@@ -1,24 +1,26 @@
+bundlesPath: ./frontend-bundles
+
 tasks:
 
   concat:
     header: |
       /*!
        * Company Name http://www.company-website.com
-       * <%= bundle.name %>.js <%= bundle.version %>
+       * <%= bundle.name %>.<%= fileExt %> <%= bundle.version %>
        * <%= bundle[section-name].md5 %>
        */
     cssBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path
     htmlBuildDir: some/path/to/build/path
 
-  min:
+  minify:
     header: |
       /*! Company Name http://www.company-website.com <%= bundle.name %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
     cssBuildDir: some/path/to/build/path
     htmlBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path
-    cssPreSuffix: ""
-    htmlPreSuffix: ""
+    cssPreSuffix: ".min"
+    htmlPreSuffix: ".min"
     jsPreSuffix: ".min"
 
   # Build Task
@@ -33,7 +35,7 @@ tasks:
       - browserify
       - requirejs
       - concat
-      - min
+      - minify
 
     # This is a global lint flag that is used if there is a lint task specified for a section
     lintBeforeBuild: true
@@ -42,7 +44,7 @@ tasks:
     concat: true
 
     # Minify files if files exists and no `--dev` flag has been specefied on run
-    min: true
+    minify: true
 
     # Runs require js section if exists
     requirejs: true
@@ -83,16 +85,15 @@ tasks:
       dev: false
 
   # RequireJs Defaults
-  requirejs: null
+  requirejs: {}
 
   # Browserify Defaults
-  browserify: null
+  browserify: {}
 
-  compass: null
+  compass: {}
 
-  csslint: null
+  csslint: {}
 
-  jslint: null
+  jslint: {}
 
-  htmllint: null
-
+  htmllint: {}
