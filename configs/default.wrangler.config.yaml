@@ -1,5 +1,9 @@
 bundlesPath: ./frontend-bundles
 
+scriptRenderer: ejs
+
+bundleConfigFormat: yaml
+
 tasks:
 
   concat:
