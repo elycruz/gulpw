@@ -4,6 +4,8 @@ scriptRenderer: ejs
 
 bundleConfigFormat: yaml
 
+bundleConstructor: ./src/Bundle
+
 tasks:
 
   concat:
