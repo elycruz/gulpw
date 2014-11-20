@@ -12,7 +12,7 @@ var fs = require('fs'),
 
 describe("#`Bundle`", function () {
 
-    var bundleConfig = yaml.safeLoad(fs.readFileSync('./tests/mvp-bundle.yaml')),
+    var bundleConfig = yaml.safeLoad(fs.readFileSync('./tests/sample-project/bundle-configs/mvp-bundle.yaml')),
         bundle = new Bundle(bundleConfig);
 
     it ('Should inherit options passed into the constructor.', function () {

@@ -4,8 +4,6 @@ scriptRenderer: ejs
 
 bundleConfigFormat: yaml
 
-bundleConstructor: ./src/Bundle
-
 tasks:
 
   concat:
@@ -15,17 +13,17 @@ tasks:
        * <%= bundle.name %>.<%= fileExt %> <%= bundle.version %>
        * <%= bundle[section-name].md5 %>
        */
-    cssBuildDir: some/path/to/build/path
-    jsBuildDir: some/path/to/build/path
-    htmlBuildDir: some/path/to/build/path
+    cssBuildDir: ./tests/sample-project/frontend-dev/pre-artifacts/css/
+    jsBuildDir: ./tests/sample-project/frontend-dev/pre-artifacts/js/
+    htmlBuildDir: ./tests/sample-project/frontend-dev/pre-artifacts/
     useVersionNumInFileName: false
 
   minify:
     header: |
       /*! Company Name http://www.company-website.com <%= bundle.name %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
-    cssBuildDir: some/path/to/build/path
-    htmlBuildDir: some/path/to/build/path
-    jsBuildDir: some/path/to/build/path
+    cssBuildDir: ./tests/sample-project/public/css/
+    jsBuildDir: ./tests/sample-project/public/js/
+    htmlBuildDir: ./tests/sample-project/public/
     cssPreSuffix: ".min"
     htmlPreSuffix: ".min"
     jsPreSuffix: ".min"

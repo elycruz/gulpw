@@ -4,7 +4,9 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy');
+var TaskProxy = require('../TaskProxy'),
+    fs = require('fs'),
+    path = require('path');
 
 module.exports = TaskProxy.extend("ConcatProxy", {
 
@@ -20,11 +22,11 @@ module.exports = TaskProxy.extend("ConcatProxy", {
         var separator = wrangler.getTaskStrSeparator();
 
         // Create task for bundle
-        gulp.task('concat' + separator + bundle.name, function () {
+        gulp.task('concat' + separator + bundle.options.name, function () {
 
             // Check for sections on bundle that can be concatenated
             ['js', 'css', 'html'].forEach(function (ext) {
-                var section = bundle[ext];
+                var section = bundle.options.files[ext];
 
                 // If section is empty or not an array exit the function
                 if (sjl.empty(section) || !Array.isArray(section)) {
@@ -32,13 +34,13 @@ module.exports = TaskProxy.extend("ConcatProxy", {
                 }
 
                 // Give gulp the list of sources to process
-                gulp.src(bundle[ext])
+                gulp.src(section)
 
                     // Concatenate current source in the {artifacts}/ext directory
-                    .pipe(concat(wrangler[ext + 'BuildPath'] + bundle.name + '.' + ext))
+                    .pipe(concat(path.join(wrangler.cwd, wrangler.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext)))
 
                     // Add file header
-                    .pipe(header('/**! <%= bundle.name %>.<%= ext %> <%= bundle.version %> <%= (new Date()) %> **/'))
+                    .pipe(header('/**! <%= bundle.options.name %>.<%= ext %> <%= bundle.options.version %> <%= (new Date()) %> **/'))
 
                     // Dump to the directory specified in the `concat` call above
                     .pipe(gulp.dest('./'));
