@@ -65,8 +65,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             }
 
             // Run tasks
-            exec('1 + 1', function (err, stdOut, stdError)
+            exec('gulp ' + this.argv._.join(' '), function (error, stdout, stderr) {
+                console.log('stdout: ' + stdout);
+                console.log('stderr: ' + stderr);
+                if (error !== null) {
+                    console.log('exec error: ' + error);
+                }
+            });
 
+            //log(gulp.__proto__, true);
 
             return gulp;
         },
