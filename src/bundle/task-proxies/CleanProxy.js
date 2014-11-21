@@ -4,8 +4,9 @@
 
 require('sjljs');
 
-var del = require('del'),
-    TaskProxy = require('./../src/TaskProxy.js');
+var path = require('path'),
+    del = require('del'),
+    TaskProxy = require(path.join(__dirname, '../TaskProxy.js'));
 
 module.exports = TaskProxy.extend(function CleanProxy(options) {
     TaskProxy.call(this, options);
@@ -37,17 +38,14 @@ module.exports = TaskProxy.extend(function CleanProxy(options) {
      * @returns {void}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-        var self = this;
-
-        // If bundle doesn't have a clean key then bail
-        if (!bundle.hasClean()) {
-            return;
-        }
-
+        var self = this,
+            bundleName = bundle.options.name,
+            cleanOptions = wrangler.clean;
+return;
         // If clean key is an array or string register the bundle
         if (Array.isArray(bundle.options.clean)
             || sjl.classOfIs(bundle.options.clean, 'String')) {
-            self.registerGulpTask(bundle.options.name, bundle.options.clean, gulp, wrangler);
+            self.registerGulpTask(bundleName, bundle.options.clean, gulp, wrangler);
         }
 
         // Else for each key in clean (except 'options'), register the clean gulp task
@@ -56,7 +54,7 @@ module.exports = TaskProxy.extend(function CleanProxy(options) {
                 if (key === 'options') {
                     return;
                 }
-                self.registerGulpTask(bundle.options.name + wrangler.taskStrSeparator
+                self.registerGulpTask(bundleName + wrangler.taskStrSeparator
                     + key, bundle.options.clean[key], gulp, wrangler);
             });
         }

@@ -6,8 +6,8 @@ require("sjljs");
 var fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
-    Bundle = require("./../src/Bundle.js"),
-    exec = require('child_process').exec,
+    Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
+
     log = function () {
         var args = sjl.argsToArray(arguments),
             verbose = sjl.extractBoolFromArrayEnd(args);
@@ -22,11 +22,9 @@ var fs = require('fs'),
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
         var defaultOptions = yaml.safeLoad(fs.readFileSync(
-                path.join(__dirname, "/../configs/default.wrangler.config.yaml"))),
+                path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
             taskProxyMap = yaml.safeLoad(fs.readFileSync(
-                path.join(__dirname, "/../configs/default.task.proxy.map.yaml")));
-
-        log(argv, true);
+                path.join(__dirname, "/../../configs/default.task.proxy.map.yaml")));
 
         sjl.extend(true, this, {
             bundles: {},
@@ -64,16 +62,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 this.createBundles(gulp, this.extractBundlePathsFromArgv(this.argv));
             }
 
-            // Run tasks
-            exec('gulp ' + this.argv._.join(' '), function (error, stdout, stderr) {
-                console.log('stdout: ' + stdout);
-                console.log('stderr: ' + stderr);
-                if (error !== null) {
-                    console.log('exec error: ' + error);
-                }
+            // loop through tasks and call gulp.start on each
+            this.argv._.forEach(function (item) {
+                gulp.start(item);
             });
-
-            //log(gulp.__proto__, true);
 
             return gulp;
         },
@@ -95,7 +87,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             var self = this,
                 src = self.taskProxyMap[task].constructorLocation,
-                TaskClass = require(src);
+                TaskClass = require(path.join(__dirname, '../', src));
 
             return new TaskClass(gulp);
         },
@@ -104,13 +96,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             // Creating task proxies message
             log("- Creating bundles.", this.argv.verbose);
             var self = this,
-                bundlesPath = this.bundlesPath,
-                usingFsFileStrings = false;
+                bundlesPath = this.bundlesPath;
 
             // Get bundles
             if (!bundles) {
                 bundles = (fs.readdirSync(bundlesPath));
-                usingFsFileStrings = true;
             }
 
             // Parse bundle configs
@@ -126,7 +116,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 config = this.getBundleConfigByName(config);
             }
 
-            //
             if (sjl.empty(config)) {
                 return; // @todo throw exception here
             }
@@ -135,8 +124,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             log('Creating bundle "' + config.name + '"', this.argv.verbose);
 
             var bundle = new Bundle(config);
-
-            log(bundle, true);
 
             // Created message
             log('"' + bundle.options.name + '" created successfully.', this.argv.verbose);
@@ -150,7 +137,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         createTasksForBundle: function (gulp, bundle) {
             var self = this;
-            log(bundle, true);
 
             // Register bundle with task so that user can call "gulp task-name:bundle-name"
             Object.keys(self.tasks).forEach(function (task) {
@@ -159,11 +145,16 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 }
                 self.tasks[task].instance.registerBundle(bundle, gulp, self);
             });
-        },
 
-        getDirSafe: function (dir) {
-            var found = sjl.namespace(dir, this.dirs);
-            return sjl.classOfIs(found, 'String') ? found + '/' : '';
+            // Register concat and minify tasks
+            if (bundle.hasFilesJs() || bundle.hasFilesCss() || bundle.hasFilesHtml()) {
+                self.tasks.concat.instance.registerBundle(bundle, gulp, self);
+                self.tasks.minify.instance.registerBundle(bundle, gulp, self);
+            }
+
+            if (bundle.hasFiles()) {
+                self.tasks.clean.instance.registerBundle(bundle, gulp, self);
+            }
         },
 
         getTaskStrSeparator: function () {
@@ -175,7 +166,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         },
 
         getBundleConfigByName: function (name) {
-            var filePath = name.indexOf(path.sep) > -1 || name.indexOf('/') > -1 ? name : process.sepapath.join(this.bundlesPath, name + '.' + this.bundleConfigFormat),
+            var filePath = name.indexOf(path.sep) > -1 || name.indexOf('/') > -1
+                    ? name : process.sepapath.join(this.bundlesPath, name + '.' + this.bundleConfigFormat),
                 retVal = {},
                 file;
             if (!fs.existsSync(filePath)) {
@@ -223,7 +215,5 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             return out;
         }
-
-
 
     });

@@ -18,7 +18,7 @@ var yaml = require('js-yaml'),
             '.yaml': 'js-yaml'
         }
     }),
-    Wrangler = require('./src/Wrangler'),
+    Wrangler = require('./src/wrangler/Wrangler'),
     userConfig,
     wrangler;
 

@@ -12,7 +12,7 @@ tasks:
     header: |
       /*!
        * Company Name http://www.company-website.com
-       * <%= bundle.name %>.<%= fileExt %> <%= bundle.version %>
+       * <%= bundle.name %>.<%= fileExt %> <%= bundle.version %> (<%= (new Date()).getTime() %>)
        * <%= bundle[section-name].md5 %>
        */
     cssBuildDir: some/path/to/build/path
@@ -26,9 +26,11 @@ tasks:
     cssBuildDir: some/path/to/build/path
     htmlBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path
-    cssPreSuffix: ".min"
-    htmlPreSuffix: ".min"
-    jsPreSuffix: ".min"
+    htmlTaskOptions:
+    cssTaskOptions:
+      keepSpecialComments: 0 # "* for keeping all (default), 1 for keeping first one only, 0 for removing all" @see https://www.npmjs.org/package/gulp-minify-css
+    jsTaskOptions: {}
+    useMinPreSuffix: true
     useVersionNumInFileName: false
 
   # Build Task
@@ -105,3 +107,9 @@ tasks:
   jslint: {}
 
   htmllint: {}
+
+  clean:
+    - js
+    - css
+    - html
+    - ./.sass-cache

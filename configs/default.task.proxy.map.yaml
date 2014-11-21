@@ -1,61 +1,61 @@
 browserify:
-  constructorLocation: ./task-proxies/BrowserifyProxy
+  constructorLocation: ./bundle/task-proxies/BrowserifyProxy
   dependencies: browserify
   helpInfo: ""
 
 build:
-  constructorLocation: ./task-proxies/BuildProxy
+  constructorLocation: ./bundle/task-proxies/BuildProxy
   helpInfo: ""
 
 clean:
-  constructorLocation: ./task-proxies/CleanProxy
+  constructorLocation: ./bundle/task-proxies/CleanProxy
   dependencies: del
   helpInfo: ""
 
 compass:
-  constructorLocation: ./task-proxies/CompassProxy
+  constructorLocation: ./bundle/task-proxies/CompassProxy
   helpInfo: ""
 
 concat:
-  constructorLocation: ./task-proxies/ConcatProxy
+  constructorLocation: ./bundle/task-proxies/ConcatProxy
   dependencies:
     - gulp-concat
     - gulp-uglify
   helpInfo: ""
 
 csslint:
-  constructorLocation: ./task-proxies/CssLintProxy
+  constructorLocation: ./bundle/task-proxies/CssLintProxy
   helpInfo: ""
 
 deploy:
-  constructorLocation: ./task-proxies/DeployProxy
+  constructorLocation: ./bundle/task-proxies/DeployProxy
   helpInfo: ""
 
 gulpfile:
-  constructorLocation: ./task-proxies/GulpFileProxy
+  constructorLocation: ./bundle/task-proxies/GulpFileProxy
   helpInfo: ""
 
 jslint:
-  constructorLocation: ./task-proxies/JsLintProxy
+  constructorLocation: ./bundle/task-proxies/JsLintProxy
   helpInfo: ""
 
 htmllint:
-  constructorLocation: ./task-proxies/HtmlLintProxy
+  constructorLocation: ./bundle/task-proxies/HtmlLintProxy
   helpInfo: ""
 
 minify:
-  constructorLocation: ./task-proxies/MinifyProxy
+  constructorLocation: ./bundle/task-proxies/MinifyProxy
   helpInfo: ""
 
 requirejs:
-  constructorLocation: ./task-proxies/RequireJsProxy
+  constructorLocation: ./bundle/task-proxies/RequireJsProxy
   helpInfo: ""
 
 watch:
-  constructorLocation: ./task-proxies/WatchProxy
+  constructorLocation: ./bundle/task-proxies/WatchProxy
   helpInfo: ""
 
 wranglerfile:
-  constructorLocation: ./task-proxies/WranglerFileProxy
+  constructorLocation: ./bundle/task-proxies/WranglerFileProxy
   helpInfo: ""
 
