@@ -20,7 +20,6 @@ concat:
   constructorLocation: ./bundle/task-proxies/ConcatProxy
   dependencies:
     - gulp-concat
-    - gulp-uglify
   helpInfo: ""
 
 csslint:

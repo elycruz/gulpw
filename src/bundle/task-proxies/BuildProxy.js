@@ -1,7 +1,4 @@
 /**
- * Created by edelacruz on 10/8/2014.
- */
-/**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
 require('sjljs');

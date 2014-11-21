@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "chai": "^1.9.2",
+    "gulp-minify-html": "^0.1.7",
     "mocha": "^2.0.1",
     "var_dumpjs": "git://github.com/elycruz/var_dumpjs"
   },

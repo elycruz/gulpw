@@ -6,7 +6,11 @@ require("sjljs");
 var fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
+<<<<<<< HEAD:src/wrangler/Wrangler.js
     Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
+=======
+    Bundle = require("./../src/Bundle.js"),
+>>>>>>> f3abf7d75f4d0619ea9471fc1ca4844292f1d0f3:src/Wrangler.js
 
     log = function () {
         var args = sjl.argsToArray(arguments),
@@ -24,7 +28,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var defaultOptions = yaml.safeLoad(fs.readFileSync(
                 path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
             taskProxyMap = yaml.safeLoad(fs.readFileSync(
+<<<<<<< HEAD:src/wrangler/Wrangler.js
                 path.join(__dirname, "/../../configs/default.task.proxy.map.yaml")));
+=======
+                path.join(__dirname, "/../configs/default.task.proxy.map.yaml")));
+
+        log(argv, argv.verbose);
+>>>>>>> f3abf7d75f4d0619ea9471fc1ca4844292f1d0f3:src/Wrangler.js
 
         sjl.extend(true, this, {
             bundles: {},
@@ -62,12 +72,23 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 this.createBundles(gulp, this.extractBundlePathsFromArgv(this.argv));
             }
 
+<<<<<<< HEAD:src/wrangler/Wrangler.js
             // loop through tasks and call gulp.start on each
             this.argv._.forEach(function (item) {
                 gulp.start(item);
             });
 
             return gulp;
+=======
+            // Run all tasks passed in via cli
+            if (this.argv._.length > 0) {
+                this.argv._.forEach(function (item) {
+                    gulp.start(item);
+                });
+            }
+
+            // Else run all tasks in all bundles
+>>>>>>> f3abf7d75f4d0619ea9471fc1ca4844292f1d0f3:src/Wrangler.js
         },
 
         createTaskProxies: function (gulp) {
@@ -111,7 +132,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         },
 
         createBundle: function (config) {
-
             if (sjl.classOfIs(config, 'String')) {
                 config = this.getBundleConfigByName(config);
             }
@@ -125,9 +145,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             var bundle = new Bundle(config);
 
+<<<<<<< HEAD:src/wrangler/Wrangler.js
             // Created message
             log('"' + bundle.options.name + '" created successfully.', this.argv.verbose);
 
+=======
+>>>>>>> f3abf7d75f4d0619ea9471fc1ca4844292f1d0f3:src/Wrangler.js
             // Store bundle
             this.bundles[bundle.options.name] = bundle;
 
@@ -137,6 +160,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         createTasksForBundle: function (gulp, bundle) {
             var self = this;
+<<<<<<< HEAD:src/wrangler/Wrangler.js
+=======
+
+            if (sjl.empty(bundle)) {
+                return;
+            }
+>>>>>>> f3abf7d75f4d0619ea9471fc1ca4844292f1d0f3:src/Wrangler.js
 
             // Register bundle with task so that user can call "gulp task-name:bundle-name"
             Object.keys(self.tasks).forEach(function (task) {
@@ -145,6 +175,17 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 }
                 self.tasks[task].instance.registerBundle(bundle, gulp, self);
             });
+<<<<<<< HEAD:src/wrangler/Wrangler.js
+=======
+
+            // Composite tasks @todo should be moved
+            if (bundle.hasFilesJs() || bundle.hasFilesCss() || bundle.hasFilesHtml()) {
+                self.tasks.concat.instance.registerBundle(bundle, gulp, self);
+                self.tasks.minify.instance.registerBundle(bundle, gulp, self);
+            }
+
+        },
+>>>>>>> f3abf7d75f4d0619ea9471fc1ca4844292f1d0f3:src/Wrangler.js
 
             // Register concat and minify tasks
             if (bundle.hasFilesJs() || bundle.hasFilesCss() || bundle.hasFilesHtml()) {
@@ -166,8 +207,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         },
 
         getBundleConfigByName: function (name) {
+<<<<<<< HEAD:src/wrangler/Wrangler.js
             var filePath = name.indexOf(path.sep) > -1 || name.indexOf('/') > -1
                     ? name : process.sepapath.join(this.bundlesPath, name + '.' + this.bundleConfigFormat),
+=======
+            var filePath = name.indexOf(path.sep) > -1 || name.indexOf('/') > -1 ? name : path.join(this.bundlesPath, name + '.' + this.bundleConfigFormat),
+>>>>>>> f3abf7d75f4d0619ea9471fc1ca4844292f1d0f3:src/Wrangler.js
                 retVal = {},
                 file;
             if (!fs.existsSync(filePath)) {
