@@ -37,12 +37,9 @@ module.exports = TaskProxy.extend("MinifyProxy", {
         // Create task for bundle
         gulp.task(taskName, ['concat' + separator + bundleName], function () {
 
-            wrangler.log('Running ' + taskName, '--debug');
-
             // Check for sections on bundle that can be minified
             ['js', 'css', 'html'].forEach(function (ext) {
-                var concatenatedFile = path.join(wrangler.cwd, wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext),
-                    buildPath = path.join(wrangler.cwd, wrangler.tasks.minify[ext + 'BuildPath']),
+                var buildPath = wrangler.tasks.minify[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext];
 
                 // If no files for this section, bail to the next one
@@ -50,21 +47,18 @@ module.exports = TaskProxy.extend("MinifyProxy", {
                     return;
                 }
 
-                var filePath = path.relative(wrangler.cwd,
-                        path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext)),
+                var filePath = path.join(buildPath, bundle.options.name + '.' + ext),
                     fileBasePath = path.dirname(filePath);
 
                 // If file basepath doesn't exist make sure it is created
                 if (!fs.existsSync(fileBasePath)) {
-                    //fs.mkdirSync(fileBasePath);
+                    wrangler.ensurePathExists(fileBasePath);
                 }
 
                 // Else if output file already exists remove it
                 else if (fs.existsSync(filePath)) {
                     fs.unlinkSync(filePath);
                 }
-
-                wrangler.log(filePath, fileBasePath, '--debug');
 
                 // Give gulp the list of sources to process
                 gulp.src(bundle.options.files[ext])

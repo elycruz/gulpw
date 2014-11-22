@@ -27,6 +27,8 @@ tasks:
     htmlBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path
     htmlTaskOptions:
+      spare: true
+      comments: false
     cssTaskOptions:
       keepSpecialComments: 0 # "* for keeping all (default), 1 for keeping first one only, 0 for removing all" @see https://www.npmjs.org/package/gulp-minify-css
     jsTaskOptions: {}

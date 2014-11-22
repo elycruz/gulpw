@@ -7,6 +7,10 @@ var fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
     chalk = require('chalk'),
+
+    // Recursive mkdir (makes all paths in passed path)
+    mkdirp = require('mkdirp'),
+
     Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
 
     throwBundleFileNotExistError = function (bundleName, filePath) {
@@ -60,13 +64,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             self.createBundles(gulp, self.extractBundlePathsFromArgv(argv));
         }
 
-        // New line
-        self.log('\n', '--mandatory');
-
         // loop through tasks and call gulp.start on each
         argv._.forEach(function (item) {
             // Start running task
-            self.log('Running ' + item, '--mandatory');
+            self.log(chalk.dim('Running ' + item), '--mandatory');
 
             // Capture start time
             startDate = Date.now();
@@ -79,8 +80,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 + ((new Date()) - startDate) / 100 + 'ms'), '--mandatory');
         });
 
-        // New line
-        self.log('\n', '--mandatory');
     },
 
     createTaskProxies: function (gulp) {
@@ -254,6 +253,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
 
         return this;
+    },
+
+    ensurePathExists: function (dirPath) {
+        return mkdirp.sync(dirPath);
     }
 
 });

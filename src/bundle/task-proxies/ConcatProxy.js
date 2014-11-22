@@ -5,7 +5,6 @@ require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
-    chalk = require('chalk'),
     fs = require('fs'),
     concat = require('gulp-concat'),
     header = require('gulp-header'),
@@ -38,13 +37,12 @@ module.exports = TaskProxy.extend("ConcatProxy", {
                     return;
                 }
 
-                var filePath = path.relative(wrangler.cwd,
-                    path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext)),
+                var filePath = path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext),
                     fileBasePath = path.dirname(filePath);
 
                 // If file basepath doesn't exist make sure it is created
                 if (!fs.existsSync(fileBasePath)) {
-                    fs.mkdirSync(fileBasePath);
+                    wrangler.ensurePathExists(fileBasePath);
                 }
 
                 // Else if output file already exists remove it
