@@ -1,5 +1,7 @@
 gulp-bundle-wrangler
 ====================
+##*** Note ***
+This project is in very-pre-alpha.  Please do not attempt to use it until this notice is removed.
 
 Allows the management of a project via bundle configuration files (architected towards speed).
 

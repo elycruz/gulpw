@@ -37,17 +37,13 @@ function init(env) {
     }
 
     if (env.configPath) {
-
-        //console.log(process.argv,__dirname);
         process.chdir(env.configBase);
 
         userConfig = yaml.safeLoad(fs.readFileSync(env.configPath));
 
         wrangler = new Wrangler(gulp, argv, env, userConfig);
-
-        //require(env.configPath);
-
-    } else {
+    }
+    else {
         console.log('No \'bundle.wrangler.config.*\' file found.');
     }
 }
