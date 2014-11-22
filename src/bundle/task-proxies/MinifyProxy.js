@@ -50,13 +50,26 @@ module.exports = TaskProxy.extend("MinifyProxy", {
                     return;
                 }
 
-                wrangler.log(bundle.options.files[ext],
-                    'WRANGLER.CWD = ' + wrangler.cwd, '--debug');
+                var filePath = path.relative(wrangler.cwd,
+                        path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext)),
+                    fileBasePath = path.dirname(filePath);
+
+                // If file basepath doesn't exist make sure it is created
+                if (!fs.existsSync(fileBasePath)) {
+                    //fs.mkdirSync(fileBasePath);
+                }
+
+                // Else if output file already exists remove it
+                else if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+
+                wrangler.log(filePath, fileBasePath, '--debug');
 
                 // Give gulp the list of sources to process
                 gulp.src(bundle.options.files[ext])
 
-                    .pipe(concat(path.join(buildPath, bundleName + '.' + ext)))
+                    .pipe(concat(filePath))
 
                     // Minify current source in the {artifacts}/ext directory
                     .pipe(gulpif(!wrangler.argv.dev, taskInstanceConfig.instance(taskInstanceConfig.options)))

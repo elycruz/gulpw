@@ -5,6 +5,7 @@ require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
+    chalk = require('chalk'),
     fs = require('fs'),
     concat = require('gulp-concat'),
     header = require('gulp-header'),
@@ -22,10 +23,11 @@ module.exports = TaskProxy.extend("ConcatProxy", {
     registerBundle: function (bundle, gulp, wrangler) {
 
         // Task string separator
-        var separator = wrangler.getTaskStrSeparator();
+        var separator = wrangler.getTaskStrSeparator(),
+            taskName = 'concat' + separator + bundle.options.name;
 
         // Create task for bundle
-        gulp.task('concat' + separator + bundle.options.name, function () {
+        gulp.task(taskName, function () {
 
             // Check for sections on bundle that can be concatenated
             ['js', 'css', 'html'].forEach(function (ext) {
@@ -36,11 +38,25 @@ module.exports = TaskProxy.extend("ConcatProxy", {
                     return;
                 }
 
+                var filePath = path.relative(wrangler.cwd,
+                    path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext)),
+                    fileBasePath = path.dirname(filePath);
+
+                // If file basepath doesn't exist make sure it is created
+                if (!fs.existsSync(fileBasePath)) {
+                    fs.mkdirSync(fileBasePath);
+                }
+
+                // Else if output file already exists remove it
+                else if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+
                 // Give gulp the list of sources to process
                 gulp.src(section)
 
                     // Concatenate current source in the {artifacts}/ext directory
-                    .pipe(concat(path.join(wrangler.cwd, wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext)))
+                    .pipe(concat(filePath))
 
                     // Add file header
                     .pipe(gulpif(ext !== 'html', header(wrangler.tasks.concat.header, {

@@ -12,6 +12,7 @@
     "gulp-bump": "~0.1.11",
     "gulp-clip-empty-files": "~0.1.1",
     "gulp-concat": "~2.4.1",
+    "gulp-duration": "0.0.0",
     "gulp-header": "^1.2.2",
     "gulp-if": "^1.2.5",
     "gulp-minify-css": "^0.3.11",

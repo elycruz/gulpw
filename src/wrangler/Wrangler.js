@@ -37,7 +37,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 {
     init: function (gulp, argv) {
         var self = this,
-            anyGlobalTasksToRun;
+            anyGlobalTasksToRun,
+            startDate;
 
         self.log("Gulp Bundle Wrangler initializing...");
 
@@ -59,11 +60,27 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             self.createBundles(gulp, self.extractBundlePathsFromArgv(argv));
         }
 
+        // New line
+        self.log('\n', '--mandatory');
+
         // loop through tasks and call gulp.start on each
         argv._.forEach(function (item) {
-            self.log('--Running gulp task: ' + item, '--debug');
+            // Start running task
+            self.log('Running ' + item, '--mandatory');
+
+            // Capture start time
+            startDate = Date.now();
+
+            // Run task
             gulp.start(item);
+
+            // Log task duration
+            self.log(chalk.cyan(item + ' finished - duration: '
+                + ((new Date()) - startDate) / 100 + 'ms'), '--mandatory');
         });
+
+        // New line
+        self.log('\n', '--mandatory');
     },
 
     createTaskProxies: function (gulp) {
@@ -220,7 +237,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             verbose = this.argv.verbose,
             debug = args[args.length - 1] === '--debug',
             debugFlag = this.argv.debug,
-            mandatory = args[args.length - 1] === '--always';
+            mandatory = args[args.length - 1] === '--mandatory';
 
         if (debug || mandatory) {
             args.pop();
