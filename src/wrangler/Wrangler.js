@@ -66,7 +66,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // loop through tasks and call gulp.start on each
         argv._.forEach(function (item) {
-            // Start running task
+            // 'Start running task' message
             self.log(chalk.dim('Running ' + item), '--mandatory');
 
             // Capture start time
@@ -169,9 +169,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             self.tasks.csslint.instance.registerBundle(bundle, gulp, self);
         }
 
-        //if (bundle.hasFiles()) {
-        //    self.tasks.clean.instance.registerBundle(bundle, gulp, self);
-        //}
+        // Register clean task
+        if (bundle.hasFiles() || bundle.hasClean()) {
+            self.tasks.clean.instance.registerBundle(bundle, gulp, self);
+        }
     },
 
     getTaskStrSeparator: function () {
@@ -208,10 +209,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     extractBundleNamesFromArray: function (list) {
         var parts, extracted = [];
         list.filter(function (item) {
-            return /[a-z\d\-_]+\:[a-z\d\-_]+/i.test(item);
+            return /^[a-z\d\-_]+\:[a-z\d\-_]+/i.test(item);
         }).forEach(function (item) {
             parts = item.split(':');
-            extracted.push(parts[parts.length - 1]);
+            extracted.push(parts[1]);
         });
         return extracted;
     },

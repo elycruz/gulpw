@@ -39,10 +39,6 @@ jshint:
   constructorLocation: ./bundle/task-proxies/JsHintProxy
   helpInfo: ""
 
-htmllint:
-  constructorLocation: ./bundle/task-proxies/HtmlLintProxy
-  helpInfo: ""
-
 minify:
   constructorLocation: ./bundle/task-proxies/MinifyProxy
   helpInfo: ""

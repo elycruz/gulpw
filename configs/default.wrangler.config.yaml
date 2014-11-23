@@ -124,10 +124,8 @@ tasks:
         - marionette
         - require
 
-  htmllint: {}
-
   clean:
-    - js
-    - css
-    - html
-    - ./.sass-cache
+    allowedFileTypes:
+      - js
+      - css
+      - html

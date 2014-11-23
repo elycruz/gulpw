@@ -1,7 +1,9 @@
 gulp-bundle-wrangler
 ====================
+
 ##*** Note ***
-This project is in very-pre-alpha.  Please do not attempt to use it until this notice is removed.
+This project is in the pre-alpha stage and only a few tasks are available.
+Please do not attempt to use it until this notice is removed.
 
 Allows the management of a project via bundle configuration files (architected towards speed).
 
@@ -20,8 +22,8 @@ That directory should contain "bundle-configuration" files which are used within
 	- [ ] - browserify
 	- [ ] - build
 	- [ ] - clean
-	- [X] - concat
-	- [X] - csslint
+	- [X] - concat (gulp-concat)
+	- [X] - csslint (gulp-csslint)
 	- [ ] - deploy (ssh tool)
 	- [ ] - document (jsdoc, groco, etc)
 	- [ ] - htmllint (tentative)
