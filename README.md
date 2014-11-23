@@ -20,14 +20,15 @@ That directory should contain "bundle-configuration" files which are used within
 	- [ ] - browserify
 	- [ ] - build
 	- [ ] - clean
-	- [ ] - concat
-	- [ ] - csslint (csslint etc.)
+	- [X] - concat
+	- [X] - csslint
 	- [ ] - deploy (ssh tool)
 	- [ ] - document (jsdoc, groco, etc)
-	- [ ] - htmllint (tidy, htmllint etc.)
-	- [ ] - jslint (jshint, jslint, etc.)
-	- [ ] - minify (uglify, closure compiler, cssmin etc. (also a proxy for requirejs and browserify)
-	- [ ] - templates (mustache, handlebars etc.) (stores all templates on specified global via a script template)
+	- [ ] - htmllint (tentative)
+	- [ ] - htmltidy (tentative)
+	- [X] - jshint (gulp-jshint)
+	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
+	- [ ] - template (mustache, handlebars etc.) (stores all templates on specified global via a script template)
 	- [ ] - requirejs
 	- [ ] - watch
 - For `Bundle`:
