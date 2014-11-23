@@ -12,7 +12,7 @@ module.exports = TaskProxy.extend("HtmlLintProxy", {
      * Regsiters bundle with `html` gulp task.
      * @param bundle {Bundle}
      * @param gulp {gulp}
-     * @param wrangler {GulpBundleWrangler}
+     * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
 

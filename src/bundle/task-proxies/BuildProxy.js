@@ -15,7 +15,7 @@ module.exports = TaskProxy.extend("BuildProxy", {
      *
      * @param bundle {Bundle}
      * @param gulp {gulp}
-     * @param wrangler {GulpBundleWrangler}
+     * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
 

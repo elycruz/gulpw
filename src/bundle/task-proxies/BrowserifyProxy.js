@@ -15,7 +15,7 @@ module.exports = TaskProxy.extend("BrowserifyProxy", {
      * Regsiters bundle with `browserify` gulp task.
      * @param bundle {Bundle}
      * @param gulp {gulp}
-     * @param wrangler {GulpBundleWrangler}
+     * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
 

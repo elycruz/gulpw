@@ -16,7 +16,7 @@ module.exports = TaskProxy.extend(function CleanProxy(options) {
      * Registers the clean gulp task for a `taskSuffix`.
      * @param taskSuffix {String} - Required
      * @param target {Array|Object|String} - Required
-     * @param wrangler {GulpBundleWrangler} - Required
+     * @param wrangler {Wrangler} - Required
      * @return {void}
      */
     registerGulpTask: function (taskSuffix, target, gulp, wrangler) {
@@ -33,7 +33,7 @@ module.exports = TaskProxy.extend(function CleanProxy(options) {
     /**
      * Registers bundle with the `clean` task.
      * @param gulp {gulp} - Required
-     * @param wrangler {GulpBundleWrangler} - Required
+     * @param wrangler {Wrangler} - Required
      * @param bundle {Bundle} - Required
      * @returns {void}
      */

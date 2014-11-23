@@ -12,7 +12,7 @@ module.exports = TaskProxy.extend("RequireJsProxy", {
      * Regsiters bundle with `requirejs` gulp task.
      * @param bundle {Bundle}
      * @param gulp {gulp}
-     * @param wrangler {GulpBundleWrangler}
+     * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
 

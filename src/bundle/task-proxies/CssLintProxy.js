@@ -6,8 +6,8 @@
  */
 require('sjljs');
 
-// Import base task proxy to extend
-var TaskProxy = require('../TaskProxy');
+var csslint = require('gulp-csslint'),
+    TaskProxy = require('../TaskProxy');
 
 module.exports = TaskProxy.extend("CssLintProxy", {
 
@@ -15,12 +15,34 @@ module.exports = TaskProxy.extend("CssLintProxy", {
      *
      * @param bundle {Bundle}
      * @param gulp {gulp}
-     * @param wrangler {GulpBundleWrangler}
+     * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
 
         // Task string separator
-        var separator = wrangler.getTaskStrSeparator();
+        var self = this,
 
-    } // end of `registerBundle`
+            separator = wrangler.getTaskStrSeparator(),
+
+            cssLintConfig = self.getTaskConfig(wrangler.tasks.csslint) || {};
+
+        if (!bundle.hasFilesCss()) {
+            return;
+        }
+
+        gulp.task('csslint' + separator + bundle.options.name, function () {
+
+            gulp.src(bundle.options.files.css)
+
+                .pipe(csslint(cssLintConfig))
+
+                .pipe(csslint.reporter());
+        });
+
+    }, // end of `registerBundle`
+
+    getTaskConfig: function (config) {
+        // @todo if using config file load it here
+        return config.options;
+    }
 });

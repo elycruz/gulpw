@@ -165,6 +165,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         if (bundle.hasFilesJs() || bundle.hasFilesCss() || bundle.hasFilesHtml()) {
             self.tasks.concat.instance.registerBundle(bundle, gulp, self);
             self.tasks.minify.instance.registerBundle(bundle, gulp, self);
+            self.tasks.jshint.instance.registerBundle(bundle, gulp, self);
+            self.tasks.csslint.instance.registerBundle(bundle, gulp, self);
         }
 
         //if (bundle.hasFiles()) {

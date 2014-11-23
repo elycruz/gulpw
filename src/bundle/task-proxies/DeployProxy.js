@@ -12,7 +12,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
      *
      * @param bundle {Bundle}
      * @param gulp {gulp}
-     * @param wrangler {GulpBundleWrangler}
+     * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
 

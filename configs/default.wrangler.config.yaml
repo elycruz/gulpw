@@ -1,10 +1,10 @@
-bundlesPath: ./tests/sample-project/bundle-configs
+bundlesPath: ./path/to/bundles
 
 scriptRenderer: ejs
 
 bundleConfigFormat: yaml
 
-bundleConstructor: ./src/Bundle
+bundleConstructor: ./src/bundle/Bundle
 
 tasks:
 
@@ -40,12 +40,12 @@ tasks:
 
     # Tasks to run if task is not overwritten by flag (see flags below)
     tasks:
-      - compass
-      - jslint
-      - csslint
-      - htmllint
-      - browserify
-      - requirejs
+#      - compass
+#      - jslint
+#      - csslint
+#      - htmllint
+#      - browserify
+#      - requirejs
       - concat
       - minify
 
@@ -104,9 +104,25 @@ tasks:
 
   compass: {}
 
-  csslint: {}
+  csslint:
+    options: {}
 
-  jslint: {}
+  jshint:
+    useJshintRc: false
+    jsHintRcPath: ./configs/.jshintrc
+    options:
+      predef:
+        - $
+        - _
+        - amplify
+        - Backbone
+        - browserify
+        - define
+        - jQuery
+        - Modernizr
+        - Mustache
+        - marionette
+        - require
 
   htmllint: {}
 

@@ -15,7 +15,7 @@ module.exports = TaskProxy.extend("CompassProxy", {
      * Regsiters bundle with `compass` or `sass` gulp task.
      * @param bundle {Bundle}
      * @param gulp {gulp}
-     * @param wrangler {GulpBundleWrangler}
+     * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
 

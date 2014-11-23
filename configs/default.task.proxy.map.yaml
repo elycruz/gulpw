@@ -35,8 +35,8 @@ gulpfile:
   constructorLocation: ./bundle/task-proxies/GulpFileProxy
   helpInfo: ""
 
-jslint:
-  constructorLocation: ./bundle/task-proxies/JsLintProxy
+jshint:
+  constructorLocation: ./bundle/task-proxies/JsHintProxy
   helpInfo: ""
 
 htmllint:
