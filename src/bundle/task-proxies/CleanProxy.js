@@ -17,7 +17,7 @@ module.exports = TaskProxy.extend('CleanProxy', {
      * @param wrangler {Wrangler} - Required
      * @return {void}
      */
-    registerGulpTask: function (taskSuffix, targets, gulp, wrangler) {
+    registerGulpTask: function (taskSuffix, targets, gulp) {
         gulp.task('clean' + taskSuffix, function (cb) {
             del(targets, function (err) {
                 if (err) {
@@ -63,18 +63,18 @@ module.exports = TaskProxy.extend('CleanProxy', {
                 targets = targets.concat(singularTaskTargets);
 
                 // Register task for `key`
-                self.registerGulpTask(separator + bundleName + separator + ext, singularTaskTargets, gulp, wrangler);
+                self.registerGulpTask(separator + bundleName + separator + ext, singularTaskTargets, gulp);
             }
         });
 
         // If clean key is set with a valid buildable src
         if (self.isValidTaskSrc(bundle.options.clean)) {
-            self.registerGulpTask(separator + bundleName, bundle.options.clean, gulp, wrangler);
+            self.registerGulpTask(separator + bundleName, bundle.options.clean, gulp);
         }
 
         // Register overall clean task
         if (targets.length > 0) {
-            self.registerGulpTask(separator + bundleName, targets, gulp, wrangler);
+            self.registerGulpTask(separator + bundleName, targets, gulp);
         }
     },
 
@@ -108,7 +108,7 @@ module.exports = TaskProxy.extend('CleanProxy', {
 
         // Register overall clean task
         if (targets.length > 0) {
-            self.registerGulpTask("", targets, gulp, wrangler);
+            self.registerGulpTask("", targets, gulp);
         }
 
     },

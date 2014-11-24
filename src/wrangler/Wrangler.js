@@ -73,6 +73,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
 
         // loop through tasks and call gulp.start on each
+        // @todo gulp is asynchronous;  duration calculation must happen on the stream operation level.
+        // @ The timing calculations in the function below are irrelevant.
         argv._.forEach(function (item) {
             // 'Start running task' message
             self.log(chalk.dim('Running ' + item), '--mandatory');
