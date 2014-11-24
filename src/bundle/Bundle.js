@@ -95,6 +95,10 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
 
         hasFilesCss: function () {
             return !sjl.empty(this.options.files.js);
+        },
+
+        hasWatch: function () {
+            return !sjl.empty(this.options.watch);
         }
 
     }); // end of Bundle

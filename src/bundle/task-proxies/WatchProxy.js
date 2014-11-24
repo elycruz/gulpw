@@ -8,6 +8,28 @@ var TaskProxy = require('../TaskProxy');
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
+    registerGulpTask: function (taskName, targets, gulp, wrangler) {
+        var tasks, bundle;
+
+        // @note testing hack.  This function will not be this way when it is done (should not use arguments object directly)
+        if (arguments.length === 5) {
+            tasks = arguments[arguments.length - 1];
+        }
+        else if (arguments.length === 6) {
+            tasks = arguments[arguments.length - 2];
+            bundle = arguments[arguments.length - 1];
+            tasks = tasks.map(function (task) {
+                return task + ':' + bundle.options.name;
+            });
+        }
+
+        gulp.task(taskName, function () {
+            gulp.watch(targets, function () {
+                wrangler.launchTasks(tasks, gulp);
+            });
+        });
+    },
+
     /**
      *
      * @param bundle {Bundle}
@@ -15,10 +37,52 @@ module.exports = TaskProxy.extend("DeployProxy", {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-
         // Task string separator
-        var separator = wrangler.getTaskStrSeparator();
+        var separator = wrangler.getTaskStrSeparator(),
+            self = this,
+            bundleName = bundle.options.name,
+            targets,
+            tasks = wrangler.tasks.watch.tasks;
 
-    } // end of `registerBundle`
+        if (!self.isBundleValidForTask(bundle)) {
+            return; // @todo log message/warning here
+        }
+
+        targets = self.getSrcForTask(bundle);
+
+        self.registerGulpTask('watch' + separator + bundleName, targets,
+            gulp, wrangler, tasks, bundle);
+
+    }, // end of `registerBundle`
+
+    getSrcForTask: function (bundle) {
+        var targets = [];
+
+        // Bail if bundle is not valid for task
+        if (!this.isBundleValidForTask(bundle)) {
+            return;
+        }
+
+        // Merge other files to watch to targets
+        if (bundle.hasWatch() && Array.isArray(bundle.options.otherFiles)) {
+            targets = targets.concat(bundle.options.watch.otherFiles);
+        }
+
+        // Merge all arrays in files key to `targets`
+        if (bundle.hasFiles()) {
+            Object.keys(bundle.options.files).forEach(function (key) {
+                var keyVal = bundle.options.files[key];
+                targets = Array.isArray(keyVal) ? targets.concat(keyVal) :
+                    (!sjl.empty(keyVal) ? targets.push(keyVal) : targets);
+            });
+        }
+
+        return targets;
+    },
+
+    isBundleValidForTask: function (bundle) {
+        return bundle && (bundle.hasFiles() || (bundle.hasRequirejs()
+            || bundle.hasBrowserify()) || bundle.hasWatch());
+    }
 
 }); // end of export

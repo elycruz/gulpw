@@ -96,7 +96,10 @@ tasks:
     # Tasks to run on file changes ** Note ** only tasks that match changed file types will be run
     tasks:
       - build
-      - deploy
+#      - deploy
+
+    # Other files to watch (can be overridden from the bundle level as well)
+    otherFiles: null
 
     # Flags that can be passed to the watch task ** Note ** These flags are available to tasks as they run via the `gulp` object
     flags:
