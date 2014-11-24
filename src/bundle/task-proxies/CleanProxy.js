@@ -37,10 +37,6 @@ module.exports = TaskProxy.extend('CleanProxy', {
      */
     registerBundle: function (bundle, gulp, wrangler) {
 
-        if (!bundle) {
-            return;
-        }
-
         var self = this,
             bundleName = bundle.options.name,
             allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],

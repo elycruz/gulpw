@@ -4,7 +4,7 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy'),
+var FilesTaskProxy = require('../FilesTaskProxy'),
     fs = require('fs'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
@@ -14,7 +14,10 @@ var TaskProxy = require('../TaskProxy'),
     gulpif = require('gulp-if'),
     path = require('path');
 
-module.exports = TaskProxy.extend("MinifyProxy", {
+module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
+    FilesTaskProxy.apply(this, options);
+    this.name = 'minify';
+}, {
 
     /**
      * Regsiters bundle with minify gulp task.
@@ -25,8 +28,7 @@ module.exports = TaskProxy.extend("MinifyProxy", {
     registerBundle: function (bundle, gulp, wrangler) {
 
         // If bundle doesn't have any of the required keys, bail
-        if (!bundle || !bundle.hasFiles()
-            || (!bundle.hasFilesJs() && !bundleHasFilesCss && !bundle.hasFilesHtml())) {
+        if (!this.isBundleValidForTask(bundle)) {
             return;
         }
 

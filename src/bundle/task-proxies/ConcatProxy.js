@@ -4,14 +4,17 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy'),
+var FilesTaskProxy = require('../FilesTaskProxy'),
     fs = require('fs'),
     concat = require('gulp-concat'),
     header = require('gulp-header'),
     gulpif = require('gulp-if'),
     path = require('path');
 
-module.exports = TaskProxy.extend("ConcatProxy", {
+module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
+    FilesTaskProxy.apply(this, sjl.extend(true, {name: 'concat'}, options));
+    this.name = 'concat';
+}, {
 
     /**
      * Regsiters bundle with concat gulp task.
@@ -72,50 +75,6 @@ module.exports = TaskProxy.extend("ConcatProxy", {
 
         }); // end of concat task
 
-    }, // end of `registerBundle`
-
-    // @todo use this method for minify tasks as well (methods will be almost identical
-    registerBundles: function (bundles, gulp, wrangler) {
-
-        var self = this,
-            tasks = [],
-            separator = wrangler.getTaskStrSeparator(),
-            hasSection;
-
-        bundles.forEach(function (bundle, i) {
-
-            // If bundle doesn't have any of the required keys, bail
-            if (!self.isBundleValidForTask(bundle)) {
-                return;
-            }
-
-            // Check for sections on bundle that can be concatenated
-            hasSection = ['js', 'css', 'html'].filter(function (ext) {
-                var section = bundle.options.files[ext];
-
-                // If section is not empty or an array or a string then true
-                return !sjl.empty(section) && (Array.isArray(section) || sjl.classOfIs(section, 'String'));
-
-            }).length > 0; // end of loop
-
-            // Collect task name for use later
-            if (hasSection) {
-                tasks.push('concat' + separator + bundle.options.name);
-            }
-
-        }); // end of bundles loop
-
-        // Set up global `concat` task
-        gulp.task('concat', function () {
-            self.launchTasks(tasks, gulp, wrangler);
-        });
-
-    }, // end of `registerBundles`
-
-    isBundleValidForTask: function (bundle) {
-        // If bundle doesn't have any of the required keys, bail
-        return !(!bundle || !bundle.hasFiles()
-            || (!bundle.hasFilesJs() && !bundleHasFilesCss && !bundle.hasFilesHtml()));
-    }
+    } // end of `registerBundle`
 
 }); // end of export

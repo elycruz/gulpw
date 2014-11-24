@@ -3,7 +3,7 @@
  */
 require('sjljs');
 
-module.exports = new sjl.Extendable.extend(function TaskProxy(options) {
+module.exports = sjl.Extendable.extend(function TaskProxy(options) {
         sjl.extend(true, this, {
             name: "Task's cli name goes here.",
             description: "Task's description goes here.",
@@ -21,6 +21,10 @@ module.exports = new sjl.Extendable.extend(function TaskProxy(options) {
 
         launchTasks: function (tasks, gulp, wrangler) {
             return wrangler.launchTasks(tasks, gulp);
+        },
+
+        isBundleValidForTask: function (bundle) {
+            // Overwrite from extending class
         }
 
     });

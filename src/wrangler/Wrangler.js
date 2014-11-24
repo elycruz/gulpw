@@ -57,11 +57,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Create task proxies (@todo in the future only load needed tasks if it makes any difference in performance)
         self.createTaskProxies(gulp);
 
-
         // If any global tasks to run create tasks proxies and register all bundles.
-        if (anyGlobalTasksToRun) {
+        if (anyGlobalTasksToRun && argv._.length > 0) {
             self.createBundles(gulp);
-            self.registerGlobalTasks(gulp);
+            self.registerGlobalTasks(gulp, argv._);
         }
 
         // No global tasks to run (tasks on all modules) so register only passed in bundle(s)
@@ -92,9 +91,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         var self = this,
             src = self.taskProxyMap[task].constructorLocation,
-            TaskClass = require(path.join(__dirname, '../', src));
+            TaskProxyClass = require(path.join(__dirname, '../', src));
 
-        return new TaskClass(gulp);
+        return new TaskProxyClass({
+            name: task,
+            help: self.taskProxyMap['help']
+        });
     },
 
     createBundles: function (gulp, bundles) {
@@ -149,13 +151,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
-    registerGlobalTasks: function (gulp) {
+    registerGlobalTasks: function (gulp, tasks) {
         var self = this,
-            tasks = Object.keys(self.tasks),
             bundles = self.bundlesToArray();
 
         // Pass all bundles to each task
         tasks.forEach(function (task) {
+            console.log(self.tasks[task].instance, 'task instance');
             self.tasks[task].instance.registerBundles(bundles, gulp, self);
         });
     },
@@ -261,6 +263,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     launchTasks: function (tasks, gulp) {
         var self = this,
             startDate;
+
+console.log(tasks, '--debug');
 
         // loop through tasks and call gulp.start on each
         // @todo gulp is asynchronous;  duration calculation must happen on the stream operation level.

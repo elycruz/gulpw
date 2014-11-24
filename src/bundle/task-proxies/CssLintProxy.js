@@ -24,9 +24,9 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
             separator = wrangler.getTaskStrSeparator(),
 
-            cssLintConfig = self.getTaskConfig(wrangler.tasks.csslint) || {};
+            cssLintConfig = wrangler.tasks.csslint.options;
 
-        if (!bundle || !bundle.hasFilesCss()) {
+        if (!self.isBundleValidForTask(bundle)) {
             return;
         }
 
@@ -41,8 +41,27 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
     }, // end of `registerBundle`
 
-    getTaskConfig: function (config) {
-        // @todo if using config file load it here
-        return config.options;
+    registerBundles: function (bundles, gulp, wrangler) {
+        // Task string separator
+        var self = this,
+            cssLintConfig = wrangler.tasks.csslint.options,
+            targets = [];
+
+        bundles.forEach(function (bundle) {
+            if (!self.isBundleValidForTask(bundle)) {
+                return;
+            }
+            targets = targets.concat(bundle.options.files.css);
+        });
+
+        gulp.task('csslint', function () {
+            gulp.src(targets)
+                .pipe(csslint(cssLintConfig))
+                .pipe(csslint.reporter());
+        });
+    },
+
+    isBundleValidForTask: function (bundle) {
+        return bundle && bundle.hasFilesCss();
     }
 });

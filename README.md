@@ -21,7 +21,7 @@ That directory should contain "bundle-configuration" files which are used within
 - [ ] Build out the following Task proxies
 	- [ ] - browserify
 	- [ ] - build
-	- [ ] - clean
+	- [X] - clean
 	- [X] - concat (gulp-concat)
 	- [X] - csslint (gulp-csslint)
 	- [ ] - deploy (ssh tool)
