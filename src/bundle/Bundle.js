@@ -1,8 +1,15 @@
 /**
  * Created by edelacruz on 9/19/2014.
  */
-
 require('sjljs');
+
+// @todo These are hard coded here temporarily.  They need to be coming from main config or other config file
+var hasMethodKeys = {
+    clean: null,
+    compass: null,
+    requirejs: null,
+    browserify: null
+};
 
 /**
  * Bundle constructor.
@@ -21,7 +28,7 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         }, options));
 
         // Set up "has*" methods
-        self.setupHasMethods(options, true);
+        self.setupHasMethods(sjl.extend(true, hasMethodKeys, options), true);
 
         // If has init function run it
         if (self.hasOwnProperty('init') && sjl.classOfIs(self.init, 'Function')) {
@@ -76,7 +83,19 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
 
             }); // end of Object.keys(config).forEach
 
-        } // end of setupHasMethods
+        }, // end of setupHasMethods
+
+        hasFiles: function () {
+            return !sjl.empty(this.options.files);
+        },
+
+        hasFilesJs: function () {
+            return !sjl.empty(this.options.files.js);
+        },
+
+        hasFilesCss: function () {
+            return !sjl.empty(this.options.files.js);
+        }
 
     }); // end of Bundle
 

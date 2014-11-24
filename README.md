@@ -20,7 +20,7 @@ That directory should contain "bundle-configuration" files which are used within
 - [X] Build out and come up with base functionality/classes (MVP).
 - [ ] Build out the following Task proxies
 	- [ ] - browserify
-	- [ ] - build
+	- [x] - build
 	- [X] - clean
 	- [X] - concat (gulp-concat)
 	- [X] - csslint (gulp-csslint)
