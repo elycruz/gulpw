@@ -18,6 +18,10 @@ tasks:
     cssBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path
     htmlBuildDir: some/path/to/build/path
+    allowedFileTypes:
+      - js
+      - css
+      - html
     useVersionNumInFileName: false
 
   minify:
@@ -26,6 +30,10 @@ tasks:
     cssBuildDir: some/path/to/build/path
     htmlBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path
+    allowedFileTypes:
+      - js
+      - css
+      - html
     htmlTaskOptions:
       spare: true
       comments: false

@@ -23,6 +23,13 @@ module.exports = TaskProxy.extend("MinifyProxy", {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
+
+        // If bundle doesn't have any of the required keys, bail
+        if (!bundle || !bundle.hasFiles()
+            || (!bundle.hasFilesJs() && !bundleHasFilesCss && !bundle.hasFilesHtml())) {
+            return;
+        }
+
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
             taskConfigMap = {

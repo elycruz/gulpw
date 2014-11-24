@@ -27,7 +27,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
 
             useFailReporter = false;
 
-        if (!bundle.hasFilesJs()) {
+        if (!bundle || !bundle.hasFilesJs()) {
             return;
         }
 

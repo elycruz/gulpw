@@ -21,6 +21,12 @@ module.exports = TaskProxy.extend("ConcatProxy", {
      */
     registerBundle: function (bundle, gulp, wrangler) {
 
+        // If bundle doesn't have any of the required keys, bail
+        if (!bundle || !bundle.hasFiles()
+            || (!bundle.hasFilesJs() && !bundleHasFilesCss && !bundle.hasFilesHtml())) {
+            return;
+        }
+
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
             taskName = 'concat' + separator + bundle.options.name;

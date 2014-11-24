@@ -12,6 +12,11 @@ module.exports = new sjl.Extendable.extend(function TaskProxy(options) {
     },
     {
         registerBundle: function (bundle) {
-            // Overrite or extend on creation
+            // Overwrite from extending class
+        },
+
+        registerBundles: function (bundles, gulp, wrangler) {
+            // Overwrite from extending class
         }
+
     });

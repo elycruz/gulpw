@@ -15,14 +15,20 @@ var fs = require('fs'),
 
     throwBundleFileNotExistError = function (bundleName, filePath) {
         throw Error('Bundle "' + bundleName + '" config file doesn\'t exist.  Path checked: ' + filePath);
-    };
+    },
+
+    log;
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var defaultOptions = yaml.safeLoad(fs.readFileSync(
             path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
+
         taskProxyMap = yaml.safeLoad(fs.readFileSync(
             path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
+
         self = this;
+
+        log = self.log;
 
     sjl.extend(true, self, {
         bundles: {},
@@ -54,9 +60,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Create task proxies (@todo in the future only load needed tasks if it makes any difference in performance)
         self.createTaskProxies(gulp);
 
+
         // If any global tasks to run create tasks proxies and register all bundles.
         if (anyGlobalTasksToRun) {
             self.createBundles(gulp);
+            self.registerGlobalTasks(gulp);
         }
 
         // No global tasks to run (tasks on all modules) so register only passed in bundle(s)
@@ -118,13 +126,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Get bundles
         if (!bundles) {
-            bundles = (fs.readdirSync(bundlesPath));
+            bundles = fs.readdirSync(bundlesPath);
         }
 
         // Parse bundle configs
         bundles.forEach(function (fileName) {
             var bundle = self.createBundle(fileName);
-            self.createTasksForBundle(gulp, bundle);
+            self.registerTasksForBundle(gulp, bundle);
         });
     },
 
@@ -150,30 +158,33 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return bundle;
     },
 
-    createTasksForBundle: function (gulp, bundle) {
+    registerTasksForBundle: function (gulp, bundle) {
         var self = this;
 
-        // Register bundle with task so that user can call "gulp task-name:bundle-name"
+        // Register bundle with task
         Object.keys(self.tasks).forEach(function (task) {
-            if (!bundle.options.hasOwnProperty(task.name)) {
-                return;
-            }
             self.tasks[task].instance.registerBundle(bundle, gulp, self);
         });
-
-        // Register concat and minify tasks
-        if (bundle.hasFilesJs() || bundle.hasFilesCss() || bundle.hasFilesHtml()) {
-            self.tasks.concat.instance.registerBundle(bundle, gulp, self);
-            self.tasks.minify.instance.registerBundle(bundle, gulp, self);
-            self.tasks.jshint.instance.registerBundle(bundle, gulp, self);
-            self.tasks.csslint.instance.registerBundle(bundle, gulp, self);
-        }
-
-        // Register clean task
-        if (bundle.hasFiles() || bundle.hasClean()) {
-            self.tasks.clean.instance.registerBundle(bundle, gulp, self);
-        }
     },
+
+    registerGlobalTasks: function (gulp) {
+        var self = this,
+            tasks = Object.keys(self.tasks),
+            bundles = self.bundlesToArray();
+
+        // Pass all bundles to each task
+        tasks.forEach(function (task) {
+            self.tasks[task].instance.registerBundles(bundles, gulp, self);
+        });
+    },
+
+    bundlesToArray: function () {
+        var self = this;
+        return Object.keys(self.bundles).map(function (key) {
+            return self.bundles[key];
+        });
+    },
+
 
     getTaskStrSeparator: function () {
         var self = this,
@@ -184,10 +195,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     getBundleConfigByName: function (name) {
-        var filePath = name.indexOf(path.sep) > -1 || name.indexOf('/') > -1
-                ? name : process.sepapath.join(this.bundlesPath, name + '.' + this.bundleConfigFormat),
+        var configFormat = this.bundleConfigFormat,
+            fileName = name.lastIndexOf('.' + configFormat) === name.length - 5 ? name : name + '.' + configFormat,
+            filePath = fileName.indexOf(path.sep) > -1 || fileName.indexOf('/') > -1
+                ? fileName : path.join(this.bundlesPath, fileName),
             retVal = {},
             file;
+
         if (!fs.existsSync(filePath)) {
             return retVal;
         }

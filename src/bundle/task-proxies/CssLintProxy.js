@@ -26,7 +26,7 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
             cssLintConfig = self.getTaskConfig(wrangler.tasks.csslint) || {};
 
-        if (!bundle.hasFilesCss()) {
+        if (!bundle || !bundle.hasFilesCss()) {
             return;
         }
 
