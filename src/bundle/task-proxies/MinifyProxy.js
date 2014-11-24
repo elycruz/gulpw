@@ -12,6 +12,7 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
     minifyhtml = require('gulp-minify-html'),
     header = require('gulp-header'),
     gulpif = require('gulp-if'),
+    duration = require('gulp-duration'),
     path = require('path');
 
 module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
@@ -73,6 +74,8 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
                 gulp.src(bundle.options.files[ext])
 
                     .pipe(concat(filePath))
+
+                    .pipe(duration("Minifiying bundle \"" + bundle.options.name + ":" + ext + "\""))
 
                     // Minify current source in the {artifacts}/ext directory
                     .pipe(gulpif(!wrangler.argv.dev, taskInstanceConfig.instance(taskInstanceConfig.options)))

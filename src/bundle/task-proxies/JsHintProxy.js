@@ -6,6 +6,7 @@ require('sjljs');
 // Import base task proxy to extend
 var gulpif = require('gulp-if'),
     jshint = require('gulp-jshint'),
+    duration = require('gulp-duration'),
     TaskProxy = require('../TaskProxy');
 
 module.exports = TaskProxy.extend("JsHintProxy", {
@@ -30,6 +31,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         gulp.task('jshint' + separator + bundle.options.name, function () {
             gulp.src(bundle.options.files.js)
                 .pipe(jshint(jsHintConfig))
+                .pipe(duration("JsHinting \"" + bundle.options.name + "\""))
                 .pipe(jshint.reporter('jshint-stylish'))
                 .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
         });
@@ -53,6 +55,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         gulp.task('jshint', function () {
             gulp.src(targets)
                 .pipe(jshint(jsHintConfig))
+                .pipe(duration("JsHinting:" + ext + "\""))
                 .pipe(jshint.reporter('jshint-stylish'))
                 .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
         });
