@@ -22,10 +22,8 @@ var fs = require('fs'),
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var defaultOptions = yaml.safeLoad(fs.readFileSync(
             path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
-
         taskProxyMap = yaml.safeLoad(fs.readFileSync(
             path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
-
         self = this;
 
         log = self.log;
@@ -47,8 +45,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 {
     init: function (gulp, argv) {
         var self = this,
-            anyGlobalTasksToRun,
-            startDate;
+            anyGlobalTasksToRun;
 
         self.log("Gulp Bundle Wrangler initializing...");
 
@@ -72,24 +69,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             self.createBundles(gulp, self.extractBundlePathsFromArgv(argv));
         }
 
-        // loop through tasks and call gulp.start on each
-        // @todo gulp is asynchronous;  duration calculation must happen on the stream operation level.
-        // @ The timing calculations in the function below are irrelevant.
-        argv._.forEach(function (item) {
-            // 'Start running task' message
-            self.log(chalk.dim('Running ' + item), '--mandatory');
-
-            // Capture start time
-            startDate = Date.now();
-
-            // Run task
-            gulp.start(item);
-
-            // Log task duration
-            self.log(chalk.cyan(item + ' finished - duration: '
-                + ((new Date()) - startDate) / 100 + 'ms'), '--mandatory');
-        });
-
+        self.launchTasks(argv._, gulp);
     },
 
     createTaskProxies: function (gulp) {
@@ -276,6 +256,30 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     ensurePathExists: function (dirPath) {
         return mkdirp.sync(dirPath);
+    },
+
+    launchTasks: function (tasks, gulp) {
+        var self = this,
+            startDate;
+
+        // loop through tasks and call gulp.start on each
+        // @todo gulp is asynchronous;  duration calculation must happen on the stream operation level.
+        // @ The timing calculations in the function below are irrelevant.
+        tasks.forEach(function (item) {
+            // 'Start running task' message
+            self.log(chalk.dim('Running ' + item), '--mandatory');
+
+            // Capture start time
+            startDate = Date.now();
+
+            // Run task
+            gulp.start(item);
+
+            // Log task duration
+            self.log(chalk.cyan(item + ' finished - duration: '
+            + ((new Date()) - startDate) / 100 + 'ms'), '--mandatory');
+        });
+
     }
 
 });
