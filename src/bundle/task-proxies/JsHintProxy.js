@@ -11,7 +11,6 @@ var gulpif = require('gulp-if'),
 module.exports = TaskProxy.extend("JsHintProxy", {
 
     /**
-     *
      * @param bundle {Bundle}
      * @param gulp {gulp}
      * @param wrangler {Wrangler}
@@ -20,32 +19,47 @@ module.exports = TaskProxy.extend("JsHintProxy", {
 
         // Task string separator
         var self = this,
-
             separator = wrangler.getTaskStrSeparator(),
-
-            jsHintConfig = self.getTaskConfig(wrangler.tasks.jshint) || {},
-
+            jsHintConfig = wrangler.tasks.jshint.options,
             useFailReporter = false;
 
-        if (!bundle || !bundle.hasFilesJs()) {
+        if (!self.isBundleValidForTask(bundle)) {
             return;
         }
 
         gulp.task('jshint' + separator + bundle.options.name, function () {
-
             gulp.src(bundle.options.files.js)
-
                 .pipe(jshint(jsHintConfig))
-
                 .pipe(jshint.reporter('jshint-stylish'))
-
                 .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
         });
 
     }, // end of `registerBundle`
 
-    getTaskConfig: function (config) {
-        // @todo if using config file (.jshintrc etc.) file load it here
-        return config.options;
+
+    registerBundles: function (bundles, gulp, wrangler) {
+        var self = this,
+            jsHintConfig = wrangler.tasks.jshint.options,
+            useFailReporter = false,
+            targets = [];
+
+        bundles.forEach(function (bundle) {
+            if (!self.isBundleValidForTask(bundle)) {
+                return;
+            }
+            targets = targets.concat(bundle.options.files.js);
+        });
+
+        gulp.task('jshint', function () {
+            gulp.src(targets)
+                .pipe(jshint(jsHintConfig))
+                .pipe(jshint.reporter('jshint-stylish'))
+                .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
+        });
+
+    },
+
+    isBundleValidForTask: function (bundle) {
+        return bundle && bundle.hasFilesJs();
     }
 });

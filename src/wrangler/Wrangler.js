@@ -157,7 +157,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Pass all bundles to each task
         tasks.forEach(function (task) {
-            console.log(self.tasks[task].instance, 'task instance');
             self.tasks[task].instance.registerBundles(bundles, gulp, self);
         });
     },
@@ -168,7 +167,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             return self.bundles[key];
         });
     },
-
 
     getTaskStrSeparator: function () {
         var self = this,
@@ -263,8 +261,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     launchTasks: function (tasks, gulp) {
         var self = this,
             startDate;
-
-console.log(tasks, '--debug');
 
         // loop through tasks and call gulp.start on each
         // @todo gulp is asynchronous;  duration calculation must happen on the stream operation level.
