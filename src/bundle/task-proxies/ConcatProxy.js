@@ -10,6 +10,7 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
     header = require('gulp-header'),
     gulpif = require('gulp-if'),
     duration = require('gulp-duration'),
+    chalk = require('chalk'),
     path = require('path');
 
 module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
@@ -62,7 +63,7 @@ module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
                 // Give gulp the list of sources to process
                 gulp.src(section)
 
-                    .pipe(duration("Concatenating bundle \"" + bundle.options.name + ":" + ext + "\""))
+                    .pipe(duration(chalk.cyan('concat "' + bundle.options.name + ':' + ext + '" duration')))
 
                     // Concatenate current source in the {artifacts}/ext directory
                     .pipe(concat(filePath))

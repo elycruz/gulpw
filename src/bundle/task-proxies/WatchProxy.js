@@ -4,17 +4,20 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy');
+var TaskProxy = require('../TaskProxy'),
+    path = require('path');
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler) {
-        var tasks, bundle;
+        var tasks, bundle,
+            watchInterval = null;
 
         // @note testing hack.  This function will not be this way when it is done (should not use arguments object directly)
         if (arguments.length === 5) {
             tasks = arguments[arguments.length - 1];
         }
+
         else if (arguments.length === 6) {
             tasks = arguments[arguments.length - 2];
             bundle = arguments[arguments.length - 1];
@@ -24,8 +27,34 @@ module.exports = TaskProxy.extend("DeployProxy", {
         }
 
         gulp.task(taskName, function () {
-            gulp.watch(targets, function () {
+
+            console.log('Watching for file changes...]');
+
+            gulp.watch(targets, function (event) {
+
+                var doneTaskCount = 0;
+
+                console.log('\nFile ' + event.path + ' was ' + event.type + ', running tasks...');
+
                 wrangler.launchTasks(tasks, gulp);
+
+                if (watchInterval !== null) {
+                    clearInterval(watchInterval);
+                }
+
+                watchInterval = setInterval(function () {
+                    var taskKeys = Object.keys(gulp.tasks);
+                    taskKeys.forEach(function (key) {
+                        if (gulp.tasks[key].done === true) {
+                            doneTaskCount += 1;
+                        }
+                    });
+                    if (doneTaskCount === taskKeys.length) {
+                        console.log('\nWatching for file changes...');
+                        clearInterval(watchInterval);
+                    }
+                }, 100);
+
             });
         });
     },

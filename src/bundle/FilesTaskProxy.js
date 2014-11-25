@@ -22,8 +22,6 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
                 taskPrefix = self.name,
                 hasSection;
 
-            console.log(taskPrefix);
-
             bundles.forEach(function (bundle) {
 
                 // If bundle doesn't have any of the required keys, bail

@@ -31,7 +31,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         gulp.task('jshint' + separator + bundle.options.name, function () {
             gulp.src(bundle.options.files.js)
                 .pipe(jshint(jsHintConfig))
-                .pipe(duration("JsHinting \"" + bundle.options.name + "\""))
+                .pipe(duration("jshint \"" + bundle.options.name + "\" duration"))
                 .pipe(jshint.reporter('jshint-stylish'))
                 .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
         });
@@ -55,7 +55,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         gulp.task('jshint', function () {
             gulp.src(targets)
                 .pipe(jshint(jsHintConfig))
-                .pipe(duration("JsHinting:" + ext + "\""))
+                .pipe(duration("jshint duration"))
                 .pipe(jshint.reporter('jshint-stylish'))
                 .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
         });

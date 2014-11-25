@@ -264,7 +264,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             // Run task
             gulp.start(item);
         });
-
     }
 
 });
