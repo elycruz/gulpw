@@ -7,6 +7,8 @@
 require('sjljs');
 
 var csslint = require('gulp-csslint'),
+    chalk = require('chalk'),
+    duration = require('gulp-duration'),
     TaskProxy = require('../TaskProxy');
 
 module.exports = TaskProxy.extend("CssLintProxy", {
@@ -34,6 +36,8 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
             gulp.src(bundle.options.files.css)
 
+                .pipe(duration('csslint "' + bundle.options.name + '" duration'))
+
                 .pipe(csslint(cssLintConfig))
 
                 .pipe(csslint.reporter());
@@ -56,6 +60,7 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
         gulp.task('csslint', function () {
             gulp.src(targets)
+                .pipe(duration(chalk.cyan('csslint "all bundles" duration')))
                 .pipe(csslint(cssLintConfig))
                 .pipe(csslint.reporter());
         });
