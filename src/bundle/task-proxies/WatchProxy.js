@@ -9,26 +9,13 @@ var TaskProxy = require('../TaskProxy'),
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
-    registerGulpTask: function (taskName, targets, gulp, wrangler) {
-        var tasks, bundle,
+    registerGulpTask: function (taskName, targets, gulp, wrangler, tasks) {
+        var tasks,
             watchInterval = null;
-
-        // @note testing hack.  This function will not be this way when it is done (should not use arguments object directly)
-        if (arguments.length === 5) {
-            tasks = arguments[arguments.length - 1];
-        }
-
-        else if (arguments.length === 6) {
-            tasks = arguments[arguments.length - 2];
-            bundle = arguments[arguments.length - 1];
-            tasks = tasks.map(function (task) {
-                return task + ':' + bundle.options.name;
-            });
-        }
 
         gulp.task(taskName, function () {
 
-            console.log('Watching for file changes...]');
+            console.log('Watching for file changes...');
 
             gulp.watch(targets, function (event) {
 
@@ -53,7 +40,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                         console.log('\nWatching for file changes...');
                         clearInterval(watchInterval);
                     }
-                }, 100);
+                }, 10);
 
             });
         });
@@ -68,28 +55,56 @@ module.exports = TaskProxy.extend("DeployProxy", {
     registerBundle: function (bundle, gulp, wrangler) {
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
-            self = this,
             bundleName = bundle.options.name,
+            self = this,
             targets,
-            tasks = wrangler.tasks.watch.tasks;
+            tasks;
 
         if (!self.isBundleValidForTask(bundle)) {
             return; // @todo log message/warning here
         }
 
-        targets = self.getSrcForTask(bundle);
+        targets = self.getSrcForBundle(bundle);
+
+        tasks = self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks);
+        console.log(targets, tasks);
 
         self.registerGulpTask('watch' + separator + bundleName, targets,
-            gulp, wrangler, tasks, bundle);
+            gulp, wrangler, tasks);
 
     }, // end of `registerBundle`
 
-    getSrcForTask: function (bundle) {
+    /**
+     *
+     * @param bundles {Array<Bundle>}
+     * @param gulp {gulp}
+     * @param wrangler {Wrangler}
+     */
+    registerBundles: function (bundles, gulp, wrangler) {
+        var self = this,
+            targets = [],
+            tasks = [];
+
+        bundles.forEach(function (bundle) {
+            if (!self.isBundleValidForTask(bundle)) {
+                return; // @todo log message/warning here
+            }
+            targets = targets.concat(self.getSrcForBundle(bundle));
+            tasks = tasks.concat(self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks));
+        });
+
+        console.log(targets, tasks);
+
+        self.registerGulpTask('watch', targets, gulp, wrangler, tasks);
+
+    }, // end of `registerBundles`
+
+    getSrcForBundle: function (bundle) {
         var targets = [];
 
         // Bail if bundle is not valid for task
         if (!this.isBundleValidForTask(bundle)) {
-            return;
+            return targets;
         }
 
         // Merge other files to watch to targets
@@ -98,6 +113,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
         }
 
         // Merge all arrays in files key to `targets`
+        // @todo ommit files in `pre-artifact` folder if it is being used.
         if (bundle.hasFiles()) {
             Object.keys(bundle.options.files).forEach(function (key) {
                 var keyVal = bundle.options.files[key];
@@ -107,6 +123,12 @@ module.exports = TaskProxy.extend("DeployProxy", {
         }
 
         return targets;
+    },
+
+    getTasksForBundle: function (bundle, taskPrefixes) {
+        return taskPrefixes.map(function (task) {
+            return task + ':' + bundle.options.name;
+        });
     },
 
     isBundleValidForTask: function (bundle) {
