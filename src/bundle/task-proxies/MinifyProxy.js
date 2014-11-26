@@ -46,7 +46,7 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
             taskName = 'minify' + separator + bundleName;
 
         // Create task for bundle
-        gulp.task(taskName, ['concat' + separator + bundleName], function () {
+        gulp.task(taskName, function () {
 
             // Check for sections on bundle that can be minified
             ['js', 'css', 'html'].forEach(function (ext) {

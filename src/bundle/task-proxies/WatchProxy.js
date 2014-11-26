@@ -5,6 +5,7 @@ require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
+    chalk = require('chalk'),
     path = require('path');
 
 module.exports = TaskProxy.extend("DeployProxy", {
@@ -15,13 +16,27 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         gulp.task(taskName, function () {
 
-            console.log('Watching for file changes...');
+            console.log('\nWatching for changes...');
 
             gulp.watch(targets, function (event) {
 
-                var doneTaskCount = 0;
+                var doneTaskCount = 0,
+                    fileShortPath = event.path;
+                //
+                //if (Array.isArray(targets) && targets.length > 0) {
+                //    fileShortPath = targets.filter(function (file) {
+                //        //console.log(file, '\n');
+                //        file = file.indexOf('./') === 0 ? file.substr(1, file.length) : file;
+                //        //console.log(file, '\n');
+                //        return (fileShortPath.replace(/\\/, '/')).indexOf(file) > -1;
+                //    })[0];
+                //}
+                //else if (sjl.classOfIs(targets, 'String')) {
+                //    fileShortPath = targets;
+                //}
 
-                console.log('\nFile ' + event.path + ' was ' + event.type + ', running tasks...');
+
+                console.log(targets, '\n', 'File change detected at ' + fileShortPath + ';  Change type: ' + event.type + ';', 'Running tasks...');
 
                 wrangler.launchTasks(tasks, gulp);
 
@@ -37,7 +52,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                         }
                     });
                     if (doneTaskCount === taskKeys.length) {
-                        console.log('\nWatching for file changes...');
+                        console.log(chalk.cyan('\nBuild and Deploy completed.') + chalk.dim('\nNow watching for more changes...'));
                         clearInterval(watchInterval);
                     }
                 }, 10);
@@ -67,7 +82,6 @@ module.exports = TaskProxy.extend("DeployProxy", {
         targets = self.getSrcForBundle(bundle);
 
         tasks = self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks);
-        console.log(targets, tasks);
 
         self.registerGulpTask('watch' + separator + bundleName, targets,
             gulp, wrangler, tasks);
@@ -92,8 +106,6 @@ module.exports = TaskProxy.extend("DeployProxy", {
             targets = targets.concat(self.getSrcForBundle(bundle));
             tasks = tasks.concat(self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks));
         });
-
-        console.log(targets, tasks);
 
         self.registerGulpTask('watch', targets, gulp, wrangler, tasks);
 
