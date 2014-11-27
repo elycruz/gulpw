@@ -26,8 +26,8 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - csslint (gulp-csslint)
 	- [ ] - deploy (ssh tool)
 	- [ ] - document (jsdoc, groco, etc)
-	- [ ] - htmllint (tentative)
-	- [ ] - htmltidy (tentative)
+	- ~~~[ ] - htmllint (tentative)~~~
+	- ~~~[ ] - htmltidy (tentative)~~~
 	- [X] - jshint (gulp-jshint)
 	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
 	- [ ] - template (mustache, handlebars etc.) (stores all templates on specified global via a script template)
