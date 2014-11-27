@@ -26,18 +26,18 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - csslint (gulp-csslint)
 	- [ ] - deploy (ssh tool)
 	- [ ] - document (jsdoc, groco, etc)
-	- ~~~[ ] - htmllint (tentative)~~~
-	- ~~~[ ] - htmltidy (tentative)~~~
+	#- [ ] - htmllint (tentative)
+	#- [ ] - htmltidy (tentative)
 	- [X] - jshint (gulp-jshint)
 	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
 	- [ ] - template (mustache, handlebars etc.) (stores all templates on specified global via a script template)
 	- [ ] - requirejs
-	- [ ] - watch
+	- [X] - watch
 - For `Bundle`:
-	- [X] Should have `has*` methods or similiar (these methods will be auto
+	- [X] - Should have `has*` methods or similiar (these methods will be auto
 	populated at runtime based on the available task keys);  E.g., `bundle.hasCompass()`
-- The `deploy` task via the watch task should only deploy changed file types not everything for a bundle (takes to long for bigger bundles definitions).
-        - [ ] - The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files is changed and also when running the global watch the watch task should reset whenever a bundle is changed.
+	- [ ] - The `deploy` task via the watch task should only deploy changed file types not everything for a bundle (takes to long for bigger bundles definitions).
+	- [ ] - The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files is changed and also when running the global watch the watch task should reset whenever a bundle is changed.
 
 ### Notes:
 - Be able to pass in multiple flags from the command line (some with values some without values).  Running multiple tasks and passing in multiple
