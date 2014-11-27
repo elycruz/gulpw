@@ -12,6 +12,7 @@ var TaskProxy = require('../TaskProxy');
 module.exports = TaskProxy.extend("BuildProxy", {
 
     registerGulpTask: function (taskName, taskList, gulp, wrangler) {
+        console.log(taskList);
         gulp.task(taskName, function () {
             wrangler.launchTasks(taskList, gulp);
         });
@@ -66,9 +67,10 @@ module.exports = TaskProxy.extend("BuildProxy", {
     getTasksForBundle: function (bundle, wrangler) {
         var separator = wrangler.getTaskStrSeparator(),
             bundleName = bundle.options.name,
-            targets = [];
+            targets = [],
+            ignoredTasks = wrangler.tasks.build.ignoredTasks;
         Object.keys(wrangler.tasks).forEach(function (task) {
-            if (sjl.empty(bundle.options[task])) {
+            if (sjl.empty(bundle.options[task]) || ignoredTasks.indexOf(task) > -1) {
                 return;
             }
             targets.push(task + separator + bundleName);

@@ -6,6 +6,7 @@ require('sjljs');
 
 var path = require('path'),
     del = require('del'),
+    chalk = require('chalk'),
     TaskProxy = require('../TaskProxy.js');
 
 module.exports = TaskProxy.extend('CleanProxy', {
@@ -18,11 +19,15 @@ module.exports = TaskProxy.extend('CleanProxy', {
      * @return {void}
      */
     registerGulpTask: function (taskSuffix, targets, gulp) {
-        gulp.task('clean' + taskSuffix, function (cb) {
+        var start = new Date(),
+            taskName = 'clean' + (taskSuffix ? taskSuffix : "");
+        gulp.task(taskName, function (cb) {
             del(targets, function (err) {
                 if (err) {
                     console.log(err);
                 }
+                console.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
+                    + chalk.magenta((((new Date()) - start) / 1000) + 'ms'));
             });
             return cb;
         });

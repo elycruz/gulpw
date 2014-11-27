@@ -35,8 +35,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 //    fileShortPath = targets;
                 //}
 
-
-                console.log('\n', 'File change detected at ' + fileShortPath + ';  Change type: ' + event.type + ';', 'Running tasks...', '\n');
+                console.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';  Change type: ' + event.type + ';'),
+                    chalk.dim('Running tasks...'), '\n');
 
                 wrangler.launchTasks(tasks, gulp);
 
@@ -51,7 +51,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
                             doneTaskCount += 1;
                         }
                     });
-                    if (doneTaskCount === taskKeys.length - 1) {
+                    //console.log(doneTaskCount);
+                    if (doneTaskCount >= taskKeys.length) {
                         console.log(chalk.cyan('\nBuild and Deploy completed.') + chalk.dim('\nNow watching for more changes...'));
                         clearInterval(watchInterval);
                     }
