@@ -34,7 +34,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         argv: argv,
         taskProxyMap: taskProxyMap,
         taskStrSeparator: ":",
-        tasks: {}
+        tasks: {},
+        staticTasks: {}
     }, defaultOptions, config);
 
     // Resolve bundles path
@@ -48,27 +49,50 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             anyGlobalTasksToRun;
 
         self.log("Gulp Bundle Wrangler initializing...");
+        self.log(argv._, '--debug');
 
         // Check if we have any global tasks to run
         anyGlobalTasksToRun = argv.all || (argv._.filter(function (item) {
             return item.indexOf(':') === -1;
         })).length > 0;
 
-        // Create task proxies (@todo in the future only load needed tasks if it makes any difference in performance)
-        self.createTaskProxies(gulp);
-
-        // If any global tasks to run create tasks proxies and register all bundles.
-        if (anyGlobalTasksToRun && argv._.length > 0) {
-            self.createBundles(gulp);
-            self.registerGlobalTasks(gulp, argv._);
+        // Create static tasks
+        if (argv._.indexOf('prompt:deploy') > -1) {
+            self.createStaticTaskProxies(gulp);
         }
 
-        // No global tasks to run (tasks on all modules) so register only passed in bundle(s)
+        // Else create task proxies and bundle(s) if necessary
         else {
-            self.createBundles(gulp, self.extractBundlePathsFromArgv(argv));
+
+            // Create task proxies (@todo in the future only load needed tasks if it makes any difference in performance)
+            self.createTaskProxies(gulp);
+
+            // If any global tasks to run create tasks proxies and register all bundles.
+            if (anyGlobalTasksToRun && argv._.length > 0) {
+                self.createBundles(gulp);
+                self.registerGlobalTasks(gulp, argv._);
+            }
+
+            // No global tasks to run (tasks on all modules) so register only passed in bundle(s)
+            else {
+                self.createBundles(gulp, self.extractBundlePathsFromArgv(argv));
+            }
         }
 
         self.launchTasks(argv._, gulp);
+    },
+
+    createStaticTaskProxies: function (gulp) {
+        var self = this;
+
+        // Creating task proxies message
+        self.log("- Creating static task proxies.");
+
+        Object.keys(self.staticTasks).forEach(function (task) {
+            self.staticTasks[task].instance = self.createStaticTaskProxy(gulp, task);
+        });
+
+        return self;
     },
 
     createTaskProxies: function (gulp) {
@@ -78,6 +102,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         self.log("- Creating task proxies.");
 
         Object.keys(self.tasks).forEach(function (task) {
+            // 1.) If tasks[task] is a string expect string to be a path
+            // 2.) If path then load the file (allow only json, js, or yaml files)
+            // 3.) Replace tasks[task] with loaded file's return value
+            //if (sjl.classOfIs(self.tasks[task], 'String')) {
+            //    self.tasks[task] = self.loadConfigFile(task);
+            //    console.log(task, self.tasks[task]);
+            //}
+            // 4.) Load task proxy instance
             self.tasks[task].instance = self.createTaskProxy(gulp, task);
         });
 
@@ -97,6 +129,25 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             name: task,
             help: self.taskProxyMap['help']
         });
+    },
+
+    createStaticTaskProxy: function (gulp, task) {
+        // "Creating task ..." message
+        this.log("Creating static task proxy \"" + task + "\".  constructor at: \"" +
+            this.taskProxyMap[task].constructorLocation + "\"");
+
+        var self = this,
+            src = self.taskProxyMap[task].constructorLocation,
+            TaskProxyClass = require(path.join(__dirname, src));
+
+        TaskProxyClass = new TaskProxyClass({
+            name: task,
+            help: self.taskProxyMap['help']
+        });
+
+        TaskProxyClass.registerStaticTasks(gulp, self);
+
+        return TaskProxyClass;
     },
 
     createBundles: function (gulp, bundles) {
@@ -256,6 +307,18 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     ensurePathExists: function (dirPath) {
         return mkdirp.sync(dirPath);
+    },
+
+    // Method is raw and has to be prepped
+    loadConfigFile: function (file) {
+        if (file.indexOf('.js') === file.length - 4
+            || file.indexOf('.json') === file.length - 6) {
+            file = require(file);
+        }
+        else if (file.indexOf('.yaml') === file.length - 6) {
+            file = yaml.safeLoad(fs.readFileSync(file));
+        }
+        return file;
     },
 
     launchTasks: function (tasks, gulp) {

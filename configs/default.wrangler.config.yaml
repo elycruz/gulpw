@@ -6,6 +6,53 @@ bundleConfigFormat: yaml
 
 bundleConstructor: ./src/bundle/Bundle
 
+staticTasks:
+  prompt:
+    deploy:
+      defaultUserName: admin,
+      defaultPortNumber: 22,
+      questions:
+        -
+          type: list
+          messsage: Where would you like to deploy to? (use arrow keys)
+          name: server
+          choices: list-here
+        -
+          type: list
+          messsage: Which website instance would you like to use? (use arrow keys)
+          name: site
+          choices: list-here
+        -
+          type: input
+          messsage: "Which network port would you like to use? (default: <%= defaultPortNumber %>)"
+          name: port
+          default: <%= defaultPortNumber %>
+        -
+          type: list
+          messsage: Which authentication method would you like to use? (use arrow keys)
+          name: authType
+          choices:
+            - publickey
+            - password
+        -
+          type: input
+          messsage: What is the user password? (<%= defaultUserName %>)
+          name: password
+          default: admin
+        -
+          type: input
+          messsage: What is the ssh username you would like to use? (<%= defaultUserName %>)
+          name: username
+          default: admin
+        -
+          type: input
+          messsage: Where is your ssh private key? (<%= defaultUserName %>)
+          name: privatekeyLocation
+        -
+          type: input
+          messsage: What is your ssh pass phrase?
+          name: passphrase
+
 tasks:
 
   concat:
@@ -84,14 +131,17 @@ tasks:
     # Global deploy artifacts flag (used if no `deployArtifact` field is found for a section in this config
     deployArtifacts: true
 
-    # Whether or not to deploy artifact files that aren't minified or that do not have the ".min" pre-suffix
-    deployPreArifacts: false
-
-    # Flag which determines whether or not to automatically deploy file arrays
-    deployFiles: false
-
     # Should files be linted before deploy
     lintBeforeDeploy: false
+
+    port: 22,
+    authType: publickey
+    username: admin
+    password: null
+    publickeyPassphrase: null
+    privatekeyLocation: ~/.ssh/id_rsa
+
+
 
   # Watch Task Defaults
   watch:

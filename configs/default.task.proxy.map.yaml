@@ -1,6 +1,5 @@
 browserify:
   constructorLocation: ./bundle/task-proxies/BrowserifyProxy
-  dependencies: browserify
   helpInfo: ""
 
 build:
@@ -9,7 +8,6 @@ build:
 
 clean:
   constructorLocation: ./bundle/task-proxies/CleanProxy
-  dependencies: del
   helpInfo: ""
 
 compass:
@@ -18,9 +16,6 @@ compass:
 
 concat:
   constructorLocation: ./bundle/task-proxies/ConcatProxy
-  dependencies:
-    - gulp-concat
-    - gulp-uglify
   helpInfo: ""
 
 csslint:
@@ -53,5 +48,9 @@ watch:
 
 wranglerfile:
   constructorLocation: ./bundle/task-proxies/WranglerFileProxy
+  helpInfo: ""
+
+prompt:
+  constructorLocation: ./task-proxies/PromptProxy
   helpInfo: ""
 
