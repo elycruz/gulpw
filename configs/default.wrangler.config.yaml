@@ -9,8 +9,6 @@ bundleConstructor: ./src/bundle/Bundle
 staticTasks:
   prompt:
     deploy:
-      defaultUserName: admin,
-      defaultPortNumber: 22,
       questions:
         -
           type: list
@@ -133,6 +131,32 @@ tasks:
 
     # Should files be linted before deploy
     lintBeforeDeploy: false
+
+    hosts:
+
+      # Hostname to develop for
+      gulpw.elycruz.com:
+
+        # Servers where user can develop for host key (in this case host key is `gulpw.elycruz.com`)
+        servers: # slots
+          - devslot1.gulpw-sample.somedomain.com
+          - devslot2.gulpw-sample.somedomain.com
+          - devslot3.gulpw-sample.somedomain.com
+
+        # all sites represent the same website just different instances of the website
+        sites: # instances
+          - web1
+          - web2
+          - web3
+
+        # directories for deploying file types to the website instance chosen
+        paths: # dir
+          font: public/media/fonts/
+          html: public/media/html/
+          video: public/media/videos/
+          image: public/media/images/
+          javascript: public/js/
+          stylesheet: public/css/
 
     port: 22,
     authType: publickey

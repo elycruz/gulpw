@@ -7,6 +7,7 @@ require('sjljs');
 var WranglerTaskProxy = require('../WranglerTaskProxy'),
     fs = require('fs'),
     path = require('path'),
+    yaml = require('js-yaml'),
     inquirer = require('inquirer');
 
 module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
@@ -109,19 +110,27 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
         });
 
         gulp.task('prompt:deploy', function () {
+
             inquirer.prompt(questions, function (answers) {
                 var outFileTemplate = {
-                    instance: answers.site,
-                    host: answers.host,
-                    port: answers.port,
-                    username: answers.username,
-                    password: answers.password,
-                    keyfile: answers.privatekeyLocation,
-                    passphrase: answers.passphrase
+                    tasks: {
+                        deploy: {
+                            instance: answers.site || null,
+                            host: answers.host || null,
+                            port: answers.port || null,
+                            username: answers.username || null,
+                            password: answers.password || null,
+                            keyfile: answers.privatekeyLocation || null,
+                            passphrase: answers.passphrase || null
+                        }
+                    }
                 };
 
+                // Ensure write path exists
+                wrangler.ensurePathExists(path.join(process.cwd(), 'gulpw-configs'));
+
                 // Write local deploy config file
-                fs.writeSync(yaml.safeDump(outFileTemplate));
+                fs.writeFileSync(path.join(process.cwd(), 'gulpw-configs', 'local.yaml'), yaml.safeDump(outFileTemplate));
             });
         });
     }
