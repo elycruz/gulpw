@@ -135,7 +135,7 @@ tasks:
     hosts:
 
       # Hostname to develop for
-      gulpw.elycruz.com:
+      gulpw-sample.somedomain.com:
 
         # Servers where user can develop for host key (in this case host key is `gulpw.elycruz.com`)
         servers: # slots
