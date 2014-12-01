@@ -127,10 +127,10 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
                 };
 
                 // Ensure write path exists
-                wrangler.ensurePathExists(path.join(process.cwd(), 'gulpw-configs'));
+                wrangler.ensurePathExists(path.join(process.cwd(), '.gulpw'));
 
                 // Write local deploy config file
-                fs.writeFileSync(path.join(process.cwd(), 'gulpw-configs', 'local.yaml'), yaml.safeDump(outFileTemplate));
+                fs.writeFileSync(path.join(process.cwd(), '.gulpw', 'local.yaml'), yaml.safeDump(outFileTemplate));
             });
         });
     }
