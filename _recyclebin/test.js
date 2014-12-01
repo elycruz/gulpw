@@ -9,7 +9,7 @@ conn.on('ready', function() {
         if (err) throw err;
 
         // Testing out fast sftp put
-        sftp.fastPut('helloworld', 'helloworld.txt', {
+        sftp.fastPut(process.cwd() + '/_recyclebin/helloworld.txt', 'helloworld.txt', {
             step: function (bytesLoaded, chunk, totalBytes) {
                 console.log('Percent uploaded: ' + (bytesLoaded / totalBytes * 100) + "%");
             }
@@ -36,5 +36,5 @@ conn.on('ready', function() {
     host: 'someserver.com',
     port: 22,
     username: 'someuser',
-    password: 'someuser'
+    password: 'someuserpassword'
 });
