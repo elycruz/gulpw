@@ -8,7 +8,9 @@ var hasMethodKeys = {
     clean: null,
     compass: null,
     requirejs: null,
-    browserify: null
+    browserify: null,
+    watch: null,
+    deploy: null
 };
 
 /**
@@ -70,7 +72,7 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
 
                     // Add has method to bundle
                     self[methodName] = function () {
-                        return !sjl.empty(sjl.namespace(changedPropChain, self.options));
+                        return self.has(changedPropChain);
                     };
 
                     // If deep perform recursive setup of has methods
@@ -90,15 +92,33 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         },
 
         hasFilesJs: function () {
-            return !sjl.empty(this.options.files.js);
+            return this.hasFiles() && !sjl.empty(this.options.files.js);
         },
 
         hasFilesCss: function () {
-            return !sjl.empty(this.options.files.js);
+            return this.hasFiles() && !sjl.empty(this.options.files.css);
+        },
+
+        hasFilesHtml: function () {
+            return this.hasFiles() && !sjl.empty(this.options.files.html);
         },
 
         hasWatch: function () {
             return !sjl.empty(this.options.watch);
+        },
+
+        has: function (nsString) {
+            var parts = nsString.split('.'),
+                part, i, nsStr;
+            if (parts.length > 1) {
+                nsStr = parts.shift();
+                for (i = 0; i < parts.length; i += 1) {
+                    part = parts[i];
+                    !sjl.empty(sjl.namespace(nsString, this.options))
+                    nsStr += '.' + part;
+                }
+            }
+            return !sjl.empty(sjl.namespace(nsString, this.options));
         }
 
     }); // end of Bundle

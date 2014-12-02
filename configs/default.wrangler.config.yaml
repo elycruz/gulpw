@@ -165,7 +165,15 @@ tasks:
     publickeyPassphrase: null
     privatekeyLocation: ~/.ssh/id_rsa
 
-
+    allowedFileTypes:
+      - js
+      - css
+      - html
+      - json
+      - yaml
+      - jpg
+      - png
+      - gif
 
   # Watch Task Defaults
   watch:
