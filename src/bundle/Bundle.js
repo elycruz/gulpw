@@ -110,7 +110,7 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         has: function (nsString) {
             var parts = nsString.split('.'),
                 part, i, nsStr;
-            if (parts.length > 1) {
+                if (parts.length > 1) {
                 nsStr = parts.shift();
                 for (i = 0; i < parts.length; i += 1) {
                     part = parts[i];

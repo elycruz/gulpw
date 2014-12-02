@@ -5,12 +5,21 @@ require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
+    path = require('path'),
     ssh = require('ssh2');
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
         gulp.task('deploy' + (taskPrefix || ""), function () {
+            var target;
+            Object.keys(targets).forEach(function (key) {
+                target = targets[key];
+                console.log('Now deploying "' + key + '" files');
+                target.forEach(function (item) {
+                    console.log(item);
+                });
+            });
 
         });
     },
@@ -18,11 +27,12 @@ module.exports = TaskProxy.extend("DeployProxy", {
     registerBundle: function (bundle, gulp, wrangler) {
 
         // Task string separator
-        var separator = wrangler.getTaskStrSeparator();
+        var separator = wrangler.getTaskStrSeparator(),
+            targets = this.getSrcForBundle(bundle, wrangler);
 
-        console.log(this.getSrcForBundle(bundle, wrangler));
+        console.log('Dumping deploy targets here: ', targets);
 
-        this.registerGulpTask(':global', [], gulp, wrangler);
+        this.registerGulpTask(':global', targets, gulp, wrangler);
 
     }, // end of `registerBundle`
 
@@ -41,15 +51,20 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
-            srcs[fileType] = [];
+            var hasDeployOtherFiles = bundle.has('deploy.otherFiles.' + fileType),
+                hasFilesFileType = bundle.has('files.' + fileType);
+
+            if (hasDeployOtherFiles || hasFilesFileType) {
+                srcs[fileType] = [];
+            }
 
             // Check if bundle has files [js, css, allowed file types etc.]
-            if (bundle.has('files.' + fileType)) {
-                srcs[fileType].push(bundle.options.name + '.' + fileType);
+            if (hasFilesFileType) {
+                srcs[fileType].push(path.join(wrangler.tasks.minify[fileType + 'BuildPath'], bundle.options.name + '.' + fileType));
             }
 
             // Check allowedFileType in deploy.otherFiles key
-            if (bundle.has('deploy.otherFiles')) {
+            if (hasDeployOtherFiles) {
                 srcs[fileType].push(bundle.options.deploy.otherFiles[fileType]);
             }
         });

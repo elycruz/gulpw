@@ -44,6 +44,7 @@ That directory should contain "bundle-configuration" files which are used within
 	  changed.
 - General:
 	- [ ] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run.
+	- [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
 ### Notes:
 - Be able to pass in multiple flags from the command line (some with values some without values).  Running
  multiple tasks and passing in multiple flags and flags with values are allowed  (flags and values need to
