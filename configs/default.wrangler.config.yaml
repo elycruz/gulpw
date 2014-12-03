@@ -6,9 +6,13 @@ bundleConfigFormat: yaml
 
 bundleConstructor: ./src/bundle/Bundle
 
+localConfigPath: ./.gulpw
+
 staticTasks:
   prompt:
     deploy:
+    config:
+      localConfigBackupPath: ./.gulpw/bundle.wrangler.config.local.yaml
 
 tasks:
 
@@ -82,8 +86,8 @@ tasks:
   # Deploy Task
   deploy:
 
-    # Files to be deployed
-    files: []
+    # Other files to be deployed
+    otherFiles: []
 
     # Global deploy artifacts flag (used if no `deployArtifact` field is found for a section in this config
     deployArtifacts: true
@@ -91,39 +95,24 @@ tasks:
     # Should files be linted before deploy
     lintBeforeDeploy: false
 
-    hosts:
+    # Local deploy config used to override local bundle.wrangler.yaml deploy config options
+    localDeployFileName: deploy.local.yaml
 
-      # Hostname to develop for
-      gulpw.elycruz.com:
+    # Use one-to-one paths for undefined/null deploy paths.
+    # If this is false and an undefined/null deploy path is found for a type an error
+    # is thrown and the deploy tasks exits
+    useOneToOnePaths: false
 
-        # Servers where user can develop for host key (in this case host key is `gulpw.elycruz.com`)
-        servers: # slots
-          - devslot1.gulpw-sample.somedomain.com
-          - devslot2.gulpw-sample.somedomain.com
-          - devslot3.gulpw-sample.somedomain.com
-
-        # all sites represent the same website just different instances of the website
-        sites: # instances
-          - web1
-          - web2
-          - web3
-
-        # directories for deploying file types to the website instance chosen
-        paths: # dir
-          font: public/media/fonts/
-          html: public/media/html/
-          video: public/media/videos/
-          image: public/media/images/
-          js: public/js/
-          css: public/css/
-
-    port: 22,
-    authType: publickey
-    username: admin
+    # Options written by `prompt:deploy`
+    hostPrefix: null
+    host: null
+    port: 22
+    username: null
     password: null
     publickeyPassphrase: null
-    privatekeyLocation: ~/.ssh/id_rsa
+    privatekeyLocation: null
 
+    # File types that are allowed for deployment
     allowedFileTypes:
       - js
       - css
@@ -135,6 +124,35 @@ tasks:
       - gif
       - md
       - mkd
+
+    domainsToDevelop:
+
+      # Hostname to develop for
+      gulpw.somedomain.com:
+
+        # Servers where user can develop for host key (in this case host key is `gulpw.elycruz.com`)
+        devHostnames: # slots/hosts
+          - devslot1.gulpw-sample.somedomain.com
+          - devslot2.gulpw-sample.somedomain.com
+          - devslot3.gulpw-sample.somedomain.com
+
+        # All website instance prefixes represent the same website just different
+        # instances of the website.
+
+        # If object then we expect the hostname prefix (key) and site instance's folder path
+        devHostnamePrefixes:
+          - web1-
+          - web2-
+          - web3-
+
+        # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
+        typesAndDeployPathsMap:
+          font: public/media/fonts/
+          html: public/media/html/
+          video: public/media/videos/
+          image: public/media/images/
+          js: public/js/
+          css: public/css/
 
   # Watch Task Defaults
   watch:

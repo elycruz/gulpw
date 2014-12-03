@@ -38,6 +38,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         staticTasks: {}
     }, defaultOptions, config);
 
+    //console.log(self.cwd, process.cwd());
+
     // Resolve bundles path
     self.bundlesPath = path.join(self.cwd, self.bundlesPath);
     self.init(gulp, self.argv);

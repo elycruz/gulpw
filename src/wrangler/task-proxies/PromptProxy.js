@@ -20,32 +20,39 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
     },
 
     registerDeployTask: function (gulp, wrangler) {
-        var userPath = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
+        var userPath = process.env.HOME || process.env.HOMEPATH
+                || process.env.USERPROFILE,
             userIdRsaPath = path.normalize(userPath + '/.ssh/id_rsa'),
             questions = [],
-            servers = [],
-            hosts = wrangler.tasks.deploy.hosts;
-
-        Object.keys(hosts).forEach(function (host) {
-            servers = servers.concat(hosts[host].servers);
-        });
+            domainsToDevelop = wrangler.tasks.deploy.domainsToDevelop;
 
         questions.push({
-            name: 'host',
+            name: 'developingDomain',
             type: 'list',
-            message: 'Where would you like to deploy?',
-            choices: servers
+            message: 'What domain key would you like to develop for?',
+            choices: Object.keys(domainsToDevelop)
         });
 
-        Object.keys(hosts).forEach(function (hostKey) {
-            var host = hosts[hostKey];
+        Object.keys(domainsToDevelop).forEach(function (domainToDevelopKey) {
+            var domainToDevelop = domainsToDevelop[domainToDevelopKey];
+
             questions.push({
-                name: 'site',
+                name: 'devHostname',
                 type: 'list',
-                message: 'Which application instance would you like to use?',
-                choices: host.sites,
+                message: 'What server would you like to deploy to?',
+                choices: domainToDevelop.devHostnames,
                 when: function (answers) {
-                    return hostKey === answers.host;
+                    return domainToDevelopKey === answers.developingDomain
+                }
+            });
+
+            questions.push({
+                name: 'devHostnamePrefix',
+                type: 'list',
+                message: 'Which host prefix would you like to use?',
+                choices: domainToDevelop.devHostnamePrefixes,
+                when: function (answers) {
+                    return domainToDevelopKey === answers.developingDomain;
                 }
             });
         });
@@ -60,7 +67,7 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
         questions.push({
             name: 'authType',
             type: 'list',
-            message: 'Which questions method would you like to use?',
+            message: 'How would you like to login to server?',
             choices: ['publickey', 'password']
         });
 
@@ -92,7 +99,8 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
             message: 'Where is your SSH private key?',
             default: userIdRsaPath,
             validate: function (filepath) {
-                return fs.existsSync(filepath) ? true : 'The specified file does not exist.';
+                return fs.existsSync(filepath) ? true :
+                    'The specified file does not exist.';
             },
             when: function (answers) {
                 return answers['authType'] === 'publickey';
@@ -100,7 +108,7 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
         });
 
         questions.push({
-            name: 'passphrase',
+            name: 'publickeyPassphrase',
             type: 'password',
             message: 'What is your SSH passphrase?',
             default: '',
@@ -110,27 +118,27 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
         });
 
         gulp.task('prompt:deploy', function () {
-
             inquirer.prompt(questions, function (answers) {
                 var outFileTemplate = {
-                    tasks: {
-                        deploy: {
-                            instance: answers.site || null,
-                            host: answers.host || null,
-                            port: answers.port || null,
-                            username: answers.username || null,
-                            password: answers.password || null,
-                            keyfile: answers.privatekeyLocation || null,
-                            passphrase: answers.passphrase || null
-                        }
-                    }
+                    developingDomain: answers.developingDomain || null,
+                    devHostnamePrefix: answers.devHostnamePrefix || null,
+                    devHostname: answers.devHostname || null,
+                    port: answers.port || null,
+                    username: answers.username || null,
+                    password: answers.password || null,
+                    privatekeyLocation: answers.privateKeyLocation || null,
+                    publickeyPassphrase: answers.publickeyPassphrase || null
                 };
 
                 // Ensure write path exists
-                wrangler.ensurePathExists(path.join(process.cwd(), '.gulpw'));
+                wrangler.ensurePathExists(
+                    path.join(process.cwd(), wrangler.localConfigPath));
 
                 // Write local deploy config file
-                fs.writeFileSync(path.join(process.cwd(), '.gulpw', 'local.yaml'), yaml.safeDump(outFileTemplate));
+                fs.writeFileSync(path.join(process.cwd(),
+                    wrangler.localConfigPath,
+                    wrangler.tasks.deploy.localDeployFileName),
+                    yaml.safeDump(outFileTemplate) );
             });
         });
     }

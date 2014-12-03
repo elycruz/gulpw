@@ -7,11 +7,13 @@ require('sjljs');
 var TaskProxy = require('../TaskProxy'),
     path = require('path'),
     fs = require('fs'),
-    ssh = require('ssh2');
+    ssh = require('ssh2'),
+    yaml = require('js-yaml');
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
+        console.log(wrangler.tasks.deploy);
         gulp.task('deploy' + (taskPrefix || ""), function () {
             var target;
             Object.keys(targets).forEach(function (key) {
@@ -36,7 +38,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
         var separator = wrangler.getTaskStrSeparator(),
             targets = this.getSrcForBundle(bundle, wrangler);
 
-        this.registerGulpTask(':global', targets, gulp, wrangler);
+        this.mergeLocalConfigs(wrangler)
+            .registerGulpTask(':global', targets, gulp, wrangler);
 
     }, // end of `registerBundle`
 
@@ -118,6 +121,17 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 bundle.has('files')
                 || (bundle.has('requirejs') || bundle.has('browserify'))
                 || bundle.has('deploy.otherFiles') );
+    },
+
+    mergeLocalConfigs: function (wrangler) {
+        var localConfigPath = path.join(wrangler.localConfigPath, wrangler.tasks.deploy.localDeployFileName),
+            localConfig;
+        // Get local deploy config if exists
+        if (fs.existsSync(localConfigPath)) {
+            localConfig = yaml.safeLoad(fs.readFileSync(localConfigPath));
+            sjl.extend(true, wrangler.tasks.deploy, localConfig);
+        }
+        return this;
     }
 
 }); // end of export
