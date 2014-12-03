@@ -6,6 +6,7 @@ require('sjljs');
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
     path = require('path'),
+    fs = require('fs'),
     ssh = require('ssh2');
 
 module.exports = TaskProxy.extend("DeployProxy", {
@@ -17,7 +18,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 target = targets[key];
                 console.log('Now deploying "' + key + '" files');
                 target.forEach(function (item) {
-                    console.log(item);
+                    console.log(item[0], ' => ', item[1]);
                 });
             });
 
@@ -41,9 +42,19 @@ module.exports = TaskProxy.extend("DeployProxy", {
     },
 
     getSrcForBundle: function (bundle, wrangler) {
-        var srcs = {},
-            options = bundle.options,
-            allowedFileTypes = wrangler.tasks.deploy.allowedFileTypes;
+        var self = this,
+            srcs = {},
+            allowedFileTypes = wrangler.tasks.deploy.allowedFileTypes,
+
+            // dummy entry
+            selectedServerEntry = {
+                paths: {
+                    js: '/public/js',
+                    css: '/public/css',
+                    html: '/public/html',
+                    md: '/public/'
+                }
+            };
 
         if (this.isBundleValidForTask()) {
             return srcs;
@@ -52,20 +63,34 @@ module.exports = TaskProxy.extend("DeployProxy", {
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
             var hasDeployOtherFiles = bundle.has('deploy.otherFiles.' + fileType),
-                hasFilesFileType = bundle.has('files.' + fileType);
-
-            if (hasDeployOtherFiles || hasFilesFileType) {
-                srcs[fileType] = [];
-            }
+                hasFilesFileType = bundle.has('files.' + fileType),
+                deployPath, localPath;
 
             // Check if bundle has files [js, css, allowed file types etc.]
             if (hasFilesFileType) {
-                srcs[fileType].push(path.join(wrangler.tasks.minify[fileType + 'BuildPath'], bundle.options.name + '.' + fileType));
+
+                // Initialize storage array
+                srcs[fileType] = [];
+
+                // Build local src path
+                deployPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
+                    bundle.options.name + '.' + fileType);
+
+                // Build deploy src path
+                localPath = path.join(selectedServerEntry.paths[fileType],
+                    bundle.options.name + '.' + fileType);
+
+                // Push array map entry
+                srcs[fileType].push([localPath, deployPath]);
             }
 
             // Check allowedFileType in deploy.otherFiles key
             if (hasDeployOtherFiles) {
-                srcs[fileType].push(bundle.options.deploy.otherFiles[fileType]);
+
+                // Push array map entry
+                srcs[fileType] = self.mapFileArrayToDeployArrayMap(
+                    bundle.options.deploy.otherFiles[fileType], fileType,
+                        selectedServerEntry, wrangler);
             }
         });
 
@@ -73,10 +98,27 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
     },
 
+    mapFileArrayToDeployArrayMap: function (fileArray, fileType,
+                                            selectedServerEntry, wrangler) {
+        return fileArray.map(function (item) {
+            var retVal;
+            if (selectedServerEntry.paths[fileType]) {
+                retVal = [item, path.join(selectedServerEntry.paths[fileType],
+                    path.basename(item))];
+            }
+            else {
+                retVal = [item, item];
+            }
+
+            return retVal;
+        });
+    },
+
     isBundleValidForTask: function (bundle) {
         return bundle && (
-                bundle.has('files') || (bundle.has('requirejs') || bundle.has('browserify'))
-                || bundle.has('deploy.otherFiles'));
+                bundle.has('files')
+                || (bundle.has('requirejs') || bundle.has('browserify'))
+                || bundle.has('deploy.otherFiles') );
     }
 
 }); // end of export

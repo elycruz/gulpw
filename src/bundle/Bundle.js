@@ -88,37 +88,44 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         }, // end of setupHasMethods
 
         hasFiles: function () {
-            return !sjl.empty(this.options.files);
+            return this.has('files');
         },
 
         hasFilesJs: function () {
-            return this.hasFiles() && !sjl.empty(this.options.files.js);
+            return this.has('files.js');
         },
 
         hasFilesCss: function () {
-            return this.hasFiles() && !sjl.empty(this.options.files.css);
+            return this.has('files.css');
         },
 
         hasFilesHtml: function () {
-            return this.hasFiles() && !sjl.empty(this.options.files.html);
+            return this.has('files.html');
         },
 
         hasWatch: function () {
-            return !sjl.empty(this.options.watch);
+            return this.has('watch');
         },
 
         has: function (nsString) {
             var parts = nsString.split('.'),
-                part, i, nsStr;
-                if (parts.length > 1) {
+                i, nsStr, retVal = false;
+
+            if (parts.length > 1) {
                 nsStr = parts.shift();
-                for (i = 0; i < parts.length; i += 1) {
-                    part = parts[i];
-                    !sjl.empty(sjl.namespace(nsString, this.options))
-                    nsStr += '.' + part;
+                for (i = 0; i <= parts.length; i += 1) {
+                    retVal = !sjl.empty(sjl.namespace(nsStr, this.options));
+                    if (!retVal) {
+                        break;
+                    }
+                    nsStr += '.' + parts[i];
                 }
             }
-            return !sjl.empty(sjl.namespace(nsString, this.options));
+            else {
+                retVal = !sjl.empty(sjl.namespace(nsString, this.options));
+            }
+
+            return retVal;
         }
 
     }); // end of Bundle

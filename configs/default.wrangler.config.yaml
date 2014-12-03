@@ -9,47 +9,6 @@ bundleConstructor: ./src/bundle/Bundle
 staticTasks:
   prompt:
     deploy:
-      questions:
-        -
-          type: list
-          messsage: Where would you like to deploy to? (use arrow keys)
-          name: server
-          choices: list-here
-        -
-          type: list
-          messsage: Which website instance would you like to use? (use arrow keys)
-          name: site
-          choices: list-here
-        -
-          type: input
-          messsage: "Which network port would you like to use? (default: <%= defaultPortNumber %>)"
-          name: port
-          default: <%= defaultPortNumber %>
-        -
-          type: list
-          messsage: Which authentication method would you like to use? (use arrow keys)
-          name: authType
-          choices:
-            - publickey
-            - password
-        -
-          type: input
-          messsage: What is the user password? (<%= defaultUserName %>)
-          name: password
-          default: admin
-        -
-          type: input
-          messsage: What is the ssh username you would like to use? (<%= defaultUserName %>)
-          name: username
-          default: admin
-        -
-          type: input
-          messsage: Where is your ssh private key? (<%= defaultUserName %>)
-          name: privatekeyLocation
-        -
-          type: input
-          messsage: What is your ssh pass phrase?
-          name: passphrase
 
 tasks:
 
@@ -155,8 +114,8 @@ tasks:
           html: public/media/html/
           video: public/media/videos/
           image: public/media/images/
-          javascript: public/js/
-          stylesheet: public/css/
+          js: public/js/
+          css: public/css/
 
     port: 22,
     authType: publickey
@@ -174,6 +133,8 @@ tasks:
       - jpg
       - png
       - gif
+      - md
+      - mkd
 
   # Watch Task Defaults
   watch:
