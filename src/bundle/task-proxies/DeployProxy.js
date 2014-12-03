@@ -27,11 +27,14 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
     registerBundle: function (bundle, gulp, wrangler) {
 
+        // If bundle is not valid for task, bail
+        if (!this.isBundleValidForTask(bundle)) {
+            return;
+        }
+
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
             targets = this.getSrcForBundle(bundle, wrangler);
-
-        console.log('Dumping deploy targets here: ', targets);
 
         this.registerGulpTask(':global', targets, gulp, wrangler);
 
@@ -55,10 +58,6 @@ module.exports = TaskProxy.extend("DeployProxy", {
                     md: '/public/'
                 }
             };
-
-        if (this.isBundleValidForTask()) {
-            return srcs;
-        }
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
