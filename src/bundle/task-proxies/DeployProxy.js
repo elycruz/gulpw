@@ -34,12 +34,13 @@ module.exports = TaskProxy.extend("DeployProxy", {
             return;
         }
 
+        this.mergeLocalConfigs(wrangler);
+
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
             targets = this.getSrcForBundle(bundle, wrangler);
 
-        this.mergeLocalConfigs(wrangler)
-            .registerGulpTask(':global', targets, gulp, wrangler);
+        this.registerGulpTask(':global', targets, gulp, wrangler);
 
     }, // end of `registerBundle`
 
@@ -53,14 +54,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
             allowedFileTypes = wrangler.tasks.deploy.allowedFileTypes,
 
             // dummy entry
-            selectedServerEntry = {
-                paths: {
-                    js: '/public/js',
-                    css: '/public/css',
-                    html: '/public/html',
-                    md: '/public/'
-                }
-            };
+            selectedServerEntry = wrangler.tasks.deploy.domainsToDevelop
+                [wrangler.tasks.deploy.developingDomain];
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -79,7 +74,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                     bundle.options.name + '.' + fileType);
 
                 // Build deploy src path
-                localPath = path.join(selectedServerEntry.paths[fileType],
+                localPath = path.join(selectedServerEntry.typesAndDeployPathsMap[fileType],
                     bundle.options.name + '.' + fileType);
 
                 // Push array map entry
@@ -104,7 +99,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                                             selectedServerEntry, wrangler) {
         return fileArray.map(function (item) {
             var retVal;
-            if (selectedServerEntry.paths[fileType]) {
+            if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
                 retVal = [item, path.join(selectedServerEntry.paths[fileType],
                     path.basename(item))];
             }

@@ -104,8 +104,9 @@ tasks:
     useOneToOnePaths: false
 
     # Options written by `prompt:deploy`
-    hostPrefix: null
-    host: null
+    developingDomain: null
+    devHostnamePrefix: null
+    devHostname: null
     port: 22
     username: null
     password: null
