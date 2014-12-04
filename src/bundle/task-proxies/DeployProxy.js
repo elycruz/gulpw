@@ -10,6 +10,7 @@ var TaskProxy = require('../TaskProxy'),
     fs = require('fs'),
     ssh = require('ssh2'),
     conn = new ssh(),
+    chalk = require('chalk'),
     yaml = require('js-yaml');
 
 module.exports = TaskProxy.extend("DeployProxy", {
@@ -26,19 +27,27 @@ module.exports = TaskProxy.extend("DeployProxy", {
             },
             totalFileCount = 0,
             uploadedFileCount = 0,
-            startDeployMessage = 'Deploying files for sections:';
+            startDeployMessage = 'Deploying ',
+            taskName = 'deploy' + (taskPrefix || ""),
+            startTime;
 
         // Get file count
-        Object.keys(targets).forEach(function (key) {
-            startDeployMessage += '\n  - ' + key;
+        Object.keys(targets).forEach(function (key, index, list) {
+            startDeployMessage += (index === 0 ? '' : (index < list.length - 1 ? ', ' : ' and ')) + '*.' + key;
             totalFileCount += targets[key].length;
         });
 
-        gulp.task('deploy' + (taskPrefix || ""), function () {
+        startDeployMessage += ' files.';
+
+        gulp.task(taskName, function () {
+
+            wrangler.log('\n', chalk.dim(' Running "' + taskName + '" task.'), '--mandatory');
+
+            startTime = new Date();
 
             conn.on('ready', function () {
 
-                console.log('\n Connected to ' + host);
+                wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
 
                 conn.sftp(function (err, sftp) {
 
@@ -48,7 +57,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                     var target;
 
-                    console.log('\n', startDeployMessage, '\n');
+                    wrangler.log('\n', startDeployMessage, '\n', '--mandatory');
 
                     Object.keys(targets).forEach(function (key) {
                         target = targets[key];
@@ -57,17 +66,18 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                                 // Callback
                                 function (err) {
-                                    console.log(' - ', item[0], ' => ', item[1]);
+                                    wrangler.log(chalk.green(' - ', item[0]), '--mandatory')
+                                        wrangler.log(chalk.green(' => ', item[1]));
                                     if (err) { throw err; }
                                     uploadedFileCount += 1;
                                 });
                         });
                     }); // end of files loop
 
-
                     var countTimeout = setInterval(function () {
                         if (totalFileCount <= uploadedFileCount) {
-                            console.log('\n File deployment complete.');
+                            wrangler.log(chalk.cyan('\n File deployment complete.'),
+                                chalk.dim('\n\n Closing connection...'));
                             conn.end();
                             clearInterval(countTimeout);
                         }
@@ -77,9 +87,17 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
             })
             .on('close', function (hadError) {
-                console.log(' Closing connection.');
+
+                // Log "Connection closed"
+                wrangler.log(chalk.dim('\n Connection closed.'));
+
+                // Log task completion
+                wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
+                    chalk.magenta((((new Date()) - startTime) / 1000) + 's'), '--mandatory');
+
+                // If error log it
                 if (hadError) {
-                    console.log(' Connection closed due to an unknown error.');
+                    wrangler.log('\n Connection closed due to an unknown error.', '--mandatory');
                 }
             })
             .connect(sshOptions);
@@ -91,6 +109,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         // If bundle is not valid for task, bail
         if (!this.isBundleValidForTask(bundle)) {
+            console.warn(chalk.yellow('Bundle "' +
+                bundle.options.name + '" is not valid for `deploy` task.'));
             return;
         }
 
