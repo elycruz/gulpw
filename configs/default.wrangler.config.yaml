@@ -96,12 +96,14 @@ tasks:
     lintBeforeDeploy: false
 
     # Local deploy config used to override local bundle.wrangler.yaml deploy config options
-    localDeployFileName: deploy.local.yaml
+    localDeployFileName: deploy.yaml
 
     # Use one-to-one paths for undefined/null deploy paths.
     # If this is false and an undefined/null deploy path is found for a type an error
     # is thrown and the deploy tasks exits
     useOneToOnePaths: false
+
+    deployUsingUnixStylePaths: true
 
     # Options written by `prompt:deploy`
     developingDomain: null
@@ -149,7 +151,7 @@ tasks:
         # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
         typesAndDeployPathsMap:
           font: public/media/fonts/
-          html: public/media/html/
+          html: public/
           video: public/media/videos/
           image: public/media/images/
           js: public/js/

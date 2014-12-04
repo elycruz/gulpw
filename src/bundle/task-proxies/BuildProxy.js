@@ -12,7 +12,6 @@ var TaskProxy = require('../TaskProxy');
 module.exports = TaskProxy.extend("BuildProxy", {
 
     registerGulpTask: function (taskName, taskList, gulp, wrangler) {
-        console.log(taskList);
         gulp.task(taskName, function () {
             wrangler.launchTasks(taskList, gulp);
         });

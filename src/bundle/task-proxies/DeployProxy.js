@@ -5,24 +5,84 @@ require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
+    os = require('os'),
     path = require('path'),
     fs = require('fs'),
     ssh = require('ssh2'),
+    conn = new ssh(),
     yaml = require('js-yaml');
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
-        console.log(wrangler.tasks.deploy);
+
+        var deployOptions = wrangler.tasks.deploy,
+            host = deployOptions.devHostnamePrefix + deployOptions.devHostname,
+            sshOptions = {
+                host: host,
+                username: deployOptions.username,
+                password: deployOptions.password,
+                port: deployOptions.port
+            },
+            totalFileCount = 0,
+            uploadedFileCount = 0,
+            startDeployMessage = 'Deploying files for sections:';
+
+        // Get file count
+        Object.keys(targets).forEach(function (key) {
+            startDeployMessage += '\n  - ' + key;
+            totalFileCount += targets[key].length;
+        });
+
         gulp.task('deploy' + (taskPrefix || ""), function () {
-            var target;
-            Object.keys(targets).forEach(function (key) {
-                target = targets[key];
-                console.log('Now deploying "' + key + '" files');
-                target.forEach(function (item) {
-                    console.log(item[0], ' => ', item[1]);
+
+            conn.on('ready', function () {
+
+                console.log('\n Connected to ' + host);
+
+                conn.sftp(function (err, sftp) {
+
+                    if (err) {
+                        throw err;
+                    }
+
+                    var target;
+
+                    console.log('\n', startDeployMessage, '\n');
+
+                    Object.keys(targets).forEach(function (key) {
+                        target = targets[key];
+                        target.forEach(function (item) {
+                            sftp.fastPut(item[0], item[1],
+
+                                // Callback
+                                function (err) {
+                                    console.log(' - ', item[0], ' => ', item[1]);
+                                    if (err) { throw err; }
+                                    uploadedFileCount += 1;
+                                });
+                        });
+                    }); // end of files loop
+
+
+                    var countTimeout = setInterval(function () {
+                        if (totalFileCount <= uploadedFileCount) {
+                            console.log('\n File deployment complete.');
+                            conn.end();
+                            clearInterval(countTimeout);
+                        }
+                    }, 500);
+
                 });
-            });
+
+            })
+            .on('close', function (hadError) {
+                console.log(' Closing connection.');
+                if (hadError) {
+                    console.log(' Connection closed due to an unknown error.');
+                }
+            })
+            .connect(sshOptions);
 
         });
     },
@@ -37,10 +97,9 @@ module.exports = TaskProxy.extend("DeployProxy", {
         this.mergeLocalConfigs(wrangler);
 
         // Task string separator
-        var separator = wrangler.getTaskStrSeparator(),
-            targets = this.getSrcForBundle(bundle, wrangler);
+        var targets = this.getSrcForBundle(bundle, wrangler);
 
-        this.registerGulpTask(':global', targets, gulp, wrangler);
+        this.registerGulpTask(':' + bundle.options.name, targets, gulp, wrangler);
 
     }, // end of `registerBundle`
 
@@ -51,11 +110,11 @@ module.exports = TaskProxy.extend("DeployProxy", {
     getSrcForBundle: function (bundle, wrangler) {
         var self = this,
             srcs = {},
-            allowedFileTypes = wrangler.tasks.deploy.allowedFileTypes,
-
-            // dummy entry
-            selectedServerEntry = wrangler.tasks.deploy.domainsToDevelop
-                [wrangler.tasks.deploy.developingDomain];
+            deployOptions = wrangler.tasks.deploy,
+            allowedFileTypes = deployOptions.allowedFileTypes,
+            deployUsingUnixStylePaths = deployOptions.deployUsingUnixStylePaths,
+            selectedServerEntry = deployOptions.domainsToDevelop
+                [deployOptions.developingDomain];
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -70,12 +129,22 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 srcs[fileType] = [];
 
                 // Build local src path
-                deployPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
+                localPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
                     bundle.options.name + '.' + fileType);
 
                 // Build deploy src path
-                localPath = path.join(selectedServerEntry.typesAndDeployPathsMap[fileType],
-                    bundle.options.name + '.' + fileType);
+                if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
+                    deployPath = path.join(selectedServerEntry.deployRootFolder, selectedServerEntry.typesAndDeployPathsMap[fileType],
+                        bundle.options.name + '.' + fileType);
+                }
+                else {
+                    deployPath = path.join(selectedServerEntry.deployRootFolder, bundle.options.name + '.' + fileType);
+                }
+
+                // Check if we need styled unix paths and are on windows
+                if (deployUsingUnixStylePaths && ((os.type()).toLowerCase()).indexOf('windows') > -1) {
+                    deployPath = deployPath.replace(/\\/g, '/');
+                }
 
                 // Push array map entry
                 srcs[fileType].push([localPath, deployPath]);
@@ -87,7 +156,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 // Push array map entry
                 srcs[fileType] = self.mapFileArrayToDeployArrayMap(
                     bundle.options.deploy.otherFiles[fileType], fileType,
-                        selectedServerEntry, wrangler);
+                    selectedServerEntry, wrangler);
             }
         });
 
@@ -100,12 +169,19 @@ module.exports = TaskProxy.extend("DeployProxy", {
         return fileArray.map(function (item) {
             var retVal;
             if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
-                retVal = [item, path.join(selectedServerEntry.paths[fileType],
+                retVal = [item, path.join(selectedServerEntry.deployRootFolder, selectedServerEntry.typesAndDeployPathsMap[fileType],
                     path.basename(item))];
             }
             else {
-                retVal = [item, item];
+                retVal = [item, path.join(selectedServerEntry.deployRootFolder, item)];
             }
+
+            // Check if we need styled unix paths and are on windows
+            if (wrangler.tasks.deploy.deployUsingUnixStylePaths && ((os.type()).toLowerCase()).indexOf('windows') > -1) {
+                retVal[1] = retVal[1].replace(/\\/g, '/');
+            }
+
+            retVal[0] = path.normalize(retVal[0]);
 
             return retVal;
         });
@@ -113,9 +189,9 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
     isBundleValidForTask: function (bundle) {
         return bundle && (
-                bundle.has('files')
-                || (bundle.has('requirejs') || bundle.has('browserify'))
-                || bundle.has('deploy.otherFiles') );
+            bundle.has('files')
+            || (bundle.has('requirejs') || bundle.has('browserify'))
+            || bundle.has('deploy.otherFiles') );
     },
 
     mergeLocalConfigs: function (wrangler) {

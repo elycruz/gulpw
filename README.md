@@ -45,7 +45,10 @@ That directory should contain "bundle-configuration" files which are used within
 - General:
 	- [ ] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run.
 	- [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
+	- [ ] - Deploy task should reference local deploy file name from `prompt` task config.
+
 ### Notes:
+
 - Be able to pass in multiple flags from the command line (some with values some without values).  Running
  multiple tasks and passing in multiple flags and flags with values are allowed  (flags and values need to
   be passed in last for this to work (cli doesn't differentiate between task names and param/flag values));
