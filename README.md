@@ -25,7 +25,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - clean (del)
 	- [X] - concat (gulp-concat)
 	- [X] - csslint (gulp-csslint)
-	- [ ] - deploy (gulp-ssh)
+	- [X] - deploy (ssh2)
 	- [ ] - document (jsdoc, groco, etc)
 	- [X] - jshint (gulp-jshint)
 	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
@@ -43,8 +43,12 @@ That directory should contain "bundle-configuration" files which are used within
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
 	  changed.
 - General:
-	- [ ] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run (should happen from ins Wrangler.js for all tasks (if any configs present)).
+	- [ ] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run (should happen from inside Wrangler.js for all tasks (if any configs present)).
+	- [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
+	- [ ] - Deploy task should reference local deploy file name from `prompt` task config.
+
 ### Notes:
+
 - Be able to pass in multiple flags from the command line (some with values some without values).  Running
  multiple tasks and passing in multiple flags and flags with values are allowed  (flags and values need to
   be passed in last for this to work (cli doesn't differentiate between task names and param/flag values));

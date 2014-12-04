@@ -1,7 +1,4 @@
 /**
- * Created by edelacruz on 10/8/2014.
- */
-/**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
 require('sjljs');
@@ -12,7 +9,6 @@ var TaskProxy = require('../TaskProxy');
 module.exports = TaskProxy.extend("BuildProxy", {
 
     registerGulpTask: function (taskName, taskList, gulp, wrangler) {
-        console.log(taskList);
         gulp.task(taskName, function () {
             wrangler.launchTasks(taskList, gulp);
         });
@@ -33,6 +29,7 @@ module.exports = TaskProxy.extend("BuildProxy", {
             targets;
 
         if (!self.isBundleValidForTask(bundle)) {
+            console.warn('\n!Warning: Bundle "' + bundleName + '" is not valid for `build` task.\n');
             return; // @todo log message/warning here
         }
 
@@ -57,11 +54,11 @@ module.exports = TaskProxy.extend("BuildProxy", {
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && bundle.hasFiles() || (bundle.hasRequirejs() || bundle.hasBrowserify());
+        return bundle && (bundle.has('files') || bundle.has('requirejs') || bundle.has('browserify'));
     },
 
     isBundleValidForMinifyAndConcat: function (bundle) {
-       return bundle && bundle.hasFilesJs() || bundle.hasFilesCss() || bundle.hasFilesHtml();
+       return bundle && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html'));
     },
 
     getTasksForBundle: function (bundle, wrangler) {

@@ -102,14 +102,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         self.log("- Creating task proxies.");
 
         Object.keys(self.tasks).forEach(function (task) {
-            // 1.) If tasks[task] is a string expect string to be a path
-            // 2.) If path then load the file (allow only json, js, or yaml files)
-            // 3.) Replace tasks[task] with loaded file's return value
-            //if (sjl.classOfIs(self.tasks[task], 'String')) {
-            //    self.tasks[task] = self.loadConfigFile(task);
-            //    console.log(task, self.tasks[task]);
-            //}
-            // 4.) Load task proxy instance
             self.tasks[task].instance = self.createTaskProxy(gulp, task);
         });
 
@@ -195,6 +187,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     registerTasksForBundle: function (gulp, bundle) {
         var self = this;
+            //argvTasks = self.extractTaskNamesFromArgv(arv._);
 
         // Register bundle with task
         Object.keys(self.tasks).forEach(function (task) {
@@ -249,7 +242,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 retVal = yaml.safeLoad(file);
                 break;
         }
-
         return retVal;
     },
 
@@ -279,6 +271,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
 
         return out;
+    },
+
+    extractTaskNamesFromArgv: function (argv) {
+        //argv._.map(function (item) {
+        //    /^[a-z\d\-_]+\:[a-z\d\-_]+/i.test(item);
+        //});
     },
 
     log: function () {

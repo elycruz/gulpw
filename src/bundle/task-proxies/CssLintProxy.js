@@ -67,6 +67,6 @@ module.exports = TaskProxy.extend("CssLintProxy", {
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && bundle.hasFilesCss();
+        return bundle && bundle.has('files.css');
     }
 });

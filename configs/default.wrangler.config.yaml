@@ -6,50 +6,13 @@ bundleConfigFormat: yaml
 
 bundleConstructor: ./src/bundle/Bundle
 
+localConfigPath: ./.gulpw
+
 staticTasks:
   prompt:
     deploy:
-      questions:
-        -
-          type: list
-          messsage: Where would you like to deploy to? (use arrow keys)
-          name: server
-          choices: list-here
-        -
-          type: list
-          messsage: Which website instance would you like to use? (use arrow keys)
-          name: site
-          choices: list-here
-        -
-          type: input
-          messsage: "Which network port would you like to use? (default: <%= defaultPortNumber %>)"
-          name: port
-          default: <%= defaultPortNumber %>
-        -
-          type: list
-          messsage: Which authentication method would you like to use? (use arrow keys)
-          name: authType
-          choices:
-            - publickey
-            - password
-        -
-          type: input
-          messsage: What is the user password? (<%= defaultUserName %>)
-          name: password
-          default: admin
-        -
-          type: input
-          messsage: What is the ssh username you would like to use? (<%= defaultUserName %>)
-          name: username
-          default: admin
-        -
-          type: input
-          messsage: Where is your ssh private key? (<%= defaultUserName %>)
-          name: privatekeyLocation
-        -
-          type: input
-          messsage: What is your ssh pass phrase?
-          name: passphrase
+    config:
+      localConfigBackupPath: ./.gulpw/bundle.wrangler.config.local.yaml
 
 tasks:
 
@@ -93,6 +56,7 @@ tasks:
 
     ignoredTasks:
       - clean
+      - deploy
 
     # Tasks to run if task is not overwritten by flag (see flags below)
     tasks:
@@ -102,7 +66,7 @@ tasks:
 #      - htmllint
 #      - browserify
 #      - requirejs
-      - concat
+#      - concat
       - minify
 
     # This is a global lint flag that is used if there is a lint task specified for a section
@@ -123,8 +87,8 @@ tasks:
   # Deploy Task
   deploy:
 
-    # Files to be deployed
-    files: []
+    # Other files to be deployed
+    otherFiles: []
 
     # Global deploy artifacts flag (used if no `deployArtifact` field is found for a section in this config
     deployArtifacts: true
@@ -132,40 +96,67 @@ tasks:
     # Should files be linted before deploy
     lintBeforeDeploy: false
 
-    hosts:
+    # Local deploy config used to override local bundle.wrangler.yaml deploy config options
+    localDeployFileName: deploy.yaml
+
+    # Use one-to-one paths for undefined/null deploy paths.
+    # If this is false and an undefined/null deploy path is found for a type an error
+    # is thrown and the deploy tasks exits
+    useOneToOnePaths: false
+
+    deployUsingUnixStylePaths: true
+
+    # Options written by `prompt:deploy`
+    developingDomain: null
+    devHostnamePrefix: null
+    devHostname: null
+    port: 22
+    username: null
+    password: null
+    publickeyPassphrase: null
+    privatekeyLocation: null
+
+    # File types that are allowed for deployment
+    allowedFileTypes:
+      - js
+      - css
+      - html
+      - json
+      - yaml
+      - jpg
+      - png
+      - gif
+      - md
+      - mkd
+
+    domainsToDevelop:
 
       # Hostname to develop for
       gulpw-sample.somedomain.com:
 
         # Servers where user can develop for host key (in this case host key is `gulpw.elycruz.com`)
-        servers: # slots
+        devHostnames: # slots/hosts
           - devslot1.gulpw-sample.somedomain.com
           - devslot2.gulpw-sample.somedomain.com
           - devslot3.gulpw-sample.somedomain.com
 
-        # all sites represent the same website just different instances of the website
-        sites: # instances
-          - web1
-          - web2
-          - web3
+        # All website instance prefixes represent the same website just different
+        # instances of the website.
 
-        # directories for deploying file types to the website instance chosen
-        paths: # dir
+        # If object then we expect the hostname prefix (key) and site instance's folder path
+        devHostnamePrefixes:
+          - web1-
+          - web2-
+          - web3-
+
+        # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
+        typesAndDeployPathsMap:
           font: public/media/fonts/
-          html: public/media/html/
+          html: public/
           video: public/media/videos/
           image: public/media/images/
-          javascript: public/js/
-          stylesheet: public/css/
-
-    port: 22,
-    authType: publickey
-    username: admin
-    password: null
-    publickeyPassphrase: null
-    privatekeyLocation: ~/.ssh/id_rsa
-
-
+          js: public/js/
+          css: public/css/
 
   # Watch Task Defaults
   watch:
@@ -173,7 +164,7 @@ tasks:
     # Tasks to run on file changes ** Note ** only tasks that match changed file types will be run
     tasks:
       - build
-#      - deploy
+      - deploy
 
     # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null

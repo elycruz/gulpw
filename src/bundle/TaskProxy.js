@@ -25,6 +25,10 @@ module.exports = sjl.Extendable.extend(function TaskProxy(options) {
 
         isBundleValidForTask: function (bundle) {
             // Overwrite from extending class
+        },
+
+        isValidTaskSrc: function (src) {
+            return (sjl.classOfIs(src, 'String') || sjl.classOfIs(src, 'Array')) && !sjl.empty(src);
         }
 
     });
