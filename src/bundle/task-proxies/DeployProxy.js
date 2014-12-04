@@ -41,7 +41,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         gulp.task(taskName, function () {
 
-            wrangler.log('\n', chalk.dim(' Running "' + taskName + '" task.'), '--mandatory');
+            wrangler.log('\n', 'Running ' + chalk.cyan('"' + taskName + '"') + ' task.', '--mandatory');
 
             startTime = new Date();
 
@@ -57,7 +57,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                     var target;
 
-                    wrangler.log('\n', startDeployMessage, '\n', '--mandatory');
+                    wrangler.log('\n', chalk.grey(startDeployMessage), '\n', '--mandatory');
 
                     Object.keys(targets).forEach(function (key) {
                         target = targets[key];
@@ -66,7 +66,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                                 // Callback
                                 function (err) {
-                                    wrangler.log(chalk.green(' - ', item[0]), '--mandatory')
+                                    wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory')
                                         wrangler.log(chalk.green(' => ', item[1]));
                                     if (err) { throw err; }
                                     uploadedFileCount += 1;
@@ -77,7 +77,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                     var countTimeout = setInterval(function () {
                         if (totalFileCount <= uploadedFileCount) {
                             wrangler.log(chalk.cyan('\n File deployment complete.'),
-                                chalk.dim('\n\n Closing connection...'));
+                                chalk.grey('\n\n Closing connection...'));
                             conn.end();
                             clearInterval(countTimeout);
                         }
@@ -89,7 +89,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             .on('close', function (hadError) {
 
                 // Log "Connection closed"
-                wrangler.log(chalk.dim('\n Connection closed.'));
+                wrangler.log(chalk.grey('\n Connection closed.'));
 
                 // Log task completion
                 wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
@@ -123,8 +123,26 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
     }, // end of `registerBundle`
 
-    regsiterBundles: function (bundles, gulp, wrangler) {
+    registerBundles: function (bundles, gulp, wrangler) {
+        var self = this,
+            targets = {};
 
+        bundles.forEach(function (bundle) {
+            if (!self.isBundleValidForTask(bundle)) {
+                return;
+            }
+            var bundleTargets = self.getSrcForBundle(bundle, wrangler);
+            Object.keys(bundleTargets).forEach(function (key) {
+                if (bundleTargets.hasOwnProperty(key)) {
+                    if (sjl.empty(targets[key])) {
+                        targets[key] = [];
+                    }
+                    targets[key] = targets[key].concat(bundleTargets[key]);
+                }
+            });
+        });
+
+        this.registerGulpTask('', targets, gulp, wrangler);
     },
 
     getSrcForBundle: function (bundle, wrangler) {
