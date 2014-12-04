@@ -56,7 +56,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                     singularTaskTargets = [];
 
                 // Check if `key` in `files` is buildable (concatable/minifiable)
-                if (bundle.hasFiles() && self.isValidTaskSrc(section)) {
+                if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                     // Get file path for `key` in `files`
                     singularTaskTargets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
@@ -94,7 +94,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                     var section = bundle.options.files[ext];
 
                     // Check if `key` in `files` is buildable (concatable/minifiable)
-                    if (bundle.hasFiles() && self.isValidTaskSrc(section)) {
+                    if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                         // Get file path for `key` in `files`
                         targets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));

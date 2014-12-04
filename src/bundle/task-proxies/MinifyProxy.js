@@ -54,7 +54,7 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
                     taskInstanceConfig = taskConfigMap[ext];
 
                 // If no files for this section, bail to the next one
-                if (sjl.empty(sjl.namespace('options.files.' + ext, bundle))) {
+                if (!bundle.has('files.' + ext)) {
                     return;
                 }
 

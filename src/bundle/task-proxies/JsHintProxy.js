@@ -63,6 +63,6 @@ module.exports = TaskProxy.extend("JsHintProxy", {
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && bundle.hasFilesJs();
+        return bundle && bundle.has('files.js');
     }
 });

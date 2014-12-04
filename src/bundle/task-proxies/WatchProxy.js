@@ -121,13 +121,13 @@ module.exports = TaskProxy.extend("DeployProxy", {
         }
 
         // Merge other files to watch to targets
-        if (bundle.hasWatch() && Array.isArray(bundle.options.otherFiles)) {
+        if (bundle.has('watch') && Array.isArray(bundle.options.otherFiles)) {
             targets = targets.concat(bundle.options.watch.otherFiles);
         }
 
         // Merge all arrays in files key to `targets`
         // @todo ommit files in `pre-artifact` folder if it is being used.
-        if (bundle.hasFiles()) {
+        if (bundle.has('files')) {
             Object.keys(bundle.options.files).forEach(function (key) {
                 var keyVal = bundle.options.files[key];
                 targets = Array.isArray(keyVal) ? targets.concat(keyVal) :
@@ -145,8 +145,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && (bundle.hasFiles() || (bundle.hasRequirejs()
-            || bundle.hasBrowserify()) || bundle.hasWatch());
+        return bundle && (bundle.has('files') || bundle.has('requirejs')
+            || bundle.has('browserify') || bundle.has('watch'));
     }
 
 }); // end of export

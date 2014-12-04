@@ -56,6 +56,7 @@ tasks:
 
     ignoredTasks:
       - clean
+      - deploy
 
     # Tasks to run if task is not overwritten by flag (see flags below)
     tasks:
@@ -65,7 +66,7 @@ tasks:
 #      - htmllint
 #      - browserify
 #      - requirejs
-      - concat
+#      - concat
       - minify
 
     # This is a global lint flag that is used if there is a lint task specified for a section
@@ -163,7 +164,7 @@ tasks:
     # Tasks to run on file changes ** Note ** only tasks that match changed file types will be run
     tasks:
       - build
-#      - deploy
+      - deploy
 
     # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null

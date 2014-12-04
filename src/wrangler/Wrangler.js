@@ -242,7 +242,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 retVal = yaml.safeLoad(file);
                 break;
         }
-
         return retVal;
     },
 

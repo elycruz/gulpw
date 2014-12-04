@@ -54,8 +54,8 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
 
         isBundleValidForTask: function (bundle) {
             // If bundle doesn't have any of the required keys, bail
-            return !(!bundle || !bundle.hasFiles()
-            || (!bundle.hasFilesJs() && bundle.hasFilesCss() && !bundle.hasFilesHtml()));
+            return bundle && bundle.has('files')
+                && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html'));
         }
 
     });
