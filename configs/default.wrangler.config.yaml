@@ -31,6 +31,11 @@ tasks:
       - css
       - html
     useVersionNumInFileName: false
+    template:
+      templateVariable: someGlobalVar
+      templatesKey: templates
+      removeWhitespace: true
+      tmpWritePath: ./.gulpw/tmp
 
   minify:
     header: |
@@ -50,6 +55,14 @@ tasks:
     jsTaskOptions: {}
     useMinPreSuffix: true
     useVersionNumInFileName: false
+    template:
+      templatesParentVar: someGlobalVar
+      templatesKey: templates
+      removeWhitespace: true
+      templateTypeKeys:
+        - mustache
+        - handlebars
+        - ejs
 
   # Build Task
   build:

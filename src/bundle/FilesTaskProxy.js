@@ -7,7 +7,11 @@ require('sjljs');
 
 var path = require('path'),
 
-    TaskProxy = require(path.join(__dirname, "TaskProxy.js"));
+    jsStringEscape = require('js-string-escape'),
+
+    TaskProxy = require(path.join(__dirname, "TaskProxy.js")),
+
+    fs = require('fs');
 
 module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
         TaskProxy.apply(this, options);
@@ -56,6 +60,40 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
             // If bundle doesn't have any of the required keys, bail
             return bundle && bundle.has('files')
                 && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html'));
+        },
+
+        getTemplatesString: function (bundle, gulp, wrangler) {
+            var output = '',
+                fileContent,
+                removeWhitespace = wrangler.tasks.minify.template.removeWhitespace,
+                templateOptions = wrangler.tasks.minify.template;
+
+            // Loop through allowed templates concatenation keys
+            templateOptions.templateTypeKeys.forEach(function (key) {
+
+                // If bundle doesn't have file type key, bail
+                if (!bundle.has('files.' + key)) {
+                    return;
+                }
+
+                // Loop through template files in bundle
+                bundle.options.files[key].forEach(function (file) {
+
+                    // Get file contents and make string safe for javascript
+                    fileContent = jsStringEscape(fs.readFileSync(file));
+
+                    // Remove white space if necessary
+                    fileContent = removeWhitespace ? fileContent.replace(/\s/, '') : fileContent;
+
+                    // Write file contents to key value pair on templates object
+                    output += templateOptions.templatesParentVar + '.' + templateOptions.templatesKey +
+                        '["' + path.basename(file, '.' + key) + '"] = "' + fileContent + '";';
+
+                }); // end of template files loop
+
+            }); // end of template type keys loop
+
+            return output;
         }
 
     });

@@ -11,6 +11,7 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
     minifycss = require('gulp-minify-css'),
     minifyhtml = require('gulp-minify-html'),
     header = require('gulp-header'),
+    footer = require('gulp-footer'),
     gulpif = require('gulp-if'),
     duration = require('gulp-duration'),
     chalk = require('chalk'),
@@ -35,15 +36,17 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
         }
 
         // Task string separator
-        var separator = wrangler.getTaskStrSeparator(),
+        var self = this,
+            separator = wrangler.getTaskStrSeparator(),
             taskConfigMap = {
                 html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
                 css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions},
-                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions},
+                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
             },
             useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
             bundleName = bundle.options.name,
-            taskName = 'minify' + separator + bundleName;
+            taskName = self.name + separator + bundleName,
+            templateOptions = wrangler.tasks.minify.template;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -51,7 +54,8 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
             // Check for sections on bundle that can be minified
             ['js', 'css', 'html'].forEach(function (ext) {
                 var buildPath = wrangler.tasks.minify[ext + 'BuildPath'],
-                    taskInstanceConfig = taskConfigMap[ext];
+                    taskInstanceConfig = taskConfigMap[ext],
+                    tmplsString;
 
                 // If no files for this section, bail to the next one
                 if (!bundle.has('files.' + ext)) {
@@ -71,12 +75,17 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
                     fs.unlinkSync(filePath);
                 }
 
+                // Only populate template string if extension we're looking at is 'js'
+                tmplsString = ext === 'js' ? self.getTemplatesString(bundle, gulp, wrangler) : null;
+
                 // Give gulp the list of sources to process
                 gulp.src(bundle.options.files[ext])
 
                     .pipe(concat(filePath))
 
-                    .pipe(duration(chalk.cyan('minify "' + bundle.options.name + ':' + ext + '" duration')))
+                    .pipe(gulpif( !sjl.empty(tmplsString), footer(tmplsString) ))
+
+                    .pipe(duration(chalk.cyan(self.name + ' "' + bundle.options.name + ':' + ext + '" duration')))
 
                     // Minify current source in the {artifacts}/ext directory
                     .pipe(gulpif(!wrangler.argv.dev, taskInstanceConfig.instance(taskInstanceConfig.options)))
