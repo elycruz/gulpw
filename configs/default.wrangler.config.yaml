@@ -213,7 +213,7 @@ tasks:
         - jQuery
         - Modernizr
         - Mustache
-        - marionette
+        - Marionette
         - require
 
   clean:
