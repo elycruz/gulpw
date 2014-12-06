@@ -11,6 +11,8 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
     gulpif = require('gulp-if'),
     duration = require('gulp-duration'),
     chalk = require('chalk'),
+    os = require('os'),
+    exec = require('child_process').exec,
     path = require('path');
 
 module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
@@ -33,18 +35,65 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
 
         // Task string separator
         var self = this,
+
+            // Task Separator
             separator = wrangler.getTaskStrSeparator(),
+
+            // RequireJs Config Section
             requireJsOptions = wrangler.tasks.requirejs,
+
+            // To minify or not to minify ... haha
             devMode = wrangler.argv.dev,
+
+            // Bundle name for task
             bundleName = bundle.options.name,
-            taskName = self.name + separator + bundleName;
+
+            // Task name
+            taskName = self.name + separator + bundleName,
+
+            // Rjs command (adding prefix for windows version)
+            rjsCommandName = 'r.js' + (os.platform().toLowerCase().indexOf('windows') ? '.cmd' : '');
 
         // Create task for bundle
         gulp.task(taskName, function () {
 
+            // Date for tracking task duration
+            var start = new Date();
+
+            // Message "Running task"
+            wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
+
+            // Execute r.js command
+            exec(rjsCommandName + ' -o ' + bundle.options.requirejs.buildConfigPath, {cwd: process.cwd()},
+
+                // "Child Process Execute" callback
+                function (error, stdout, stderr) {
+
+                    // Replace extraneous '\n' characters at the end of `stdout` and output `stdout`
+                    wrangler.log (chalk.grey(stdout.replace(/\n+$/g, '\n')), '--mandatory');
+
+                    // If error, log it
+                    if (error !== null) {
+                        console.log('exec error: ' + error);
+                    }
+
+                    // If `stderr` log it
+                    if (stderr) {
+                        console.log('stderr: ' + stderr);
+                    }
+
+                    // Notify of task completion and task duration
+                    wrangler.log(chalk.cyan(chalk.green(String.fromCharCode(8730)) + ' "requirejs" task completed.  Duration: ') +
+                        chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+
+                }); // end of execution callback
 
         }); // end of requirejs task
 
-    } // end of `registerBundle`
+    }, // end of `registerBundle`
+
+    isBundleValidForTask: function (bundle) {
+        return bundle.has('requirejs');
+    }
 
 }); // end of export
