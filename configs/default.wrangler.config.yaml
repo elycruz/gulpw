@@ -202,6 +202,7 @@ tasks:
   jshint:
     useJshintRc: false
     jsHintRcPath: ./configs/.jshintrc
+    ignoreFiles: null
     options:
       predef:
         - $
