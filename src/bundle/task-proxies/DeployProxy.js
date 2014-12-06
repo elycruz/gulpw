@@ -33,7 +33,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         // Get file count
         Object.keys(targets).forEach(function (key, index, list) {
-            startDeployMessage += (index === 0 ? '' : (index < list.length - 1 ? ', ' : ' and ')) + '*.' + key;
+            startDeployMessage += (index === 0 ? '' :
+                (index < list.length - 1 ? ', ' : ' and ')) + (key !== 'relative' ? '*.' : '') + key;
             totalFileCount += targets[key].length;
         });
 
@@ -172,7 +173,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 // Build deploy src path
                 if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
-                    deployPath = path.join(selectedServerEntry.deployRootFolder, selectedServerEntry.typesAndDeployPathsMap[fileType],
+                    deployPath = path.join(selectedServerEntry.deployRootFolder,
+                        selectedServerEntry.typesAndDeployPathsMap[fileType],
                         bundle.options.name + '.' + fileType);
                 }
                 else {
@@ -189,7 +191,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             }
 
             // Check allowedFileType in deploy.otherFiles key
-            if (hasDeployOtherFiles) {
+            if (hasDeployOtherFiles && !bundle.has('deploy.otherFiles' + fileType)) {
 
                 // Push array map entry
                 srcs[fileType] = self.mapFileArrayToDeployArrayMap(
@@ -198,13 +200,22 @@ module.exports = TaskProxy.extend("DeployProxy", {
             }
         });
 
+        // Other relative path files
+        if (bundle.has('deploy.otherFiles.relative')) {
+
+            // Push array map entry
+            srcs['relative'] = self.mapFileArrayToDeployArrayMap(
+                bundle.options.deploy.otherFiles['relative'], 'relative',
+                    selectedServerEntry, wrangler);
+        }
+
         return srcs;
 
     },
 
     mapFileArrayToDeployArrayMap: function (fileArray, fileType,
                                             selectedServerEntry, wrangler) {
-        return fileArray.map(function (item) {
+        return Array.isArray(fileArray) ? fileArray.map(function (item) {
             var retVal;
             if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
                 retVal = [item, path.join(selectedServerEntry.deployRootFolder, selectedServerEntry.typesAndDeployPathsMap[fileType],
@@ -212,6 +223,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             }
             else {
                 retVal = [item, path.join(selectedServerEntry.deployRootFolder, item)];
+                wrangler.log(item);
             }
 
             // Check if we need styled unix paths and are on windows
@@ -222,7 +234,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             retVal[0] = path.normalize(retVal[0]);
 
             return retVal;
-        });
+        }) : [];
     },
 
     isBundleValidForTask: function (bundle) {

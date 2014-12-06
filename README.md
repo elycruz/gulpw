@@ -43,6 +43,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
 	- [ ] - Deploy task should reference local deploy file name from `prompt` task config.
 	- [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
+	- [ ] - Fix all non streaming tasks to return streams so that other tasks can list them as dependencies.
 
 ### Notes:
 
