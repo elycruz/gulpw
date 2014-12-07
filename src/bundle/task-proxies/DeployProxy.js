@@ -17,7 +17,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
 
-        var deployOptions = wrangler.tasks.deploy,
+        var self = this,
+            deployOptions = wrangler.tasks.deploy,
             host = deployOptions.devHostnamePrefix + deployOptions.devHostname,
             sshOptions = {
                 host: host,
@@ -50,29 +51,61 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
 
+                //conn.exec('uptime', function(err, stream) {
+                //    if (err) throw err;
+                //    stream.on('exit', function(code, signal) {
+                //        console.log('Stream :: exit :: code: ' + code + ', signal: ' + signal);
+                //    }).on('close', function() {
+                //        console.log('Stream :: close');
+                //        conn.end();
+                //    }).on('data', function(data) {
+                //        console.log('STDOUT: ' + data);
+                //    }).stderr.on('data', function(data) {
+                //            console.log('STDERR: ' + data);
+                //        });
+                //});
+
+                // Make sure directories exist
+
                 conn.sftp(function (err, sftp) {
 
-                    if (err) {
-                        throw err;
-                    }
+                    if (err) { throw err; }
 
                     var target;
 
                     wrangler.log('\n', chalk.grey(startDeployMessage), '\n', '--mandatory');
 
+                    // Loop through all target keys in targets
                     Object.keys(targets).forEach(function (key) {
-                        target = targets[key];
-                        target.forEach(function (item) {
-                            sftp.fastPut(item[0], item[1],
 
-                                // Callback
-                                function (err) {
-                                    wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory')
+                        // Get file pair ([local-file, server-file])
+                        target = targets[key];
+
+                        // Loop through files and upload them
+                        target.forEach(function (item) {
+
+                            // Make sure directories exist before trying to put files to them
+                            conn.exec('mkdir -p ' + path.dirname(item[1]), function (err, stream) {
+
+                                // If error
+                                if (err) {
+                                    console.log('', err);
+                                }
+
+                                // Put file to server
+                                sftp.fastPut(item[0], item[1],
+
+                                    // Callback
+                                    function (err) {
+                                        wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory')
                                         wrangler.log(chalk.green(' => ', item[1]));
-                                    if (err) { throw err; }
-                                    uploadedFileCount += 1;
-                                });
+                                        if (err) { throw err; }
+                                        uploadedFileCount += 1;
+                                    });
+                            });
+
                         });
+
                     }); // end of files loop
 
                     var countTimeout = setInterval(function () {
@@ -253,6 +286,12 @@ module.exports = TaskProxy.extend("DeployProxy", {
             sjl.extend(true, wrangler.tasks.deploy, localConfig);
         }
         return this;
+    },
+
+    mkdirpOnServer: function (sftp, dirPath) {
+        sftp.mkdir(dirPath, {}, function () {
+            console.log(dirPath + ' created');
+        });
     }
 
 }); // end of export

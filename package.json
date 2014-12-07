@@ -32,6 +32,7 @@
     "liftoff": "^0.13.6",
     "mkdirp": "^0.5.0",
     "prompt": "^0.2.14",
+    "requirejs": "^2.1.15",
     "sjljs": "git://github.com/elycruz/sjljs",
     "ssh2": "^0.3.6",
     "var_dumpjs": "git://github.com/elycruz/var_dumpjs",

@@ -7,18 +7,45 @@ require('sjljs');
 var FilesTaskProxy = require('../FilesTaskProxy'),
     fs = require('fs'),
     header = require('gulp-header'),
-    footer = require('gulp-footer'),
-    gulpif = require('gulp-if'),
+    requirejs = require('requirejs'),
     duration = require('gulp-duration'),
     chalk = require('chalk'),
-    os = require('os'),
-    exec = require('child_process').exec,
     path = require('path');
 
 module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
     FilesTaskProxy.apply(this, options);
     this.name = 'requirejs';
 }, {
+
+    registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler) {
+
+        // Create task for bundle
+        gulp.task(taskName, function () {
+
+            // Date for tracking task duration
+            var start = new Date();
+
+            // Message "Running task"
+            wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
+
+            requirejs.optimize(requireJsOptions, function (buildResponse) {
+                //buildResponse is just a text output of the modules
+                //included. Load the built file for the contents.
+                //Use config.out to get the optimized file contents.
+                wrangler.log(buildResponse, '--mandatory');
+
+                // Notify of task completion and task duration
+                wrangler.log(chalk.cyan(chalk.green(String.fromCharCode(8730)) +
+                    ' "requirejs" task completed.  Duration: ') +
+                    chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+
+            }, function(err) {
+                //optimization err callback
+                wrangler.log(chalk.red('r.js encountered an error:\n' + err), '--mandatory');
+            });
+
+        }); // end of requirejs task
+    },
 
     /**
      * Regsiters bundle with requirejs gulp task.
@@ -39,12 +66,6 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             // Task Separator
             separator = wrangler.getTaskStrSeparator(),
 
-            // RequireJs Config Section
-            requireJsOptions = wrangler.tasks.requirejs,
-
-            // To minify or not to minify ... haha
-            devMode = wrangler.argv.dev,
-
             // Bundle name for task
             bundleName = bundle.options.name,
 
@@ -52,48 +73,20 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             taskName = self.name + separator + bundleName,
 
             // Rjs command (adding prefix for windows version)
-            rjsCommandName = self.getRjsCommand(bundle) ;
+            requireJsOptions = self.getRequireJsOptions(bundle);
 
-        // Create task for bundle
-        gulp.task(taskName, function () {
-
-            // Date for tracking task duration
-            var start = new Date();
-
-            // Message "Running task"
-            wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
-
-            // Execute r.js command
-            exec(rjsCommandName, {cwd: process.cwd()},
-
-                // "Child Process Execute" callback
-                function (error, stdout, stderr) {
-
-                    // Replace extraneous '\n' characters at the end of `stdout` and output `stdout`
-                    wrangler.log (chalk.grey(stdout.replace(/\n+$/g, '\n')), '--mandatory');
-
-                    // If error, log it
-                    if (error !== null) {
-                        console.log('exec error: ' + error);
-                    }
-
-                    // If `stderr` log it
-                    if (stderr) {
-                        console.log('stderr: ' + stderr);
-                    }
-
-                    // Notify of task completion and task duration
-                    wrangler.log(chalk.cyan(chalk.green(String.fromCharCode(8730)) +
-                        ' "requirejs" task completed.  Duration: ') +
-                            chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
-
-                }); // end of execution callback
-
-        }); // end of requirejs task
+        self.registerGulpTask(taskName, requireJsOptions, gulp, wrangler);
 
     }, // end of `registerBundle`
 
-    requireJsBuildType: function (bundle) {
+    registerBundles: function (bundles, gulp, wrangler) {
+        var self = this;
+        bundles.forEach(function (bundle) {
+            self.registerBundle(bundle);
+        });
+    },
+
+    getRequireJsOptions: function (bundle) {
         var rjsOptions = null;
         if (bundle.has('requirejs.buildConfigPath')) {
             // Load build config
@@ -105,16 +98,11 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             //
             rjsOptions = bundle.options.requirejs.options;
         }
-        return !sjl.empty(rjsOptions['dir']) ? 'dir' : 'out';
-    },
-
-    getRjsCommand: function (bundle) {
-        return 'r.js' + (os.platform().toLowerCase().indexOf('windows') ? '.cmd' : '') +
-            ' -o ' + bundle.options.requirejs.buildConfigPath;
+        return rjsOptions;
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle.has('requirejs');
+        return bundle.has('requirejs.buildConfigPath') || bundle.has('requirejs.options');
     }
 
 }); // end of export
