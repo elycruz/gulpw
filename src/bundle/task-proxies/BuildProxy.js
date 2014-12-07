@@ -58,7 +58,7 @@ module.exports = TaskProxy.extend("BuildProxy", {
     },
 
     isBundleValidForMinifyAndConcat: function (bundle) {
-       return bundle && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html'));
+       return bundle && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html') || bundle.has('files.html'));
     },
 
     getTasksForBundle: function (bundle, wrangler) {
@@ -73,11 +73,17 @@ module.exports = TaskProxy.extend("BuildProxy", {
             targets.push(task + separator + bundleName);
         });
 
+        // If bundle has minifiable or concatable sources build
         if (this.isBundleValidForMinifyAndConcat(bundle)) {
             // @todo put a condition here so that we run concat and copy the
             // file over to the build directory when the '--dev' flag is passed in
             //targets.push('concat' +  separator + bundleName);
             targets.push('minify' + separator + bundleName); // does both minify and concat
+        }
+
+        // If bundle has requirejs
+        if (bundle.has('requirejs')) {
+            targets.push('requirejs' + separator + bundleName);
         }
 
         return targets;

@@ -52,7 +52,7 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             taskName = self.name + separator + bundleName,
 
             // Rjs command (adding prefix for windows version)
-            rjsCommandName = 'r.js' + (os.platform().toLowerCase().indexOf('windows') ? '.cmd' : '');
+            rjsCommandName = self.getRjsCommand(bundle) ;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -64,7 +64,7 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
 
             // Execute r.js command
-            exec(rjsCommandName + ' -o ' + bundle.options.requirejs.buildConfigPath, {cwd: process.cwd()},
+            exec(rjsCommandName, {cwd: process.cwd()},
 
                 // "Child Process Execute" callback
                 function (error, stdout, stderr) {
@@ -83,14 +83,35 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
                     }
 
                     // Notify of task completion and task duration
-                    wrangler.log(chalk.cyan(chalk.green(String.fromCharCode(8730)) + ' "requirejs" task completed.  Duration: ') +
-                        chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+                    wrangler.log(chalk.cyan(chalk.green(String.fromCharCode(8730)) +
+                        ' "requirejs" task completed.  Duration: ') +
+                            chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
 
                 }); // end of execution callback
 
         }); // end of requirejs task
 
     }, // end of `registerBundle`
+
+    requireJsBuildType: function (bundle) {
+        var rjsOptions = null;
+        if (bundle.has('requirejs.buildConfigPath')) {
+            // Load build config
+            rjsOptions = yaml.safeLoad(
+                fs.readFileSync(
+                    bundle.options.requirejs.buildConfigPath));
+        }
+        else if (bundle.has('requirejs.options')) {
+            //
+            rjsOptions = bundle.options.requirejs.options;
+        }
+        return !sjl.empty(rjsOptions['dir']) ? 'dir' : 'out';
+    },
+
+    getRjsCommand: function (bundle) {
+        return 'r.js' + (os.platform().toLowerCase().indexOf('windows') ? '.cmd' : '') +
+            ' -o ' + bundle.options.requirejs.buildConfigPath;
+    },
 
     isBundleValidForTask: function (bundle) {
         return bundle.has('requirejs');
