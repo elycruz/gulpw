@@ -21,6 +21,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             gulp.watch(targets, function (event) {
 
                 var doneTaskCount = 0,
+                    doneDeployCount = 0,
                     fileShortPath = event.path;
                 //
                 //if (Array.isArray(targets) && targets.length > 0) {
@@ -35,10 +36,14 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 //    fileShortPath = targets;
                 //}
 
-                console.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';  Change type: ' + event.type + ';'),
-                    chalk.dim('Running tasks...'), '\n');
+                wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
+                wrangler.log('Change type: ' + event.type + ';');
+                wrangler.log(chalk.dim('Running tasks sub tasks...'), '--mandatory');
+                wrangler.log(tasks, '--debug');
 
-                wrangler.launchTasks(tasks, gulp);
+                wrangler.launchTasks(tasks.filter(function (task) {
+                        return task.indexOf('deploy') === -1;
+                    }), gulp);
 
                 if (watchInterval !== null) {
                     clearInterval(watchInterval);
@@ -51,9 +56,21 @@ module.exports = TaskProxy.extend("DeployProxy", {
                             doneTaskCount += 1;
                         }
                     });
+
                     //console.log(doneTaskCount);
+
                     if (doneTaskCount >= taskKeys.length) {
-                        console.log(chalk.cyan('\nBuild and Deploy completed.') + chalk.dim('\nNow watching for more changes...'));
+                        console.log(chalk.cyan('\nBuild completed.'));
+
+                        wrangler.log(tasks.filter(function (task) {
+                                return task.indexOf('deploy') > -1;
+                            }), '--debug');
+
+                        // Launch any `deploy` tasks that may have been defined
+                        wrangler.launchTasks(tasks.filter(function (task) {
+                                return task.indexOf('deploy') > -1;
+                            }), gulp);
+
                         clearInterval(watchInterval);
                     }
                 }, 10);

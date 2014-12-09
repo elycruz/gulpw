@@ -320,43 +320,16 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     launchTasks: function (tasks, gulp) {
-
-        var deployTasks = tasks.filter(function (task) {
-            return task.indexOf('deploy');
-        }),
-            intervalId;
-
-        if (deployTasks.length > 1) {
-
+        if (sjl.empty(tasks)) {
+            console.warn(chalk.yellow('No sub tasks to run from Wrangler.launch tasks.'));
+            return;
         }
-        else {
-
-        }
-
         // loop through tasks and call gulp.start on each
         tasks.forEach(function (item) {
             // Run task
             gulp.start(item);
 
         });
-
-        //intervalId = setInterval(function () {
-        //    var numCompletedTasks = tasks.filter(function (task) {
-        //            task = gulp.tasks[task];
-        //            return !sjl.empty(task.done) && task.running === false;
-        //        }).length,
-        //
-        //        done = numCompletedTasks === tasks.length;
-        //
-        //    console.log(numCompletedTasks + ' completed of ' + tasks.length);
-        //
-        //    if (done) {
-        //        clearInterval(intervalId);
-        //        console.log('done');
-        //    }
-        //}, 10);
-
-        this.log(gulp, '--debug');
     }
 
 });

@@ -9,7 +9,6 @@ var TaskProxy = require('../TaskProxy'),
     path = require('path'),
     fs = require('fs'),
     ssh = require('ssh2'),
-    conn = new ssh(),
     chalk = require('chalk'),
     yaml = require('js-yaml');
 
@@ -42,6 +41,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
         startDeployMessage += ' files.';
 
         gulp.task(taskName, function () {
+
+            var conn = new ssh();
 
             wrangler.log('\n', 'Running ' + chalk.cyan('"' + taskName + '"') + ' task.', '--mandatory');
 
@@ -98,6 +99,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                         if (totalFileCount <= uploadedFileCount) {
                             wrangler.log(chalk.cyan('\n File deployment complete.'),
                                 chalk.grey('\n\n Closing connection...'));
+                            gulp.tasks[taskName].done = true;
                             conn.end();
                             clearInterval(countTimeout);
                         }

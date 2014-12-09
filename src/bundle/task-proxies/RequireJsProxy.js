@@ -17,7 +17,7 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
     this.name = 'requirejs';
 }, {
 
-    registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler) {
+    registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -28,7 +28,7 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             // Message "Running task"
             wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
 
-            requirejs.optimize(requireJsOptions, function (buildResponse) {
+            requirejs.optimize(sjl.extend({}, bundle.options.requirejs.options), function (buildResponse) {
                 //buildResponse is just a text output of the modules
                 //included. Load the built file for the contents.
                 //Use config.out to get the optimized file contents.
@@ -75,12 +75,13 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             // Rjs command (adding prefix for windows version)
             requireJsOptions = self.getRequireJsOptions(bundle);
 
-        self.registerGulpTask(taskName, requireJsOptions, gulp, wrangler);
+        self.registerGulpTask(taskName, requireJsOptions, gulp, wrangler, bundle);
 
     }, // end of `registerBundle`
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
+            taskName,
             targets;
 
         // If we do not have any bundles, bail
@@ -99,8 +100,14 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
                 return;
             }
 
+            // Get task name
+            taskName = 'requirejs:' + bundle.options.name;
+
             // Push task name to targets list
-            targets.push('requirejs:' + bundle.options.name);
+            targets.push(taskName);
+
+            // Register singular task
+            self.registerGulpTask(taskName, bundle.options.requirejs.options, gulp, wrangler, bundle);
         });
 
         // If we have targets register them
