@@ -14,6 +14,11 @@ module.exports = TaskProxy.extend("DeployProxy", {
         var tasks,
             watchInterval = null;
 
+        // If no tasks or targets bail
+        if (sjl.empty(tasks) || sjl.empty(targets)) {
+            return;
+        }
+
         gulp.task(taskName, function () {
 
             console.log('\nWatching for changes...');
@@ -21,58 +26,71 @@ module.exports = TaskProxy.extend("DeployProxy", {
             gulp.watch(targets, function (event) {
 
                 var doneTaskCount = 0,
-                    doneDeployCount = 0,
-                    fileShortPath = event.path;
-                //
-                //if (Array.isArray(targets) && targets.length > 0) {
-                //    fileShortPath = targets.filter(function (file) {
-                //        //console.log(file, '\n');
-                //        file = file.indexOf('./') === 0 ? file.substr(1, file.length) : file;
-                //        //console.log(file, '\n');
-                //        return (fileShortPath.replace(/\\/, '/')).indexOf(file) > -1;
-                //    })[0];
-                //}
-                //else if (sjl.classOfIs(targets, 'String')) {
-                //    fileShortPath = targets;
-                //}
+                    deployTasksLaunched = false,
+                    fileShortPath = event.path,
+                    deployTasks;
 
                 wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
                 wrangler.log('Change type: ' + event.type + ';');
                 wrangler.log(chalk.dim('Running tasks sub tasks...'), '--mandatory');
                 wrangler.log(tasks, '--debug');
 
+                // Launch all tasks except for deploy tasks
                 wrangler.launchTasks(tasks.filter(function (task) {
                         return task.indexOf('deploy') === -1;
                     }), gulp);
+
+                // Get deploy tasks
+                deployTasks = tasks.filter(function (task) {
+                    return task.indexOf('deploy') > -1;
+                });
 
                 if (watchInterval !== null) {
                     clearInterval(watchInterval);
                 }
 
                 watchInterval = setInterval(function () {
-                    var taskKeys = Object.keys(gulp.tasks);
-                    taskKeys.forEach(function (key) {
-                        if (gulp.tasks[key].done === true) {
-                            doneTaskCount += 1;
+                    var taskKeys = Object.keys(gulp.tasks),
+                        hasDeployTasks = deployTasks.length > 0,
+                        otherTasksComplete = doneTaskCount === taskKeys.length,
+                        deployTasksComplete = (doneTaskCount + taskKeys.length)
+                            === (taskKeys.length + deployTasks.length);
+
+                    if (!otherTasksComplete) {
+                        if (doneTaskCount < taskKeys.length) {
+                            taskKeys.forEach(function (key) {
+                                if (gulp.tasks[key].done === true) {
+                                    doneTaskCount += 1;
+                                }
+                            });
                         }
-                    });
 
-                    //console.log(doneTaskCount);
+                        else if (otherTasksComplete && !hasDeployTasks) {
+                            console.log(chalk.cyan('\nBuild completed.'));
+                            clearInterval(watchInterval);
+                        }
 
-                    if (doneTaskCount >= taskKeys.length) {
-                        console.log(chalk.cyan('\nBuild completed.'));
-
-                        wrangler.log(tasks.filter(function (task) {
-                                return task.indexOf('deploy') > -1;
-                            }), '--debug');
-
-                        // Launch any `deploy` tasks that may have been defined
-                        wrangler.launchTasks(tasks.filter(function (task) {
-                                return task.indexOf('deploy') > -1;
-                            }), gulp);
-
-                        clearInterval(watchInterval);
+                        else if (otherTasksComplete && hasDeployTasks) {
+                            console.log(chalk.cyan('\nBuild completed.'));
+                        }
                     }
+
+                    else if (hasDeployTasks) {
+                        //if (!deployTasksComplete && !deployTasksLaunched) {
+                        //    // Launch any `deploy` tasks that may have been defined
+                        //    wrangler.launchTasks(tasks.filter(function (task) {
+                        //        return task.indexOf('deploy') > -1;
+                        //    }), gulp);
+                        //
+                        //    deployTasksLaunched = true;
+                        //}
+                        //else if (deployTasksComplete) {
+                        //    // Log deploy tasks if in debug mode
+                        //    wrangler.log('Deploy Tasks: \n' + deployTasks, '--debug');
+                            clearInterval(watchInterval);
+                        //}
+                    }
+
                 }, 10);
 
             });
