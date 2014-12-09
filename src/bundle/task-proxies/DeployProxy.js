@@ -51,20 +51,6 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
 
-                //conn.exec('uptime', function(err, stream) {
-                //    if (err) throw err;
-                //    stream.on('exit', function(code, signal) {
-                //        console.log('Stream :: exit :: code: ' + code + ', signal: ' + signal);
-                //    }).on('close', function() {
-                //        console.log('Stream :: close');
-                //        conn.end();
-                //    }).on('data', function(data) {
-                //        console.log('STDOUT: ' + data);
-                //    }).stderr.on('data', function(data) {
-                //            console.log('STDERR: ' + data);
-                //        });
-                //});
-
                 // Make sure directories exist
 
                 conn.sftp(function (err, sftp) {
@@ -85,21 +71,21 @@ module.exports = TaskProxy.extend("DeployProxy", {
                         target.forEach(function (item) {
 
                             // Make sure directories exist before trying to put files to them
-                            conn.exec('mkdir -p ' + path.dirname(item[1]), function (err, stream) {
+                            conn.exec('mkdir -p ' + path.dirname(item[1]), function (err2, stream) {
 
                                 // If error
                                 if (err) {
-                                    console.log('', err);
+                                    wrangler.log('', err2, '--debug');
                                 }
 
                                 // Put file to server
                                 sftp.fastPut(item[0], item[1],
 
                                     // Callback
-                                    function (err) {
+                                    function (err3) {
                                         wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory')
                                         wrangler.log(chalk.green(' => ', item[1]));
-                                        if (err) { throw err; }
+                                        if (err3) { throw err3; }
                                         uploadedFileCount += 1;
                                     });
                             });
@@ -148,7 +134,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             return;
         }
 
-        this.mergeLocalConfigs(wrangler);
+        this.mergeLocalConfigs(gulp, wrangler);
 
         // Task string separator
         var targets = this.getSrcForBundle(bundle, wrangler);
@@ -277,13 +263,19 @@ module.exports = TaskProxy.extend("DeployProxy", {
             || bundle.has('deploy.otherFiles') );
     },
 
-    mergeLocalConfigs: function (wrangler) {
+    mergeLocalConfigs: function (gulp, wrangler) {
         var localConfigPath = path.join(wrangler.localConfigPath, wrangler.tasks.deploy.localDeployFileName),
             localConfig;
         // Get local deploy config if exists
         if (fs.existsSync(localConfigPath)) {
             localConfig = yaml.safeLoad(fs.readFileSync(localConfigPath));
             sjl.extend(true, wrangler.tasks.deploy, localConfig);
+        }
+        else {
+            // Log a warning
+            wrangler.log('\n' + chalk.yellow('Please run the "prompt:deploy" task before ' +
+                'attempting to deploy (running the task now).') + '\n', '--mandatory');
+            this.localConfigLoadFailed = true;
         }
         return this;
     },

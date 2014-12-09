@@ -135,6 +135,11 @@ module.exports = TaskProxy.extend("DeployProxy", {
             });
         }
 
+        if (bundle.has('requirejs')) {
+            targets.push(path.join(bundle.options.requirejs.options.appDir,
+                bundle.options.requirejs.options.baseUrl) + path.sep + '**/*');
+        }
+
         return targets;
     },
 

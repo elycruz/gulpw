@@ -44,6 +44,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [ ] - Deploy task should reference local deploy file name from `prompt` task config.
 	- [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
 	- [ ] - Fix all non streaming tasks to return streams so that other tasks can list them as dependencies.
+	- [ ] - Add pointers to `gulp` and `wrangler` to `*TaskProxy` (eliminates having to pass them around all the time).
 
 ### Notes:
 

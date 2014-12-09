@@ -99,7 +99,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this;
 
         // Creating task proxies message
-        self.log("- Creating task proxies.");
+        self.log("\n- Creating task proxies.");
 
         Object.keys(self.tasks).forEach(function (task) {
             self.tasks[task].instance = self.createTaskProxy(gulp, task);
@@ -110,7 +110,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     createTaskProxy: function (gulp, task) {
         // "Creating task ..." message
-        this.log("Creating task proxy \"" + task + "\".  constructor at: \"" +
+        this.log(" - Creating task proxy \"" + task + "\".  constructor at: \"" +
             this.taskProxyMap[task].constructorLocation + "\"");
 
         var self = this,
@@ -125,7 +125,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     createStaticTaskProxy: function (gulp, task) {
         // "Creating task ..." message
-        this.log("Creating static task proxy \"" + task + "\".  constructor at: \"" +
+        this.log("\n- Creating static task proxy \"" + task + "\".  constructor at: \"" +
             this.taskProxyMap[task].constructorLocation + "\"");
 
         var self = this,
@@ -147,7 +147,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             bundlesPath;
 
         // Creating task proxies message
-        self.log("- Creating bundles.");
+        self.log("\n- Creating bundles.");
 
         bundlesPath = self.bundlesPath;
 
@@ -174,7 +174,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
 
         // "Creating task ..." message
-        this.log('Creating bundle "' + config.name + '"');
+        this.log(' - Creating bundle "' + config.name + '"');
 
         var bundle = new Bundle(config);
 
@@ -320,11 +320,43 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     launchTasks: function (tasks, gulp) {
+
+        var deployTasks = tasks.filter(function (task) {
+            return task.indexOf('deploy');
+        }),
+            intervalId;
+
+        if (deployTasks.length > 1) {
+
+        }
+        else {
+
+        }
+
         // loop through tasks and call gulp.start on each
         tasks.forEach(function (item) {
             // Run task
             gulp.start(item);
+
         });
+
+        //intervalId = setInterval(function () {
+        //    var numCompletedTasks = tasks.filter(function (task) {
+        //            task = gulp.tasks[task];
+        //            return !sjl.empty(task.done) && task.running === false;
+        //        }).length,
+        //
+        //        done = numCompletedTasks === tasks.length;
+        //
+        //    console.log(numCompletedTasks + ' completed of ' + tasks.length);
+        //
+        //    if (done) {
+        //        clearInterval(intervalId);
+        //        console.log('done');
+        //    }
+        //}, 10);
+
+        this.log(gulp, '--debug');
     }
 
 });
