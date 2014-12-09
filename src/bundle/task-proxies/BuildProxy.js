@@ -8,12 +8,6 @@ var TaskProxy = require('../TaskProxy');
 
 module.exports = TaskProxy.extend("BuildProxy", {
 
-    registerGulpTask: function (taskName, taskList, gulp, wrangler) {
-        gulp.task(taskName, function () {
-            wrangler.launchTasks(taskList, gulp);
-        });
-    },
-
     /**
      *
      * @param bundle {Bundle}
@@ -24,18 +18,18 @@ module.exports = TaskProxy.extend("BuildProxy", {
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
             self = this,
-            taskName = 'build',
             bundleName = bundle.options.name,
+            taskName = 'build' + separator + bundleName,
             targets;
 
         if (!self.isBundleValidForTask(bundle)) {
-            console.warn('\n!Warning: Bundle "' + bundleName + '" is not valid for `build` task.\n');
+            console.warn('\n' + chalk.yellow('Warning: Bundle "' + bundleName + '" is not valid for `build` task.') + '\n');
             return; // @todo log message/warning here
         }
 
         targets = self.getTasksForBundle(bundle, wrangler);
 
-        self.registerGulpTask('build' + separator + bundleName, targets, gulp, wrangler);
+        self.registerGulpTasks(taskName, targets, gulp, wrangler);
 
     }, // end of `registerBundle`
 
@@ -50,7 +44,7 @@ module.exports = TaskProxy.extend("BuildProxy", {
             targets = self.getTasksForBundle(bundle, wrangler).concat(targets);
         });
 
-        self.registerGulpTask('build', targets, gulp, wrangler);
+        self.registerGulpTasks('build', targets, gulp, wrangler);
     },
 
     isBundleValidForTask: function (bundle) {
@@ -79,11 +73,6 @@ module.exports = TaskProxy.extend("BuildProxy", {
             // file over to the build directory when the '--dev' flag is passed in
             //targets.push('concat' +  separator + bundleName);
             targets.push('minify' + separator + bundleName); // does both minify and concat
-        }
-
-        // If bundle has requirejs
-        if (bundle.has('requirejs')) {
-            targets.push('requirejs' + separator + bundleName);
         }
 
         return targets;

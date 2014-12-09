@@ -19,6 +19,12 @@ module.exports = sjl.Extendable.extend(function TaskProxy(options) {
             // Overwrite from extending class
         },
 
+        registerGulpTasks: function (taskName, tasks, gulp, wrangler) {
+            gulp.task(taskName, function () {
+                wrangler.launchTasks(tasks, gulp);
+            });
+        },
+
         launchTasks: function (tasks, gulp, wrangler) {
             return wrangler.launchTasks(tasks, gulp);
         },

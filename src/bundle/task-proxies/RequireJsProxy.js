@@ -35,8 +35,8 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
                 wrangler.log(buildResponse, '--mandatory');
 
                 // Notify of task completion and task duration
-                wrangler.log(chalk.cyan(chalk.green(String.fromCharCode(8730)) +
-                    ' "requirejs" task completed.  Duration: ') +
+                wrangler.log('[' + chalk.green('gulp') +  ']' +
+                    chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
                     chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
 
             }, function(err) {
@@ -80,10 +80,34 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
     }, // end of `registerBundle`
 
     registerBundles: function (bundles, gulp, wrangler) {
-        var self = this;
+        var self = this,
+            targets;
+
+        // If we do not have any bundles, bail
+        if (!Array.isArray(bundles) || sjl.empty(bundles)) {
+            return;
+        }
+
+        // Init targets list
+        targets = [];
+
+        // Loop through bundles for task name
         bundles.forEach(function (bundle) {
-            self.registerBundle(bundle);
+
+            // If bundle not valid skip it
+            if (!self.isBundleValidForTask(bundle)) {
+                return;
+            }
+
+            // Push task name to targets list
+            targets.push('requirejs:' + bundle.options.name);
         });
+
+        // If we have targets register them
+        if (targets.length > 0) {
+            self.registerGulpTasks('requirejs', targets, gulp, wrangler);
+        }
+
     },
 
     getRequireJsOptions: function (bundle) {
