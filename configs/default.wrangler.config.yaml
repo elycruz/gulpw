@@ -69,7 +69,7 @@ tasks:
 
     ignoredTasks:
       - clean
-#      - deploy
+      - deploy
 
     # Tasks to run if task is not overwritten by flag (see flags below)
     tasks:

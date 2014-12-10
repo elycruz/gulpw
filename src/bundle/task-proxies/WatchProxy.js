@@ -28,70 +28,96 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 var doneTaskCount = 0,
                     deployTasksLaunched = false,
                     fileShortPath = event.path,
-                    deployTasks;
+                    otherTasks,
+                    deployTasks,
+                    rawTaskKeys;
 
                 wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
                 wrangler.log('Change type: ' + event.type + ';');
                 wrangler.log(chalk.dim('Running tasks sub tasks...'), '--mandatory');
-                wrangler.log(tasks, '--debug');
-
-                // Launch all tasks except for deploy tasks
-                wrangler.launchTasks(tasks.filter(function (task) {
-                        return task.indexOf('deploy') === -1;
-                    }), gulp);
 
                 // Get deploy tasks
                 deployTasks = tasks.filter(function (task) {
                     return task.indexOf('deploy') > -1;
                 });
 
+                tasks = tasks.filter(function (task) {
+                    return task.indexOf('deploy') === - 1;
+                });
+
+                // Launch all tasks except for deploy tasks
+                wrangler.launchTasks(tasks, gulp);
+
+                rawTaskKeys = Object.keys(gulp.tasks);
+
+                // Get deploy tasks
+                deployTasks = deployTasks.concat(rawTaskKeys.filter(function (task) {
+                    return task.indexOf('deploy') > -1;
+                }));
+
+                // Get deploy tasks
+                otherTasks = rawTaskKeys.filter(function (task) {
+                    return task.indexOf('deploy') === -1;
+                });
+
                 if (watchInterval !== null) {
                     clearInterval(watchInterval);
                 }
 
+                deployTasks = deployTasks.filter(function (item, i, list) {
+                    return list.indexOf(item) === i;
+                });
+
                 watchInterval = setInterval(function () {
-                    var taskKeys = Object.keys(gulp.tasks),
-                        hasDeployTasks = deployTasks.length > 0,
-                        otherTasksComplete = doneTaskCount === taskKeys.length,
-                        deployTasksComplete = (doneTaskCount + taskKeys.length)
-                            === (taskKeys.length + deployTasks.length);
+                    var hasDeployTasks = deployTasks.length > 0,
+                        otherTasksComplete = doneTaskCount === otherTasks.length,
+                        deployTasksComplete = (doneTaskCount + otherTasks.length)
+                            >= (otherTasks.length + deployTasks.length);
 
-                    if (!otherTasksComplete) {
-                        if (doneTaskCount < taskKeys.length) {
-                            taskKeys.forEach(function (key) {
-                                if (gulp.tasks[key].done === true) {
-                                    doneTaskCount += 1;
-                                }
-                            });
+                    if (!otherTasksComplete && doneTaskCount < otherTasks.length) {
+                        otherTasks.forEach(function (key) {
+                            if (gulp.tasks[key].done === true) {
+                                doneTaskCount += 1;
+                            }
+                        });
+                    }
+
+                    else if (otherTasksComplete && !hasDeployTasks) {
+                        console.log(chalk.cyan('\nBuild completed.'));
+                        clearInterval(watchInterval);
+                    }
+
+                    else if (otherTasksComplete && hasDeployTasks) {
+                        console.log(chalk.cyan('\nBuild completed.'));
+                    }
+
+                    console.log(hasDeployTasks, deployTasksComplete, deployTasksLaunched, otherTasksComplete, otherTasks.length, doneTaskCount,
+                    otherTasks, deployTasks);
+
+                    if (hasDeployTasks) {
+
+                        if (!deployTasksComplete && !deployTasksLaunched && otherTasksComplete) {
+                            wrangler.log('DEPLOY.');
+
+                            console.log(deployTasks);
+
+                            // Launch any `deploy` tasks that may have been defined
+                            wrangler.launchTasks(deployTasks, gulp);
+
+                            deployTasksLaunched = true;
                         }
-
-                        else if (otherTasksComplete && !hasDeployTasks) {
-                            console.log(chalk.cyan('\nBuild completed.'));
+                        else if (deployTasksComplete) {
                             clearInterval(watchInterval);
                         }
 
-                        else if (otherTasksComplete && hasDeployTasks) {
-                            console.log(chalk.cyan('\nBuild completed.'));
-                        }
+                        deployTasks.forEach(function (key) {
+                            if (gulp.tasks[key].done === true) {
+                                doneTaskCount += 1;
+                            }
+                        });
                     }
 
-                    else if (hasDeployTasks) {
-                        //if (!deployTasksComplete && !deployTasksLaunched) {
-                        //    // Launch any `deploy` tasks that may have been defined
-                        //    wrangler.launchTasks(tasks.filter(function (task) {
-                        //        return task.indexOf('deploy') > -1;
-                        //    }), gulp);
-                        //
-                        //    deployTasksLaunched = true;
-                        //}
-                        //else if (deployTasksComplete) {
-                        //    // Log deploy tasks if in debug mode
-                        //    wrangler.log('Deploy Tasks: \n' + deployTasks, '--debug');
-                            clearInterval(watchInterval);
-                        //}
-                    }
-
-                }, 10);
+                }, 1000);
 
             });
         });

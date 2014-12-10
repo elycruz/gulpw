@@ -60,12 +60,16 @@ module.exports = TaskProxy.extend("BuildProxy", {
             bundleName = bundle.options.name,
             targets = [],
             ignoredTasks = wrangler.tasks.build.ignoredTasks;
+
         Object.keys(wrangler.tasks).forEach(function (task) {
+            console.log(ignoredTasks.indexOf(task) > -1);
             if (sjl.empty(bundle.options[task]) || ignoredTasks.indexOf(task) > -1) {
                 return;
             }
             targets.push(task + separator + bundleName);
         });
+
+        console.log(targets);
 
         // If bundle has minifiable or concatable sources build
         if (this.isBundleValidForMinifyAndConcat(bundle)) {
@@ -74,6 +78,8 @@ module.exports = TaskProxy.extend("BuildProxy", {
             //targets.push('concat' +  separator + bundleName);
             targets.push('minify' + separator + bundleName); // does both minify and concat
         }
+
+        console.log(targets);
 
         return targets;
     }
