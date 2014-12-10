@@ -17,23 +17,45 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
          * Registers the clean gulp task for a `taskSuffix`.
          * @param taskSuffix {String} - Required
          * @param targets {Array|String} - Required
+         * @param gulp {gulp} - Required
          * @param wrangler {Wrangler} - Required
          * @return {void}
          */
-        registerGulpTask: function (taskSuffix, targets, gulp) {
+        registerGulpTask: function (taskSuffix, targets, gulp, wrangler) {
+
+            // Get task start time
             var start = new Date(),
+
+                // Get task name
                 taskName = 'clean' + (taskSuffix ? taskSuffix : "");
+
+            // Define 'clean' task
             gulp.task(taskName, function (cb) {
+
+                // Log start of task
+                wrangler.log('Running "' + taskName + '"', '--mandatory');
+
+                // Log files to delete
+                wrangler.log('Deleting the following files: \n', targets);
+
+                // Delete targets
                 del(targets, function (err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    console.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
-                    + chalk.magenta((((new Date()) - start) / 1000) + 'ms'));
-                });
-                return cb;
-            });
-        },
+
+                    // If error log it
+                    if (err) { console.log(err); }
+
+                    // Log completion of task
+                    wrangler.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
+                        + chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+
+                }); // end of deletion of targets
+
+                // Return callback
+                return cb();
+
+            }); // End of 'clean' task
+
+        }, // End of `registerGulpTask`
 
         /**
          * Registers bundle with the `clean` task.
@@ -72,12 +94,18 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
 
             // If clean key is set with a valid buildable src
             if (self.isValidTaskSrc(bundle.options.clean)) {
-                self.registerGulpTask(separator + bundleName, bundle.options.clean, gulp);
+                self.registerGulpTask(separator + bundleName, bundle.options.clean, gulp, wrangler);
+            }
+
+            if (bundle.has('requirejs.options')) {
+                // @todo allow using the requirejs outfile as a target here
+                targets.push(path.join(process.cwd(), bundle.options.requirejs.options.dir) + path.sep);
+                self.registerGulpTask(separator + bundleName + separator + 'requirejs', targets, gulp, wrangler);
             }
 
             // Register overall clean task
             if (targets.length > 0) {
-                self.registerGulpTask(separator + bundleName, targets, gulp);
+                self.registerGulpTask(separator + bundleName, targets, gulp, wrangler);
             }
         },
 
@@ -111,7 +139,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
 
             // Register overall clean task
             if (targets.length > 0) {
-                self.registerGulpTask("", targets, gulp);
+                self.registerGulpTask("", targets, gulp, wrangler);
             }
 
         }
