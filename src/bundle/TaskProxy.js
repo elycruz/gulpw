@@ -35,6 +35,12 @@ module.exports = sjl.Extendable.extend(function TaskProxy(options) {
 
         isValidTaskSrc: function (src) {
             return (sjl.classOfIs(src, 'String') || sjl.classOfIs(src, 'Array')) && !sjl.empty(src);
+        },
+
+        getTasksForBundle: function (bundle, targets, ignoredTasks) {
+            return targets.map(function (task) {
+                return task + ':' + bundle.options.name;
+            });
         }
 
     });

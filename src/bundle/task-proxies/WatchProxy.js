@@ -119,6 +119,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 }, 1000);
 
+                console.log(gulp);
+
             });
         });
     },
@@ -143,7 +145,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         targets = self.getSrcForBundle(bundle);
 
-        tasks = self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks);
+        tasks = self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks, wrangler);
 
         self.registerGulpTask('watch' + separator + bundleName, targets,
             gulp, wrangler, tasks);
@@ -202,12 +204,6 @@ module.exports = TaskProxy.extend("DeployProxy", {
         }
 
         return targets;
-    },
-
-    getTasksForBundle: function (bundle, taskPrefixes) {
-        return taskPrefixes.map(function (task) {
-            return task + ':' + bundle.options.name;
-        });
     },
 
     isBundleValidForTask: function (bundle) {
