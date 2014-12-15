@@ -1,7 +1,7 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 // Import base task proxy to extend
 var FilesTaskProxy = require('../FilesTaskProxy'),
@@ -14,11 +14,11 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
 
 module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
     FilesTaskProxy.apply(this, options);
-    this.name = 'requirejs';
+    this.alias = 'requirejs';
 }, {
 
     registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
-
+        console.log(taskName);
         // Create task for bundle
         gulp.task(taskName, function () {
 
@@ -60,6 +60,8 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             return;
         }
 
+        console.log(bundle);
+
         // Task string separator
         var self = this,
 
@@ -67,10 +69,10 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             separator = wrangler.getTaskStrSeparator(),
 
             // Bundle name for task
-            bundleName = bundle.options.name,
+            bundleName = bundle.options.alias,
 
             // Task name
-            taskName = self.name + separator + bundleName,
+            taskName = self.alias + separator + bundleName,
 
             // Rjs command (adding prefix for windows version)
             requireJsOptions = self.getRequireJsOptions(bundle);
@@ -101,7 +103,7 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
             }
 
             // Get task name
-            taskName = 'requirejs:' + bundle.options.name;
+            taskName = 'requirejs:' + bundle.options.alias;
 
             // Push task name to targets list
             targets.push(taskName);

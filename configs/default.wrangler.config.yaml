@@ -20,7 +20,7 @@ tasks:
     header: |
       /*!
        * Company Name http://www.company-website.com
-       * <%= bundle.name %>.<%= fileExt %> <%= bundle.version %> (<%= (new Date()).getTime() %>)
+       * <%= bundle.alias %>.<%= fileExt %> <%= bundle.version %> (<%= (new Date()).getTime() %>)
        * <%= bundle[section-name].md5 %>
        */
     cssBuildDir: some/path/to/build/path
@@ -39,7 +39,7 @@ tasks:
 
   minify:
     header: |
-      /*! Company Name http://www.company-website.com <%= bundle.name %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
+      /*! Company Name http://www.company-website.com <%= bundle.alias %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
     cssBuildDir: some/path/to/build/path
     htmlBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path

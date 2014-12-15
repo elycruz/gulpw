@@ -1,7 +1,7 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy');
@@ -18,7 +18,7 @@ module.exports = TaskProxy.extend("BuildProxy", {
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
             self = this,
-            bundleName = bundle.options.name,
+            bundleName = bundle.options.alias,
             taskName = 'build' + separator + bundleName,
             targets;
 
@@ -57,19 +57,16 @@ module.exports = TaskProxy.extend("BuildProxy", {
 
     getTasksForBundle: function (bundle, wrangler) {
         var separator = wrangler.getTaskStrSeparator(),
-            bundleName = bundle.options.name,
+            bundleName = bundle.options.alias,
             targets = [],
             ignoredTasks = wrangler.tasks.build.ignoredTasks;
 
         Object.keys(wrangler.tasks).forEach(function (task) {
-            console.log(ignoredTasks.indexOf(task) > -1);
             if (sjl.empty(bundle.options[task]) || ignoredTasks.indexOf(task) > -1) {
                 return;
             }
             targets.push(task + separator + bundleName);
         });
-
-        console.log(targets);
 
         // If bundle has minifiable or concatable sources build
         if (this.isBundleValidForMinifyAndConcat(bundle)) {
@@ -78,8 +75,6 @@ module.exports = TaskProxy.extend("BuildProxy", {
             //targets.push('concat' +  separator + bundleName);
             targets.push('minify' + separator + bundleName); // does both minify and concat
         }
-
-        console.log(targets);
 
         return targets;
     }

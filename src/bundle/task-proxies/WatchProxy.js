@@ -1,7 +1,7 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
@@ -91,7 +91,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
                         console.log(chalk.cyan('\nBuild completed.'));
                     }
 
-                    console.log(hasDeployTasks, deployTasksComplete, deployTasksLaunched, otherTasksComplete, otherTasks.length, doneTaskCount,
+                    console.log(hasDeployTasks, deployTasksComplete,
+                        deployTasksLaunched, otherTasksComplete, otherTasks.length, doneTaskCount,
                     otherTasks, deployTasks);
 
                     if (hasDeployTasks) {
@@ -134,7 +135,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
     registerBundle: function (bundle, gulp, wrangler) {
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
-            bundleName = bundle.options.name,
+            bundleName = bundle.options.alias,
             self = this,
             targets,
             tasks;

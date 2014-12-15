@@ -1,7 +1,7 @@
 /**
  * Created by edelacruz on 9/19/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 module.exports = sjl.Extendable.extend(function TaskProxy(options) {
         sjl.extend(true, this, {
@@ -39,7 +39,7 @@ module.exports = sjl.Extendable.extend(function TaskProxy(options) {
 
         getTasksForBundle: function (bundle, targets, ignoredTasks) {
             return targets.map(function (task) {
-                return task + ':' + bundle.options.name;
+                return task + ':' + bundle.options.alias;
             });
         }
 

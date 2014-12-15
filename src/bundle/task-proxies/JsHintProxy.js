@@ -1,7 +1,7 @@
 /**
  * Created by edelacruz on 10/8/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 // Import base task proxy to extend
 var gulpif = require('gulp-if'),
@@ -24,7 +24,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         // Task string separator
         var self = this,
             separator = wrangler.getTaskStrSeparator(),
-            taskName = 'jshint' + separator + bundle.options.name,
+            taskName = 'jshint' + separator + bundle.options.alias,
             jsHintConfig = wrangler.tasks.jshint.options,
             useFailReporter = false,
             filesToExclude = wrangler.tasks.jshint.ignoredFiles,
@@ -50,7 +50,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
                     return cb ? cb() : file;
                 }))
                 .pipe(jshint(jsHintConfig))
-                .pipe(duration(chalk.cyan("jshint \"" + bundle.options.name + "\" duration")))
+                .pipe(duration(chalk.cyan("jshint \"" + bundle.options.alias + "\" duration")))
                 .pipe(jshint.reporter('jshint-stylish'))
                 .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
         });

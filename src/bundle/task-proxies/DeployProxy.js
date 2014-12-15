@@ -1,7 +1,8 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-require('sjljs');
+
+"use strict"; require("sjljs");
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
@@ -132,7 +133,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
         // If bundle is not valid for task, bail
         if (!this.isBundleValidForTask(bundle)) {
             console.warn(chalk.yellow('Bundle "' +
-                bundle.options.name + '" is not valid for `deploy` task.'));
+                bundle.options.alias + '" is not valid for `deploy` task.'));
             return;
         }
 
@@ -141,7 +142,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
         // Task string separator
         var targets = this.getSrcForBundle(bundle, wrangler);
 
-        this.registerGulpTask(':' + bundle.options.name, targets, gulp, wrangler);
+        this.registerGulpTask(':' + bundle.options.alias, targets, gulp, wrangler);
 
     }, // end of `registerBundle`
 
@@ -190,16 +191,16 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 // Build local src path
                 localPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
-                    bundle.options.name + '.' + fileType);
+                    bundle.options.alias + '.' + fileType);
 
                 // Build deploy src path
                 if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
                     deployPath = path.join(selectedServerEntry.deployRootFolder,
                         selectedServerEntry.typesAndDeployPathsMap[fileType],
-                        bundle.options.name + '.' + fileType);
+                        bundle.options.alias + '.' + fileType);
                 }
                 else {
-                    deployPath = path.join(selectedServerEntry.deployRootFolder, bundle.options.name + '.' + fileType);
+                    deployPath = path.join(selectedServerEntry.deployRootFolder, bundle.options.alias + '.' + fileType);
                 }
 
                 // Check if we need styled unix paths and are on windows

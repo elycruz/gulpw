@@ -3,7 +3,7 @@
  */
 
 // Global
-require('sjljs');
+"use strict"; require("sjljs");
 
 var path = require('path'),
 
@@ -23,7 +23,7 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
             var self = this,
                 tasks = [],
                 separator = wrangler.getTaskStrSeparator(),
-                taskPrefix = self.name,
+                taskPrefix = self.alias,
                 hasSection;
 
             bundles.forEach(function (bundle) {
@@ -44,7 +44,7 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
 
                 // Collect task name for use later
                 if (hasSection) {
-                    tasks.push(taskPrefix + separator + bundle.options.name);
+                    tasks.push(taskPrefix + separator + bundle.options.alias);
                 }
 
             }); // end of bundles loop

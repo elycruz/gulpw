@@ -1,7 +1,7 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 // Import base task proxy to extend
 var FilesTaskProxy = require('../FilesTaskProxy'),
@@ -19,7 +19,7 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
 
 module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
     FilesTaskProxy.apply(this, options);
-    this.name = 'minify';
+    this.alias = 'minify';
 }, {
 
     /**
@@ -44,8 +44,8 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
                 js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
             },
             useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
-            bundleName = bundle.options.name,
-            taskName = self.name + separator + bundleName,
+            bundleName = bundle.options.alias,
+            taskName = self.alias + separator + bundleName,
             templateOptions = wrangler.tasks.minify.template;
 
         // Create task for bundle
@@ -62,7 +62,7 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
                     return;
                 }
 
-                var filePath = path.join(buildPath, bundle.options.name + '.' + ext),
+                var filePath = path.join(buildPath, bundle.options.alias + '.' + ext),
                     fileBasePath = path.dirname(filePath);
 
                 // If file basepath doesn't exist make sure it is created
@@ -85,7 +85,7 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
 
                     .pipe(gulpif( !sjl.empty(tmplsString), footer(tmplsString) ))
 
-                    .pipe(duration(chalk.cyan(self.name + ' "' + bundle.options.name + ':' + ext + '" duration')))
+                    .pipe(duration(chalk.cyan(self.alias + ' "' + bundle.options.alias + ':' + ext + '" duration')))
 
                     // Minify current source in the {artifacts}/ext directory
                     .pipe(gulpif(!wrangler.argv.dev, taskInstanceConfig.instance(taskInstanceConfig.options)))

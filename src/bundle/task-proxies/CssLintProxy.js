@@ -4,7 +4,7 @@
 /**
  * Created by edelacruz on 10/8/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 var csslint = require('gulp-csslint'),
     chalk = require('chalk'),
@@ -32,11 +32,11 @@ module.exports = TaskProxy.extend("CssLintProxy", {
             return;
         }
 
-        gulp.task('csslint' + separator + bundle.options.name, function () {
+        gulp.task('csslint' + separator + bundle.options.alias, function () {
 
             gulp.src(bundle.options.files.css)
 
-                .pipe(duration('csslint "' + bundle.options.name + '" duration'))
+                .pipe(duration('csslint "' + bundle.options.alias + '" duration'))
 
                 .pipe(csslint(cssLintConfig))
 

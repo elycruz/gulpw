@@ -2,7 +2,7 @@
  * Created by edelacruz on 10/8/2014.
  */
 
-require('sjljs');
+"use strict"; require("sjljs");
 
 var path = require('path'),
     del = require('del'),
@@ -67,7 +67,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
         registerBundle: function (bundle, gulp, wrangler) {
 
             var self = this,
-                bundleName = bundle.options.name,
+                bundleName = bundle.options.alias,
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
                 separator = wrangler.taskStrSeparator,
                 targets = [];
@@ -115,7 +115,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'];
 
             bundles.forEach(function (bundle) {
-                var bundleName = bundle.options.name;
+                var bundleName = bundle.options.alias;
 
                 // Compile targets array
                 allowedFileTypes.forEach(function (ext) {

@@ -1,7 +1,7 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-require('sjljs');
+"use strict"; require("sjljs");
 
 // Import base task proxy to extend
 var FilesTaskProxy = require('../FilesTaskProxy'),
@@ -15,7 +15,7 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
 
 module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
     FilesTaskProxy.apply(this, sjl.extend(true, {name: 'concat'}, options));
-    this.name = 'concat';
+    this.alias = 'concat';
 }, {
 
     /**
@@ -33,7 +33,7 @@ module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
 
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
-            taskName = 'concat' + separator + bundle.options.name;
+            taskName = 'concat' + separator + bundle.options.alias;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -47,7 +47,7 @@ module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
                     return;
                 }
 
-                var filePath = path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.name + '.' + ext),
+                var filePath = path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundle.options.alias + '.' + ext),
                     fileBasePath = path.dirname(filePath);
 
                 // If file basepath doesn't exist make sure it is created
@@ -63,7 +63,7 @@ module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
                 // Give gulp the list of sources to process
                 gulp.src(section)
 
-                    .pipe(duration(chalk.cyan('concat "' + bundle.options.name + ':' + ext + '" duration')))
+                    .pipe(duration(chalk.cyan('concat "' + bundle.options.alias + ':' + ext + '" duration')))
 
                     // Concatenate current source in the {artifacts}/ext directory
                     .pipe(concat(filePath))

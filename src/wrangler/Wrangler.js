@@ -1,7 +1,7 @@
 /**
  * Created by Ely on 10/4/2014.
  */
-require("sjljs");
+"use strict"; require("sjljs");;
 
 var fs = require('fs'),
     path = require('path'),
@@ -49,7 +49,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             anyGlobalTasksToRun;
 
         self.log("Gulp Bundle Wrangler initializing...");
-        self.log(argv._, '--debug');
 
         // Check if we have any global tasks to run
         anyGlobalTasksToRun = argv.all || (argv._.filter(function (item) {
@@ -174,12 +173,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
 
         // "Creating task ..." message
-        this.log(' - Creating bundle "' + config.name + '"');
+        this.log(' - Creating bundle "' + config.alias + '"', config);
 
         var bundle = new Bundle(config);
 
         // Store bundle
-        this.bundles[bundle.options.name] = bundle;
+        this.bundles[bundle.options.alias] = bundle;
 
         // Return bundle
         return bundle;
