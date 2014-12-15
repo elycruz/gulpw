@@ -1,7 +1,5 @@
-gulp-bundle-wrangler
+gulp-bundle-wrangler (Beta)
 ====================
-
-##*** ALPHA State ***
 
 Allows the management of a project via bundle configuration files (architected towards speed).
 
@@ -32,6 +30,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - prompt:deploy (creates local deploy configuration file from series of questions)
 	- [ ] - requirejs
 	- [X] - watch
+	- [ ] - mocha
 - For `Bundle`:
 	- [ ] - The `deploy` task via the watch task should only deploy changed file types not everything for
 	 a bundle (takes to long for bigger bundles definitions).
