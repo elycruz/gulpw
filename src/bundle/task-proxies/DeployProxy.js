@@ -49,6 +49,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
             startTime = new Date();
 
+            //console.log('DeployProxy -> targets\n', targets);
+
             conn.on('ready', function () {
 
                 wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
@@ -245,7 +247,6 @@ module.exports = TaskProxy.extend("DeployProxy", {
             }
             else {
                 retVal = [item, path.join(selectedServerEntry.deployRootFolder, item)];
-                wrangler.log(item);
             }
 
             // Check if we need styled unix paths and are on windows

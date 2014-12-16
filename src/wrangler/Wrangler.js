@@ -173,7 +173,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
 
         // "Creating task ..." message
-        this.log(' - Creating bundle "' + config.alias + '"', config);
+        this.log(' - Creating bundle "' + config.alias + '"');
 
         var bundle = new Bundle(config);
 
@@ -327,8 +327,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         tasks.forEach(function (item) {
             // Run task
             gulp.start(item);
-
         });
-    }
+    },
+
+    launchCompleteMessages: function (taskProxy, gulp) {    }
 
 });

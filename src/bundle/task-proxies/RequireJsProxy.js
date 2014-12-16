@@ -18,7 +18,6 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
 }, {
 
     registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
-        console.log(taskName);
         // Create task for bundle
         gulp.task(taskName, function () {
 
@@ -59,8 +58,6 @@ module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
         if (!this.isBundleValidForTask(bundle)) {
             return;
         }
-
-        console.log(bundle);
 
         // Task string separator
         var self = this,

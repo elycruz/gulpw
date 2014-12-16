@@ -10,7 +10,7 @@ var TaskProxy = require('../TaskProxy'),
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
-    registerGulpTask: function (taskName, targets, gulp, wrangler, tasks) {
+    registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {
         var tasks,
             watchInterval = null;
 
@@ -28,9 +28,10 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 var doneTaskCount = 0,
                     deployTasksLaunched = false,
                     fileShortPath = event.path,
-                    otherTasks,
                     deployTasks,
-                    rawTaskKeys;
+                    otherTasks;
+
+                //console.log(chalk.magenta('\nTasks that will be launched on file changes:\n'), tasks);
 
                 wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
                 wrangler.log('Change type: ' + event.type + ';');
@@ -41,45 +42,28 @@ module.exports = TaskProxy.extend("DeployProxy", {
                     return task.indexOf('deploy') > -1;
                 });
 
-                tasks = tasks.filter(function (task) {
-                    return task.indexOf('deploy') === - 1;
-                });
-
                 // Launch all tasks except for deploy tasks
-                wrangler.launchTasks(tasks, gulp);
-
-                rawTaskKeys = Object.keys(gulp.tasks);
-
-                // Get deploy tasks
-                deployTasks = deployTasks.concat(rawTaskKeys.filter(function (task) {
-                    return task.indexOf('deploy') > -1;
-                }));
-
-                // Get deploy tasks
-                otherTasks = rawTaskKeys.filter(function (task) {
-                    return task.indexOf('deploy') === -1;
-                });
+                wrangler.launchTasks(tasks.filter(function (task) {
+                    return task.indexOf('deploy') === - 1;
+                }), gulp);
 
                 if (watchInterval !== null) {
                     clearInterval(watchInterval);
                 }
 
-                deployTasks = deployTasks.filter(function (item, i, list) {
-                    return list.indexOf(item) === i;
-                });
+                // Tasks called by `build:...`
+                otherTasks = wrangler.tasks.build.instance.getTasksForBundle(bundle, wrangler);
 
                 watchInterval = setInterval(function () {
                     var hasDeployTasks = deployTasks.length > 0,
-                        otherTasksComplete = doneTaskCount === otherTasks.length,
-                        deployTasksComplete = (doneTaskCount + otherTasks.length)
-                            >= (otherTasks.length + deployTasks.length);
+                        otherTasksComplete = doneTaskCount >= otherTasks.length,
+                        deployTasksComplete = doneTaskCount >= (otherTasks.length + deployTasks.length);
 
-                    if (!otherTasksComplete && doneTaskCount < otherTasks.length) {
-                        otherTasks.forEach(function (key) {
-                            if (gulp.tasks[key].done === true) {
-                                doneTaskCount += 1;
-                            }
-                        });
+                    if (!otherTasksComplete) {
+                        doneTaskCount = (otherTasks.filter(function (key) {
+                            if (key.indexOf('deploy') > -1) { return false; }
+                            return gulp.tasks[key].done === true;
+                        })).length;
                     }
 
                     else if (otherTasksComplete && !hasDeployTasks) {
@@ -87,20 +71,24 @@ module.exports = TaskProxy.extend("DeployProxy", {
                         clearInterval(watchInterval);
                     }
 
-                    else if (otherTasksComplete && hasDeployTasks) {
+                    else if (otherTasksComplete && hasDeployTasks && !deployTasksLaunched) {
                         console.log(chalk.cyan('\nBuild completed.'));
                     }
 
-                    console.log(hasDeployTasks, deployTasksComplete,
-                        deployTasksLaunched, otherTasksComplete, otherTasks.length, doneTaskCount,
-                    otherTasks, deployTasks);
+                    //wrangler.log('\nhasDeployTasks: ' + hasDeployTasks,
+                    //    '\ndeployTasksComplete: ' + deployTasksComplete,
+                    //    '\ndeployTasksLaunched: ' + deployTasksLaunched,
+                    //    '\notherTasksComplete: ' + otherTasksComplete,
+                    //    '\ndeployTasks.length: ' + deployTasks.length,
+                    //    '\notherTasks.length: ' + otherTasks.length,
+                    //    '\ndoneTaskCount: ' + doneTaskCount,
+                    //    '\notherTasks: ' + otherTasks,
+                    //    '\ndeployTasks: ' + deployTasks,
+                    //    '\n\n', otherTasks);
 
                     if (hasDeployTasks) {
 
                         if (!deployTasksComplete && !deployTasksLaunched && otherTasksComplete) {
-                            wrangler.log('DEPLOY.');
-
-                            console.log(deployTasks);
 
                             // Launch any `deploy` tasks that may have been defined
                             wrangler.launchTasks(deployTasks, gulp);
@@ -109,18 +97,18 @@ module.exports = TaskProxy.extend("DeployProxy", {
                         }
                         else if (deployTasksComplete) {
                             clearInterval(watchInterval);
+                            deployTasksLaunched = false;
                         }
-
-                        deployTasks.forEach(function (key) {
-                            if (gulp.tasks[key].done === true) {
-                                doneTaskCount += 1;
-                            }
-                        });
+                        else {
+                            doneTaskCount = (deployTasks.filter(function (key) {
+                                return gulp.tasks[key].done === true;
+                            })).length + otherTasks.length;
+                        }
                     }
 
                 }, 1000);
 
-                console.log(gulp);
+                //console.log(gulp);
 
             });
         });
@@ -149,7 +137,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
         tasks = self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks, wrangler);
 
         self.registerGulpTask('watch' + separator + bundleName, targets,
-            gulp, wrangler, tasks);
+            gulp, wrangler, bundle, tasks);
 
     }, // end of `registerBundle`
 
@@ -172,7 +160,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             tasks = tasks.concat(self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks));
         });
 
-        self.registerGulpTask('watch', targets, gulp, wrangler, tasks);
+        self.registerGulpTask('watch', targets, gulp, wrangler, bundle, tasks);
 
     }, // end of `registerBundles`
 
@@ -204,12 +192,22 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 bundle.options.requirejs.options.baseUrl) + path.sep + '**/*');
         }
 
+        //if (bundle.has('deploy.otherFiles')) {
+        //    Object.keys(bundle.options.deploy.otherFiles).forEach(function (key) {
+        //        var keyVal = bundle.options.deploy.otherFiles[key];
+        //        targets = Array.isArray(keyVal) ? targets.concat(keyVal) :
+        //            (!sjl.empty(keyVal) ? targets.push(keyVal) : targets);
+        //    });
+        //}
+
         return targets;
     },
 
     isBundleValidForTask: function (bundle) {
         return bundle && (bundle.has('files') || bundle.has('requirejs')
-            || bundle.has('browserify') || bundle.has('watch'));
+            || bundle.has('browserify') || bundle.has('watch') || bundle.has('deploy.otherFiles'));
     }
+
+
 
 }); // end of export

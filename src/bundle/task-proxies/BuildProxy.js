@@ -23,13 +23,16 @@ module.exports = TaskProxy.extend("BuildProxy", {
             targets;
 
         if (!self.isBundleValidForTask(bundle)) {
-            console.warn('\n' + chalk.yellow('Warning: Bundle "' + bundleName + '" is not valid for `build` task.') + '\n');
+            console.warn('\n' + chalk.yellow('Warning: Bundle "' +
+                bundleName + '" is not valid for `build` task.') + '\n');
             return; // @todo log message/warning here
         }
 
         targets = self.getTasksForBundle(bundle, wrangler);
 
         self.registerGulpTasks(taskName, targets, gulp, wrangler);
+
+        //wrangler.log('BuildProxy -> targets: ', targets, '--debug');
 
     }, // end of `registerBundle`
 
@@ -59,12 +62,22 @@ module.exports = TaskProxy.extend("BuildProxy", {
         var separator = wrangler.getTaskStrSeparator(),
             bundleName = bundle.options.alias,
             targets = [],
-            ignoredTasks = wrangler.tasks.build.ignoredTasks;
+            ignoredTasks = wrangler.tasks.build.ignoredTasks,
+            ignoreTask;
 
         Object.keys(wrangler.tasks).forEach(function (task) {
-            if (sjl.empty(bundle.options[task]) || ignoredTasks.indexOf(task) > -1) {
+            ignoreTask = ignoredTasks.filter(function (ignoredTask) {
+                    return task.indexOf(ignoredTask) > -1;
+                }).length > 0;
+
+            //wrangler.log('BuildProxy -> Ignore Task "' + task + '"? ', ignoreTask, '--debug');
+
+            if (sjl.empty(bundle.options[task])
+                || ignoredTasks.indexOf(task) > -1
+                || ignoreTask) {
                 return;
             }
+
             targets.push(task + separator + bundleName);
         });
 
