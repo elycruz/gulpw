@@ -4,7 +4,8 @@
 "use strict"; require("sjljs");
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy');
+var TaskProxy = require('../TaskProxy'),
+    chalk = require('chalk');
 
 module.exports = TaskProxy.extend("BuildProxy", {
 
@@ -23,8 +24,6 @@ module.exports = TaskProxy.extend("BuildProxy", {
             targets;
 
         if (!self.isBundleValidForTask(bundle)) {
-            console.warn('\n' + chalk.yellow('Warning: Bundle "' +
-                bundleName + '" is not valid for `build` task.') + '\n');
             return; // @todo log message/warning here
         }
 

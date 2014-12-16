@@ -54,3 +54,6 @@ prompt:
   constructorLocation: ./task-proxies/PromptProxy
   helpInfo: ""
 
+mocha:
+  constructorLocation: ./bundle/task-proxies/MochaProxy
+  helpInfo: ""

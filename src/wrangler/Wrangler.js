@@ -98,7 +98,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this;
 
         // Creating task proxies message
-        self.log("\n- Creating task proxies.");
+        self.log(chalk.cyan("\n- Creating task proxies."));
 
         Object.keys(self.tasks).forEach(function (task) {
             self.tasks[task].instance = self.createTaskProxy(gulp, task);
@@ -109,8 +109,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     createTaskProxy: function (gulp, task) {
         // "Creating task ..." message
-        this.log(" - Creating task proxy \"" + task + "\".  constructor at: \"" +
-            this.taskProxyMap[task].constructorLocation + "\"");
+        this.log(" - Creating task proxy \"" + task + "\".");
 
         var self = this,
             src = self.taskProxyMap[task].constructorLocation,
@@ -124,8 +123,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     createStaticTaskProxy: function (gulp, task) {
         // "Creating task ..." message
-        this.log("\n- Creating static task proxy \"" + task + "\".  constructor at: \"" +
-            this.taskProxyMap[task].constructorLocation + "\"");
+        this.log(chalk.cyan("\n- Creating static task proxy \"" + task + "\"."));
 
         var self = this,
             src = self.taskProxyMap[task].constructorLocation,
@@ -146,7 +144,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             bundlesPath;
 
         // Creating task proxies message
-        self.log("\n- Creating bundles.");
+        self.log(chalk.cyan("\n- Creating bundles."));
 
         bundlesPath = self.bundlesPath;
 

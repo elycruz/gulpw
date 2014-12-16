@@ -28,9 +28,9 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - template (mustache, handlebars etc.) (stores all templates on specified global via a script
 	template)
 	- [X] - prompt:deploy (creates local deploy configuration file from series of questions)
-	- [ ] - requirejs
-	- [X] - watch
-	- [ ] - mocha
+	- [X] - requirejs
+	- [X] - watch (unstable)
+	- [X] - mocha
 - For `Bundle`:
 	- [ ] - The `deploy` task via the watch task should only deploy changed file types not everything for
 	 a bundle (takes to long for bigger bundles definitions).
