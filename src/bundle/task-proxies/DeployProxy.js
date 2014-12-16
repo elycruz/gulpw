@@ -134,8 +134,6 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         // If bundle is not valid for task, bail
         if (!this.isBundleValidForTask(bundle)) {
-            console.warn(chalk.yellow('Bundle "' +
-                bundle.options.alias + '" is not valid for `deploy` task.'));
             return;
         }
 

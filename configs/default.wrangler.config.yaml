@@ -226,3 +226,7 @@ tasks:
       - js
       - css
       - html
+
+  mocha:
+    testsDir: ./tests/
+    options: null
