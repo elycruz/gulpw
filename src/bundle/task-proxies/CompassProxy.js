@@ -7,7 +7,8 @@
 "use strict"; require("sjljs");
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy');
+var TaskProxy = require('../TaskProxy'),
+	exec = require('child_process').exec;
 
 module.exports = TaskProxy.extend("CompassProxy", {
 
@@ -18,10 +19,37 @@ module.exports = TaskProxy.extend("CompassProxy", {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
+		if (!bundle.has('compass')) {
+			return;
+		}
+		
+		gulp.task('compass:' + bundle.options.alias, function () {		
+			exec('compass compile', function (error, stdout, stderr) {
+				console.log('compass compile stdout: ' + stdout);
+				console.log('compass compile stderr: ' + stderr);
+				if (error !== null) {
+				  console.log('exec error: ' + error);
+				}
+			});	
+		});
+		
+    }, // end of `registerBundle`
+	
+	registerBundles: function (bundles, gulp, wrangler) {
+		var self = this,
+			targets = [];
 
-        // Task string separator
-        var separator = wrangler.getTaskStrSeparator();
+		bundles.forEach(function (bundle) {
+			self.registerBundle(bundle);
+			if (bundle.has('compass')) {
+				targets.push('compass:' + bundle.options.alias);
+			}
+		});
 
-    } // end of `registerBundle`
-
+			gulp.task('compass', function () {
+				if (targets.length > 0) {
+					wrangler.launchTasks(targets, gulp);
+				}
+			});
+	}
 }); // end of export

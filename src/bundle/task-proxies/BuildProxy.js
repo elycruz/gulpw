@@ -85,6 +85,18 @@ module.exports = TaskProxy.extend("BuildProxy", {
             // @todo put a condition here so that we run concat and copy the
             // file over to the build directory when the '--dev' flag is passed in
             //targets.push('concat' +  separator + bundleName);
+            targets.push('csslint' + separator + bundleName);
+
+            // Add jshint task if necessary
+            if (bundle.has('files.js') || bundle.has('requirejs') || bundle.has('browserify')) {
+                targets.push('jshint' + separator + bundleName);
+            }
+
+            // Add css lint task if necessary
+            if (bundle.has('files.css') || bundle.has('compass')) {
+                targets.push('csslint' + separator + bundleName);
+            }
+
             targets.push('minify' + separator + bundleName); // does both minify and concat
         }
 

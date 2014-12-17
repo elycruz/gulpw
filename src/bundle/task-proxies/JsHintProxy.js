@@ -34,7 +34,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
             return;
         }
 
-        src = bundle.options.files.js;
+        src = self.getTargetsForBundle(bundle, wrangler);
 
         if (filesToExclude && Array.isArray(filesToExclude)) {
             src = src.filter(function (item) {
@@ -59,29 +59,27 @@ module.exports = TaskProxy.extend("JsHintProxy", {
 
 
     registerBundles: function (bundles, gulp, wrangler) {
-        var self = this,
-            jsHintConfig = wrangler.tasks.jshint.options,
-            useFailReporter = false,
-            targets = [];
-
+        var self = this;
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
-                return;
+                self.registerBundle(bundle, gulp, wrangler);
             }
+        });
+    },
+
+    getTargetsForBundle: function (bundle, wrangler) {
+        var targets = [];
+        if (bundle.has('files.js')) {
             targets = targets.concat(bundle.options.files.js);
-        });
-
-        gulp.task('jshint', function () {
-            gulp.src(targets)
-                .pipe(jshint(jsHintConfig))
-                .pipe(duration("jshint duration"))
-                .pipe(jshint.reporter('jshint-stylish'))
-                .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
-        });
-
+        }
+        if (bundle.has('requirejs')) {
+            targets.push(path.join(bundle.options.requirejs.options.dir, '**/*.js'));
+        }
+        // @todo If bundle has browserify
+        return targets;
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && bundle.has('files.js');
+        return bundle && (bundle.has('files.js') || bundle.has('requirejs') || bundle.has('browserify'));
     }
 });
