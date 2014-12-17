@@ -16,6 +16,9 @@ staticTasks:
 
 tasks:
 
+  compass:
+    compassProjectRoot: null # config.rb home
+
   concat:
     header: |
       /*!
@@ -34,6 +37,7 @@ tasks:
     template:
       templateVariable: someGlobalVar
       templatesKey: templates
+      setterFunction: null
       removeWhitespace: true
       tmpWritePath: ./.gulpw/tmp
 
@@ -71,31 +75,8 @@ tasks:
       - clean
       - deploy
 
-    # Tasks to run if task is not overwritten by flag (see flags below)
-    tasks:
-#      - compass
-#      - jslint
-#      - csslint
-#      - htmllint
-#      - browserify
-#      - requirejs
-#      - concat
-      - minify
-
     # This is a global lint flag that is used if there is a lint task specified for a section
     lintBeforeBuild: true
-
-    # Concatenate files if files exists
-    concat: true
-
-    # Minify files if files exists and no `--dev` flag has been specefied on run
-    minify: true
-
-    # Runs require js section if exists
-    requirejs: true
-
-    # Runs browserify section if exists
-    browserify: true
 
   # Deploy Task
   deploy:
@@ -109,7 +90,7 @@ tasks:
     # Should files be linted before deploy
     lintBeforeDeploy: false
 
-    # Local deploy config used to override local bundle.wrangler.yaml deploy config options
+    # Local deploy config used to override local bundle.wrangler.yaml deploy config options.  Stored in `localConfigPath` whose default value is '.gulpw'
     localDeployFileName: deploy.yaml
 
     # Use one-to-one paths for undefined/null deploy paths.
@@ -147,7 +128,7 @@ tasks:
       # Hostname to develop for
       gulpw-sample.somedomain.com:
 
-        # Servers where user can develop for host key (in this case host key is `gulpw.elycruz.com`)
+        # Servers where user can develop for `domainToDevelopFor` (in this case `domainToDevelopFor` is `gulpw-sample.somedomain.com`)
         devHostnames: # slots/hosts
           - devslot1.gulpw-sample.somedomain.com
           - devslot2.gulpw-sample.somedomain.com
@@ -162,6 +143,9 @@ tasks:
           - web2-
           - web3-
 
+        # Root folder on the server to use for deployments (prefix path for file paths being deployed)s)
+        deployRootFolder: null
+
         # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
         typesAndDeployPathsMap:
           font: public/media/fonts/
@@ -174,6 +158,7 @@ tasks:
   # Watch Task Defaults
   watch:
 
+    # Tasks to ignore on the bundle level (watch creates it's own collection of deploy tasks from the bundle(s) registered with it)
     ignoredTasks:
       - clean
       - deploy
@@ -186,7 +171,8 @@ tasks:
     # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null
 
-    # Flags that can be passed to the watch task ** Note ** These flags are available to tasks as they run via the `gulp` object
+    # Flags that can be passed to the watch task ** Note ** These flags are available to all tasks
+    # besides the watch task as they run from the same terminal session.
     flags:
 
       # This flag specifies that minification should not occur
@@ -228,5 +214,9 @@ tasks:
       - html
 
   mocha:
-    testsDir: ./tests/
+    testsDir: null
     options: null
+
+#  jasmine:
+#    testsDir: null
+#    options: null

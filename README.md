@@ -19,10 +19,12 @@ That directory should contain "bundle-configuration" files which are used within
 	- [ ] - browserify
 	- [x] - build
 	- [X] - clean (del)
+	- [X] - compass (custom)
 	- [X] - concat (gulp-concat)
 	- [X] - csslint (gulp-csslint)
 	- [X] - deploy (ssh2)
 	- [ ] - document (jsdoc, groco, etc)
+	- [ ] - jasmine
 	- [X] - jshint (gulp-jshint)
 	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
 	- [X] - template (mustache, handlebars etc.) (stores all templates on specified global via a script
@@ -45,6 +47,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
 	- [ ] - Fix all non streaming tasks to return streams so that other tasks can list them as dependencies.
 	- [ ] - Add pointers to `gulp` and `wrangler` to `*TaskProxy` (eliminates having to pass them around all the time).
+	- [ ] - Isolate hinting/linting tasks before running `build` task and wait for them to finish before running `build` task.
 
 ### Notes:
 

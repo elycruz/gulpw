@@ -9,12 +9,6 @@ var TaskProxy = require('../TaskProxy'),
 
 module.exports = TaskProxy.extend("BuildProxy", {
 
-    /**
-     *
-     * @param bundle {Bundle}
-     * @param gulp {gulp}
-     * @param wrangler {Wrangler}
-     */
     registerBundle: function (bundle, gulp, wrangler) {
         // Task string separator
         var separator = wrangler.getTaskStrSeparator(),
@@ -58,46 +52,61 @@ module.exports = TaskProxy.extend("BuildProxy", {
     },
 
     getTasksForBundle: function (bundle, wrangler) {
-        var separator = wrangler.getTaskStrSeparator(),
+        var self = this,
+            separator = wrangler.getTaskStrSeparator(),
             bundleName = bundle.options.alias,
             targets = [],
             ignoredTasks = wrangler.tasks.build.ignoredTasks,
-            ignoreTask;
+            ignoreTask,
+            isBundleValidForMinAndConcat = this.isBundleValidForMinifyAndConcat(bundle);
 
+        // Loop through possible tasks in `wrangler.tasks` and register the `bundle` with the ones
+        // it has defined
         Object.keys(wrangler.tasks).forEach(function (task) {
+
+            // Do we need to ignore current `task`?
             ignoreTask = ignoredTasks.filter(function (ignoredTask) {
                     return task.indexOf(ignoredTask) > -1;
                 }).length > 0;
 
             //wrangler.log('BuildProxy -> Ignore Task "' + task + '"? ', ignoreTask, '--debug');
 
+            // If it is not ok to push the current `task` in the loop to the return value bail
             if (sjl.empty(bundle.options[task])
                 || ignoredTasks.indexOf(task) > -1
                 || ignoreTask) {
                 return;
             }
 
+            // Push task to run later
             targets.push(task + separator + bundleName);
         });
 
-        // If bundle has minifiable or concatable sources build
-        if (this.isBundleValidForMinifyAndConcat(bundle)) {
-            // @todo put a condition here so that we run concat and copy the
-            // file over to the build directory when the '--dev' flag is passed in
-            //targets.push('concat' +  separator + bundleName);
-            targets.push('csslint' + separator + bundleName);
+        //wrangler.log('\nwrangler.skipLinting: ' + wrangler.skipLinting(),
+        //    '\nwrangler.skipCssLinting: ' + wrangler.skipCssLinting(),
+        //    '\nwrangler.skipJsLinting: ' + wrangler.skipJsLinting(),
+        //    '\nlintBeforeBuild: ' + self.lintBeforeBuild, '--debug');
 
-            // Add jshint task if necessary
-            if (bundle.has('files.js') || bundle.has('requirejs') || bundle.has('browserify')) {
+        // Add linting/hinting tasks if necessary
+        if (wrangler.tasks.build.lintBeforeBuild && !wrangler.skipLinting()) {
+
+            // Add jshint task if `files.js`, `requirejs` or `browserify` key exists on `bundle`
+            if ((bundle.has('files.js') || bundle.has('requirejs') || bundle.has('browserify')) && !wrangler.skipJsLinting()) {
                 targets.push('jshint' + separator + bundleName);
             }
 
             // Add css lint task if necessary
-            if (bundle.has('files.css') || bundle.has('compass')) {
+            if ((bundle.has('files.css') || bundle.has('compass')) && !wrangler.skipCssLinting()) {
                 targets.push('csslint' + separator + bundleName);
             }
+        }
+        else {
+            wrangler.log(chalk.grey('   Skipping lint/hint registration for bundle "' + bundleName + '".'), '--mandatory');
+        }
 
-            targets.push('minify' + separator + bundleName); // does both minify and concat
+        // If bundle has minifiable or concatable sources build
+        if (isBundleValidForMinAndConcat) {
+            targets.push('minify' + separator + bundleName);
         }
 
         return targets;

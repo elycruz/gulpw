@@ -40,6 +40,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     // Resolve bundles path
     self.bundlesPath = path.join(self.cwd, self.bundlesPath);
+
+    // Initialize the pipeline call(s)
     self.init(gulp, self.argv);
 },
 
@@ -328,6 +330,35 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
-    launchCompleteMessages: function (taskProxy, gulp) {    }
+    launchCompleteMessages: function (taskProxy, gulp) {    },
 
+    skipLinting: function () {
+        var self = this;
+        return (self.argv['no-lint']
+            || self.argv['skip-lint']
+            || self.argv['skip-linting']
+            || self.argv['no-hint']
+            || self.argv['skip-hint']
+            || self.argv['skip-hinting']) || false;
+    },
+
+    skipCssLinting: function () {
+        var self = this;
+        return (self.argv['no-csslint']
+            || self.argv['skip-csslint']
+            || self.argv['skip-csslinting']
+            || self.argv['no-csshint']
+            || self.argv['skip-csshint']
+            || self.argv['skip-csshinting']) || false;
+    },
+
+    skipJsLinting: function () {
+        var self = this;
+        return (self.argv['no-jslint']
+            || self.argv['skip-jslint']
+            || self.argv['skip-jslinting']
+            || self.argv['no-jshint']
+            || self.argv['skip-jshint']
+            || self.argv['skip-jshinting']) || false;
+    }
 });
