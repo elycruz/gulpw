@@ -13,10 +13,6 @@ var fs = require('fs'),
 
     Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
 
-    throwBundleFileNotExistError = function (bundleName, filePath) {
-        throw Error('Bundle "' + bundleName + '" config file doesn\'t exist.  Path checked: ' + filePath);
-    },
-
     log;
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
@@ -186,8 +182,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     registerTasksForBundle: function (gulp, bundle) {
         var self = this;
-            //argvTasks = self.extractTaskNamesFromArgv(arv._);
-
         // Register bundle with task
         Object.keys(self.tasks).forEach(function (task) {
             self.tasks[task].instance.registerBundle(bundle, gulp, self);
@@ -264,18 +258,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.extractBundleNamesFromArray(argv._).forEach(function (item) {
             filePath = path.join(self.bundlesPath, item + '.' + self.bundleConfigFormat);
             if (!fs.existsSync(filePath)) {
-                return throwBundleFileNotExistError(item, filePath);
+                throw Error('Bundle "' + item + '" config file doesn\'t exist.  Path checked: ' + filePath);
             }
             out.push(filePath);
         });
 
         return out;
-    },
-
-    extractTaskNamesFromArgv: function (argv) {
-        //argv._.map(function (item) {
-        //    /^[a-z\d\-_]+\:[a-z\d\-_]+/i.test(item);
-        //});
     },
 
     log: function () {
@@ -329,8 +317,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             gulp.start(item);
         });
     },
-
-    launchCompleteMessages: function (taskProxy, gulp) {    },
 
     skipLinting: function () {
         var self = this;

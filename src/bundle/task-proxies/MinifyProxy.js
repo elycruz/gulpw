@@ -45,8 +45,7 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
             },
             useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
             bundleName = bundle.options.alias,
-            taskName = self.alias + separator + bundleName,
-            templateOptions = wrangler.tasks.minify.template;
+            taskName = self.alias + separator + bundleName;
 
         // Create task for bundle
         gulp.task(taskName, function () {
