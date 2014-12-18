@@ -23,7 +23,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - concat (gulp-concat)
 	- [X] - csslint (gulp-csslint)
 	- [X] - deploy (ssh2)
-	- [ ] - document (jsdoc, groco, etc)
+	- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
 	- [ ] - jasmine
 	- [X] - jshint (gulp-jshint)
 	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
@@ -42,6 +42,7 @@ That directory should contain "bundle-configuration" files which are used within
 	  changed.
 - General:
 	- [X] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run (should happen from inside Wrangler.js for all tasks (if any configs present)).
+  - [ ] - all/default task
 	- [ ] - Make `Wrangler` constructor `Optionable`.
 	- [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
 	- [ ] - Deploy task should reference local deploy file name from `prompt` task config.
