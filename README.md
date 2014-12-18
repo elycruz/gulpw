@@ -41,7 +41,8 @@ That directory should contain "bundle-configuration" files which are used within
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
 	  changed.
 - General:
-	- [ ] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run (should happen from inside Wrangler.js for all tasks (if any configs present)).
+	- [X] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run (should happen from inside Wrangler.js for all tasks (if any configs present)).
+	- [ ] - Make `Wrangler` constructor `Optionable`.
 	- [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
 	- [ ] - Deploy task should reference local deploy file name from `prompt` task config.
 	- [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).

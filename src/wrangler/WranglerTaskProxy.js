@@ -3,9 +3,11 @@
  */
 "use strict"; require("sjljs");
 
-module.exports = sjl.Optionable.extend(function WranglerTaskProxy(options) {
-        sjl.Optionable.call(this, sjl.extend(true, {
-            name: "Task's cli name goes here.",
+var Optionable = require(path.join(__dirname, "../Optionable.js"));
+
+module.exports = Optionable.extend(function WranglerTaskProxy(options) {
+        Optionable.call(this, sjl.extend(true, {
+            alias: "Task's cli name goes here.",
             description: "Task's description goes here.",
             help: "Task's help details go here."
         }, options));

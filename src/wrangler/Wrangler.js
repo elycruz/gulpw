@@ -11,15 +11,15 @@ var fs = require('fs'),
     // Recursive mkdir (makes all paths in passed path)
     mkdirp = require('mkdirp'),
 
+    Optionable = require(path.join(__dirname, "../Optionable.js")),
+
     Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
 
     log;
 
-module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
-    var defaultOptions = yaml.safeLoad(fs.readFileSync(
-            path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
-        taskProxyMap = yaml.safeLoad(fs.readFileSync(
-            path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
+module.exports = Optionable.extend(function Wrangler(gulp, argv, env, config) {
+    var defaultOptions = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
+        taskProxyMap = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
         self = this;
 
         log = self.log;
@@ -346,5 +346,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             || self.argv['no-jshint']
             || self.argv['skip-jshint']
             || self.argv['skip-jshinting']) || false;
+    },
+
+    /**
+     * Clones an object the dirty way.
+     * @param obj
+     * @returns {*}
+     */
+    clone: function (obj) {
+        return JSON.parse(JSON.stringify(obj));
     }
 });

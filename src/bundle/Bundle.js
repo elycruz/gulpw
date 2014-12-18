@@ -8,11 +8,16 @@
  * @param options {Object} - Required
  * @constructor
  */
-module.exports = sjl.Optionable.extend(function Bundle(options) {
+
+var path = require('path'),
+
+    Optionable = require(path.join(__dirname, '../Optionable'));
+
+module.exports = Optionable.extend(function Bundle(options) {
         var self = this;
 
         // merged with our defaults
-        sjl.Optionable.call(self, sjl.extend(true, {
+        Optionable.call(self, sjl.extend(true, {
             alias: "Alias goes here.",
             description: "Description goes here.",
             version: "Semver version string goes here."
@@ -21,29 +26,6 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         // If has init function run it
         if (self.hasOwnProperty('init') && sjl.classOfIs(self.init, 'Function')) {
             self.init();
-        }
-
-    }, {
-
-        has: function (nsString) {
-            var parts = nsString.split('.'),
-                i, nsStr, retVal = false;
-
-            if (parts.length > 1) {
-                nsStr = parts.shift();
-                for (i = 0; i <= parts.length; i += 1) {
-                    retVal = !sjl.empty(sjl.namespace(nsStr, this.options));
-                    if (!retVal) {
-                        break;
-                    }
-                    nsStr += '.' + parts[i];
-                }
-            }
-            else {
-                retVal = !sjl.empty(sjl.namespace(nsString, this.options));
-            }
-
-            return retVal;
         }
 
     }); // end of Bundle

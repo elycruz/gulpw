@@ -1,6 +1,7 @@
-Types of TaskProxies/TaskAdapters that exists are:
-- Task Proxies that implement represent a gulp plugin.
-- Task Proxies that represent multiple gulp plugins.
-- Task Proxies that represent multiple node modules and gulp plugins.
-- Task Proxies that represent one or many node modules.
-- Task Proxies that do not represent any node modules or gulp plugins.
+I.)  Brainstorming:
+    1.)  Types of TaskProxies/TaskAdapters that exists are:
+        - TaskProxy           - Task Proxies that implement represent a gulp plugin.
+        - TaskProxy           - Task Proxies that represent one or many node modules.
+        - CompositeTaskProxy  - Task Proxies that represent multiple gulp plugins.
+        - CompositeTaskProxy  - Task Proxies that represent multiple node modules and gulp plugins.
+        - StaticTaskProxy     - Task Proxies that do not represent any node modules or gulp plugins.
