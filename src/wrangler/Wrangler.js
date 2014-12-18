@@ -11,13 +11,11 @@ var fs = require('fs'),
     // Recursive mkdir (makes all paths in passed path)
     mkdirp = require('mkdirp'),
 
-    Optionable = require(path.join(__dirname, "../Optionable.js")),
-
     Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
 
     log;
 
-module.exports = Optionable.extend(function Wrangler(gulp, argv, env, config) {
+module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config) {
     var defaultOptions = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
         taskProxyMap = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
         self = this;
