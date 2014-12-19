@@ -37,13 +37,11 @@
     "requirejs": "^2.1.15",
     "sjljs": "git://github.com/elycruz/sjljs",
     "ssh2": "^0.3.6",
-    "var_dumpjs": "git://github.com/elycruz/var_dumpjs",
     "yargs": "^1.3.3"
   },
   "devDependencies": {
     "chai": "^1.9.2",
-    "mocha": "^2.0.1",
-    "var_dumpjs": "git://github.com/elycruz/var_dumpjs"
+    "mocha": "^2.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
