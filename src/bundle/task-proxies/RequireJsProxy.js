@@ -4,7 +4,7 @@
 "use strict"; require("sjljs");
 
 // Import base task proxy to extend
-var FilesTaskProxy = require('../FilesTaskProxy'),
+var FilesTaskProxy = require('../FilesHashTaskProxy'),
     fs = require('fs'),
     header = require('gulp-header'),
     requirejs = require('requirejs'),
@@ -12,8 +12,8 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
     chalk = require('chalk'),
     path = require('path');
 
-module.exports = FilesTaskProxy.extend(function RequireJsProxy(options) {
-    FilesTaskProxy.apply(this, options);
+module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
+    FilesHashTaskProxy.apply(this, options);
     this.alias = 'requirejs';
 }, {
 
