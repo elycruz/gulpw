@@ -47,6 +47,8 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
             bundleName = bundle.options.alias,
             taskName = self.alias + separator + bundleName;
 
+        //taskConfigMap.js.linter = wrangler.tasks.jshint.instance.toLazyPipe();
+
         // Create task for bundle
         gulp.task(taskName, function () {
 

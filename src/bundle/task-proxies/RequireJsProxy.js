@@ -4,7 +4,7 @@
 "use strict"; require("sjljs");
 
 // Import base task proxy to extend
-var FilesTaskProxy = require('../FilesHashTaskProxy'),
+var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     fs = require('fs'),
     header = require('gulp-header'),
     requirejs = require('requirejs'),

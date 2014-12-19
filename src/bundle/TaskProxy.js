@@ -44,6 +44,10 @@ module.exports = sjl.Extendable.extend(function TaskProxy(options) {
             return targets.map(function (task) {
                 return task + ':' + bundle.options.alias;
             });
+        },
+
+        getTaskDepsForBundle: function (bundle, gulp, wrangler) {
+            // Overwrite from extending class
         }
 
     });

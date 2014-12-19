@@ -37,8 +37,6 @@ module.exports = TaskProxy.extend("BuildProxy", {
 
         self.registerGulpTasks(taskName, targets, gulp, wrangler);
 
-        //wrangler.log('BuildProxy -> targets: ', targets, '--debug');
-
     }, // end of `registerBundle`
 
     registerBundles: function (bundles, gulp, wrangler) {
@@ -62,7 +60,8 @@ module.exports = TaskProxy.extend("BuildProxy", {
     },
 
     isBundleValidForMinifyAndConcat: function (bundle) {
-       return bundle && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html') || bundle.has('files.html'));
+       return bundle && (bundle.has('files.js') || bundle.has('files.css')
+           || bundle.has('files.html') || bundle.has('files.html'));
     },
 
     getTaskDepsForBundle: function (bundle, gulp, wrangler) {
@@ -110,8 +109,6 @@ module.exports = TaskProxy.extend("BuildProxy", {
             ignoreTask = ignoredTasks.filter(function (ignoredTask) {
                     return task.indexOf(ignoredTask) > -1;
                 }).length > 0;
-
-            //wrangler.log('BuildProxy -> Ignore Task "' + task + '"? ', ignoreTask, '--debug');
 
             // If it is not ok to push the current `task` in the loop to the return value bail
             if (sjl.empty(bundle.options[task])
