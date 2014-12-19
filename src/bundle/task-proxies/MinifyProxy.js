@@ -39,9 +39,9 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
         var self = this,
             separator = wrangler.getTaskStrSeparator(),
             taskConfigMap = {
-                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
-                css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions},
-                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
+                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions, linter: null},
+                css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions, linter: null},
+                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions, linter: null}
             },
             useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
             bundleName = bundle.options.alias,
