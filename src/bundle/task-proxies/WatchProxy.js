@@ -11,8 +11,7 @@ var TaskProxy = require('../TaskProxy'),
 module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {
-        var tasks,
-            watchInterval = null;
+        var watchInterval = null;
 
         // If no tasks or targets bail
         if (sjl.empty(tasks) || sjl.empty(targets)) {

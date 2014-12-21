@@ -16,7 +16,6 @@ var TaskProxy = require('../TaskProxy'),
 module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
-
         var self = this,
             deployOptions = wrangler.tasks.deploy,
             host = deployOptions.devHostnamePrefix + deployOptions.devHostname,
@@ -26,24 +25,23 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 password: deployOptions.password,
                 port: deployOptions.port
             },
-            totalFileCount = 0,
-            uploadedFileCount = 0,
-            startDeployMessage = 'Deploying ',
             taskName = 'deploy' + (taskPrefix || ""),
             startTime;
 
-        // Get file count
-        Object.keys(targets).forEach(function (key, index, list) {
-            startDeployMessage += (index === 0 ? '' :
-                (index < list.length - 1 ? ', ' : ' and ')) + (key !== 'relative' ? '*.' : '') + key;
-            totalFileCount += targets[key].length;
-        });
-
-        startDeployMessage += ' files.';
-
         gulp.task(taskName, function () {
+            var totalFileCount = 0,
+                uploadedFileCount = 0,
+                startDeployMessage = 'Deploying ',
+                conn = new ssh();
 
-            var conn = new ssh();
+            // Get file count
+            Object.keys(targets).forEach(function (key, index, list) {
+                startDeployMessage += (index === 0 ? '' :
+                    (index < list.length - 1 ? ', ' : ' and ')) + (key !== 'relative' ? '*.' : '') + key;
+                totalFileCount += targets[key].length;
+            });
+
+            startDeployMessage += ' files.';
 
             wrangler.log('\n', 'Running ' + chalk.cyan('"' + taskName + '"') + ' task.', '--mandatory');
 
@@ -59,7 +57,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 conn.sftp(function (err, sftp) {
 
-                    if (err) { throw err; }
+                    if (err) { console.log(err); }
 
                     var target;
 
@@ -89,7 +87,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                                     function (err3) {
                                         wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory')
                                         wrangler.log(chalk.green(' => ', item[1]));
-                                        if (err3) { throw err3; }
+                                        if (err3) { console.log(err3); }
                                         uploadedFileCount += 1;
                                     });
                             });
