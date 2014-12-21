@@ -17,39 +17,23 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
     this.alias = 'requirejs';
 }, {
 
+    // @todo add a `getTaskNameForBundle` method
     registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
+        var self = this;
+
         // Create task for bundle
         gulp.task(taskName, function () {
-
-            // Date for tracking task duration
-            var start = new Date(),
-                otherOptions = {};
-
-            // @todo add flag in yaml to allow optimize type (for advanced usages)
-            if (!wrangler.argv.dev) {
-                otherOptions.optimize = 'uglify';
+            var classOfRequireJs = sjl.classOf(bundle.get('requirejs'));
+            if (classOfRequireJs === 'Object') {
+                self.runRequireTaskInline(taskName, bundle, requireJsOptions, gulp, wrangler);
             }
-
-            // Message "Running task"
-            wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
-
-            requirejs.optimize(sjl.extend({}, bundle.options.requirejs.options, otherOptions),
-                function (buildResponse) {
-                //buildResponse is just a text output of the modules
-                //included. Load the built file for the contents.
-                //Use config.out to get the optimized file contents.
-                wrangler.log(buildResponse, '--mandatory');
-
-                // Notify of task completion and task duration
-                wrangler.log('[' + chalk.green('gulp') +  ']' +
-                    chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
-                    chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
-
-            }, function(err) {
-                //optimization err callback
-                wrangler.log(chalk.red('r.js encountered an error:\n' + err), '--mandatory');
-            });
-
+            else if (classOfRequireJs === 'String') {
+                self.runRequireTaskAsCommand(taskName, bundle, requireJsOptions, gulp, wrangler);
+            }
+            else {
+                throw new Error('Requirejs task config is of invalid type.' +
+                    '  Type recieved: ' + classOfRequireJs);
+            }
         }); // end of requirejs task
     },
 
@@ -113,7 +97,7 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
             targets.push(taskName);
 
             // Register singular task
-            self.registerGulpTask(taskName, bundle.options.requirejs.options, gulp, wrangler, bundle);
+            self.registerGulpTask(taskName, self.getRequireJsOptions(bundle), gulp, wrangler, bundle);
         });
 
         // If we have targets register them
@@ -132,10 +116,47 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
                     bundle.options.requirejs.buildConfigPath));
         }
         else if (bundle.has('requirejs.options')) {
-            //
             rjsOptions = bundle.options.requirejs.options;
         }
+        else {
+            rjsOptions = bundle.get('requirejs');
+        }
         return rjsOptions;
+    },
+
+    runRequireTaskInline: function (taskName, bundle, requireJsOptions, gulp, wrangler) {
+        // Date for tracking task duration
+        var start = new Date(),
+            otherOptions = {};
+
+        // @todo add flag in yaml to allow optimize type (for advanced usages)
+        if (!wrangler.argv.dev) {
+            otherOptions.optimize = 'uglify';
+        }
+
+        // Message "Running task"
+        wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
+
+        requirejs.optimize(sjl.extend({}, requireJsOptions, otherOptions),
+            function (buildResponse) {
+                //buildResponse is just a text output of the modules
+                //included. Load the built file for the contents.
+                //Use config.out to get the optimized file contents.
+                wrangler.log(buildResponse, '--mandatory');
+
+                // Notify of task completion and task duration
+                wrangler.log('[' + chalk.green('gulp') +  ']' +
+                chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
+                chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+
+            }, function(err) {
+                //optimization err callback
+                wrangler.log(chalk.red('r.js encountered an error:\n' + err), '--mandatory');
+            });
+    },
+
+    runRequireTaskAsCommand: function () {
+
     },
 
     isBundleValidForTask: function (bundle) {
