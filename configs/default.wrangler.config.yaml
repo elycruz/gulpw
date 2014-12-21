@@ -167,7 +167,7 @@ tasks:
     # Tasks to run on file changes ** Note ** only tasks that match changed file types will be run
     tasks:
       - build
-#      - deploy
+      - deploy
 
     # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null
@@ -221,3 +221,4 @@ tasks:
 #  jasmine:
 #    testsDir: null
 #    options: null
+  copy:

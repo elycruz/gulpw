@@ -22,12 +22,19 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
         gulp.task(taskName, function () {
 
             // Date for tracking task duration
-            var start = new Date();
+            var start = new Date(),
+                otherOptions = {};
+
+            // @todo add flag in yaml to allow optimize type (for advanced usages)
+            if (!wrangler.argv.dev) {
+                otherOptions.optimize = 'uglify';
+            }
 
             // Message "Running task"
             wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
 
-            requirejs.optimize(sjl.extend({}, bundle.options.requirejs.options), function (buildResponse) {
+            requirejs.optimize(sjl.extend({}, bundle.options.requirejs.options, otherOptions),
+                function (buildResponse) {
                 //buildResponse is just a text output of the modules
                 //included. Load the built file for the contents.
                 //Use config.out to get the optimized file contents.

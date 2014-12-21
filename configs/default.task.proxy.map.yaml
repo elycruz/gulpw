@@ -18,6 +18,10 @@ concat:
   constructorLocation: ./bundle/task-proxies/ConcatProxy
   helpInfo: ""
 
+copy:
+  constructorLocation: ./bundle/task-proxies/CopyProxy
+  helpInfo: ""
+
 csslint:
   constructorLocation: ./bundle/task-proxies/CssLintProxy
   helpInfo: ""
