@@ -128,6 +128,10 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                         targets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
                         targets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
                     }
+
+                    if (bundle.has('requirejs')) {
+                        targets.push(path.join(bundle.options.requirejs.options.dir, '/**/*'));
+                    }
                 });
 
                 // If clean key is set with a valid buildable src
