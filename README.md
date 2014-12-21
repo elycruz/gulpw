@@ -33,6 +33,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - requirejs
 	- [X] - watch (unstable)
 	- [X] - mocha
+	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
 - For `Bundle`:
 	- [X] - ~~~The `deploy` task via the watch task should only deploy changed file types not everything for
 	 a bundle (takes to long for bigger bundles definitions).~~~  The previous was changed to only deploy the
