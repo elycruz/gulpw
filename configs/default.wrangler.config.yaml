@@ -75,6 +75,8 @@ tasks:
     ignoredTasks:
       - clean
       - deploy
+      - jshint
+      - csslint
 
     # This is a global lint flag that is used if there is a lint task specified for a section
     lintBeforeBuild: true
