@@ -13,17 +13,11 @@ var fs = require('fs'),
 
     Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
 
-    throwBundleFileNotExistError = function (bundleName, filePath) {
-        throw Error('Bundle "' + bundleName + '" config file doesn\'t exist.  Path checked: ' + filePath);
-    },
-
     log;
 
-module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
-    var defaultOptions = yaml.safeLoad(fs.readFileSync(
-            path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
-        taskProxyMap = yaml.safeLoad(fs.readFileSync(
-            path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
+module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config) {
+    var defaultOptions = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
+        taskProxyMap = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
         self = this;
 
         log = self.log;
@@ -186,8 +180,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     registerTasksForBundle: function (gulp, bundle) {
         var self = this;
-            //argvTasks = self.extractTaskNamesFromArgv(arv._);
-
         // Register bundle with task
         Object.keys(self.tasks).forEach(function (task) {
             self.tasks[task].instance.registerBundle(bundle, gulp, self);
@@ -264,18 +256,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.extractBundleNamesFromArray(argv._).forEach(function (item) {
             filePath = path.join(self.bundlesPath, item + '.' + self.bundleConfigFormat);
             if (!fs.existsSync(filePath)) {
-                return throwBundleFileNotExistError(item, filePath);
+                throw Error('Bundle "' + item + '" config file doesn\'t exist.  Path checked: ' + filePath);
             }
             out.push(filePath);
         });
 
         return out;
-    },
-
-    extractTaskNamesFromArgv: function (argv) {
-        //argv._.map(function (item) {
-        //    /^[a-z\d\-_]+\:[a-z\d\-_]+/i.test(item);
-        //});
     },
 
     log: function () {
@@ -330,8 +316,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
-    launchCompleteMessages: function (taskProxy, gulp) {    },
-
     skipLinting: function () {
         var self = this;
         return (self.argv['no-lint']
@@ -360,5 +344,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             || self.argv['no-jshint']
             || self.argv['skip-jshint']
             || self.argv['skip-jshinting']) || false;
+    },
+
+    /**
+     * Clones an object the dirty way.
+     * @param obj
+     * @returns {*}
+     */
+    clone: function (obj) {
+        return JSON.parse(JSON.stringify(obj));
     }
 });

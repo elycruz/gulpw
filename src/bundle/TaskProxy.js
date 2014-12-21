@@ -1,11 +1,14 @@
 /**
  * Created by edelacruz on 9/19/2014.
  */
-"use strict"; require("sjljs");
+
+"use strict";
+
+require("sjljs");
 
 module.exports = sjl.Extendable.extend(function TaskProxy(options) {
         sjl.extend(true, this, {
-            name: "Task's cli name goes here.",
+            alias: "Task's cli name goes here.",
             description: "Task's description goes here.",
             help: "Task's help details go here."
         }, options);
@@ -41,6 +44,10 @@ module.exports = sjl.Extendable.extend(function TaskProxy(options) {
             return targets.map(function (task) {
                 return task + ':' + bundle.options.alias;
             });
+        },
+
+        getTaskDepsForBundle: function (bundle, gulp, wrangler) {
+            // Overwrite from extending class
         }
 
     });

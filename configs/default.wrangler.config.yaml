@@ -68,7 +68,8 @@ tasks:
         - handlebars
         - ejs
 
-  # Build Task
+  # Build Task (Looks through bundle.config.yaml file and runs
+  # all tasks that are not in the `ignoreTasks` array in this config.
   build:
 
     ignoredTasks:
@@ -220,3 +221,4 @@ tasks:
 #  jasmine:
 #    testsDir: null
 #    options: null
+  copy:

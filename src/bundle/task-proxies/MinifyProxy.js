@@ -4,7 +4,7 @@
 "use strict"; require("sjljs");
 
 // Import base task proxy to extend
-var FilesTaskProxy = require('../FilesTaskProxy'),
+var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     fs = require('fs'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
@@ -17,8 +17,8 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
     chalk = require('chalk'),
     path = require('path');
 
-module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
-    FilesTaskProxy.apply(this, options);
+module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
+    FilesHashTaskProxy.apply(this, options);
     this.alias = 'minify';
 }, {
 
@@ -39,14 +39,15 @@ module.exports = FilesTaskProxy.extend(function MinifyProxy(options) {
         var self = this,
             separator = wrangler.getTaskStrSeparator(),
             taskConfigMap = {
-                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
-                css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions},
-                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
+                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions, linter: null},
+                css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions, linter: null},
+                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions, linter: null}
             },
             useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
             bundleName = bundle.options.alias,
-            taskName = self.alias + separator + bundleName,
-            templateOptions = wrangler.tasks.minify.template;
+            taskName = self.alias + separator + bundleName;
+
+        //taskConfigMap.js.linter = wrangler.tasks.jshint.instance.toLazyPipe();
 
         // Create task for bundle
         gulp.task(taskName, function () {

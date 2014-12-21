@@ -14,7 +14,7 @@ var path = require('path'),
     fs = require('fs');
 
 module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
-        TaskProxy.apply(this, options);
+        TaskProxy.apply(this, arguments);
     },
     {
         // @todo use this method for minify tasks as well (methods will be almost identical

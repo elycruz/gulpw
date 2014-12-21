@@ -4,7 +4,7 @@
 "use strict"; require("sjljs");
 
 // Import base task proxy to extend
-var FilesTaskProxy = require('../FilesTaskProxy'),
+var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     fs = require('fs'),
     concat = require('gulp-concat'),
     header = require('gulp-header'),
@@ -13,8 +13,8 @@ var FilesTaskProxy = require('../FilesTaskProxy'),
     chalk = require('chalk'),
     path = require('path');
 
-module.exports = FilesTaskProxy.extend(function ConcatProxy (options) {
-    FilesTaskProxy.apply(this, sjl.extend(true, {name: 'concat'}, options));
+module.exports = FilesHashTaskProxy.extend(function ConcatProxy (options) {
+    FilesHashTaskProxy.apply(this, sjl.extend(true, {name: 'concat'}, options));
     this.alias = 'concat';
 }, {
 
