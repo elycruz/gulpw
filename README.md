@@ -42,15 +42,15 @@ That directory should contain "bundle-configuration" files which are used within
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
 	  changed.
 - General:
-	- [X] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run (should happen from inside Wrangler.js for all tasks (if any configs present)).
+  - [X] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run (should happen from inside Wrangler.js for all tasks (if any configs present)).
   - [ ] - all/default task
-	- [ ] - Make `Wrangler` constructor `Optionable`.
-	- [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
-	- [ ] - Deploy task should reference local deploy file name from `prompt` task config.
-	- [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
-	- [ ] - Fix all non streaming tasks to return streams so that other tasks can list them as dependencies.
-	- [ ] - Add pointers to `gulp` and `wrangler` to `*TaskProxy` (eliminates having to pass them around all the time).
-	- [ ] - Isolate hinting/linting tasks before running `build` task and wait for them to finish before running `build` task.
+  - [ ] - Make `Wrangler` constructor `Optionable`.
+  - [ ] - Remove build paths from concat task.  Instead use the ones defined in the minify task.
+  - [X] - Deploy task should reference local deploy file name from `prompt` task config.
+  - [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
+  - [ ] - Fix all non streaming tasks to return streams so that other tasks can list them as dependencies.
+  - [ ] - Add pointers to `gulp` and `wrangler` to `*TaskProxy` (eliminates having to pass them around all the time).
+  - [ ] - Isolate hinting/linting tasks before running `build` task and wait for them to finish before running `build` task.
 
 ### Notes:
 

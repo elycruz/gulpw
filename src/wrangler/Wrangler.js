@@ -179,10 +179,17 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
     },
 
     registerTasksForBundle: function (gulp, bundle) {
-        var self = this;
+        var self = this,
+            tasksPassedIn = self.argv._;
+
         // Register bundle with task
         Object.keys(self.tasks).forEach(function (task) {
-            self.tasks[task].instance.registerBundle(bundle, gulp, self);
+
+            // Only attempt to register bundle for tasks that were passed in the command line arguments
+            //if (tasksPassedIn.indexOf(task + ':' + bundle.options.alias)
+            //|| tasksPassedIn.indexOf(task)) {
+                self.tasks[task].instance.registerBundle(bundle, gulp, self);
+            //}
         });
     },
 
@@ -304,6 +311,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         return file;
     },
 
+    // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
         if (sjl.empty(tasks)) {
             console.warn(chalk.yellow('No sub tasks to run from Wrangler.launch tasks.'));

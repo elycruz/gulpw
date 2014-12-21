@@ -56,7 +56,13 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
             ['js', 'css', 'html'].forEach(function (ext) {
                 var buildPath = wrangler.tasks.minify[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext],
+                    jsHintPipe = wrangler.tasks.jshint.instance.getPipe(bundle, gulp, wrangler),
+                    cssLintPipe = wrangler.tasks.csslint.instance.getPipe(bundle, gulp, wrangler),
+                    skipCssLinting = wrangler.skipCssLinting() || wrangler.skipLinting(),
+                    skipJsLinting = wrangler.skipJsLinting() || wrangler.skipLinting(),
                     tmplsString;
+
+
 
                 // If no files for this section, bail to the next one
                 if (!bundle.has('files.' + ext)) {
@@ -66,21 +72,25 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
                 var filePath = path.join(buildPath, bundle.options.alias + '.' + ext),
                     fileBasePath = path.dirname(filePath);
 
-                // If file basepath doesn't exist make sure it is created
-                if (!fs.existsSync(fileBasePath)) {
-                    wrangler.ensurePathExists(fileBasePath);
-                }
-
-                // Else if output file already exists remove it
-                else if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
+                //// If file basepath doesn't exist make sure it is created
+                //if (!fs.existsSync(fileBasePath)) {
+                //    wrangler.ensurePathExists(fileBasePath);
+                //}
+                //
+                //// Else if output file already exists remove it
+                //else if (fs.existsSync(filePath)) {
+                //    fs.unlinkSync(filePath);
+                //}
 
                 // Only populate template string if extension we're looking at is 'js'
                 tmplsString = ext === 'js' ? self.getTemplatesString(bundle, gulp, wrangler) : null;
 
                 // Give gulp the list of sources to process
                 gulp.src(bundle.options.files[ext])
+
+                    .pipe(gulpif(ext === 'js' && !skipJsLinting, jsHintPipe()))
+
+                    .pipe(gulpif(ext === 'css' && !skipCssLinting, cssLintPipe()))
 
                     .pipe(concat(filePath))
 

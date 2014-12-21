@@ -221,4 +221,4 @@ tasks:
 #  jasmine:
 #    testsDir: null
 #    options: null
-  copy:
+  copy: {}

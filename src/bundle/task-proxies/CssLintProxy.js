@@ -9,7 +9,8 @@
 var csslint = require('gulp-csslint'),
     chalk = require('chalk'),
     duration = require('gulp-duration'),
-    TaskProxy = require('../TaskProxy');
+    TaskProxy = require('../TaskProxy'),
+    lazypipe = require('lazypipe');
 
 module.exports = TaskProxy.extend("CssLintProxy", {
 
@@ -23,10 +24,8 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
         // Task string separator
         var self = this,
-
             separator = wrangler.getTaskStrSeparator(),
-
-            cssLintConfig = wrangler.tasks.csslint.options;
+            cssLintPipe = self.getPipe(bundle, gulp, wrangler);
 
         if (!self.isBundleValidForTask(bundle)) {
             return;
@@ -36,11 +35,7 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
             gulp.src(bundle.options.files.css)
 
-                .pipe(duration('csslint "' + bundle.options.alias + '" duration'))
-
-                .pipe(csslint(cssLintConfig))
-
-                .pipe(csslint.reporter());
+                .pipe(cssLintPipe());
         });
 
     }, // end of `registerBundle`
@@ -68,5 +63,19 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
     isBundleValidForTask: function (bundle) {
         return bundle && bundle.has('files.css');
+    },
+
+    getPipe: function (bundle, gulp, wrangler) {
+        var self = this,
+            cssLintConfig = wrangler.tasks.csslint.options;
+
+        if (sjl.empty(self.pipe)) {
+            self.pipe = lazypipe()
+                .pipe(duration, 'csslint "' + bundle.options.alias + '" duration')
+                .pipe(csslint, cssLintConfig)
+                .pipe(csslint.reporter);
+
+        }
+        return self.pipe;
     }
 });

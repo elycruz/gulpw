@@ -10,7 +10,8 @@ var gulpif = require('gulp-if'),
     TaskProxy = require('../TaskProxy'),
     path = require('path'),
     chalk = require('chalk'),
-    callback = require('gulp-fncallback');
+    callback = require('gulp-fncallback'),
+    lazypipe = require('lazypipe');
 
 module.exports = TaskProxy.extend("JsHintProxy", {
 
@@ -25,8 +26,6 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         var self = this,
             separator = wrangler.getTaskStrSeparator(),
             taskName = 'jshint' + separator + bundle.options.alias,
-            jsHintConfig = wrangler.tasks.jshint.options,
-            useFailReporter = false,
             filesToExclude = wrangler.tasks.jshint.ignoredFiles,
             src;
 
@@ -43,16 +42,13 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         }
 
         gulp.task(taskName, function () {
+
             wrangler.log(chalk.cyan('Running "' + taskName + '"'), '--mandatory');
+
             gulp.src(src)
-                .pipe(callback(function (file, enc, cb) {
-                    wrangler.log(chalk.grey('Linting: ' + file.path), '--mandatory');
-                    return cb ? cb() : file;
-                }))
-                .pipe(jshint(jsHintConfig))
-                .pipe(duration(chalk.cyan("jshint \"" + bundle.options.alias + "\" duration")))
-                .pipe(jshint.reporter('jshint-stylish'))
-                .pipe(gulpif(useFailReporter, jshint.reporter('fail')));
+
+                // Get prebuilt pipe
+                .pipe(self.getPipe(bundle, gulp, wrangler)());
         });
 
     }, // end of `registerBundle`
@@ -89,5 +85,27 @@ module.exports = TaskProxy.extend("JsHintProxy", {
 
     isBundleValidForTask: function (bundle) {
         return bundle && (bundle.has('files.js') || bundle.has('requirejs') || bundle.has('browserify'));
+    },
+
+    getPipe: function (bundle, gulp, wrangler) {
+        var self = this,
+            jsHintConfig = wrangler.tasks.jshint.options,
+            useFailReporter = false;
+
+        if (sjl.empty(self.pipe)) {
+            self.pipe = lazypipe()
+                .pipe(callback, function (file, enc, cb) {
+                    wrangler.log(chalk.grey('Linting: ' + file.path), '--mandatory');
+                    return cb ? cb() : file;
+                })
+                .pipe(jshint, jsHintConfig)
+                .pipe(duration, chalk.cyan("jshint \"" + bundle.options.alias + "\" duration"))
+                .pipe(jshint.reporter, 'jshint-stylish');
+
+            if (useFailReporter) {
+                self.pipe.pipe(jshint.reporter, 'fail');
+            }
+        }
+        return self.pipe;
     }
 });
