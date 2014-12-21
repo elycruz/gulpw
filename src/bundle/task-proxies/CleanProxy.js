@@ -119,7 +119,8 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
 
                 // Compile targets array
                 allowedFileTypes.forEach(function (ext) {
-                    var section = bundle.options.files[ext];
+                    var section = bundle.options.files[ext],
+                        copyFiles = bundle.get('copy.files');
 
                     // Check if `key` in `files` is buildable (concatable/minifiable)
                     if (bundle.has('files') && self.isValidTaskSrc(section)) {
@@ -129,8 +130,21 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                         targets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
                     }
 
-                    if (bundle.has('requirejs')) {
+                    // If requirejs config is availble
+                    if (bundle.has('requirejs.options.out')) {
+                        targets.push(bundle.options.requirejs.options.out);
+                    }
+                    else if (bundle.has('requirejs.options.dir')) {
                         targets.push(path.join(bundle.options.requirejs.options.dir, '/**/*'));
+                        // @todo should we also delete the actual dir ?
+                        //targets.push(bundle.options.requirejs.options.dir);
+                    }
+
+                    // If copy tasks is setup
+                    if (bundle.has('copy.files')) {
+                        Object.keys(copyFiles).forEach(function (key) {
+                            targets.push(copyFiles[key]);
+                        });
                     }
                 });
 
