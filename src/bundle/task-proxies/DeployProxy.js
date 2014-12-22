@@ -11,7 +11,8 @@ var TaskProxy = require('../TaskProxy'),
     fs = require('fs'),
     ssh = require('ssh2'),
     chalk = require('chalk'),
-    yaml = require('js-yaml');
+    yaml = require('js-yaml'),
+    gutil = require('gulp-util');
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
@@ -175,7 +176,11 @@ module.exports = TaskProxy.extend("DeployProxy", {
             allowedFileTypes = deployOptions.allowedFileTypes,
             deployUsingUnixStylePaths = deployOptions.deployUsingUnixStylePaths,
             selectedServerEntry = deployOptions.domainsToDevelop
-                [deployOptions.developingDomain];
+                [deployOptions.developingDomain],
+            // @todo this parsing and setting of `deployRootFolder` shouldn't happen here (happening here temporarily)
+            deployRootFolder =
+                selectedServerEntry.deployRootFolder =
+                    gutil.template(selectedServerEntry.deployRootFolder, deployOptions);
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -195,12 +200,12 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 // Build deploy src path
                 if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
-                    deployPath = path.join(selectedServerEntry.deployRootFolder,
+                    deployPath = path.join(deployRootFolder,
                         selectedServerEntry.typesAndDeployPathsMap[fileType],
                         bundle.options.alias + '.' + fileType);
                 }
                 else {
-                    deployPath = path.join(selectedServerEntry.deployRootFolder, bundle.options.alias + '.' + fileType);
+                    deployPath = path.join(deployRootFolder, bundle.options.alias + '.' + fileType);
                 }
 
                 // Check if we need styled unix paths and are on windows

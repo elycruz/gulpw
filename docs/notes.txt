@@ -5,3 +5,8 @@ I.)  Brainstorming:
         - CompositeTaskProxy  - Task Proxies that represent multiple gulp plugins.
         - CompositeTaskProxy  - Task Proxies that represent multiple node modules and gulp plugins.
         - StaticTaskProxy     - Task Proxies that do not represent any node modules or gulp plugins.
+
+    2.) Suggested directories for default setup:
+        - bundle-configs/
+        - bundle.wrangler.config.yaml
+        - bundle-wrangler-configs/
