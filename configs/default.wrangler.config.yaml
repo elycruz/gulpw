@@ -133,21 +133,26 @@ tasks:
 
         # Servers where user can develop for `domainToDevelopFor` (in this case `domainToDevelopFor` is `gulpw-sample.somedomain.com`)
         devHostnames: # slots/hosts
-          - devslot1.gulpw-sample.somedomain.com
-          - devslot2.gulpw-sample.somedomain.com
-          - devslot3.gulpw-sample.somedomain.com
+          - -devslot1.gulpw-sample.somedomain.com
+          - -devslot2.gulpw-sample.somedomain.com
+          - -devslot3.gulpw-sample.somedomain.com
 
         # All website instance prefixes represent the same website just different
         # instances of the website.
 
         # If object then we expect the hostname prefix (key) and site instance's folder path
         devHostnamePrefixes:
-          - web1-
-          - web2-
-          - web3-
+          - web1
+          - web2
+          - web3
+
+        devHostnamePrefixFolders: null # If set will use these folders to suffix to `deployRootFolder`
+          #web1: website1
+          #web2: website2
+          #web3: website3
 
         # Root folder on the server to use for deployments (prefix path for file paths being deployed)s)
-        deployRootFolder: null
+        deployRootFolder: null # example: sites/<%= devHostnamePrefix %><%= devHostname %> (recieves the `deploy` has from this config)
 
         # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
         typesAndDeployPathsMap:

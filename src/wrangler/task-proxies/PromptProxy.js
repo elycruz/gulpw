@@ -144,4 +144,3 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
     }
 
 });
-
