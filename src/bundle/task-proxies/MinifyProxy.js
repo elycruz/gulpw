@@ -12,6 +12,7 @@ var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     minifyhtml = require('gulp-minify-html'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
+    //callback = require('gulp-fncallback'),
     gulpif = require('gulp-if'),
     duration = require('gulp-duration'),
     chalk = require('chalk'),
@@ -63,8 +64,6 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
                     filePath,
                     tmplsString;
 
-
-
                 // If no files for this section, bail to the next one
                 if (!bundle.has('files.' + ext)) {
                     return;
@@ -84,7 +83,13 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
 
                     .pipe(concat(filePath))
 
-                    .pipe(gulpif( !sjl.empty(tmplsString), footer(tmplsString) ))
+                    // Add templates output string to end of file
+                    .pipe(gulpif( !sjl.empty(tmplsString), footer(tmplsString)))
+
+                    //    callback(function (file, enc, cb) {
+                    //    file.contents = new Buffer(file.contents.toString() + tmplsString);
+                    //    return sjl.classOfIs(cb, 'Function') ? cb() : file;
+                    //}) ))
 
                     .pipe(duration(chalk.cyan(self.alias + ' "' + bundle.options.alias + ':' + ext + '" duration')))
 

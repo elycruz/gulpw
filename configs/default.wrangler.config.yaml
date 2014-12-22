@@ -35,11 +35,12 @@ tasks:
       - html
     useVersionNumInFileName: false
     template:
-      templateVariable: someGlobalVar
-      templatesKey: templates
-      setterFunction: null
-      removeWhitespace: true
-      tmpWritePath: ./.gulpw/tmp
+      templatePartial: null # script partial to render for each file entry in the `templates` hash.
+      compressWhitespace: true
+      templateTypeKeys:
+        - mustache
+        - handlebars
+        - ejs
 
   minify:
     header: |
@@ -60,9 +61,8 @@ tasks:
     useMinPreSuffix: true
     useVersionNumInFileName: false
     template:
-      templatesParentVar: someGlobalVar
-      templatesKey: templates
-      removeWhitespace: true
+      templatePartial: null
+      compressWhitespace: true
       templateTypeKeys:
         - mustache
         - handlebars
@@ -222,7 +222,7 @@ tasks:
       - html
 
   mocha:
-    testsDir: null
+    files: null # testDir or array of files (test files)
     options: null
 
 #  jasmine:

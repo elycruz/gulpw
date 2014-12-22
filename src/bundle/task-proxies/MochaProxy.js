@@ -20,7 +20,7 @@ module.exports = TaskProxy.extend("MochaProxy", {
 
         gulp.task(taskName, function () {
             wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
-            gulp.src(taskConfig.testsDir)
+            gulp.src(taskConfig.files)
                 .pipe(mocha(mochaOptions))
                 .pipe(duration(chalk.cyan("mocha \"" + bundle.options.alias + "\" duration")));
         });

@@ -11,7 +11,8 @@ var TaskProxy = require('../TaskProxy'),
 module.exports = TaskProxy.extend("DeployProxy", {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {
-        var watchInterval = null;
+        var tasks,
+            watchInterval = null;
 
         // If no tasks or targets bail
         if (sjl.empty(tasks) || sjl.empty(targets)) {
@@ -28,7 +29,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                     deployTasksLaunched = false,
                     fileShortPath = event.path,
                     deployTasks,
-                    otherTasks;
+                    otherTasks = [];
 
                 //console.log(chalk.magenta('\nTasks that will be launched on file changes:\n'), tasks);
 
@@ -51,7 +52,15 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 }
 
                 // Tasks called by `build:...`
-                otherTasks = wrangler.tasks.build.instance.getTasksForBundle(bundle, wrangler);
+                if (Array.isArray(bundle)) {
+                    bundle.forEach(function (_bundle) {
+                        otherTasks = otherTasks.concat(
+                            wrangler.tasks.build.instance.getTasksForBundle(_bundle, wrangler));
+                    });
+                }
+                else {
+                    otherTasks = wrangler.tasks.build.instance.getTasksForBundle(bundle, wrangler);
+                }
 
                 watchInterval = setInterval(function () {
                     var hasDeployTasks = deployTasks.length > 0,
@@ -159,7 +168,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             tasks = tasks.concat(self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks));
         });
 
-        self.registerGulpTask('watch', targets, gulp, wrangler, bundle, tasks);
+        self.registerGulpTask('watch', targets, gulp, wrangler, bundles, tasks);
 
     }, // end of `registerBundles`
 

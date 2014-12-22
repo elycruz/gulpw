@@ -11,6 +11,8 @@ var path = require('path'),
 
     TaskProxy = require(path.join(__dirname, "TaskProxy.js")),
 
+    lodash = require('lodash'),
+
     fs = require('fs');
 
 module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
@@ -65,8 +67,9 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
         getTemplatesString: function (bundle, gulp, wrangler) {
             var output = '',
                 fileContent,
-                removeWhitespace = wrangler.tasks.minify.template.removeWhitespace,
-                templateOptions = wrangler.tasks.minify.template;
+                templateOptions = wrangler.clone(wrangler.tasks.minify.template),
+                compressWhitespace = templateOptions.compressWhitespace,
+                template = templateOptions.templatePartial;
 
             // Loop through allowed templates concatenation keys
             templateOptions.templateTypeKeys.forEach(function (key) {
@@ -83,11 +86,13 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
                     fileContent = jsStringEscape(fs.readFileSync(file));
 
                     // Remove white space if necessary
-                    fileContent = removeWhitespace ? fileContent.replace(/\s/, '') : fileContent;
+                    fileContent = compressWhitespace ? fileContent.replace(/\s/, '') : fileContent;
 
                     // Write file contents to key value pair on templates object
-                    output += templateOptions.templatesParentVar + '.' + templateOptions.templatesKey +
-                        '["' + path.basename(file, '.' + key) + '"] = "' + fileContent + '";';
+                    output += lodash.template(template, sjl.extend({fileBasename: path.basename(file, '.' + key),
+                        fileContent: fileContent}, templateOptions));
+
+                    wrangler.log('Compiled template entry: ' + output, '--debug');
 
                 }); // end of template files loop
 
