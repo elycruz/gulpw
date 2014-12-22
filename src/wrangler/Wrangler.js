@@ -112,7 +112,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
             TaskProxyClass = require(path.join(__dirname, '../', src));
 
         return new TaskProxyClass({
-            name: task,
+            alias: task,
             help: self.taskProxyMap['help']
         });
     },
@@ -158,6 +158,9 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
 
     createBundle: function (config) {
 
+        var filePath = path.relative(process.cwd(), config),
+            bundle;
+
         if (sjl.classOfIs(config, 'String')) {
             config = this.getBundleConfigByName(config);
         }
@@ -169,7 +172,11 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         // "Creating task ..." message
         this.log(' - Creating bundle "' + config.alias + '"');
 
-        var bundle = new Bundle(config);
+        // Set original bundle file location to bundle.config
+        config.filePath = '.' + path.sep + filePath;
+
+        // Create bundle
+        bundle = new Bundle(config);
 
         // Store bundle
         this.bundles[bundle.options.alias] = bundle;
@@ -240,6 +247,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
                 retVal = yaml.safeLoad(file);
                 break;
         }
+        retVal.filePath = filePath;
         return retVal;
     },
 

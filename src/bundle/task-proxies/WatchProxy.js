@@ -6,20 +6,37 @@
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
     chalk = require('chalk'),
+    spawn = require('child_process').spawn,
     path = require('path');
 
-module.exports = TaskProxy.extend("DeployProxy", {
+module.exports = TaskProxy.extend(function WatchProxy () {
+    TaskProxy.apply(this, sjl.argsToArray(arguments));
+}, {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {
         var tasks,
-            watchInterval = null;
+            watchInterval = null,
+            altTaskName = null,
+            childProcess;
 
         // If no tasks or targets bail
         if (sjl.empty(tasks) || sjl.empty(targets)) {
             return;
         }
 
-        gulp.task(taskName, function () {
+        //if (taskName.indexOf(':') > -1) {
+        //    altTaskName = 'W:' + taskName.split(':')[1];
+        //}
+        //
+        //gulp.task(taskName, function () {
+        //    if (childProcess) {
+        //        childProcess.kill();
+        //    }
+        //    childProcess = spawn(taskName);
+        //});
+
+        //gulp.task(altTaskName, function () {
+        gulp.task(altTaskName, function () {
 
             console.log('\nWatching for changes...');
 
@@ -27,9 +44,14 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                 var doneTaskCount = 0,
                     deployTasksLaunched = false,
-                    fileShortPath = event.path,
+                    fileShortPath = path.relative(process.cwd(), '.' + path.sep + event.path),
                     deployTasks,
                     otherTasks = [];
+
+                // If watched bundle yaml is the changed file
+                if (fileShortPath === bundle.options.filePath) {
+                    // Restart watch task
+                }
 
                 //console.log(chalk.magenta('\nTasks that will be launched on file changes:\n'), tasks);
 
@@ -119,6 +141,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 //console.log(gulp);
 
             });
+
         });
     },
 
@@ -129,10 +152,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-        // Task string separator
-        var separator = wrangler.getTaskStrSeparator(),
-            bundleName = bundle.options.alias,
-            self = this,
+        var self = this,
             targets,
             tasks;
 
@@ -142,9 +162,12 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
         targets = self.getSrcForBundle(bundle);
 
+        // Watch the bundle file for changes (restart the watch task on bundle file changes)
+        targets.push(bundle.get('filePath'));
+
         tasks = self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks, wrangler);
 
-        self.registerGulpTask('watch' + separator + bundleName, targets,
+        self.registerGulpTask(self.getTaskNameForBundle(bundle), targets,
             gulp, wrangler, bundle, tasks);
 
     }, // end of `registerBundle`
