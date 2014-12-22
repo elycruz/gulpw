@@ -12,7 +12,8 @@ var TaskProxy = require('../TaskProxy'),
     ssh = require('ssh2'),
     chalk = require('chalk'),
     yaml = require('js-yaml'),
-    gutil = require('gulp-util');
+    lodash = require('lodash');
+    //gutil = require('gulp-util');
 
 module.exports = TaskProxy.extend("DeployProxy", {
 
@@ -173,12 +174,11 @@ module.exports = TaskProxy.extend("DeployProxy", {
             deployOptions = wrangler.tasks.deploy,
             allowedFileTypes = deployOptions.allowedFileTypes,
             deployUsingUnixStylePaths = deployOptions.deployUsingUnixStylePaths,
-            selectedServerEntry = deployOptions.domainsToDevelop
-                [deployOptions.developingDomain],
+            selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
             // @todo this parsing and setting of `deployRootFolder` shouldn't happen here (happening here temporarily)
             deployRootFolder =
                 selectedServerEntry.deployRootFolder =
-                    gutil.template(selectedServerEntry.deployRootFolder, deployOptions);
+                    lodash.template(selectedServerEntry.deployRootFolder, deployOptions);
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
