@@ -6,6 +6,7 @@
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     fs = require('fs'),
+    Promise = global.Promise || require('es6-promise').Promise,
     header = require('gulp-header'),
     requirejs = require('requirejs'),
     duration = require('gulp-duration'),
@@ -23,17 +24,22 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
 
         // Create task for bundle
         gulp.task(taskName, function () {
-            var classOfRequireJs = sjl.classOf(bundle.get('requirejs'));
-            if (classOfRequireJs === 'Object') {
-                self.runRequireTaskInline(taskName, bundle, requireJsOptions, gulp, wrangler);
-            }
-            else if (classOfRequireJs === 'String') {
-                self.runRequireTaskAsCommand(taskName, bundle, requireJsOptions, gulp, wrangler);
-            }
-            else {
-                throw new Error('Requirejs task config is of invalid type.' +
-                    '  Type recieved: ' + classOfRequireJs);
-            }
+            var classOfRequireJs = sjl.classOf(bundle.get('requirejs')),
+                promise = new Promise(function (fulfill, reject) {
+                    if (classOfRequireJs === 'Object') {
+                        self.runRequireTaskInline(taskName, bundle, requireJsOptions, gulp, wrangler, fulfill, reject);
+                    }
+                    else if (classOfRequireJs === 'String') {
+                        self.runRequireTaskAsCommand(taskName, bundle, requireJsOptions, gulp, wrangler, fulfill, reject);
+                    }
+                    else {
+                        wrangler.log('Requirejs task config is of invalid type.' +
+                            '  Type recieved: ' + classOfRequireJs, '--mandatory');
+                    }
+                });
+
+            return promise;
+
         }); // end of requirejs task
     },
 
@@ -124,7 +130,7 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
         return rjsOptions;
     },
 
-    runRequireTaskInline: function (taskName, bundle, requireJsOptions, gulp, wrangler) {
+    runRequireTaskInline: function (taskName, bundle, requireJsOptions, gulp, wrangler, fulfill, reject) {
         // Date for tracking task duration
         var start = new Date(),
             otherOptions = {};
@@ -148,10 +154,11 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
                 wrangler.log('[' + chalk.green('gulp') +  ']' +
                 chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
                 chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
-
+                fulfill();
             }, function(err) {
                 //optimization err callback
                 wrangler.log(chalk.red('r.js encountered an error:\n' + err), '--mandatory');
+                reject('r.js encountered an error:\n' + err);
             });
     },
 

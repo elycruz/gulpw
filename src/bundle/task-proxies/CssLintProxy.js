@@ -33,9 +33,10 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
         gulp.task('csslint' + separator + bundle.options.alias, function () {
 
-            gulp.src(bundle.options.files.css)
+            return gulp.src(bundle.options.files.css)
 
                 .pipe(cssLintPipe());
+
         });
 
     }, // end of `registerBundle`
@@ -54,7 +55,7 @@ module.exports = TaskProxy.extend("CssLintProxy", {
         });
 
         gulp.task('csslint', function () {
-            gulp.src(targets)
+            return gulp.src(targets)
                 .pipe(duration(chalk.cyan('csslint "all bundles" duration')))
                 .pipe(csslint(cssLintConfig))
                 .pipe(csslint.reporter());

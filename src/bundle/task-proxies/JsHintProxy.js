@@ -45,7 +45,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
 
             wrangler.log(chalk.cyan('Running "' + taskName + '"'), '--mandatory');
 
-            gulp.src(src)
+            return gulp.src(src)
 
                 // Get prebuilt pipe
                 .pipe(self.getPipe(bundle, gulp, wrangler)());

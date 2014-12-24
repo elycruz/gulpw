@@ -36,7 +36,7 @@ module.exports = TaskProxy.extend(function WatchProxy () {
         //});
 
         //gulp.task(altTaskName, function () {
-        gulp.task(altTaskName, function () {
+        gulp.task(taskName, function () {
 
             console.log('\nWatching for changes...');
 
