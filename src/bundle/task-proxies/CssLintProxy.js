@@ -55,6 +55,7 @@ module.exports = TaskProxy.extend("CssLintProxy", {
         });
 
         gulp.task('csslint', function () {
+            wrangler.log(chalk.cyan('\n Running "csslint all bundles" task'), '--mandatory');
             return gulp.src(targets)
                 .pipe(duration(chalk.cyan('csslint "all bundles" duration')))
                 .pipe(csslint(cssLintConfig))
@@ -72,7 +73,7 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
         if (sjl.empty(self.pipe)) {
             self.pipe = lazypipe()
-                .pipe(duration, 'csslint "' + bundle.options.alias + '" duration')
+                .pipe(duration, chalk.cyan('csslint "' + bundle.options.alias + '" duration'))
                 .pipe(csslint, cssLintConfig)
                 .pipe(csslint.reporter);
 
