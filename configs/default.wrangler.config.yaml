@@ -55,8 +55,6 @@ tasks:
     htmlTaskOptions:
       spare: true
       comments: false
-    cssTaskOptions:
-      keepSpecialComments: 0 # "* for keeping all (default), 1 for keeping first one only, 0 for removing all" @see https://www.npmjs.org/package/gulp-minify-css
     jsTaskOptions: {}
     useMinPreSuffix: true
     useVersionNumInFileName: false
@@ -194,12 +192,8 @@ tasks:
 
   compass: {}
 
-  csslint:
-    options: {}
-
   jshint:
-    useJshintRc: false
-    jsHintRcPath: ./configs/.jshintrc
+    jshintrc: ./configs/.jshintrc
     ignoreFiles: null
     options:
       predef:
@@ -214,6 +208,7 @@ tasks:
         - Mustache
         - Marionette
         - require
+        - sjl
 
   clean:
     allowedFileTypes:
@@ -229,3 +224,6 @@ tasks:
 #    testsDir: null
 #    options: null
   copy: {}
+
+  csslint:
+      csslintrc: null

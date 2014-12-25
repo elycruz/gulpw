@@ -69,7 +69,7 @@ module.exports = TaskProxy.extend("CssLintProxy", {
 
     getPipe: function (bundle, gulp, wrangler) {
         var self = this,
-            cssLintConfig = wrangler.tasks.csslint.options;
+            cssLintConfig = wrangler.tasks.csslint.csslintrc || wrangler.tasks.csslint.options;
 
         if (sjl.empty(self.pipe)) {
             self.pipe = lazypipe()

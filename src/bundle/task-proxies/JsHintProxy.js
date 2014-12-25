@@ -89,15 +89,15 @@ module.exports = TaskProxy.extend("JsHintProxy", {
 
     getPipe: function (bundle, gulp, wrangler) {
         var self = this,
-            jsHintConfig = wrangler.tasks.jshint.options,
+            jsHintConfig = wrangler.tasks.jshint.jshintrc || wrangler.tasks.jshint.options,
             useFailReporter = false;
 
         if (sjl.empty(self.pipe)) {
             self.pipe = lazypipe()
-                .pipe(callback, function (file, enc, cb) {
-                    wrangler.log(chalk.grey('Linting: ' + file.path), '--mandatory');
-                    return cb ? cb() : file;
-                })
+                //.pipe(callback, function (file, enc, cb) {
+                //    wrangler.log(chalk.grey('Linting: ' + file.path), '--mandatory');
+                //    return cb ? cb() : file;
+                //})
                 .pipe(jshint, jsHintConfig)
                 .pipe(duration, chalk.cyan("jshint \"" + bundle.options.alias + "\" duration"))
                 .pipe(jshint.reporter, 'jshint-stylish');
@@ -108,4 +108,5 @@ module.exports = TaskProxy.extend("JsHintProxy", {
         }
         return self.pipe;
     }
+
 });
