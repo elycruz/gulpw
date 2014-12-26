@@ -16,6 +16,11 @@ staticTasks:
 
 tasks:
 
+  all:
+    tasks:
+      - build
+      - deploy
+
   compass:
     compassProjectRoot: null # config.rb home
 
