@@ -3,13 +3,13 @@
  */
 
 // Global
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 var path = require('path'),
 
     jsStringEscape = require('js-string-escape'),
 
-    TaskProxy = require(path.join(__dirname, "TaskProxy.js")),
+    TaskProxy = require(path.join(__dirname, 'TaskProxy.js')),
 
     lodash = require('lodash'),
 

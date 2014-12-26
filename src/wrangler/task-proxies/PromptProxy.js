@@ -1,7 +1,7 @@
 /**
  * Created by edelacruz on 11/19/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var WranglerTaskProxy = require('../WranglerTaskProxy'),
@@ -42,7 +42,7 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
                 message: 'What server would you like to deploy to?',
                 choices: domainToDevelop.devHostnames,
                 when: function (answers) {
-                    return domainToDevelopKey === answers.developingDomain
+                    return domainToDevelopKey === answers.developingDomain;
                 }
             });
 
@@ -89,7 +89,7 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
                 return password ? true : 'Please enter your password.';
             },
             when: function (answers) {
-                return answers['authType'] === 'password';
+                return answers.authType === 'password';
             }
         });
 
@@ -103,7 +103,7 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
                     'The specified file does not exist.';
             },
             when: function (answers) {
-                return answers['authType'] === 'publickey';
+                return answers.authType === 'publickey';
             }
         });
 
@@ -113,7 +113,7 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
             message: 'What is your SSH passphrase?',
             default: '',
             when: function (answers) {
-                return answers['authType'] === 'publickey';
+                return answers.authType === 'publickey';
             }
         });
 

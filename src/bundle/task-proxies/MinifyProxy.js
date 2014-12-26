@@ -1,11 +1,11 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
-    fs = require('fs'),
+    //fs = require('fs'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
     minifycss = require('gulp-minify-css'),
@@ -44,7 +44,7 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
                 css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions, linter: null},
                 js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions, linter: null}
             },
-            useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
+            //useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
             bundleName = bundle.options.alias,
             taskName = self.alias + separator + bundleName;
 

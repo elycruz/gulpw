@@ -1,12 +1,12 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
     chalk = require('chalk'),
-    spawn = require('child_process').spawn,
+    //spawn = require('child_process').spawn,
     path = require('path');
 
 module.exports = TaskProxy.extend(function WatchProxy () {
@@ -14,10 +14,9 @@ module.exports = TaskProxy.extend(function WatchProxy () {
 }, {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {
-        var tasks,
-            watchInterval = null,
-            altTaskName = null,
-            childProcess;
+        var watchInterval = null;
+            //altTaskName = null,
+            //childProcess;
 
         // If no tasks or targets bail
         if (sjl.empty(tasks) || sjl.empty(targets)) {
@@ -48,10 +47,10 @@ module.exports = TaskProxy.extend(function WatchProxy () {
                     deployTasks,
                     otherTasks = [];
 
-                // If watched bundle yaml is the changed file
-                if (fileShortPath === bundle.options.filePath) {
-                    // Restart watch task
-                }
+                //// If watched bundle yaml is the changed file
+                //if (fileShortPath === bundle.options.filePath) {
+                //    // Restart watch task
+                //}
 
                 //console.log(chalk.magenta('\nTasks that will be launched on file changes:\n'), tasks);
 

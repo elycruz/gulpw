@@ -2,7 +2,7 @@
  * Created by edelacruz on 10/8/2014.
  */
 
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 var path = require('path'),
     del = require('del'),
@@ -27,7 +27,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
             var start = new Date(),
 
                 // Get task name
-                taskName = 'clean' + (taskSuffix ? taskSuffix : "");
+                taskName = 'clean' + (taskSuffix ? taskSuffix : '');
 
             // Define 'clean' task
             gulp.task(taskName, function (cb) {
@@ -157,7 +157,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
 
             // Register overall clean task
             if (targets.length > 0) {
-                self.registerGulpTask("", targets, gulp, wrangler);
+                self.registerGulpTask('', targets, gulp, wrangler);
             }
 
         }

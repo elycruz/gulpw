@@ -1,17 +1,22 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     fs = require('fs'),
-    Promise = global.Promise || require('es6-promise').Promise,
-    header = require('gulp-header'),
+    yaml = require('js-yaml'),
+    //header = require('gulp-header'),
     requirejs = require('requirejs'),
-    duration = require('gulp-duration'),
-    chalk = require('chalk'),
-    path = require('path');
+    //duration = require('gulp-duration'),
+    chalk = require('chalk');
+    //path = require('path');
+
+// Ensure `Promise` constructor
+if (!global.Promise) {
+    global.Promise = require('es6-promise').Promise;
+}
 
 module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
     FilesHashTaskProxy.apply(this, options);
@@ -140,7 +145,7 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
             otherOptions.optimize = 'uglify';
         }
 
-        // Message "Running task"
+        // Message 'Running task'
         wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
 
         requirejs.optimize(sjl.extend({}, requireJsOptions, otherOptions),

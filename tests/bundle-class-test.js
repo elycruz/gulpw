@@ -2,15 +2,21 @@
  * Created by ElyDeLaCruz on 10/29/2014.
  */
 
+'use strict';
+
 require('sjljs');
 
 var fs = require('fs'),
     chai = require('chai'),
-    expect = chai.expect,
     yaml = require('js-yaml'),
     Bundle = require('../src/Bundle');
 
-describe("#`Bundle`", function () {
+// Get `chai.expect`
+if (!global.expect) {
+    global.expect = chai.expect;
+}
+
+describe('#`Bundle`', function () {
 
     var bundleConfig = yaml.safeLoad(fs.readFileSync('./tests/sample-project/bundle-configs/mvp-bundle.yaml')),
         bundle = new Bundle(bundleConfig);

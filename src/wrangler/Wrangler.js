@@ -1,7 +1,10 @@
 /**
  * Created by Ely on 10/4/2014.
  */
-"use strict"; require("sjljs");;
+
+'use strict';
+
+require('sjljs');
 
 var fs = require('fs'),
     path = require('path'),
@@ -11,13 +14,13 @@ var fs = require('fs'),
     // Recursive mkdir (makes all paths in passed path)
     mkdirp = require('mkdirp'),
 
-    Bundle = require(path.join(__dirname, "../bundle/Bundle.js")),
+    Bundle = require(path.join(__dirname, '../bundle/Bundle.js')),
 
     log;
 
 module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config) {
-    var defaultOptions = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.wrangler.config.yaml"))),
-        taskProxyMap = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "/../../configs/default.task.proxy.map.yaml"))),
+    var defaultOptions = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '/../../configs/default.wrangler.config.yaml'))),
+        taskProxyMap = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '/../../configs/default.task.proxy.map.yaml'))),
         self = this;
 
         log = self.log;
@@ -27,7 +30,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         cwd: env.configBase,
         argv: argv,
         taskProxyMap: taskProxyMap,
-        taskStrSeparator: ":",
+        taskStrSeparator: ':',
         tasks: {},
         staticTasks: {}
     }, defaultOptions, config);
@@ -44,7 +47,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         var self = this,
             anyGlobalTasksToRun;
 
-        self.log("Gulp Bundle Wrangler initializing...");
+        self.log('Gulp Bundle Wrangler initializing...');
 
         // Check if we have any global tasks to run
         anyGlobalTasksToRun = argv.all || (argv._.filter(function (item) {
@@ -81,7 +84,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         var self = this;
 
         // Creating task proxies message
-        self.log("- Creating static task proxies.");
+        self.log('- Creating static task proxies.');
 
         Object.keys(self.staticTasks).forEach(function (task) {
             self.staticTasks[task].instance = self.createStaticTaskProxy(gulp, task);
@@ -94,7 +97,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         var self = this;
 
         // Creating task proxies message
-        self.log(chalk.cyan("\n- Creating task proxies."));
+        self.log(chalk.cyan('\n- Creating task proxies.'));
 
         Object.keys(self.tasks).forEach(function (task) {
             self.tasks[task].instance = self.createTaskProxy(gulp, task);
@@ -104,8 +107,8 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
     },
 
     createTaskProxy: function (gulp, task) {
-        // "Creating task ..." message
-        this.log(" - Creating task proxy \"" + task + "\".");
+        // 'Creating task ...' message
+        this.log(' - Creating task proxy \"' + task + '\'.');
 
         var self = this,
             src = self.taskProxyMap[task].constructorLocation,
@@ -113,13 +116,13 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
 
         return new TaskProxyClass({
             alias: task,
-            help: self.taskProxyMap['help']
+            help: self.taskProxyMap.help
         });
     },
 
     createStaticTaskProxy: function (gulp, task) {
-        // "Creating task ..." message
-        this.log(chalk.cyan("\n- Creating static task proxy \"" + task + "\"."));
+        // 'Creating task ...' message
+        this.log(chalk.cyan('\n- Creating static task proxy \"' + task + '\'.'));
 
         var self = this,
             src = self.taskProxyMap[task].constructorLocation,
@@ -127,7 +130,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
 
         TaskProxyClass = new TaskProxyClass({
             name: task,
-            help: self.taskProxyMap['help']
+            help: self.taskProxyMap.help
         });
 
         TaskProxyClass.registerStaticTasks(gulp, self);
@@ -140,7 +143,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
             bundlesPath;
 
         // Creating task proxies message
-        self.log(chalk.cyan("\n- Creating bundles."));
+        self.log(chalk.cyan('\n- Creating bundles.'));
 
         bundlesPath = self.bundlesPath;
 
@@ -169,7 +172,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
             return; // @todo throw exception here
         }
 
-        // "Creating task ..." message
+        // 'Creating task ...' message
         this.log(' - Creating bundle "' + config.alias + '"');
 
         // Set original bundle file location to bundle.config
@@ -186,8 +189,8 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
     },
 
     registerTasksForBundle: function (gulp, bundle) {
-        var self = this,
-            tasksPassedIn = self.argv._;
+        var self = this;
+            //tasksPassedIn = self.argv._;
 
         // Register bundle with task
         Object.keys(self.tasks).forEach(function (task) {

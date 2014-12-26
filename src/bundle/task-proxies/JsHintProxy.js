@@ -1,19 +1,20 @@
 /**
  * Created by edelacruz on 10/8/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
-var gulpif = require('gulp-if'),
+var
     jshint = require('gulp-jshint'),
     duration = require('gulp-duration'),
     TaskProxy = require('../TaskProxy'),
     path = require('path'),
     chalk = require('chalk'),
-    callback = require('gulp-fncallback'),
+    //callback = require('gulp-fncallback'),
+    //gulpif = require('gulp-if'),
     lazypipe = require('lazypipe');
 
-module.exports = TaskProxy.extend("JsHintProxy", {
+module.exports = TaskProxy.extend('JsHintProxy', {
 
     /**
      * @param bundle {Bundle}
@@ -56,8 +57,8 @@ module.exports = TaskProxy.extend("JsHintProxy", {
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
-            targets = [],
-            deps = [];
+            targets = [];
+            //deps = [];
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
@@ -99,7 +100,7 @@ module.exports = TaskProxy.extend("JsHintProxy", {
                 //    return cb ? cb() : file;
                 //})
                 .pipe(jshint, jsHintConfig)
-                .pipe(duration, chalk.cyan("jshint \"" + bundle.options.alias + "\" duration"))
+                .pipe(duration, chalk.cyan('jshint \"' + bundle.options.alias + '\' duration'))
                 .pipe(jshint.reporter, 'jshint-stylish');
 
             if (useFailReporter) {

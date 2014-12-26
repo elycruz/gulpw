@@ -4,12 +4,12 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy');
 
-module.exports = TaskProxy.extend("BrowserifyProxy", {
+module.exports = TaskProxy.extend('BrowserifyProxy', {
 
     /**
      * Regsiters bundle with `browserify` gulp task.
@@ -18,10 +18,7 @@ module.exports = TaskProxy.extend("BrowserifyProxy", {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-
-        // Task string separator
-        var separator = wrangler.getTaskStrSeparator();
-
+        // Write code
     } // end of `registerBundle`
 
 }); // end of export

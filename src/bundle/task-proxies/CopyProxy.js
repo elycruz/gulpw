@@ -4,15 +4,16 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
-    fs = require('fs'),
-    duration = require('gulp-duration'),
-    chalk = require('chalk'),
-    path = require('path'),
-    callback = require('gulp-fncallback');
+    //fs = require('fs'),
+    //duration = require('gulp-duration'),
+    //chalk = require('chalk'),
+    path = require('path');
+    //callback = require('gulp-fncallback')
+
 
 module.exports = FilesHashTaskProxy.extend(function CopyProxy (options) {
     FilesHashTaskProxy.apply(this, sjl.extend(true, {alias: 'copy'}, options));

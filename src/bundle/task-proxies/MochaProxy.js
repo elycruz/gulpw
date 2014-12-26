@@ -2,16 +2,16 @@
  * Created by edelacruz on 10/8/2014.
  */
 
-"use strict";
+'use strict';
 
-require("sjljs");
+require('sjljs');
 
 var mocha = require('gulp-mocha'),
     duration = require('gulp-duration'),
     TaskProxy = require('../TaskProxy'),
     chalk = require('chalk');
 
-module.exports = TaskProxy.extend("MochaProxy", {
+module.exports = TaskProxy.extend('MochaProxy', {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true,
@@ -22,7 +22,7 @@ module.exports = TaskProxy.extend("MochaProxy", {
             wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
             return gulp.src(taskConfig.files)
                 .pipe(mocha(mochaOptions))
-                .pipe(duration(chalk.cyan("mocha \"" + bundle.options.alias + "\" duration")));
+                .pipe(duration(chalk.cyan('mocha \"' + bundle.options.alias + '\' duration')));
         });
     },
 

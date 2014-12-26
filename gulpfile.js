@@ -13,8 +13,7 @@ gulp.task('jshint', function () {
 });
 
 gulp.task('watch', function () {
-    gulp.watch(srcs, ['jshint'])
-        .pipe();
+    gulp.watch(srcs, ['jshint']);
 });
 
 gulp.task('default', ['jshint', 'watch']);

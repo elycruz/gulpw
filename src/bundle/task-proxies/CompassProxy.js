@@ -4,7 +4,7 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
@@ -13,7 +13,7 @@ var TaskProxy = require('../TaskProxy'),
 	exec = child_process.exec,
 	chalk = require('chalk');
 
-module.exports = TaskProxy.extend("CompassProxy", {
+module.exports = TaskProxy.extend('CompassProxy', {
 
     /**
      * Regsiters bundle with `compass` or `sass` gulp task.
@@ -35,8 +35,7 @@ module.exports = TaskProxy.extend("CompassProxy", {
 		// Register compass task
 		gulp.task(taskName, function () {
 
-			var startDate = new Date(),
-				cd;
+			var startDate = new Date();
 
 			wrangler.log(chalk.cyan(' \nRunning "' + taskName + '" task:\n'), '--mandatory');
 

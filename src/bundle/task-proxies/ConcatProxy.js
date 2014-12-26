@@ -1,7 +1,10 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-"use strict"; require("sjljs");
+
+'use strict';
+
+require('sjljs');
 
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),

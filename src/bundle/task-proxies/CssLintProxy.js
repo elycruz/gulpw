@@ -4,7 +4,7 @@
 /**
  * Created by edelacruz on 10/8/2014.
  */
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 var csslint = require('gulp-csslint'),
     chalk = require('chalk'),
@@ -12,7 +12,7 @@ var csslint = require('gulp-csslint'),
     TaskProxy = require('../TaskProxy'),
     lazypipe = require('lazypipe');
 
-module.exports = TaskProxy.extend("CssLintProxy", {
+module.exports = TaskProxy.extend('CssLintProxy', {
 
     /**
      *

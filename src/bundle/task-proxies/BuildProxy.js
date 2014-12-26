@@ -1,15 +1,15 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-"use strict";
+'use strict';
 
-require("sjljs");
+require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
     chalk = require('chalk');
 
-module.exports = TaskProxy.extend("BuildProxy", {
+module.exports = TaskProxy.extend('BuildProxy', {
 
     //
     //registerGulpTasks: function (taskName, tasks, deps, gulp, wrangler) {
@@ -93,8 +93,7 @@ module.exports = TaskProxy.extend("BuildProxy", {
     },
 
     getTasksForBundle: function (bundle, wrangler) {
-        var self = this,
-            separator = wrangler.getTaskStrSeparator(),
+        var separator = wrangler.getTaskStrSeparator(),
             bundleName = bundle.options.alias,
             targets = [],
             ignoredTasks = wrangler.tasks.build.ignoredTasks,

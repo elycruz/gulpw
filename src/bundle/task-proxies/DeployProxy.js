@@ -2,7 +2,7 @@
  * Created by ElyDeLaCruz on 11/18/2014.
  */
 
-"use strict"; require("sjljs");
+'use strict'; require('sjljs');
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
@@ -15,11 +15,10 @@ var TaskProxy = require('../TaskProxy'),
     lodash = require('lodash');
     //gutil = require('gulp-util');
 
-module.exports = TaskProxy.extend("DeployProxy", {
+module.exports = TaskProxy.extend('DeployProxy', {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
-        var self = this,
-            deployOptions = wrangler.tasks.deploy,
+        var deployOptions = wrangler.tasks.deploy,
             host = deployOptions.devHostnamePrefix + deployOptions.devHostname,
             sshOptions = {
                 host: host,
@@ -27,7 +26,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
                 password: deployOptions.password,
                 port: deployOptions.port
             },
-            taskName = 'deploy' + (taskPrefix || ""),
+            taskName = 'deploy' + (taskPrefix || ''),
             startTime;
 
         gulp.task(taskName, function () {
@@ -87,7 +86,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
 
                                     // Callback
                                     function (err3) {
-                                        wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory')
+                                        wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory');
                                         wrangler.log(chalk.green(' => ', item[1]));
                                         if (err3) { console.log(err3); }
                                         uploadedFileCount += 1;
@@ -113,7 +112,7 @@ module.exports = TaskProxy.extend("DeployProxy", {
             })
             .on('close', function (hadError) {
 
-                // Log "Connection closed"
+                // Log 'Connection closed'
                 wrangler.log(chalk.grey('\n Connection closed.'));
 
                 // Log task completion
@@ -229,8 +228,8 @@ module.exports = TaskProxy.extend("DeployProxy", {
         if (bundle.has('deploy.otherFiles.relative')) {
 
             // Push array map entry
-            srcs['relative'] = self.mapFileArrayToDeployArrayMap(
-                bundle.options.deploy.otherFiles['relative'], 'relative',
+            srcs.relative = self.mapFileArrayToDeployArrayMap(
+                bundle.options.deploy.otherFiles.relative, 'relative',
                     selectedServerEntry, wrangler);
         }
 

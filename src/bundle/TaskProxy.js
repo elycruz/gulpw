@@ -2,15 +2,15 @@
  * Created by edelacruz on 9/19/2014.
  */
 
-"use strict";
+'use strict';
 
-require("sjljs");
+require('sjljs');
 
 module.exports = sjl.Extendable.extend(function TaskProxy(options) {
         sjl.extend(true, this, {
-            alias: "Task's cli name goes here.",
-            description: "Task's description goes here.",
-            help: "Task's help details go here."
+            alias: 'Task\'s cli name goes here.',
+            description: 'Task\'s description goes here.',
+            help: 'Task\'s help details go here.'
         }, options);
     },
     {
