@@ -62,7 +62,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         // Else create task proxies and bundle(s) if necessary
         else {
 
-            // Create task proxies (@todo in the future only load needed tasks if it makes any difference in performance)
+            // Create task proxies (~~@todo in the future only load needed tasks if it makes any difference in performance~~  Can't do this as some tasks access other task proxies internally at task runtime)
             self.createTaskProxies(gulp);
 
             // If any global tasks to run create tasks proxies and register all bundles.
