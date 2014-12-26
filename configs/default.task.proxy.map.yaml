@@ -1,3 +1,7 @@
+all:
+  constructorLocation: ./bundle/task-proxies/AllTasksProxy
+  helpInfo: ""
+
 browserify:
   constructorLocation: ./bundle/task-proxies/BrowserifyProxy
   helpInfo: ""
