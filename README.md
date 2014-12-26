@@ -21,6 +21,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - clean (del)
 	- [X] - compass (custom)
 	- [X] - concat (gulp-concat)
+	- [X] - copy
 	- [X] - csslint (gulp-csslint)
 	- [X] - deploy (ssh2)
 	- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
@@ -30,7 +31,7 @@ That directory should contain "bundle-configuration" files which are used within
 	- [X] - template (mustache, handlebars etc.) (stores all templates on specified global via a script	template)
 	- [X] - prompt:deploy (creates local deploy configuration file from series of questions)
 	- [X] - requirejs
-	- [X] - watch (unstable)
+	- [X] - watch
 	- [X] - mocha
 	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
 - For `Bundle`:
