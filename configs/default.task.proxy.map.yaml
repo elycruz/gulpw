@@ -65,3 +65,7 @@ prompt:
 mocha:
   constructorLocation: ./bundle/task-proxies/MochaProxy
   helpInfo: ""
+
+jasmine:
+  constructorLocation: ./bundle/task-proxies/JasmineProxy
+  helpInfo: ""

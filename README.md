@@ -109,11 +109,11 @@ tasks:
 - **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are included as conglomerate tasks).
 - **lintBeforeBuild {Boolean}:** Top level lint flag for overriding linting functionality in all subtasks.  Default `null`.
 
-#####Flags that can affect this task:
-- --dev
-- --skip-lint
-- --skip-csslint
-- --skip-jslint
+#####Flags that can affect the 'build' task:
+- **--dev** - Causes 'minify' to ignore minification.
+- **--skip-lint** - Causes all linting/hinting tasks to be ignored.
+- **--skip-csslint** - Causses csslint to be ignored.
+- **--skip-jshint** - Causes jshint to be ignored.
 
 ### clean
 The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
@@ -156,6 +156,11 @@ The 'concat' task concatenates all files listed in the `files` section of a {bun
 to the output destination listed in it's config section or 'minify''s config section (if they are not defined for the 'concat' config section).
 
 By default concat works only on works on the `js`, `css`, and/or `html` sections (currently hardcoded (will be updated later)).
+
+#####Flags that can affect the 'build' task:
+- **--skip-lint** - Causes all linting/hinting tasks to be ignored.
+- **--skip-csslint** - Causses csslint to be ignored.
+- **--skip-jshint** - Causes jshint to be ignored.
 
 #####Usage:
 `gulpw concat:{bundle-name}` or for all bundles
@@ -209,9 +214,7 @@ The 'compass' task calls compass compile at compass project root location (confi
 #####Global config:
 ```
 tasks:
-
   compass:
-
   	# Compass project root dir
     compassProjectRoot: null # config.rb home
 ```
@@ -261,8 +264,8 @@ tasks:
 ### MVP (Minimal Viable Product) Todos
 
 - [X] Build out and come up with base functionality/classes (MVP).
-- [ ] Build out the baseline task proxies:
-	- [ ] - all/default
+- [X] Build out the baseline task proxies:
+  - [X] - ~~all/default~~ Leaving this one for version 0.2.0
 	- [x] - build
 	- [X] - clean (del)
 	- [X] - compass (custom)
@@ -270,7 +273,7 @@ tasks:
 	- [X] - copy
 	- [X] - csslint (gulp-csslint)
 	- [X] - deploy (ssh2)
-	- [ ] - jasmine
+	- [X] - jasmine
 	- [X] - jshint (gulp-jshint)
 	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
 		- [X] - template (mustache, handlebars etc.) (stores all templates on specified global via a script	template)

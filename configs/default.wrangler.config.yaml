@@ -225,9 +225,10 @@ tasks:
     files: null # testDir or array of files (test files)
     options: null
 
-#  jasmine:
-#    testsDir: null
-#    options: null
+  jasmine:
+    files: null # testDir or array of files (test files)
+    options: null
+
   copy: {}
 
   csslint:
