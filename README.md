@@ -11,6 +11,50 @@ That directory should contain "bundle-configuration" files which are used within
  The configuration files will then hold the user's configurations in the yaml format decidedly though
  other formats could be easily supported.
 
+## Quick Nav
+- [{bundle-name}.yaml config file](#bundle-config)
+- [Running Tasks](#running-tasks)
+- [Available tasks](#available-tasks)
+- [Todos](#minimal-viable-product-todos)
+
+### Bundle config
+A bundle config is made typically of a yaml file with one or more attributes listed in it.
+A bundle config only requires an `alias` property to be a valid bundle config file.
+A bundle config file can have many sections representing and used by tasks.
+
+#####Valid Bundle Config file:
+```
+#some-other-bundle.yaml
+alias: some-other-bundle
+```
+
+#####Another Valid Bundle Config file:
+```
+# some-bunde.yaml
+alias: some-bundle
+files:
+  js:
+    - some/file/path.js
+    - some/other/file/path.js
+	css:
+    - some/other/file/path1.css
+    - some/other/file/path2.css
+requirejs:
+	options:
+		# requirejs options here ...
+		...
+```
+
+See the listed tasks below for ideas on what other sections you can use in your bundle yaml files.
+
+### Running tasks
+`gulpw {task-name}:{bundle-name}` for one bundle
+`gulpw {task-name}` for all bundles
+
+E.g., `gulpw build:global build:some-other-bundle deploy:global deploy:some-other-bundle --dev`
+The above example builds (see [build](#build)) some bundles (in development mode (unminified due to `--dev` flag)) and deploys them to
+ the users selected server (see [deploy](#deploy) task section for more info).
+
 ## Available Tasks
 - [build](#build)
 - [clean](#clean)
@@ -243,6 +287,7 @@ tasks:
   - [ ] - Add 'compass' task to the 'build' task.
   - [ ] - Add testing (mocha, jasmine) tasks to 'build' task.
   - [ ] - Make sure that 'concat' and 'minify' tasks have the same options.
+  - [ ] - Supply example bundle config file with all sections listed in it.
 
 ### Version 0.2.0 Todos
 - [ ] - Tasks
