@@ -7,10 +7,59 @@ Allows the management of a project via bundle configuration files (architected t
 So the idea is as follows:
   We have a `gulp-bundles` directory (could be named anything via the `{bundle-wrangler}-config*` file).
 That directory should contain "bundle-configuration" files which are used within "task proxies" to run a
- task.
+ task via the command line;  E.g., `$ gulpw build:global deploy:global deploy:other-bundle`.
+ The configuration files will then hold the user's configurations in the yaml format decidedly though
+ other formats could be easily supported.
 
-### UML Diagram
-[[UML Diagram of Bundle Wrangler] (http://www.gliffy.com/go/publish/6312461)]
+## Available Tasks
+- [build](#build)
+- [clean](#clean)
+- [compass](#compass)
+- [concat](#concat)
+- [copy](#copy)
+- [csslint](#csslint)
+- [deploy](#deploy)
+- [jshint](#jshint)
+- [minify](#minify)
+- [template](#template)
+- [prompt](#prompt)
+- [requirejs](#requirejs)
+- [watch](#watch)
+- [mocha](#mocha)
+
+### build
+The 'build' task calls every sub task listed within a {bundle-name}.yaml config file except (by default):
+		- clean (we could have this run via a flag in the future but is ignored for now to speed up performance)
+		- deploy
+		- jshint (called by the minify task so is ignored as standalone task)
+		- csslint (called by the minify task so is ignored as a standalone task)
+** Note ** The minify task runs 'jshint' and 'csslint' (along with other tasks) so that
+is why they are being ignored as standalone tests.
+
+#### Usage:
+`gulpw build:{bundle-name}` or run it for all bundles
+`gulpw build`
+
+### clean
+'clean' cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
+ *`requirejs` section then the artifacts outputted by these sections are cleaned up (deleted) when clean is called.
+
+*The `files` section can have many different sections that output artifact files for example a `js`, `css`, or `html` section(s).
+*See the ['minify'](#minify) section for more info on the possible sections supported by the `files` section.
+
+### concat
+
+### compass
+### copy
+### csslint
+### deploy
+### jshint
+### minify
+### template
+### prompt
+### requirejs
+### watch
+### mocha
 
 ### MVP (Minimal Viable Product) Todos
 
@@ -74,6 +123,10 @@ That directory should contain "bundle-configuration" files which are used within
     task2 as a value of --flag2 unless you explicitely pass a value to --flag3~~
 - Build files cannot be shared amongst bundles when wanting to use the 'watch' task cause they cause a cyclic dependency when running global
  watch tasks;  I.e., `gulpw watch`
+
+### Resources
+#### UML Diagram
+[[UML Diagram of Bundle Wrangler] (http://www.gliffy.com/go/publish/6312461)]
 
 ### License(s):
 - MIT (http://opensource.org/licenses/MIT)
