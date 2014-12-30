@@ -61,7 +61,7 @@ tasks:
       spare: true
       comments: false
     jsTaskOptions: {}
-    useMinPreSuffix: true
+    useMinPreSuffix: false
     useVersionNumInFileName: false
     template:
       templatePartial: null

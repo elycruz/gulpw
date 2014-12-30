@@ -28,28 +28,122 @@ That directory should contain "bundle-configuration" files which are used within
 - [mocha](#mocha)
 
 ### build
-The 'build' task calls every sub task listed within a {bundle-name}.yaml config file except (by default):
+The 'build' task calls every sub task listed in a {bundle-name}.yaml config file except (by default can be altered in local wrangler config file):
 		- clean (we could have this run via a flag in the future but is ignored for now to speed up performance)
 		- deploy
 		- jshint (called by the minify task so is ignored as standalone task)
 		- csslint (called by the minify task so is ignored as a standalone task)
+
 ** Note ** The minify task runs 'jshint' and 'csslint' (along with other tasks) so that
 is why they are being ignored as standalone tests.
 
-#### Usage:
+'build' also adds the 'minify' task to it's list of tasks 'to' run for a particular bundle or bundles
+depending on if an `html`, `css` or `js` section is found with the `files` section.
+
+#####Usage:
 `gulpw build:{bundle-name}` or run it for all bundles
 `gulpw build`
 
+#####GBW Config:
+```
+tasks:
+
+  # Build Task (Looks through {bundle-alias}.yaml file and runs
+  # all tasks that are not in the `ignoreTasks` array in this config.
+  build:
+
+    ignoredTasks:
+      - clean
+      - deploy
+      - jshint
+      - csslint
+
+    # This is a global lint flag that is used if there is a lint task specified for a section
+    lintBeforeBuild: null
+```
+
+**ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are included as conglomerate tasks).
+**lintBeforeBuild {Boolean}:** Top level lint flag for overriding linting functionality in all subtasks.  Default `null`.
+
 ### clean
 'clean' cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
- *`requirejs` section then the artifacts outputted by these sections are cleaned up (deleted) when clean is called.
+*`requirejs` then the artifacts outputted by these sections are cleaned up (deleted) when clean is called.
+'clean' also cleans/deletes any files listed in a `clean` section;  E.g.,
+```
+ clean:
+   - some/file/path.js
+   - some/file/path.css
+   - etc.
+```
 
 *The `files` section can have many different sections that output artifact files for example a `js`, `css`, or `html` section(s).
 *See the ['minify'](#minify) section for more info on the possible sections supported by the `files` section.
 
+#####GBW Config:
+```
+  clean:
+    allowedFileTypes:
+      - js
+      - css
+      - html
+```
+
 ### concat
+'concat' concatenates all files listed in the `files` section of a {bundle-name}.yaml file and outputs the results
+to the output destination listed in it's config section or 'minify''s config section (if they are not defined for the 'concat' config section).
+
+By default concat works only on works on the `js`, `css`, and/or `html` sections (currently hardcoded (will be updated later)).
+
+**Usage**
+`gulpw concat:{bundle-name}` or for all bundles
+`gulpw build`
+
+**Configuration:**
+  concat:
+    header: |
+      /*!
+       * Company Name http://www.company-website.com
+       * <%= bundle.alias %>.<%= fileExt %> <%= bundle.version %> (<%= (new Date()).getTime() %>)
+       * <%= bundle[section-name].md5 %>
+       */
+    cssBuildDir: some/path/to/build/path
+    jsBuildDir: some/path/to/build/path
+    htmlBuildDir: some/path/to/build/path
+    allowedFileTypes:
+      - js
+      - css
+      - html
+    useVersionNumInFileName: false
+    template:
+      templatePartial: null # script partial to render for each file entry in the `templates` hash.
+      compressWhitespace: true
+      templateTypeKeys:
+        - mustache
+        - handlebars
+        - ejs
+
+**header {String}:** The header to output on the concatenated file.
+
+**cssBuildDir {String}:** Output location for concatenated `*.css` files.
+
+**jsBuildDir {String}:** Output location for concatenated `*.js` files.
+
+**htmlBuildDir {String}:** Output location for concatenated `*.html` files.
+
+**allowedFileTypes {Array}:** The keys through loop through in the `files` section.
+
+**useVersionNumInFileName {Boolean}:** Whether to use the {bundle-name}.yaml file's version number suffixed to the concatenated file's name.
+
+**template {Object}:** The sub section which handles setting templates to javascript strings within the concatenated `js` section/files (*note a `js` section must be present within the `files` section in order for the template functionality to kick-in)
+
+  **templatePartial {String}:** Lodash template to use for appending the template(s) strings to the concatenated '*.js' file.
+
+  **compressWhitespace {Boolean}:** Whether or not to compress white space in the collected template strings.
+
+  **templateTypeKeys {Array}:** Keys to look for in files to trigger the template string addition functionality.
 
 ### compass
+
 ### copy
 ### csslint
 ### deploy
@@ -99,6 +193,7 @@ is why they are being ignored as standalone tests.
   any otherwise it will use the one's that it has.
   - [ ] - Add 'compass' task to the 'build' task.
   - [ ] - Add testing (mocha, jasmine) tasks to 'build' task.
+  - [ ] - Make sure that 'concat' and 'minify' tasks have the same options.
 
 ### Version 0.2.0 Todos
 - [ ] - Tasks
@@ -125,6 +220,7 @@ is why they are being ignored as standalone tests.
  watch tasks;  I.e., `gulpw watch`
 
 ### Resources
+
 #### UML Diagram
 [[UML Diagram of Bundle Wrangler] (http://www.gliffy.com/go/publish/6312461)]
 

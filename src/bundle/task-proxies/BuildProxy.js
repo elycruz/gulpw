@@ -25,15 +25,13 @@ module.exports = TaskProxy.extend('BuildProxy', {
             self = this,
             bundleName = bundle.options.alias,
             taskName = 'build' + separator + bundleName,
-            targets,
-            deps;
+            targets;
 
         if (!self.isBundleValidForTask(bundle)) {
             return; // @todo log message/warning here
         }
 
         targets = self.getTasksForBundle(bundle, wrangler);
-        deps = self.getTaskDepsForBundle(bundle, gulp, wrangler);
 
         self.registerGulpTasks(taskName, targets, gulp, wrangler);
 
@@ -49,7 +47,6 @@ module.exports = TaskProxy.extend('BuildProxy', {
                 return;
             }
             targets = self.getTasksForBundle(bundle, wrangler).concat(targets);
-            deps = self.getTaskDepsForBundle(bundle, gulp, wrangler);
         });
 
         self.registerGulpTasks('build', targets, gulp, wrangler);
