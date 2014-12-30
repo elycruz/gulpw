@@ -34,7 +34,7 @@ The 'build' task calls every sub task listed in a {bundle-name}.yaml config file
 		- jshint (called by the minify task so is ignored as standalone task)
 		- csslint (called by the minify task so is ignored as a standalone task)
 
-** Note ** The minify task runs 'jshint' and 'csslint' (along with other tasks) so that
+**Note:** The minify task runs 'jshint' and 'csslint' (along with other tasks) so that
 is why they are being ignored as standalone tests.
 
 'build' also adds the 'minify' task to it's list of tasks 'to' run for a particular bundle or bundles
@@ -44,7 +44,7 @@ depending on if an `html`, `css` or `js` section is found with the `files` secti
 `gulpw build:{bundle-name}` or run it for all bundles
 `gulpw build`
 
-#####GBW Config:
+#####Global Config:
 ```
 tasks:
 
@@ -62,11 +62,11 @@ tasks:
     lintBeforeBuild: null
 ```
 
-**ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are included as conglomerate tasks).
-**lintBeforeBuild {Boolean}:** Top level lint flag for overriding linting functionality in all subtasks.  Default `null`.
+- **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are included as conglomerate tasks).
+- **lintBeforeBuild {Boolean}:** Top level lint flag for overriding linting functionality in all subtasks.  Default `null`.
 
 ### clean
-'clean' cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
+The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
 *`requirejs` then the artifacts outputted by these sections are cleaned up (deleted) when clean is called.
 'clean' also cleans/deletes any files listed in a `clean` section;  E.g.,
 ```
@@ -79,7 +79,10 @@ tasks:
 *The `files` section can have many different sections that output artifact files for example a `js`, `css`, or `html` section(s).
 *See the ['minify'](#minify) section for more info on the possible sections supported by the `files` section.
 
-#####GBW Config:
+#####Usage:
+`gulpw clean:{bundle-name}` or for all bundles `gulpw clean`
+
+#####Global Config:
 ```
   clean:
     allowedFileTypes:
@@ -88,17 +91,30 @@ tasks:
       - html
 ```
 
+- **allowedFileTypes {Array}:** A list of keys/file types to allow for cleaning.
+
+#####Bundle level config:
+```
+ clean:
+   - some/file/path/to/clean.js
+   - some/file/path/to/clean.css
+   - etc.
+```
+
 ### concat
-'concat' concatenates all files listed in the `files` section of a {bundle-name}.yaml file and outputs the results
+The 'concat' task concatenates all files listed in the `files` section of a {bundle-name}.yaml file and outputs the results
 to the output destination listed in it's config section or 'minify''s config section (if they are not defined for the 'concat' config section).
 
 By default concat works only on works on the `js`, `css`, and/or `html` sections (currently hardcoded (will be updated later)).
 
-**Usage**
+#####Usage:
 `gulpw concat:{bundle-name}` or for all bundles
 `gulpw build`
 
-**Configuration:**
+#####Global Config:
+```
+tasks:
+
   concat:
     header: |
       /*!
@@ -121,35 +137,68 @@ By default concat works only on works on the `js`, `css`, and/or `html` sections
         - mustache
         - handlebars
         - ejs
+```
 
-**header {String}:** The header to output on the concatenated file.
-
-**cssBuildDir {String}:** Output location for concatenated `*.css` files.
-
-**jsBuildDir {String}:** Output location for concatenated `*.js` files.
-
-**htmlBuildDir {String}:** Output location for concatenated `*.html` files.
-
-**allowedFileTypes {Array}:** The keys through loop through in the `files` section.
-
-**useVersionNumInFileName {Boolean}:** Whether to use the {bundle-name}.yaml file's version number suffixed to the concatenated file's name.
-
-**template {Object}:** The sub section which handles setting templates to javascript strings within the concatenated `js` section/files (*note a `js` section must be present within the `files` section in order for the template functionality to kick-in)
-
-  **templatePartial {String}:** Lodash template to use for appending the template(s) strings to the concatenated '*.js' file.
-
-  **compressWhitespace {Boolean}:** Whether or not to compress white space in the collected template strings.
-
-  **templateTypeKeys {Array}:** Keys to look for in files to trigger the template string addition functionality.
+- **header {String}:** The header to output on the concatenated file.
+- **cssBuildDir {String}:** Output location for concatenated `*.css` files.
+- **jsBuildDir {String}:** Output location for concatenated `*.js` files.
+- **htmlBuildDir {String}:** Output location for concatenated `*.html` files.
+- **allowedFileTypes {Array}:** The keys through loop through in the `files` section.
+- **useVersionNumInFileName {Boolean}:** Whether to use the {bundle-name}.yaml file's version number suffixed to the concatenated file's name.
+- **template {Object}:** The sub section which handles setting templates to javascript strings within the concatenated `js` section/files (*note a `js` section must be present within the `files` section in order for the template functionality to kick-in)
+ - **templatePartial {String}:** Lodash template to use for appending the template(s) strings to the concatenated '*.js' file.
+ - **compressWhitespace {Boolean}:** Whether or not to compress white space in the collected template strings.
+ - **templateTypeKeys {Array}:** Keys to look for in files to trigger the template string addition functionality.
 
 ### compass
+The 'compass' task calls compass compile at compass project root location (config.rb home).
+
+#####Usage:
+`gulpw compass:{bundle-name}` or `gulpw compass`
+
+#####Global config:
+```
+tasks:
+
+  compass:
+
+  	# Compass project root dir
+    compassProjectRoot: null # config.rb home
+```
 
 ### copy
+'copy' copies any files listed in a `copy` section's `files` hash within in a {bundle-name}.yaml config file.
+E.g.,
+```
+copy:
+  files:
+    ./fe-dev/bower_components/requirejs/require.js: ./public/js/vendors/require.js
+```
+
+'copy' copies the 'key' to the 'value' location for every entry in the `files` hash.
+
+#####Usage:
+`gulpw copy:{bundle-name}` or for all bundles `gulpw copy`.
+
+#####Global config:
+none.
+
 ### csslint
+The 'csslint' task runs csslint on a bundle or all bundles using the listed '.csslintrc' file or runs with default options if no '.csslintrc' file is listed.
+
+#####Usage:
+`gulpw csslint:{bundle-name}` or for all bundles `gulpw csslint`
+
+#####Global Config
+```
+tasks:
+  csslint:
+      csslintrc: null
+```
+
 ### deploy
 ### jshint
 ### minify
-### template
 ### prompt
 ### requirejs
 ### watch
@@ -170,7 +219,7 @@ By default concat works only on works on the `js`, `css`, and/or `html` sections
 	- [ ] - jasmine
 	- [X] - jshint (gulp-jshint)
 	- [X] - minify (gulp-uglify, gulp-minify-css, gulp-minify-html)
-	- [X] - template (mustache, handlebars etc.) (stores all templates on specified global via a script	template)
+		- [X] - template (mustache, handlebars etc.) (stores all templates on specified global via a script	template)
 	- [X] - prompt:deploy (creates local deploy configuration file from series of questions)
 	- [X] - requirejs
 	- [X] - watch
