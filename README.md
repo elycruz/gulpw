@@ -12,8 +12,8 @@ That directory should contain "bundle-configuration" files which are used within
  other formats could be easily supported.
 
 ## Quick Nav
-- [{bundle-name}.yaml config file](#bundle-config)
-- [Running Tasks](#running-tasks)
+- [Bundle config](#bundle-config)
+- [Running tasks](#running-tasks)
 - [Available tasks](#available-tasks)
 - [Todos](#minimal-viable-product-todos)
 
@@ -108,6 +108,12 @@ tasks:
 
 - **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are included as conglomerate tasks).
 - **lintBeforeBuild {Boolean}:** Top level lint flag for overriding linting functionality in all subtasks.  Default `null`.
+
+#####Flags that can affect this task:
+- --dev
+- --skip-lint
+- --skip-csslint
+- --skip-jslint
 
 ### clean
 The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
@@ -240,6 +246,8 @@ tasks:
       csslintrc: null
 ```
 
+- **csslintrc:**  Location of '.csslintrc' file.
+
 ### deploy
 ### jshint
 ### minify
@@ -247,6 +255,8 @@ tasks:
 ### requirejs
 ### watch
 ### mocha
+
+## Todos
 
 ### MVP (Minimal Viable Product) Todos
 
@@ -286,7 +296,7 @@ tasks:
   any otherwise it will use the one's that it has.
   - [ ] - Add 'compass' task to the 'build' task.
   - [ ] - Add testing (mocha, jasmine) tasks to 'build' task.
-  - [ ] - Make sure that 'concat' and 'minify' tasks have the same options.
+  - [ ] - Make sure that 'concat' and 'minify' tasks have the same options (minus the ones that are exlusive to minify).
   - [ ] - Supply example bundle config file with all sections listed in it.
 
 ### Version 0.2.0 Todos
