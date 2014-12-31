@@ -326,6 +326,16 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
+    skipTesting: function () {
+        var self = this;
+        return (self.argv['no-tests']
+            || self.argv['skip-tests']
+            || self.argv['skip-testing']
+            || self.argv['no-tests']
+            || self.argv['skip-tests']
+            || self.argv['skip-testing']) || false;
+    },
+
     skipLinting: function () {
         var self = this;
         return (self.argv['no-lint']

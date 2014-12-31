@@ -301,11 +301,12 @@ tasks:
   - [X] - ~~~Remove build paths from concat task.  Instead use the ones defined in the minify task.~~~  We will set the concat task
   build paths to null and when the the task runs it will use the ones specified in the 'minify' task if it doesn't have
   any otherwise it will use the one's that it has.
-  - [ ] - Add 'compass' task to the 'build' task.
-  - [ ] - Add testing (mocha, jasmine) tasks to 'build' task.
-  - [ ] - Make sure that 'concat' and 'minify' tasks have the same options (minus the ones that are exlusive to minify).
+  - [X] - Add 'compass' task to the 'build' task.
+  - [X] - Add testing (mocha, jasmine) tasks to 'build' task.
+  - [X] - Make sure that 'concat' and 'minify' tasks have the same options (minus the ones that are exlusive to minify).
   - [ ] - Supply example bundle config file with all sections listed in it.
   - [X] - Add support for bundle config files in any one of 'js', 'json', or 'yaml' formats.
+  - [ ] - Set up pipe transport function for 'mocha' and 'jasmine' proxies.
 
 ### Version 0.2.0 Todos
 - [ ] - Tasks
