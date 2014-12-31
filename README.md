@@ -52,7 +52,7 @@ See the listed tasks below for ideas on what other sections you can use in your 
 `gulpw {task-name}` for all bundles
 
 E.g., `gulpw build:global build:some-other-bundle deploy:global deploy:some-other-bundle --dev`
-The above example builds (see [build](#build)) some bundles (in development mode (unminified due to `--dev` flag)) and deploys them to
+The above example builds (see [build](#build) task for more info) some bundles (in development mode (unminified due to `--dev` flag)) and deploys them to
  the users selected server (see [deploy](#deploy) task section for more info).
 
 ## Available Tasks
@@ -157,6 +157,9 @@ The 'concat' task concatenates all files listed in the `files` section of a {bun
 to the output destination listed in it's config section or 'minify''s config section (if they are not defined for the 'concat' config section).
 
 By default concat works only on works on the `js`, `css`, and/or `html` sections (currently hardcoded (will be updated later)).
+
+***Note do not run this task in conjunction with 'build' or 'minify' for any particular bundle cause it's effects will
+be nullified by the other tasks.
 
 #####Flags that can affect the 'build' task:
 - **--skip-lint** - Causes all linting/hinting tasks to be ignored.
@@ -295,13 +298,14 @@ tasks:
   - [X] - ~~Isolate hinting/linting tasks before running `build` task and wait for them to finish before running
   `build` task.~~ No longer necessary as by just adding them to the ignore list the extra launched tasks
   (which weren't noticed before due to the mass of output) are not launched.
-  - [ ] - ~~~Remove build paths from concat task.  Instead use the ones defined in the minify task.~~~  We will set the concat task
+  - [X] - ~~~Remove build paths from concat task.  Instead use the ones defined in the minify task.~~~  We will set the concat task
   build paths to null and when the the task runs it will use the ones specified in the 'minify' task if it doesn't have
   any otherwise it will use the one's that it has.
   - [ ] - Add 'compass' task to the 'build' task.
   - [ ] - Add testing (mocha, jasmine) tasks to 'build' task.
   - [ ] - Make sure that 'concat' and 'minify' tasks have the same options (minus the ones that are exlusive to minify).
   - [ ] - Supply example bundle config file with all sections listed in it.
+  - [X] - Add support for bundle config files in any one of 'js', 'json', or 'yaml' formats.
 
 ### Version 0.2.0 Todos
 - [ ] - Tasks

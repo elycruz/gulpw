@@ -5,7 +5,6 @@
 
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
-    fs = require('fs'),
     yaml = require('js-yaml'),
     //header = require('gulp-header'),
     requirejs = require('requirejs'),

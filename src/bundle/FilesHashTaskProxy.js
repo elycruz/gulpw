@@ -92,8 +92,6 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
                     output += lodash.template(template, sjl.extend({fileBasename: path.basename(file, '.' + key),
                         fileContent: fileContent}, templateOptions));
 
-                    wrangler.log('Compiled template entry: ' + output, '--debug');
-
                 }); // end of template files loop
 
             }); // end of template type keys loop
