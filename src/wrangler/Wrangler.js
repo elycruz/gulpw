@@ -19,9 +19,9 @@ var fs = require('fs'),
     log;
 
 module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config) {
-    var defaultOptions = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '/../../configs/default.wrangler.config.yaml'))),
-        taskProxyMap = yaml.safeLoad(fs.readFileSync(path.join(__dirname, '/../../configs/default.task.proxy.map.yaml'))),
-        self = this;
+    var self = this,
+        defaultOptions = self.loadConfigFile(path.join(__dirname, '/../../configs/default.wrangler.config.yaml')),
+        taskProxyMap = self.loadConfigFile(path.join(__dirname, '/../../configs/default.task.proxy.map.yaml'));
 
         log = self.log;
 
@@ -154,18 +154,18 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
 
         // Parse bundle configs
         bundles.forEach(function (fileName) {
-            var bundle = self.createBundle(fileName);
+            var bundle = self.createBundle(path.join(bundlesPath, fileName));
             self.registerTasksForBundle(gulp, bundle);
         });
     },
 
     createBundle: function (config) {
-
         var filePath = path.relative(process.cwd(), config),
             bundle;
 
+        // If config is of type 'String' we assume a path
         if (sjl.classOfIs(config, 'String')) {
-            config = this.getBundleConfigByName(config);
+            config = this.loadConfigFile(config);
         }
 
         if (sjl.empty(config)) {
@@ -228,32 +228,6 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
             ? separator : self.defaultTaskStrSeparator;
     },
 
-    getBundleConfigByName: function (name) {
-        var configFormat = this.bundleConfigFormat,
-            fileName = name.lastIndexOf('.' + configFormat) === name.length - 5 ? name : name + '.' + configFormat,
-            filePath = fileName.indexOf(path.sep) > -1 || fileName.indexOf('/') > -1
-                ? fileName : path.join(this.bundlesPath, fileName),
-            retVal = {},
-            file;
-
-        if (!fs.existsSync(filePath)) {
-            return retVal;
-        }
-
-        file = fs.readFileSync(filePath);
-
-        switch (this.bundleConfigFormat) {
-            case 'yaml':
-                retVal = yaml.safeLoad(file);
-                break;
-            default:
-                retVal = yaml.safeLoad(file);
-                break;
-        }
-        retVal.filePath = filePath;
-        return retVal;
-    },
-
     extractBundleNamesFromArray: function (list) {
         var parts, extracted = [];
         list.filter(function (item) {
@@ -272,14 +246,31 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
             filePath;
 
         this.extractBundleNamesFromArray(argv._).forEach(function (item) {
-            filePath = path.join(self.bundlesPath, item + '.' + self.bundleConfigFormat);
-            if (!fs.existsSync(filePath)) {
+            filePath = self.getFilePathForBundle(item);
+            if (filePath === null || !fs.existsSync(filePath)) {
                 throw Error('Bundle "' + item + '" config file doesn\'t exist.  Path checked: ' + filePath);
+                process.exit(0);
             }
             out.push(filePath);
         });
 
         return out;
+    },
+
+    getFilePathForBundle: function (alias) {
+        var fileType,
+            filePath,
+            retVal = null,
+            i;
+        for (i = 0; i < this.bundleConfigFormats.length; i += 1) {
+            fileType = this.bundleConfigFormats[i];
+            filePath = path.join(this.bundlesPath, alias + fileType);
+            if (fs.existsSync(filePath)) {
+                retVal = filePath;
+                break;
+            }
+        }
+        return retVal;
     },
 
     log: function () {
@@ -312,11 +303,11 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
 
     // Method is raw and has to be prepped
     loadConfigFile: function (file) {
-        if (file.indexOf('.js') === file.length - 4
-            || file.indexOf('.json') === file.length - 6) {
+        if (file.lastIndexOf('.js') === file.length - 3
+            || file.lastIndexOf('.json') === file.length - 5) {
             file = require(file);
         }
-        else if (file.indexOf('.yaml') === file.length - 6) {
+        else if (file.lastIndexOf('.yaml') === file.length - 5) {
             file = yaml.safeLoad(fs.readFileSync(file));
         }
         return file;

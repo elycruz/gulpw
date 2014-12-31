@@ -4,6 +4,11 @@ scriptRenderer: ejs
 
 bundleConfigFormat: yaml
 
+bundleConfigFormats:
+  - .yaml
+  - .js
+  - .json
+
 bundleConstructor: ./src/bundle/Bundle
 
 localConfigPath: ./.gulpw

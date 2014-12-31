@@ -74,7 +74,7 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
             taskName = self.alias + separator + bundleName,
 
             // Rjs command (adding prefix for windows version)
-            requireJsOptions = self.getRequireJsOptions(bundle);
+            requireJsOptions = self.getRequireJsOptions(bundle, wrangler);
 
         self.registerGulpTask(taskName, requireJsOptions, gulp, wrangler, bundle);
 
@@ -118,13 +118,12 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
 
     },
 
-    getRequireJsOptions: function (bundle) {
+    getRequireJsOptions: function (bundle, wrangler) {
         var rjsOptions = null;
         if (bundle.has('requirejs.buildConfigPath')) {
             // Load build config
-            rjsOptions = yaml.safeLoad(
-                fs.readFileSync(
-                    bundle.options.requirejs.buildConfigPath));
+            rjsOptions = wrangler.loadConfigFile(
+                bundle.options.requirejs.buildConfigPath);
         }
         else if (bundle.has('requirejs.options')) {
             rjsOptions = bundle.options.requirejs.options;

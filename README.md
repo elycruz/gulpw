@@ -134,6 +134,7 @@ The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if 
 
 #####Global Config:
 ```
+tasks:
   clean:
     allowedFileTypes:
       - js
@@ -194,16 +195,16 @@ tasks:
         - ejs
 ```
 
-- **header {String}:** The header to output on the concatenated file.
-- **cssBuildDir {String}:** Output location for concatenated `*.css` files.
-- **jsBuildDir {String}:** Output location for concatenated `*.js` files.
-- **htmlBuildDir {String}:** Output location for concatenated `*.html` files.
-- **allowedFileTypes {Array}:** The keys through loop through in the `files` section.
-- **useVersionNumInFileName {Boolean}:** Whether to use the {bundle-name}.yaml file's version number suffixed to the concatenated file's name.
-- **template {Object}:** The sub section which handles setting templates to javascript strings within the concatenated `js` section/files (*note a `js` section must be present within the `files` section in order for the template functionality to kick-in)
- - **templatePartial {String}:** Lodash template to use for appending the template(s) strings to the concatenated '*.js' file.
- - **compressWhitespace {Boolean}:** Whether or not to compress white space in the collected template strings.
- - **templateTypeKeys {Array}:** Keys to look for in files to trigger the template string addition functionality.
+- **header:** The header to output on the concatenated file.
+- **cssBuildDir:** Output location for concatenated `*.css` files.
+- **jsBuildDir:** Output location for concatenated `*.js` files.
+- **htmlBuildDir:** Output location for concatenated `*.html` files.
+- **allowedFileTypes:** The keys through loop through in the `files` section.
+- **useVersionNumInFileName:** Whether to use the {bundle-name}.yaml file's version number suffixed to the concatenated file's name.
+- **template:** The sub section which handles setting templates to javascript strings within the concatenated `js` section/files (*note a `js` section must be present within the `files` section in order for the template functionality to kick-in)
+ - **templatePartial:** Lodash template to use for appending the template(s) strings to the concatenated '*.js' file.
+ - **compressWhitespace:** Whether or not to compress white space in the collected template strings.
+ - **templateTypeKeys:** Keys to look for in files to trigger the template string addition functionality.
 
 ### compass
 The 'compass' task calls compass compile at compass project root location (config.rb home).
