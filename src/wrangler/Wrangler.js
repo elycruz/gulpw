@@ -249,7 +249,6 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
             filePath = self.getFilePathForBundle(item);
             if (filePath === null || !fs.existsSync(filePath)) {
                 throw Error('Bundle "' + item + '" config file doesn\'t exist.  Path checked: ' + filePath);
-                process.exit(0);
             }
             out.push(filePath);
         });

@@ -6,8 +6,7 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy'),
-    chalk = require('chalk');
+var TaskProxy = require('../TaskProxy');
 
 module.exports = TaskProxy.extend('AllTasksProxy', {
 

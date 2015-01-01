@@ -39,8 +39,7 @@ module.exports = TaskProxy.extend('BuildProxy', {
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
-            targets = [],
-            deps = [];
+            targets = [];
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
