@@ -67,7 +67,7 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [jshint](#jshint)
 - [minify](#minify)
 - [template](#template)
-- [prompt](#prompt)
+- [prompt:deploy](#promptdeploy)
 - [requirejs](#requirejs)
 - [watch](#watch)
 - [mocha](#mocha)

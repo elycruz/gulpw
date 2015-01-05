@@ -2,9 +2,10 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-var yaml = require('js-yaml'),
-    fs = require('fs'),
-    Liftoff = require('liftoff'),
+
+require('sjljs');
+
+var Liftoff = require('liftoff'),
     argv = require('yargs').argv,
     gulp = require('gulp'),
     cli = new Liftoff({
@@ -23,7 +24,7 @@ var yaml = require('js-yaml'),
     wrangler;
 
 function init(env) {
-    if (argv.verbose) {
+    //if (argv.verbose) {
         //console.log('LIFTOFF SETTINGS:', this);
         //console.log('CLI OPTIONS:', argv);
         //console.log('CWD:', env.cwd);
@@ -34,23 +35,27 @@ function init(env) {
         //console.log('YOUR LOCAL MODULE IS LOCATED:', env.modulePath);
         //console.log('LOCAL PACKAGE.JSON:', env.modulePackage);
         //console.log('CLI PACKAGE.JSON', require('./package'));
+    //}
+
+    if (sjl.empty(env.configPath)) {
+        console.log('`gulpw` couldn\'t find \'bundle.wrangler.config.*\' file.');
+        return;
     }
 
-    if (env.configPath) {
-        process.chdir(env.configBase);
+    // Change to config's path
+    process.chdir(env.configBase);
 
-        userConfig = yaml.safeLoad(fs.readFileSync(env.configPath));
+    // Load config file
+    userConfig = Wrangler.prototype.loadConfigFile(env.configPath);
 
-        wrangler = new Wrangler(gulp, argv, env, userConfig);
-    }
-    else {
-        console.log('No \'bundle.wrangler.config.*\' file found.');
-    }
+    // Instantiate wrangler
+    wrangler = new Wrangler(gulp, argv, env, userConfig);
+
 }
 
 cli.launch({
     cwd: argv.cwd,
-    configPath: argv.bwfile,
+    configPath: argv.configFile,
     require: argv.require,
     completion: argv.completion,
     verbose: argv.verbose
