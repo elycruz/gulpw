@@ -36,25 +36,22 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
             return;
         }
 
-        // Task string separator
         var self = this,
-            separator = wrangler.getTaskStrSeparator(),
             taskConfigMap = {
-                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions, linter: null},
-                css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions, linter: null},
-                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions, linter: null}
+                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
+                css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions},
+                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
             },
             //useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
             bundleName = bundle.options.alias,
-            taskName = self.alias + separator + bundleName;
-
-        //taskConfigMap.js.linter = wrangler.tasks.jshint.instance.toLazyPipe();
+            taskName = self.alias + ':' + bundleName,
+            allowedFileTypes = wrangler.tasks.minify.allowedFileTypes;
 
         // Create task for bundle
         gulp.task(taskName, function () {
 
             // Check for sections on bundle that can be minified
-            ['js', 'css', 'html'].forEach(function (ext) {
+            allowedFileTypes.forEach(function (ext) {
                 var buildPath = wrangler.tasks.minify[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext],
                     jsHintPipe = wrangler.tasks.jshint.instance.getPipe(bundle, gulp, wrangler),
