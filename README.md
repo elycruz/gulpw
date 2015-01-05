@@ -349,8 +349,19 @@ tasks:
         - ejs
 ```
 
-
 ### prompt:deploy
+Launches an interactive questionnaire for generating a local 'deploy.yaml' file with deployment details for current development environment.
+****Note**** This task must be run before the `deploy` task in order for it to function.
+****Note**** File is put in the directory specified by `localConfigPath` of the 'bundle.wrangler.config.yaml' file or the default is used ('./.gulpw').
+
+#####Usage:
+`gulpw prompt:deploy`
+
+#####In 'bundle.wrangler.config.yaml':
+No bundle.wrangler.config section at this time.
+
+- **localDeployFileName**: This property of the deploy task (`tasks.deploy.localDeployFileName`)
+list the file name to use when generating a local deploy options file.
 
 ### requirejs
 RequireJs task.
