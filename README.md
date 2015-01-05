@@ -597,6 +597,9 @@ tasks:
   - [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
   - [ ] - Fix all non streaming tasks to return streams or promises so that other tasks can list them as
    dependencies.
+  - [ ] - Clean up notes for deploy task.
+  - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
+  up deploy task to take this into account)
 
 ### ~~Notes~~ Caveats:
 
