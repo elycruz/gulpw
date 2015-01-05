@@ -8,10 +8,7 @@ bundleConfigFormats:
 localConfigPath: ./.gulpw
 
 staticTasks:
-  prompt:
-    deploy:
-    config:
-      localConfigBackupPath: ./.gulpw/bundle.wrangler.config.local.yaml
+  prompt: {}
 
 tasks:
 
