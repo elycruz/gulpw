@@ -18,7 +18,7 @@ var fs = require('fs'),
 
     log;
 
-module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config) {
+module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var self = this,
         defaultOptions = self.loadConfigFile(path.join(__dirname, '/../../configs/default.wrangler.config.yaml')),
         taskProxyMap = self.loadConfigFile(path.join(__dirname, '/../../configs/default.task.proxy.map.yaml'));
@@ -160,7 +160,7 @@ module.exports = sjl.Optionable.extend(function Wrangler(gulp, argv, env, config
     },
 
     createBundle: function (config) {
-        var filePath = path.relative(process.cwd(), config),
+        var filePath = config, //path.relative(process.cwd(), config),
             bundle;
 
         // If config is of type 'String' we assume a path

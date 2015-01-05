@@ -37,20 +37,20 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
             var domainToDevelop = domainsToDevelop[domainToDevelopKey];
 
             questions.push({
-                name: 'devHostname',
+                name: 'hostname',
                 type: 'list',
                 message: 'What server would you like to deploy to?',
-                choices: domainToDevelop.devHostnames,
+                choices: domainToDevelop.hostnames,
                 when: function (answers) {
                     return domainToDevelopKey === answers.developingDomain;
                 }
             });
 
             questions.push({
-                name: 'devHostnamePrefix',
+                name: 'hostnamePrefix',
                 type: 'list',
                 message: 'Which host prefix would you like to use?',
-                choices: domainToDevelop.devHostnamePrefixes,
+                choices: domainToDevelop.hostnamePrefixes,
                 when: function (answers) {
                     return domainToDevelopKey === answers.developingDomain;
                 }
@@ -121,8 +121,8 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
             inquirer.prompt(questions, function (answers) {
                 var outFileTemplate = {
                     developingDomain: answers.developingDomain || null,
-                    devHostnamePrefix: answers.devHostnamePrefix || null,
-                    devHostname: answers.devHostname || null,
+                    hostnamePrefix: answers.hostnamePrefix || null,
+                    hostname: answers.hostname || null,
                     port: answers.port || null,
                     username: answers.username || null,
                     password: answers.password || null,

@@ -19,7 +19,7 @@ module.exports = TaskProxy.extend('DeployProxy', {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
         var deployOptions = wrangler.tasks.deploy,
-            host = deployOptions.devHostnamePrefix + deployOptions.devHostname,
+            host = deployOptions.hostnamePrefix + deployOptions.hostname,
             sshOptions = {
                 host: host,
                 username: deployOptions.username,

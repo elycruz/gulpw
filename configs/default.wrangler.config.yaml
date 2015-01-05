@@ -1,15 +1,9 @@
 bundlesPath: ./path/to/bundles
 
-scriptRenderer: ejs
-
-bundleConfigFormat: yaml
-
 bundleConfigFormats:
   - .yaml
   - .js
   - .json
-
-bundleConstructor: ./src/bundle/Bundle
 
 localConfigPath: ./.gulpw
 
@@ -25,6 +19,29 @@ tasks:
     tasks:
       - build
       - deploy
+
+  # Browserify Defaults
+  browserify: {}
+
+  # Build Task (Looks through {bundle-alias}.yaml file and runs
+  # all tasks that are not in the `ignoreTasks` array in this config.
+  build:
+
+    prelimTasks:
+      - mocha
+      - jasmine
+
+    ignoredTasks:
+      - clean
+      - deploy
+      - jshint
+      - csslint
+
+  clean:
+    allowedFileTypes:
+      - js
+      - css
+      - html
 
   compass:
     compassProjectRoot: null # config.rb home
@@ -52,46 +69,10 @@ tasks:
         - handlebars
         - ejs
 
-  minify:
-    header: |
-      /*! Company Name http://www.company-website.com <%= bundle.alias %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
-    cssBuildDir: some/path/to/build/path
-    htmlBuildDir: some/path/to/build/path
-    jsBuildDir: some/path/to/build/path
-    allowedFileTypes:
-      - js
-      - css
-      - html
-    htmlTaskOptions:
-      spare: true
-      comments: false
-    jsTaskOptions: {}
-    useMinPreSuffix: false
-    useVersionNumInFileName: false
-    template:
-      templatePartial: null
-      compressWhitespace: true
-      templateTypeKeys:
-        - mustache
-        - handlebars
-        - ejs
+  copy: {}
 
-  # Build Task (Looks through {bundle-alias}.yaml file and runs
-  # all tasks that are not in the `ignoreTasks` array in this config.
-  build:
-
-    prelimTasks:
-      - mocha
-      - jasmine
-
-    ignoredTasks:
-      - clean
-      - deploy
-      - jshint
-      - csslint
-
-    # This is a global lint flag that is used if there is a lint task specified for a section
-    lintBeforeBuild: true
+  csslint:
+      csslintrc: null
 
   # Deploy Task
   deploy:
@@ -117,8 +98,8 @@ tasks:
 
     # Options written by `prompt:deploy`
     developingDomain: null
-    devHostnamePrefix: null
-    devHostname: null
+    hostnamePrefix: null
+    hostname: null
     port: 22
     username: null
     password: null
@@ -144,7 +125,7 @@ tasks:
       gulpw-sample.somedomain.com:
 
         # Servers where user can develop for `domainToDevelopFor` (in this case `domainToDevelopFor` is `gulpw-sample.somedomain.com`)
-        devHostnames: # slots/hosts
+        hostnames: # slots/hosts
           - -devslot1.gulpw-sample.somedomain.com
           - -devslot2.gulpw-sample.somedomain.com
           - -devslot3.gulpw-sample.somedomain.com
@@ -153,12 +134,12 @@ tasks:
         # instances of the website.
 
         # If object then we expect the hostname prefix (key) and site instance's folder path
-        devHostnamePrefixes:
+        hostnamePrefixes:
           - web1
           - web2
           - web3
 
-        devHostnamePrefixFolders: null # If set will use these folders to suffix to `deployRootFolder`
+        hostnamePrefixFolders: null # If set will use these folders to suffix to `deployRootFolder`
           #web1: website1
           #web2: website2
           #web3: website3
@@ -175,6 +156,59 @@ tasks:
           js: public/js/
           css: public/css/
 
+  jasmine:
+    files: null # testDir or array of files (test files)
+    options: null
+
+  jshint:
+      jshintrc: ./configs/.jshintrc
+      ignoreFiles: null
+      options:
+        predef:
+          - $
+          - _
+          - amplify
+          - Backbone
+          - browserify
+          - define
+          - jQuery
+          - Modernizr
+          - Mustache
+          - Marionette
+          - require
+          - sjl
+
+  minify:
+    header: |
+      /*! Company Name http://www.company-website.com <%= bundle.alias %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
+    cssBuildDir: some/path/to/build/path
+    htmlBuildDir: some/path/to/build/path
+    jsBuildDir: some/path/to/build/path
+    allowedFileTypes:
+      - js
+      - css
+      - html
+    htmlTaskOptions:
+      spare: true
+      comments: false
+    jsTaskOptions: {}
+    useMinPreSuffix: false
+    useVersionNumInFileName: false
+    template:
+      templatePartial: null
+      compressWhitespace: true
+      templateTypeKeys:
+        - mustache
+        - handlebars
+        - ejs
+
+  mocha:
+    files: null # testDir or array of files (test files)
+    options: null
+
+  # RequireJs Defaults
+  requirejs: {}
+
   # Watch Task Defaults
   watch:
 
@@ -190,55 +224,3 @@ tasks:
 
     # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null
-
-    # Flags that can be passed to the watch task ** Note ** These flags are available to all tasks
-    # besides the watch task as they run from the same terminal session.
-    flags:
-
-      # This flag specifies that minification should not occur
-      dev: false
-
-  # RequireJs Defaults
-  requirejs: {}
-
-  # Browserify Defaults
-  browserify: {}
-
-  compass: {}
-
-  jshint:
-    jshintrc: ./configs/.jshintrc
-    ignoreFiles: null
-    options:
-      predef:
-        - $
-        - _
-        - amplify
-        - Backbone
-        - browserify
-        - define
-        - jQuery
-        - Modernizr
-        - Mustache
-        - Marionette
-        - require
-        - sjl
-
-  clean:
-    allowedFileTypes:
-      - js
-      - css
-      - html
-
-  mocha:
-    files: null # testDir or array of files (test files)
-    options: null
-
-  jasmine:
-    files: null # testDir or array of files (test files)
-    options: null
-
-  copy: {}
-
-  csslint:
-      csslintrc: null
