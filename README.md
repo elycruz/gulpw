@@ -1,7 +1,7 @@
 gulp-bundle-wrangler (Beta)
 ====================
 
-Allows the management of a project via bundle configuration files (architected towards speed).
+Allows the management of a project via bundle configuration files.
 
 ## Basic Idea
 So the idea is as follows:
