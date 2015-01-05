@@ -11,29 +11,26 @@ var TaskProxy = require('../TaskProxy'),
 
 module.exports = TaskProxy.extend('BuildProxy', {
 
-    //
-    //registerGulpTasks: function (taskName, tasks, deps, gulp, wrangler) {
-    //    console.log(deps);
-    //    gulp.task(taskName, deps, function () {
-    //        wrangler.launchTasks(tasks, gulp);
-    //    });
-    //},
-
     registerBundle: function (bundle, gulp, wrangler) {
         // Task string separator
-        var separator = wrangler.getTaskStrSeparator(),
-            self = this,
+        var self = this,
             bundleName = bundle.options.alias,
-            taskName = 'build' + separator + bundleName,
-            targets;
+            taskName = 'build:' + bundleName,
+            targets, deps;
 
         if (!self.isBundleValidForTask(bundle)) {
-            return; // @todo log message/warning here
+            return;
         }
 
         targets = self.getTasksForBundle(bundle, wrangler);
 
-        self.registerGulpTasks(taskName, targets, gulp, wrangler);
+        deps = self.getTaskDepsForBundle(bundle, wrangler, targets);
+
+        targets = targets.filter(function (task) {
+            return deps.indexOf(task) === false;
+        });
+
+        self.registerGulpTasks(taskName, targets, gulp, wrangler, deps);
 
     }, // end of `registerBundle`
 
@@ -60,37 +57,23 @@ module.exports = TaskProxy.extend('BuildProxy', {
            || bundle.has('files.html') || bundle.has('files.html'));
     },
 
-    getTaskDepsForBundle: function (bundle, gulp, wrangler) {
+    getTaskDepsForBundle: function (bundle, wrangler, tasks) {
         var deps = [],
-            bundleName = bundle.options.alias;
+            prelimTasks = wrangler.tasks.build.prelimTasks;
 
-        //wrangler.log('\nwrangler.skipLinting: ' + wrangler.skipLinting(),
-        //    '\nwrangler.skipCssLinting: ' + wrangler.skipCssLinting(),
-        //    '\nwrangler.skipJsLinting: ' + wrangler.skipJsLinting(),
-        //    '\nlintBeforeBuild: ' + self.lintBeforeBuild, '--debug');
-
-        // Add linting/hinting tasks if necessary
-        if (wrangler.tasks.build.lintBeforeBuild && !wrangler.skipLinting()) {
-
-            // Add jshint task if `files.js`, `requirejs` or `browserify` key exists on `bundle`
-            if ((bundle.has('files.js') || bundle.has('requirejs') || bundle.has('browserify')) && !wrangler.skipJsLinting()) {
-                deps.push('jshint:' + bundleName);
-            }
-
-            // Add css lint task if necessary
-            if ((bundle.has('files.css') || bundle.has('compass')) && !wrangler.skipCssLinting()) {
-                deps.push('csslint:' + bundleName);
-            }
+        if (!sjl.empty(prelimTasks)) {
+            deps = tasks.filter(function (task) {
+                return prelimTasks.filter(function (prelimTask) {
+                    return task.indexOf(prelimTask) > -1;
+                }).length > 0;
+            });
         }
-        else {
-            wrangler.log(chalk.grey('   Skipping lint/hint registration for bundle "' + bundleName + '".'), '--mandatory');
-        }
+
         return deps;
     },
 
     getTasksForBundle: function (bundle, wrangler) {
-        var separator = wrangler.getTaskStrSeparator(),
-            bundleName = bundle.options.alias,
+        var bundleName = bundle.options.alias,
             targets = [],
             ignoredTasks = wrangler.tasks.build.ignoredTasks,
             ignoreTask,
@@ -113,12 +96,12 @@ module.exports = TaskProxy.extend('BuildProxy', {
             }
 
             // Push task to run later
-            targets.push(task + separator + bundleName);
+            targets.push(task + ':' + bundleName);
         });
 
         // If bundle has minifiable or concatable sources build
         if (isBundleValidForMinAndConcat) {
-            targets.push('minify' + separator + bundleName);
+            targets.push('minify' + ':' + bundleName);
         }
 
         return targets;

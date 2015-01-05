@@ -80,6 +80,10 @@ tasks:
   # all tasks that are not in the `ignoreTasks` array in this config.
   build:
 
+    prelimTasks:
+      - mocha
+      - jasmine
+
     ignoredTasks:
       - clean
       - deploy
