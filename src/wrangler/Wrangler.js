@@ -318,7 +318,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
         if (sjl.empty(tasks)) {
-            console.warn(chalk.yellow('No sub tasks to run from Wrangler.launch tasks.'));
             return;
         }
         // loop through tasks and call gulp.start on each

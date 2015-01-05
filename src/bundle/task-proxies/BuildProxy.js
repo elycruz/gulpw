@@ -27,7 +27,7 @@ module.exports = TaskProxy.extend('BuildProxy', {
         deps = self.getTaskDepsForBundle(bundle, wrangler, targets);
 
         targets = targets.filter(function (task) {
-            return deps.indexOf(task) === false;
+            return deps.indexOf(task) === -1;
         });
 
         self.registerGulpTasks(taskName, targets, gulp, wrangler, deps);

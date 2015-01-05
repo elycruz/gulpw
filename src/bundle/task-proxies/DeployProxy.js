@@ -62,7 +62,7 @@ module.exports = TaskProxy.extend('DeployProxy', {
 
                     var target;
 
-                    wrangler.log('\n', chalk.grey(startDeployMessage), '\n', '--mandatory');
+                    wrangler.log('\n', chalk.grey(startDeployMessage), '\n');
 
                     // Loop through all target keys in targets
                     Object.keys(targets).forEach(function (key) {
@@ -117,7 +117,7 @@ module.exports = TaskProxy.extend('DeployProxy', {
 
                 // Log task completion
                 wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
-                    chalk.magenta((((new Date()) - startTime) / 1000) + 's'), '--mandatory');
+                    chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
 
                 // If error log it
                 if (hadError) {
