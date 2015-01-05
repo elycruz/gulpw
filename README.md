@@ -52,7 +52,8 @@ See the listed tasks below for ideas on what other sections you can use in your 
 `gulpw {task-name}` for all bundles
 
 E.g., `gulpw build:global build:some-other-bundle deploy:global deploy:some-other-bundle --dev`
-The above example builds (see [build](#build) task for more info) some bundles (in development mode (unminified due to `--dev` flag)) and deploys them to
+The above example builds (see [build](#build) task for more info) some bundles (in development mode
+(unminified due to `--dev` flag)) and deploys them to
  the users selected server (see [deploy](#deploy) task section for more info).
 
 ## Available Tasks
@@ -72,7 +73,8 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [mocha](#mocha)
 
 ### build
-The 'build' task calls every sub task listed in a {bundle-name}.yaml config file except (by default can be altered in local wrangler config file):
+The 'build' task calls every sub task listed in a {bundle-name}.yaml config file except (by default can be
+ altered in local wrangler config file):
 		- clean (we could have this run via a flag in the future but is ignored for now to speed up performance)
 		- deploy
 		- jshint (called by the minify task so is ignored as standalone task)
@@ -115,7 +117,8 @@ tasks:
       - csslint
 ```
 
-- **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are included as conglomerate tasks).
+- **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are
+ included as conglomerate tasks).
 
 ### clean
 The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
@@ -128,7 +131,8 @@ The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if 
    - etc.
 ```
 
-*The `files` section can have many different sections that output artifact files for example a `js`, `css`, or `html` section(s).
+*The `files` section can have many different sections that output artifact files for
+ example a `js`, `css`, or `html` section(s).
 *See the ['minify'](#minify) section for more info on the possible sections supported by the `files` section.
 
 #####Usage:
@@ -155,12 +159,16 @@ tasks:
 ```
 
 ### concat
-The 'concat' task concatenates all files listed in the `files` section of a {bundle-name}.yaml file and outputs the results
-to the output destination listed in it's config section or 'minify''s config section (if they are not defined for the 'concat' config section).
+The 'concat' task concatenates all files listed in the `files` section of a {bundle-name}.yaml file and
+outputs the results
+to the output destination listed in it's config section or 'minify''s config section (if they are not
+defined for the 'concat' config section).
 
-By default concat works only on works on the `js`, `css`, and/or `html` sections (currently hardcoded (will be updated later)).
+By default concat works only on works on the `js`, `css`, and/or `html` sections (currently hardcoded
+(will be updated later)).
 
-***Note do not run this task in conjunction with 'build' or 'minify' for any particular bundle cause it's effects will
+***Note do not run this task in conjunction with 'build' or 'minify' for any particular bundle cause
+it's effects will
 be nullified by the other tasks.
 
 #####Flags:
@@ -207,9 +215,13 @@ tasks:
 - **jsBuildDir:** Output location for concatenated `*.js` files.
 - **htmlBuildDir:** Output location for concatenated `*.html` files.
 - **allowedFileTypes:** The keys through loop through in the `files` section.
-- **useVersionNumInFileName:** Whether to use the {bundle-name}.yaml file's version number suffixed to the concatenated file's name.
-- **template:** The sub section which handles setting templates to javascript strings within the concatenated `js` section/files (*note a `js` section must be present within the `files` section in order for the template functionality to kick-in)
- - **templatePartial:** Lodash template to use for appending the template(s) strings to the concatenated '*.js' file.
+- **useVersionNumInFileName:** Whether to use the {bundle-name}.yaml file's version number suffixed to the
+ concatenated file's name.
+- **template:** The sub section which handles setting templates to javascript strings within the
+ concatenated `js` section/files (*note a `js` section must be present within the `files` section in order
+  for the template functionality to kick-in)
+ - **templatePartial:** Lodash template to use for appending the template(s) strings to the concatenated
+  '*.js' file.
  - **compressWhitespace:** Whether or not to compress white space in the collected template strings.
  - **templateTypeKeys:** Keys to look for in files to trigger the template string addition functionality.
 
@@ -245,7 +257,8 @@ copy:
 none.
 
 ### csslint
-The 'csslint' task runs csslint on a bundle or all bundles using the listed '.csslintrc' file or runs with default options if no '.csslintrc' file is listed.
+The 'csslint' task runs csslint on a bundle or all bundles using the listed '.csslintrc' file or runs with
+ default options if no '.csslintrc' file is listed.
 
 #####Usage:
 `gulpw csslint:{bundle-name}` or for all bundles `gulpw csslint`
@@ -260,11 +273,104 @@ tasks:
 - **csslintrc:**  Location of '.csslintrc' file.
 
 ### deploy
+Deploy's files using deploy section in 'bundle.wrangler.config.yaml' and deploy configuration generated by
+'prompt:deploy' task.  See notes in config section below.
 
+#####Usage:
+`gulpw deploy:{bundle-name}` or for all bundles `gulpw deploy`
 
+#####In 'bundle.wrangler.config.yaml':
+```
+tasks:
+ # Deploy Task
+  deploy:
+
+    # Other files to be deployed
+    otherFiles: []
+
+    # Global deploy artifacts flag (used if no `deployArtifact` field is found for a section in this config
+    deployArtifacts: true
+
+    # Should files be linted before deploy
+    lintBeforeDeploy: false
+
+    # Local deploy config used to override local bundle.wrangler.yaml deploy config options.  Stored in `localConfigPath` whose default value is '.gulpw'
+    localDeployFileName: deploy.yaml
+
+    # Use one-to-one paths for undefined/null deploy paths.
+    # If this is false and an undefined/null deploy path is found for a type an error
+    # is thrown and the deploy tasks exits
+    useOneToOnePaths: false
+
+    # Use unix style paths for deployment
+    deployUsingUnixStylePaths: true
+
+    # Options written by `prompt:deploy` to `localDeployFileName`
+    developingDomain: null
+    hostnamePrefix: null
+    hostname: null
+    port: 22
+    username: null
+    password: null
+    publickeyPassphrase: null
+    privatekeyLocation: null
+
+    # File types that are allowed for deployment
+    allowedFileTypes:
+      - js
+      - css
+      - html
+      - json
+      - yaml
+      - jpg
+      - png
+      - gif
+      - md
+      - mkd
+
+    # Domains to develop
+    domainsToDevelop:
+
+      # Hostname to develop for
+      gulpw-sample.somedomain.com:
+
+        # Servers where user can develop for `domainToDevelopFor` (in this case `domainToDevelopFor` is `gulpw-sample.somedomain.com`)
+        hostnames: # slots/hosts
+          - -devslot1.gulpw-sample.somedomain.com
+          - -devslot2.gulpw-sample.somedomain.com
+          - -devslot3.gulpw-sample.somedomain.com
+
+        # All website instance prefixes represent the same website just different
+        # instances of the website.
+
+        # If object then we expect the hostname prefix (key) and site instance's folder path
+        hostnamePrefixes:
+          - web1
+          - web2
+          - web3
+
+        hostnamePrefixFolders: null # If set will use these folders to suffix to `deployRootFolder`
+          #web1: website1
+          #web2: website2
+          #web3: website3
+
+        # Root folder on the server to use for deployments (prefix path for file paths being deployed)s)
+        deployRootFolder: null # example: sites/<%= devHostnamePrefix %><%= devHostname %> (recieves the `deploy` has from this config)
+
+        # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
+        typesAndDeployPathsMap:
+          font: public/media/fonts/
+          html: public/
+          video: public/media/videos/
+          image: public/media/images/
+          js: public/js/
+          css: public/css/
+
+```
 
 ### jshint
-JsHint task.  If `jshintrc` is specified those options are used instead (maybe we'll merge these options in the future?).
+JsHint task.  If `jshintrc` is specified those options are used instead (maybe we'll merge these options
+ in the future?).
 
 #####Usage:
 `gulpw jshint:{bundle-name}` or for all bundles `gulpw jshint`
@@ -293,7 +399,8 @@ tasks:
 
 ### minify
 The 'minify' task is a big composite task due to the many subtasks it handles.
-The minify task launches the following tasks per file in it's sources array (task only launch for corresponding file types):
+The minify task launches the following tasks per file in it's sources array (task only launch for
+corresponding file types):
 - gulp-csslint
 - gulp-minify-css
 - gulp-jshint
@@ -350,9 +457,11 @@ tasks:
 ```
 
 ### prompt:deploy
-Launches an interactive questionnaire for generating a local 'deploy.yaml' file with deployment details for current development environment.
+Launches an interactive questionnaire for generating a local 'deploy.yaml' file with deployment details
+ for current development environment.
 ****Note**** This task must be run before the `deploy` task in order for it to function.
-****Note**** File is put in the directory specified by `localConfigPath` of the 'bundle.wrangler.config.yaml' file or the default is used ('./.gulpw').
+****Note**** File is put in the directory specified by `localConfigPath` of the
+ 'bundle.wrangler.config.yaml' file or the default is used ('./.gulpw').
 
 #####Usage:
 `gulpw prompt:deploy`
@@ -455,16 +564,20 @@ tasks:
   (should happen from inside Wrangler.js for all tasks (if any configs present)).
   - [X] - ~~Make `Wrangler` constructor `Optionable`.~~  No longer necessary.
   - [X] - Deploy task should reference local deploy file name from `prompt` task config.
-  - [X] - ~~Add pointers to `gulp` and `wrangler` to `*TaskProxy` (eliminates having to pass them around all the time).~~  Tentative.
-  - [X] - ~~Isolate hinting/linting tasks before running `build` task and wait for them to finish before running
-  `build` task.~~ No longer necessary as by just adding them to the ignore list the extra launched tasks
+  - [X] - ~~Add pointers to `gulp` and `wrangler` to `*TaskProxy` (eliminates having to pass them around
+  all the time).~~  Tentative.
+  - [X] - ~~Isolate hinting/linting tasks before running `build` task and wait for them to finish before
+  running `build` task.~~ No longer necessary as by just adding them to the ignore list the extra launched tasks
   (which weren't noticed before due to the mass of output) are not launched.
-  - [X] - ~~~Remove build paths from concat task.  Instead use the ones defined in the minify task.~~~  We will set the concat task
-  build paths to null and when the the task runs it will use the ones specified in the 'minify' task if it doesn't have
+  - [X] - ~~~Remove build paths from concat task.  Instead use the ones defined in the minify task.~~~
+  We will set the concat task
+  build paths to null and when the the task runs it will use the ones specified in the 'minify' task if
+   it doesn't have
   any otherwise it will use the one's that it has.
   - [X] - Add 'compass' task to the 'build' task.
   - [X] - Add testing (mocha, jasmine) tasks to 'build' task.
-  - [X] - Make sure that 'concat' and 'minify' tasks have the same options (minus the ones that are exlusive to minify).
+  - [X] - Make sure that 'concat' and 'minify' tasks have the same options (minus the ones that are exlusive
+   to minify).
   - [ ] - Supply example bundle config file with all sections listed in it.
   - [X] - Add support for bundle config files in any one of 'js', 'json', or 'yaml' formats.
   - [X] - ~~Set up pipe transport function for 'mocha' and 'jasmine' proxies.~~  No longer needed.
@@ -472,7 +585,8 @@ tasks:
 ### Version 0.2.0 Todos
 - [ ] - Tasks
 	- [ ] - browserify
-	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
+	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified
+	 bundle.
 	- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
 	- [ ] - vulcanize (for polymer build tool)
 - For `Bundle`:
@@ -481,7 +595,8 @@ tasks:
 	  changed.
 - General:
   - [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
-  - [ ] - Fix all non streaming tasks to return streams or promises so that other tasks can list them as dependencies.
+  - [ ] - Fix all non streaming tasks to return streams or promises so that other tasks can list them as
+   dependencies.
 
 ### ~~Notes~~ Caveats:
 
@@ -490,7 +605,8 @@ tasks:
   be passed in last for this to work (cli doesn't differentiate between task names and param/flag values));
     E.g., `gulp task1 --flag1 flag-value --flag2 --flag3 task2 --flag4` will only run `task1` and will parse
     task2 as a value of --flag2 unless you explicitely pass a value to --flag3~~
-- Build files cannot be shared amongst bundles when wanting to use the 'watch' task cause they cause a cyclic dependency when running global
+- Build files cannot be shared amongst bundles when wanting to use the 'watch' task cause they cause a
+ cyclic dependency when running global
  watch tasks;  I.e., `gulpw watch`
 
 ### Resources
