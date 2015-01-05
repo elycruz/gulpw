@@ -16,9 +16,14 @@ module.exports = TaskProxy.extend('JasmineProxy', {
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true,
                 JSON.parse(JSON.stringify(wrangler.tasks.jasmine)), bundle.options.jasmine),
-            jasmineOptions = taskConfig.options;
+            jasmineOptions = taskConfig.options,
+            skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
         gulp.task(taskName, function () {
+            if (skipTests) {
+                wrangler.log(chalk.grey('\nSkipping jasmine tests.'), '--mandatory');
+                return;
+            }
             wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
             return gulp.src(taskConfig.files)
                 .pipe(jasmine(jasmineOptions))
@@ -42,7 +47,8 @@ module.exports = TaskProxy.extend('JasmineProxy', {
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             taskName,
-            tasks = [];
+            tasks = [],
+            skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
@@ -54,6 +60,10 @@ module.exports = TaskProxy.extend('JasmineProxy', {
         });
 
         gulp.task('jasmine', function () {
+            if (skipTests) {
+                wrangler.log(chalk.grey('\nSkipping jasmine tests.'), '--mandatory');
+                return;
+            }
             wrangler.log('\n  Running "jasmine" task(s):', '--mandatory');
             wrangler.launchTasks(tasks, gulp);
         });

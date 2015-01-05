@@ -38,7 +38,7 @@ function init(env) {
     //}
 
     if (sjl.empty(env.configPath)) {
-        console.log('`gulpw` couldn\'t find \'bundle.wrangler.config.*\' file.');
+        console.log('No \'bundle.wrangler.config.*\' file found.');
         return;
     }
 

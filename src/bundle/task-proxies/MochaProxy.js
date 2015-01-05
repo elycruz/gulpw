@@ -16,9 +16,14 @@ module.exports = TaskProxy.extend('MochaProxy', {
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true,
                 JSON.parse(JSON.stringify(wrangler.tasks.mocha)), bundle.options.mocha),
-            mochaOptions = taskConfig.options;
+            mochaOptions = taskConfig.options,
+            skipTests = wrangler.skipTesting() || wrangler.skipMochaTesting();
 
         gulp.task(taskName, function () {
+            if (skipTests) {
+                wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
+                return;
+            }
             wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
             return gulp.src(taskConfig.files)
                 .pipe(mocha(mochaOptions))
@@ -43,7 +48,8 @@ module.exports = TaskProxy.extend('MochaProxy', {
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             taskName,
-            tasks = [];
+            tasks = [],
+            skipTests = wrangler.skipTesting() || wrangler.skipMochaTesting();
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
@@ -55,6 +61,10 @@ module.exports = TaskProxy.extend('MochaProxy', {
         });
 
         gulp.task('mocha', function () {
+            if (skipTests) {
+                wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
+                return;
+            }
             wrangler.log('\n  Running "mocha" task(s):', '--mandatory');
             wrangler.launchTasks(tasks, gulp);
         });

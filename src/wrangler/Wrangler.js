@@ -147,14 +147,17 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         bundlesPath = self.bundlesPath;
 
-        // Get bundles
+        // Get bundle paths if bundles is not set
         if (!bundles) {
             bundles = fs.readdirSync(bundlesPath);
+            bundles = bundles.map(function (fileName) {
+                return path.join(bundlesPath, fileName);
+            });
         }
 
         // Parse bundle configs
         bundles.forEach(function (fileName) {
-            var bundle = self.createBundle(path.join(bundlesPath, fileName));
+            var bundle = self.createBundle(fileName);
             self.registerTasksForBundle(gulp, bundle);
         });
     },
@@ -329,10 +332,21 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this;
         return (self.argv['no-tests']
             || self.argv['skip-tests']
-            || self.argv['skip-testing']
-            || self.argv['no-tests']
-            || self.argv['skip-tests']
             || self.argv['skip-testing']) || false;
+    },
+
+    skipMochaTesting: function () {
+        var self = this;
+        return (self.argv['no-mocha-tests']
+            || self.argv['skip-mocha-tests']
+            || self.argv['skip-mocha-testing']) || false;
+    },
+
+    skipJasmineTesting: function () {
+        var self = this;
+        return (self.argv['no-jasmine-tests']
+            || self.argv['skip-jasmine-tests']
+            || self.argv['skip-jasmine-testing']) || false;
     },
 
     skipLinting: function () {

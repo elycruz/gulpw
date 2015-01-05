@@ -519,6 +519,15 @@ tasks:
 ### mocha
 Mocha tests task runs the mocha module on your test 'files' array or string using `options` if any.
 
+#####Flags
+- Skip Testing:
+  - `--no-tests`
+  - `--skip-tests`
+  - `--skip-testing`
+  - `--no-mocha-tests`
+  - `--skip-mocha-tests`
+  - `--skip-mocha-testing`
+
 #####Usage:
 `gulpw mocha:{bundle-name}` or for all bundles `gulpw mocha`
 
@@ -526,6 +535,33 @@ Mocha tests task runs the mocha module on your test 'files' array or string usin
 ```
 tasks:
   mocha:
+    # {String|Array} of files.  Default `null`
+    files: # or ./some/tests/**/*.js
+      - some/tests/folder/with/tests/**/*.js
+      - some/tests/file.js
+    options: null # - {Object} - Options if any.  Default `null`
+```
+
+
+### jasmine
+Jasmine tests task runs the jasmine module on your test 'files' array or string using `options` if any.
+
+#####Flags
+- Skip Testing:
+  - `--no-tests`
+  - `--skip-tests`
+  - `--skip-testing`
+  - `--no-jasmine-tests`
+  - `--skip-jasmine-tests`
+  - `--skip-jasmine-testing`
+
+#####Usage:
+`gulpw jasmine:{bundle-name}` or for all bundles `gulpw jasmine`
+
+#####In 'bundle.wrangler.config.yaml':
+```
+tasks:
+  jasmine:
     # {String|Array} of files.  Default `null`
     files: # or ./some/tests/**/*.js
       - some/tests/folder/with/tests/**/*.js
