@@ -56,8 +56,8 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
                     taskInstanceConfig = taskConfigMap[ext],
                     jsHintPipe = wrangler.tasks.jshint.instance.getPipe(bundle, gulp, wrangler),
                     cssLintPipe = wrangler.tasks.csslint.instance.getPipe(bundle, gulp, wrangler),
-                    skipCssLinting = wrangler.skipCssLinting() || wrangler.skipLinting(),
-                    skipJsLinting = wrangler.skipJsLinting() || wrangler.skipLinting(),
+                    skipCssLinting = wrangler.skipLinting() || wrangler.skipCssLinting(),
+                    skipJsLinting = wrangler.skipLinting() || wrangler.skipJsLinting(),
                     filePath,
                     tmplsString;
 

@@ -212,6 +212,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Pass all bundles to each task
         tasks.forEach(function (task) {
+            if (task.indexOf(':') > -1) {
+                return;
+            }
             self.tasks[task].instance.registerBundles(bundles, gulp, self);
         });
     },
@@ -329,53 +332,40 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     skipTesting: function () {
         var self = this;
-        return (self.argv['no-tests']
-            || self.argv['skip-tests']
+        return (self.argv['skip-tests']
             || self.argv['skip-testing']) || false;
     },
 
     skipMochaTesting: function () {
         var self = this;
-        return (self.argv['no-mocha-tests']
-            || self.argv['skip-mocha-tests']
+        return (self.argv['skip-mocha-tests']
             || self.argv['skip-mocha-testing']) || false;
     },
 
     skipJasmineTesting: function () {
         var self = this;
-        return (self.argv['no-jasmine-tests']
-            || self.argv['skip-jasmine-tests']
+        return (self.argv['skip-jasmine-tests']
             || self.argv['skip-jasmine-testing']) || false;
     },
 
     skipLinting: function () {
         var self = this;
-        return (self.argv['no-lint']
-            || self.argv['skip-lint']
+        return (self.argv['skip-lint']
             || self.argv['skip-linting']
-            || self.argv['no-hint']
             || self.argv['skip-hint']
             || self.argv['skip-hinting']) || false;
     },
 
     skipCssLinting: function () {
         var self = this;
-        return (self.argv['no-csslint']
-            || self.argv['skip-csslint']
-            || self.argv['skip-csslinting']
-            || self.argv['no-csshint']
-            || self.argv['skip-csshint']
-            || self.argv['skip-csshinting']) || false;
+        return (self.argv['skip-csslint']
+            || self.argv['skip-csslinting']) || false;
     },
 
     skipJsLinting: function () {
         var self = this;
-        return (self.argv['no-jslint']
-            || self.argv['skip-jslint']
-            || self.argv['skip-jslinting']
-            || self.argv['no-jshint']
-            || self.argv['skip-jshint']
-            || self.argv['skip-jshinting']) || false;
+        return (self.argv['skip-jslint']
+            || self.argv['skip-jslinting']) || false;
     },
 
     /**
