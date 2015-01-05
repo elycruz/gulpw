@@ -161,22 +161,22 @@ tasks:
     options: null
 
   jshint:
-      jshintrc: ./configs/.jshintrc
-      ignoreFiles: null
-      options:
-        predef:
-          - $
-          - _
-          - amplify
-          - Backbone
-          - browserify
-          - define
-          - jQuery
-          - Modernizr
-          - Mustache
-          - Marionette
-          - require
-          - sjl
+    jshintrc: ./configs/.jshintrc
+    ignoreFiles: null
+    options:
+      predef:
+        - $
+        - _
+        - amplify
+        - Backbone
+        - browserify
+        - define
+        - jQuery
+        - Modernizr
+        - Mustache
+        - Marionette
+        - require
+        - sjl
 
   minify:
     header: |

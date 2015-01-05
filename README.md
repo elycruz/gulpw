@@ -113,19 +113,9 @@ tasks:
       - deploy
       - jshint
       - csslint
-
-    # This is a global lint flag that is used if there is a lint task specified for a section
-    lintBeforeBuild: null
 ```
 
 - **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are included as conglomerate tasks).
-- **lintBeforeBuild {Boolean}:** Top level lint flag for overriding linting functionality in all subtasks.  Default `null`.
-
-#####Flags that can affect the 'build' task:
-- **--dev** - Causes 'minify' to ignore minification.
-- **--skip-lint** - Causes all linting/hinting tasks to be ignored.
-- **--skip-csslint** - Causses csslint to be ignored.
-- **--skip-jshint** - Causes jshint to be ignored.
 
 ### clean
 The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
@@ -173,10 +163,14 @@ By default concat works only on works on the `js`, `css`, and/or `html` sections
 ***Note do not run this task in conjunction with 'build' or 'minify' for any particular bundle cause it's effects will
 be nullified by the other tasks.
 
-#####Flags that can affect the 'build' task:
-- **--skip-lint** - Causes all linting/hinting tasks to be ignored.
-- **--skip-csslint** - Causses csslint to be ignored.
-- **--skip-jshint** - Causes jshint to be ignored.
+#####Flags:
+Linting/hinting can be skipped by passing anyone of the following flags:
+- `--skip-lint`
+- `--skip-linting`
+- `--skip-hint`
+- `--skip-hinting`
+
+Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint`.
 
 #####Usage:
 `gulpw concat:{bundle-name}` or for all bundles `gulpw build`
@@ -267,7 +261,35 @@ tasks:
 
 ### deploy
 
+
+
 ### jshint
+JsHint task.  If `jshintrc` is specified those options are used instead (maybe we'll merge these options in the future?).
+
+#####Usage:
+`gulpw jshint:{bundle-name}` or for all bundles `gulpw jshint`
+
+#####In 'bundle.wrangler.config.yaml':
+```
+tasks:
+  jshint:
+    jshintrc: ./configs/.jshintrc
+    ignoreFiles: null
+    options:
+      predef:
+        - $
+        - _
+        - amplify
+        - Backbone
+        - browserify
+        - define
+        - jQuery
+        - Modernizr
+        - Mustache
+        - Marionette
+        - require
+        - sjl
+```
 
 ### minify
 The 'minify' task is a big composite task due to the many subtasks it handles.
