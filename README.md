@@ -84,6 +84,18 @@ is why they are being ignored as standalone tests.
 'build' also adds the 'minify' task to it's list of tasks 'to' run for a particular bundle or bundles
 depending on if an `html`, `css` or `js` section is found with the `files` section.
 
+#####Flags:
+Linting/hinting can be skipped by passing anyone of the following flags:
+- `--skip-lint`
+- `--skip-linting`
+- `--skip-hint`
+- `--skip-hinting`
+
+Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint`.
+
+Development mode:
+`--dev` - Skips minification for all *.css, *.js, and *.html files.
+
 #####Usage:
 `gulpw build:{bundle-name}` or run it for all bundles
 `gulpw build`
@@ -167,8 +179,7 @@ be nullified by the other tasks.
 - **--skip-jshint** - Causes jshint to be ignored.
 
 #####Usage:
-`gulpw concat:{bundle-name}` or for all bundles
-`gulpw build`
+`gulpw concat:{bundle-name}` or for all bundles `gulpw build`
 
 #####In 'bundle.wrangler.config.yaml':
 ```
@@ -178,8 +189,7 @@ tasks:
     header: |
       /*!
        * Company Name http://www.company-website.com
-       * <%= bundle.alias %>.<%= fileExt %> <%= bundle.version %> (<%= (new Date()).getTime() %>)
-       * <%= bundle[section-name].md5 %>
+       * <%= bundle.options.alias %>.<%= fileExt %> <%= bundle.options.version %> (<%= (new Date()).getTime() %>)
        */
     cssBuildDir: some/path/to/build/path
     jsBuildDir: some/path/to/build/path
@@ -260,12 +270,109 @@ tasks:
 ### jshint
 
 ### minify
+The 'minify' task is a big composite task due to the many subtasks it handles.
+The minify task launches the following tasks per file in it's sources array (task only launch for corresponding file types):
+- gulp-csslint
+- gulp-minify-css
+- gulp-jshint
+- gulp-uglify
+- gulp-minify-html
+
+The `template` hash in the options for this task takes care of importing templates using a lodash template
+into your javascript file (appended to the bottom of the javascript file)(read notes in config description).
+
+#####Flags:
+Linting/hinting can be skipped by passing anyone of the following flags:
+- `--skip-lint`
+- `--skip-linting`
+- `--skip-hint`
+- `--skip-hinting`
+
+Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint`.
+
+Development mode:
+`--dev` - Skips minification for all *.css, *.js, and *.html files.
+
+#####Usage:
+`gulpw minify:{bundle-name}` or for all bundles `gulpw minify`
+
+#####In 'bundle.wrangler.config.yaml':
+```
+tasks:
+
+  minify:
+
+    # Header for top of file (lodash template)
+    header: |
+      /*! Company Name http://www.company-website.com <%= bundle.options.alias %>.js <%= bundle.options.version %> */
+    cssBuildDir: some/css/build/path
+    htmlBuildDir: some/html/build/path
+    jsBuildDir: some/js/build/path
+    allowedFileTypes: # allowed files types to process for the main tasks (css, js, and html)
+      - js
+      - css
+      - html
+    htmlTaskOptions:
+      spare: true
+      comments: false
+    jsTaskOptions: {}
+    useMinPreSuffix: false
+    useVersionNumInFileName: false
+    template:
+      templatePartial: null # lodash template
+      compressWhitespace: true
+      templateTypeKeys: # template keys to look for in `files` hash of a bundle
+        - mustache
+        - handlebars
+        - ejs
+```
+
 
 ### prompt:deploy
 
 ### requirejs
+RequireJs task.
+
+#####Usage:
+`gulpw requirejs:{bundle-name}` or for all bundles `gulpw requirejs`
+
+#####In 'bundle.wrangler.config.yaml':
+```
+tasks:
+
+  # RequireJs Defaults
+  requirejs:
+    options:
+      # requirejs options here
+      ...
+```
 
 ### watch
+Watch task.
+
+#####Usage:
+`gulpw watch:{bundle-name}` or for all bundles `gulpw watch`
+
+#####In 'bundle.wrangler.config.yaml':
+```
+tasks:
+
+  # Watch Task Defaults
+  watch:
+
+    # Standalone tasks to ignore on the bundle level (watch creates it's own collection of deploy tasks from the bundle(s) registered with it)
+    ignoredTasks:
+      - clean
+      - deploy
+
+    # Tasks to run on file changes.
+    tasks:
+      - build
+      - deploy
+
+    # Other files to watch (can be overridden from the bundle level as well)
+    otherFiles: null
+```
 
 ### mocha
 Mocha tests task runs the mocha module on your test 'files' array or string using `options` if any.
