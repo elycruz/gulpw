@@ -88,7 +88,7 @@ depending on if an `html`, `css` or `js` section is found with the `files` secti
 `gulpw build:{bundle-name}` or run it for all bundles
 `gulpw build`
 
-#####Global Config:
+#####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
 
@@ -132,7 +132,7 @@ The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if 
 #####Usage:
 `gulpw clean:{bundle-name}` or for all bundles `gulpw clean`
 
-#####Global Config:
+#####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
   clean:
@@ -170,7 +170,7 @@ be nullified by the other tasks.
 `gulpw concat:{bundle-name}` or for all bundles
 `gulpw build`
 
-#####Global Config:
+#####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
 
@@ -246,7 +246,7 @@ The 'csslint' task runs csslint on a bundle or all bundles using the listed '.cs
 #####Usage:
 `gulpw csslint:{bundle-name}` or for all bundles `gulpw csslint`
 
-#####Global Config
+#####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
   csslint:
@@ -256,12 +256,33 @@ tasks:
 - **csslintrc:**  Location of '.csslintrc' file.
 
 ### deploy
+
 ### jshint
+
 ### minify
-### prompt
+
+### prompt:deploy
+
 ### requirejs
+
 ### watch
+
 ### mocha
+Mocha tests task runs the mocha module on your test 'files' array or string using `options` if any.
+
+#####Usage:
+`gulpw mocha:{bundle-name}` or for all bundles `gulpw mocha`
+
+#####In 'bundle.wrangler.config.yaml':
+```
+tasks:
+  mocha:
+    # {String|Array} of files.  Default `null`
+    files: # or ./some/tests/**/*.js
+      - some/tests/folder/with/tests/**/*.js
+      - some/tests/file.js
+    options: null # - {Object} - Options if any.  Default `null`
+```
 
 ## Todos
 
