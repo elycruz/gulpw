@@ -1,4 +1,7 @@
 /**
+ * Created by edelacruz on 1/6/2015.
+ */
+/**
  * Created by ElyDeLaCruz on 10/29/2014.
  */
 
@@ -14,7 +17,7 @@ var chai = require('chai'),
         expect(sjl.empty(stderr)).to.equal(true);
         expect(sjl.empty(error)).to.equal(true);
     },
-    timeout = 13000,
+    timeout = 34000,
     commandOptions = {
         cwd: path.join(__dirname, '..', '..', 'gulpw-sample-app'),
         timeout: timeout
@@ -25,7 +28,7 @@ if (!global.expect) {
     global.expect = chai.expect;
 }
 
-describe('#`requirejs` task test', function () {
+describe('#global tasks test', function () {
 
     before(function (done) {
         // Set timeout for test
@@ -33,22 +36,11 @@ describe('#`requirejs` task test', function () {
         tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
     });
 
-    it ('should output build sources when using the `dir` option', function (done) {
+    it ('should be able to run all global tasks when passed in separately', function (done) {
         // Set timeout for test
         this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw requirejs:amd', commandOptions, null, done);
-    });
-
-    it ('should output an "out" file when using the `out` option', function (done) {
-        // Set timeout for test
-        this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw requirejs:amd-outfile', commandOptions, null, done);
-    });
-
-    it ('should output artifacts for all bundles that contain a "requirejs" key', function (done) {
-        // Set timeout for test
-        this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw requirejs', commandOptions, null, done);
+        tutil.executeTaskAsChild('gulpw compass mocha jasmine csslint jshint minify requirejs deploy',
+            commandOptions, genericTest, done);
     });
 
 });

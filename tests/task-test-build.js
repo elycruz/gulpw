@@ -8,11 +8,17 @@ require('sjljs');
 
 var chai = require('chai'),
     path = require('path'),
-    testProjectPath = path.join(__dirname, '..', '..', 'gulpw-sample-app'),
-    child_process = require('child_process'),
-    exec = child_process.exec,
+    log = console.log,
+    tutil = require(path.join(__dirname, '../src/test-utils/test-utils')),
+    genericTest = function (error, stdout, stderr) {
+        expect(sjl.empty(stderr)).to.equal(true);
+        expect(sjl.empty(error)).to.equal(true);
+    },
     timeout = 13000,
-    log = console.log;
+    commandOptions = {
+            cwd: path.join(__dirname, '..', '..', 'gulpw-sample-app'),
+            timeout: timeout
+        };
 
 // Get `chai.expect`
 if (!global.expect) {
@@ -21,19 +27,29 @@ if (!global.expect) {
 
 describe('#`build` task test', function () {
 
-    //before(function (done) {
-    //    // Clean all outputted artifacts before outputting new ones
-    //    exec('gulpw clean:amd clean:amd-outfile', {cwd: testProjectPath, timeout: timeout}, function (error, stdout, stderr) {
-    //        log('\n"clean:amd" and "clean:amd-outfile" tasks performed.\n');
-    //        if (!sjl.empty(stderr)) {
-    //            log('stderr: ' + stderr);
-    //        }
-    //        if (!sjl.empty(error)) {
-    //            log(error);
-    //        }
-    //        log('\nProceeding with other tests..\n');
-    //        done();
-    //    });
-    //});
+    before(function (done) {
+        // Set timeout for test
+        this.timeout(timeout);
+        tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
+    });
+
+    it('should build all bundles when no bundle name is passed in', function (done) {
+        // Set timeout for test
+        this.timeout(timeout);
+        tutil.executeTaskAsChild('gulpw build', commandOptions, genericTest, done);
+    });
+
+    it('should be able to build a bundle that has "requirejs" section', function (done) {
+        // Set timeout for this test
+        this.timeout(timeout);
+        tutil.executeTaskAsChild('gulpw build:amd-outfile', commandOptions, genericTest, done);
+    });
+
+    it('should be able to build multiple singular bundles', function (done) {
+        // Set timeout for this test
+        this.timeout(timeout);
+        tutil.executeTaskAsChild('gulpw build:global build:amd build:amd-outfile',
+            commandOptions, genericTest, done);
+    });
 
 });
