@@ -218,8 +218,13 @@ module.exports = TaskProxy.extend(function WatchProxy () {
         }
 
         if (bundle.has('requirejs')) {
-            targets.push(path.join(bundle.options.requirejs.options.appDir,
-                bundle.options.requirejs.options.baseUrl) + path.sep + '**/*');
+            if (!sjl.empty(bundle.options.requirejs.options.appDir)) {
+                targets.push(path.join(bundle.options.requirejs.options.appDir,
+                    bundle.options.requirejs.options.baseUrl) + path.sep + '**/*');
+            }
+            else if (!sjl.empty(bundle.options.requirejs.options.baseUrl)) {
+                targets.push(bundle.options.requirejs.options.baseUrl + path.sep + '**' + path.sep + '*');
+            }
         }
 
         //if (bundle.has('deploy.otherFiles')) {

@@ -99,7 +99,12 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
 
             if (bundle.has('requirejs.options')) {
                 // @todo allow using the requirejs outfile as a target here
-                targets.push(path.join(process.cwd(), bundle.options.requirejs.options.dir) + path.sep);
+                if (!sjl.empty(bundle.options.requirejs.options.out)) {
+                    targets.push(path.join(process.cwd(), bundle.options.requirejs.options.out) + path.sep);
+                }
+                else if (!sjl.empty(bundle.options.requirejs.options.dir)) {
+                    targets.push(path.join(process.cwd(), bundle.options.requirejs.options.dir) + path.sep);
+                }
                 self.registerGulpTask(separator + bundleName + separator + 'requirejs', targets, gulp, wrangler);
             }
 

@@ -28,21 +28,19 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
         // Create task for bundle
         gulp.task(taskName, function () {
             var classOfRequireJs = sjl.classOf(bundle.get('requirejs')),
-                promise = new Promise(function (fulfill, reject) {
+                retVal;
                     if (classOfRequireJs === 'Object') {
-                        self.runRequireTaskInline(taskName, bundle, requireJsOptions, gulp, wrangler, fulfill, reject);
+                        retVal = self.runRequireTaskInline(taskName, bundle, requireJsOptions, gulp, wrangler);
                     }
                     else if (classOfRequireJs === 'String') {
-                        self.runRequireTaskAsCommand(taskName, bundle, requireJsOptions, gulp, wrangler, fulfill, reject);
+                        retVal = self.runRequireTaskAsCommand(taskName, bundle, requireJsOptions, gulp, wrangler);
                     }
                     else {
                         wrangler.log('Requirejs task config is of invalid type.' +
                             '  Type recieved: ' + classOfRequireJs, '--mandatory');
                     }
-                });
 
-            return promise;
-
+            return retVal;
         }); // end of requirejs task
     },
 
@@ -132,10 +130,11 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
         return rjsOptions;
     },
 
-    runRequireTaskInline: function (taskName, bundle, requireJsOptions, gulp, wrangler, fulfill, reject) {
+    runRequireTaskInline: function (taskName, bundle, requireJsOptions, gulp, wrangler) {
         // Date for tracking task duration
         var start = new Date(),
-            otherOptions = {};
+            otherOptions = {},
+            promise;
 
         // @todo add flag in yaml to allow optimize type (for advanced usages)
         if (!wrangler.argv.dev) {
@@ -145,23 +144,28 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
         // Message 'Running task'
         wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
 
-        requirejs.optimize(sjl.extend({}, requireJsOptions, otherOptions),
-            function (buildResponse) {
-                //buildResponse is just a text output of the modules
-                //included. Load the built file for the contents.
-                //Use config.out to get the optimized file contents.
-                wrangler.log(buildResponse, '--mandatory');
+        promise = new Promise(function (fulfill, reject) {
+            requirejs.optimize(sjl.extend({}, requireJsOptions, otherOptions),
+                function (buildResponse) {
+                    //buildResponse is just a text output of the modules
+                    //included. Load the built file for the contents.
+                    //Use config.out to get the optimized file contents.
+                    wrangler.log(buildResponse, '--mandatory');
 
-                // Notify of task completion and task duration
-                wrangler.log('[' + chalk.green('gulp') +  ']' +
-                chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
-                chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
-                fulfill();
-            }, function(err) {
-                //optimization err callback
-                wrangler.log(chalk.red('r.js encountered an error:\n' + err), '--mandatory');
-                reject('r.js encountered an error:\n' + err);
-            });
+                    // Notify of task completion and task duration
+                    wrangler.log('[' + chalk.green('gulp') +  ']' +
+                    chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
+                    chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+                    fulfill();
+                }, function(err) {
+                    //optimization err callback
+                    wrangler.log(chalk.red('r.js encountered an error:\n' + err), '--mandatory');
+                    reject('r.js encountered an error:\n' + err);
+                });
+        });
+
+        return promise;
+
     },
 
     runRequireTaskAsCommand: function () {

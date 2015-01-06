@@ -78,7 +78,12 @@ module.exports = TaskProxy.extend('JsHintProxy', {
         }
         // @todo Allow both use of appdir and dir for requirejs resources jshint
         if (bundle.has('requirejs')) {
-            targets.push(path.join(bundle.options.requirejs.options.dir, '**/*.js'));
+            if (bundle.options.requirejs.options.dir) {
+                targets.push(path.join(bundle.options.requirejs.options.dir, '**/*.js'));
+            }
+            else {
+                targets.push(path.join(bundle.options.requirejs.options.out, '**/*.js'));
+            }
         }
         // @todo If bundle has browserify
         return targets;
