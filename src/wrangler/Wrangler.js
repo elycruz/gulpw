@@ -112,12 +112,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         var self = this,
             src = self.taskProxyMap[task].constructorLocation,
-            TaskProxyClass = require(path.join(__dirname, '../', src));
+            TaskProxyClass = require(path.join(__dirname, '../', src)),
+            options = self.tasks[task];
 
-        return new TaskProxyClass({
-            alias: task,
-            help: self.taskProxyMap.help
-        });
+        options.alias = task;
+        options.help = self.taskProxyMap.help;
+
+        return new TaskProxyClass(options);
     },
 
     createStaticTaskProxy: function (gulp, task) {

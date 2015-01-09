@@ -9,6 +9,8 @@ require('sjljs');
 var mocha = require('gulp-mocha'),
     duration = require('gulp-duration'),
     TaskProxy = require('../TaskProxy'),
+    fncallback = require('gulp-fncallback'),
+    Promise = require('es6-promise').Promise,
     chalk = require('chalk');
 
 module.exports = TaskProxy.extend('MochaProxy', {
@@ -20,14 +22,20 @@ module.exports = TaskProxy.extend('MochaProxy', {
             skipTests = wrangler.skipTesting() || wrangler.skipMochaTesting();
 
         gulp.task(taskName, function () {
-            if (skipTests) {
-                wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
-                return;
-            }
-            wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
-            return gulp.src(taskConfig.files)
-                .pipe(mocha(mochaOptions))
-                .pipe(duration(chalk.cyan('mocha \"' + bundle.options.alias + '\' duration')));
+            return (new Promise(function (fulfill, reject) {
+                if (skipTests) {
+                    wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
+                    fulfill();
+                    return;
+                }
+                wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
+                gulp.src(taskConfig.files)
+                    .pipe(mocha(mochaOptions))
+                    .pipe(duration(chalk.cyan('mocha \"' + bundle.options.alias + '\' duration')))
+                    .pipe(fncallback(function () {
+                        fulfill();
+                    }));
+            }));
         });
     },
 
@@ -66,7 +74,7 @@ module.exports = TaskProxy.extend('MochaProxy', {
                 return;
             }
             wrangler.log('\n  Running "mocha" task(s):', '--mandatory');
-            wrangler.launchTasks(tasks, gulp);
+            return wrangler.launchTasks(tasks, gulp);
         });
     },
 

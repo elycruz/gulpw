@@ -24,7 +24,7 @@ module.exports = sjl.Extendable.extend(function TaskProxy(options) {
 
         registerGulpTasks: function (taskName, tasks, gulp, wrangler, deps) {
             gulp.task(taskName, deps || [], function () {
-                wrangler.launchTasks(tasks, gulp);
+                return wrangler.launchTasks(tasks, gulp);
             });
         },
 
