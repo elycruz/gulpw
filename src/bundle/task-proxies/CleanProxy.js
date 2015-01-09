@@ -48,7 +48,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                         // If error log it
                         if (err) {
                             console.log(err);
-                            reject();
+                            reject(err);
                             return;
                         }
 

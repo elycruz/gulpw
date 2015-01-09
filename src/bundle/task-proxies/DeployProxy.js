@@ -2,7 +2,10 @@
  * Created by ElyDeLaCruz on 11/18/2014.
  */
 
-'use strict'; require('sjljs');
+'use strict';
+
+require('sjljs');
+require('es6-promise').polyfill();
 
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
@@ -13,6 +16,7 @@ var TaskProxy = require('../TaskProxy'),
     chalk = require('chalk'),
     yaml = require('js-yaml'),
     lodash = require('lodash');
+
     //gutil = require('gulp-util');
 
 module.exports = TaskProxy.extend('DeployProxy', {
@@ -35,96 +39,104 @@ module.exports = TaskProxy.extend('DeployProxy', {
                 startDeployMessage = 'Deploying ',
                 conn = new ssh();
 
-            // Get file count
-            Object.keys(targets).forEach(function (key, index, list) {
-                startDeployMessage += (index === 0 ? '' :
-                    (index < list.length - 1 ? ', ' : ' and ')) + (key !== 'relative' ? '*.' : '') + key;
-                totalFileCount += targets[key].length;
-            });
-
-            startDeployMessage += ' files.';
-
-            wrangler.log('\n', 'Running ' + chalk.cyan('"' + taskName + '"') + ' task.', '--mandatory');
-
-            startTime = new Date();
-
-            //console.log('DeployProxy -> targets\n', targets);
-
-            conn.on('ready', function () {
-
-                wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
-
-                // Make sure directories exist
-
-                conn.sftp(function (err, sftp) {
-
-                    if (err) { console.log(err); }
-
-                    var target;
-
-                    wrangler.log('\n', chalk.grey(startDeployMessage), '\n');
-
-                    // Loop through all target keys in targets
-                    Object.keys(targets).forEach(function (key) {
-
-                        // Get file pair ([local-file, server-file])
-                        target = targets[key];
-
-                        // Loop through files and upload them
-                        target.forEach(function (item) {
-
-                            // Make sure directories exist before trying to put files to them
-                            conn.exec('mkdir -p ' + path.dirname(item[1]), function (err2, stream) {
-
-                                // If error
-                                if (err) {
-                                    wrangler.log('', err2, '--debug');
-                                }
-
-                                // Put file to server
-                                sftp.fastPut(item[0], item[1],
-
-                                    // Callback
-                                    function (err3) {
-                                        wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory');
-                                        wrangler.log(chalk.green(' => ', item[1]));
-                                        if (err3) { console.log(err3); }
-                                        uploadedFileCount += 1;
-                                    });
-                            });
-
-                        });
-
-                    }); // end of files loop
-
-                    var countTimeout = setInterval(function () {
-                        if (totalFileCount <= uploadedFileCount) {
-                            wrangler.log(chalk.cyan('\n File deployment complete.'),
-                                chalk.grey('\n\n Closing connection...'));
-                            gulp.tasks[taskName].done = true;
-                            conn.end();
-                            clearInterval(countTimeout);
-                        }
-                    }, 500);
-
+            return (new Promise(function (fulfill, reject) {
+                // Get file count
+                Object.keys(targets).forEach(function (key, index, list) {
+                    startDeployMessage += (index === 0 ? '' :
+                        (index < list.length - 1 ? ', ' : ' and ')) + (key !== 'relative' ? '*.' : '') + key;
+                    totalFileCount += targets[key].length;
                 });
 
-            })
-            .on('close', function (hadError) {
+                startDeployMessage += ' files.';
 
-                // Log 'Connection closed'
-                wrangler.log(chalk.grey('\n Connection closed.'));
+                wrangler.log('\n', 'Running ' + chalk.cyan('"' + taskName + '"') + ' task.', '--mandatory');
 
-                // Log task completion
-                wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
-                    chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
+                startTime = new Date();
 
-                // If error log it
-                if (hadError) {
-                    wrangler.log('\n Connection closed due to an unknown error.', '--mandatory');
-                }
-            })
-            .connect(sshOptions);
+                //console.log('DeployProxy -> targets\n', targets);
+
+                conn.on('ready', function () {
+
+                    wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
+
+                    // Make sure directories exist
+
+                    conn.sftp(function (err, sftp) {
+
+                        if (err) { console.log(err); }
+
+                        var target;
+
+                        wrangler.log('\n', chalk.grey(startDeployMessage), '\n');
+
+                        // Loop through all target keys in targets
+                        Object.keys(targets).forEach(function (key) {
+
+                            // Get file pair ([local-file, server-file])
+                            target = targets[key];
+
+                            // Loop through files and upload them
+                            target.forEach(function (item) {
+
+                                // Make sure directories exist before trying to put files to them
+                                conn.exec('mkdir -p ' + path.dirname(item[1]), function (err2, stream) {
+
+                                    // If error
+                                    if (err) {
+                                        wrangler.log('', err2, '--debug');
+                                    }
+
+                                    // Put file to server
+                                    sftp.fastPut(item[0], item[1],
+
+                                        // Callback
+                                        function (err3) {
+                                            wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory');
+                                            wrangler.log(chalk.green(' => ', item[1]));
+                                            if (err3) { console.log(err3); }
+                                            uploadedFileCount += 1;
+                                        });
+                                });
+
+                            });
+
+                        }); // end of files loop
+
+                        var countTimeout = setInterval(function () {
+                            if (totalFileCount <= uploadedFileCount) {
+                                wrangler.log(chalk.cyan('\n File deployment complete.'),
+                                    chalk.grey('\n\n Closing connection...'));
+                                gulp.tasks[taskName].done = true;
+                                conn.end();
+                                clearInterval(countTimeout);
+                            }
+                        }, 500);
+
+                    });
+
+                })
+                    .on('close', function (hadError) {
+
+                        // Log 'Connection closed'
+                        wrangler.log(chalk.grey('\n Connection closed.'));
+
+                        // Log task completion
+                        wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
+                        chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
+
+                        // If error log it
+                        if (hadError) {
+                            reject('Connection closed due to an unknown error.');
+                            wrangler.log('\n Connection closed due to an unknown error.', '--mandatory');
+                        }
+                        else {
+                            fulfill();
+                        }
+                    })
+                    .connect(sshOptions);
+            }));
+
+
 
         });
     },
@@ -267,6 +279,7 @@ module.exports = TaskProxy.extend('DeployProxy', {
             || bundle.has('deploy.otherFiles') );
     },
 
+    // @todo throw an error when load fails here
     mergeLocalConfigs: function (gulp, wrangler) {
         var localConfigPath = path.join(wrangler.localConfigPath, wrangler.tasks.deploy.localDeployFileName),
             localConfig;
@@ -279,6 +292,7 @@ module.exports = TaskProxy.extend('DeployProxy', {
             // Log a warning
             wrangler.log('\n' + chalk.yellow('Please run the "prompt:deploy" task before ' +
                 'attempting to deploy (running the task now).') + '\n', '--mandatory');
+
             this.localConfigLoadFailed = true;
         }
         return this;

@@ -66,7 +66,7 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [deploy](#deploy)
 - [jshint](#jshint)
 - [minify](#minify)
-- ~~[template](#template)~~
+- ~~[template](#template)~~ This is part of the minify task.
 - [prompt:deploy](#promptdeploy)
 - [requirejs](#requirejs)
 - [watch](#watch)
@@ -644,7 +644,7 @@ tasks:
     - [X] - concat
     - [X] - copy
     - [X] - csslint
-    - [ ] - deploy
+    - [X] - deploy
     - [X] - jasmine
     - [X] - jshint
     - [X] - minify

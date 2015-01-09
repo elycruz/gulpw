@@ -70,7 +70,7 @@ module.exports = TaskProxy.extend('CompassProxy', {
 						default:
 							console.log('`compass compile` exited with code ' + code);
 							actionWord = chalk.red('did not complete');
-							reject();
+							reject('`compass compile` exited with code "' + code + '".');
 							break;
 					}
 

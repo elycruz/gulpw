@@ -14,130 +14,48 @@ module.exports = TaskProxy.extend(function WatchProxy () {
 }, {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {
-        var watchInterval = null;
-            //altTaskName = null,
-            //childProcess;
 
         // If no tasks or targets bail
         if (sjl.empty(tasks) || sjl.empty(targets)) {
             return;
         }
 
-        //if (taskName.indexOf(':') > -1) {
-        //    altTaskName = 'W:' + taskName.split(':')[1];
-        //}
-        //
-        //gulp.task(taskName, function () {
-        //    if (childProcess) {
-        //        childProcess.kill();
-        //    }
-        //    childProcess = spawn(taskName);
-        //});
-
-        //gulp.task(altTaskName, function () {
         gulp.task(taskName, function () {
 
-            console.log('\nWatching for changes...');
+            wranger.log('\nWatching for changes...', '--mandatory');
 
             gulp.watch(targets, function (event) {
-
-                var doneTaskCount = 0,
-                    deployTasksLaunched = false,
-                    fileShortPath = path.relative(process.cwd(), '.' + path.sep + event.path),
-                    deployTasks,
-                    otherTasks = [];
-
-                //// If watched bundle yaml is the changed file
-                //if (fileShortPath === bundle.options.filePath) {
-                //    // Restart watch task
-                //}
-
-                //console.log(chalk.magenta('\nTasks that will be launched on file changes:\n'), tasks);
+                var fileShortPath = path.relative(process.cwd(), '.' + path.sep + event.path);
 
                 wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
                 wrangler.log('Change type: ' + event.type + ';');
                 wrangler.log(chalk.dim('Running tasks sub tasks...'), '--mandatory');
 
-                // Get deploy tasks
-                deployTasks = tasks.filter(function (task) {
-                    return task.indexOf('deploy') > -1;
-                });
-
-                // Launch all tasks except for deploy tasks
-                wrangler.launchTasks(tasks.filter(function (task) {
+                // Return launch promise (es6 Promise sweetness -> this script went from over 60 lines to 14 lines!)
+                // ----
+                // Run all task that are not deploy tasks first
+                return wrangler.launchTasks(tasks.filter(function (task) {
                     return task.indexOf('deploy') === - 1;
-                }), gulp);
+                }), gulp)
 
-                if (watchInterval !== null) {
-                    clearInterval(watchInterval);
-                }
+                // On promise fulfillment..
+                .then(function () {
 
-                // Tasks called by `build:...`
-                if (Array.isArray(bundle)) {
-                    bundle.forEach(function (_bundle) {
-                        otherTasks = otherTasks.concat(
-                            wrangler.tasks.build.instance.getTasksForBundle(_bundle, wrangler));
-                    });
-                }
-                else {
-                    otherTasks = wrangler.tasks.build.instance.getTasksForBundle(bundle, wrangler);
-                }
+                    // Run all deploy tasks
+                    return wrangler.launchTasks(tasks.filter(function (task) {
+                            return task.indexOf('deploy')  > -1;
+                        }), gulp)
 
-                watchInterval = setInterval(function () {
-                    var hasDeployTasks = deployTasks.length > 0,
-                        otherTasksComplete = doneTaskCount >= otherTasks.length,
-                        deployTasksComplete = doneTaskCount >= (otherTasks.length + deployTasks.length);
+                        // Catch any promise rejections
+                        .catch(function (reason) {
+                            wrangler.log(reason, '--mandatory');
+                        });
+                })
 
-                    if (!otherTasksComplete) {
-                        doneTaskCount = (otherTasks.filter(function (key) {
-                            if (key.indexOf('deploy') > -1) { return false; }
-                            return gulp.tasks[key].done === true;
-                        })).length;
-                    }
-
-                    else if (otherTasksComplete && !hasDeployTasks) {
-                        console.log(chalk.cyan('\nBuild completed.'));
-                        clearInterval(watchInterval);
-                    }
-
-                    else if (otherTasksComplete && hasDeployTasks && !deployTasksLaunched) {
-                        console.log(chalk.cyan('\nBuild completed.'));
-                    }
-
-                    //wrangler.log('\nhasDeployTasks: ' + hasDeployTasks,
-                    //    '\ndeployTasksComplete: ' + deployTasksComplete,
-                    //    '\ndeployTasksLaunched: ' + deployTasksLaunched,
-                    //    '\notherTasksComplete: ' + otherTasksComplete,
-                    //    '\ndeployTasks.length: ' + deployTasks.length,
-                    //    '\notherTasks.length: ' + otherTasks.length,
-                    //    '\ndoneTaskCount: ' + doneTaskCount,
-                    //    '\notherTasks: ' + otherTasks,
-                    //    '\ndeployTasks: ' + deployTasks,
-                    //    '\n\n', otherTasks);
-
-                    if (hasDeployTasks) {
-
-                        if (!deployTasksComplete && !deployTasksLaunched && otherTasksComplete) {
-
-                            // Launch any `deploy` tasks that may have been defined
-                            wrangler.launchTasks(deployTasks, gulp);
-
-                            deployTasksLaunched = true;
-                        }
-                        else if (deployTasksComplete) {
-                            clearInterval(watchInterval);
-                            deployTasksLaunched = false;
-                        }
-                        else {
-                            doneTaskCount = (deployTasks.filter(function (key) {
-                                return gulp.tasks[key].done === true;
-                            })).length + otherTasks.length;
-                        }
-                    }
-
-                }, 1000);
-
-                //console.log(gulp);
+                // Catch any promise rejections
+                .catch(function (reason) {
+                    wrangler.log(reason, '--mandatory');
+                });
 
             });
 
