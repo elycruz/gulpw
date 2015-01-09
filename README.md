@@ -636,10 +636,12 @@ tasks:
   - [ ] - Clean up notes for deploy task.
   - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
   up deploy task to take this into account)
-  - [ ] - Make sure all tasks return promises:
+  - [ ] - Make sure all tasks return promises or a stream:
     - [X] - requirejs
     - [X] - mocha
-    - [ ] - 
+    - [X] - compass
+    - [X] - minify
+    - [ ]
 
 ### ~~Notes~~ Caveats:
 

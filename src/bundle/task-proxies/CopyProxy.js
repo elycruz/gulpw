@@ -9,16 +9,37 @@
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     //fs = require('fs'),
-    //duration = require('gulp-duration'),
-    //chalk = require('chalk'),
+    chalk = require('chalk'),
     path = require('path');
-    //callback = require('gulp-fncallback')
 
 
 module.exports = FilesHashTaskProxy.extend(function CopyProxy (options) {
-    FilesHashTaskProxy.apply(this, sjl.extend(true, {alias: 'copy'}, options));
-    this.alias = 'copy';
+    FilesHashTaskProxy.apply(this, options);
 }, {
+
+    registerGulpTask: function (taskName, gulp, bundle, wrangler) {
+        // Create task for bundle
+        gulp.task(taskName, function () {
+            return (new Promise(function (fulfill, reject) {
+                var copyTargets = bundle.options.copy.files;
+
+                Object.keys(copyTargets).forEach(function (file) {
+                    var newFile = copyTargets[file],
+                        newFileBasePath = path.dirname(newFile);
+
+                    // Pass the file source through gulp
+                    gulp.src(file)
+
+                        // Output the file src
+                        .pipe(gulp.dest(newFileBasePath));
+                });
+
+                fulfill();
+            }));
+
+        }); // end of concat task
+    },
+
     /**
      * Regsiters bundle with concat gulp task.
      * @param bundle {Bundle}
@@ -26,34 +47,36 @@ module.exports = FilesHashTaskProxy.extend(function CopyProxy (options) {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-
-        // If bundle doesn't have any of the required keys, bail
         if (!this.isBundleValidForTask(bundle)) {
             return;
         }
+        this.registerGulpTask('copy:' + bundle.options.alias, gulp, bundle, wrangler);
+    },
 
-        // Task string separator
-        var separator = wrangler.getTaskStrSeparator(),
-            taskName = 'copy' + separator + bundle.options.alias;
+    registerBundles: function (bundles, gulp, wrangler) {
+        var self = this,
+            taskName,
+            tasks = [],
+            skipCopy = wrangler.argv.skipCopy;
 
-        // Create task for bundle
-        gulp.task(taskName, function () {
-            var copyTargets = bundle.options.copy.files;
+        bundles.forEach(function (bundle) {
+            if (!self.isBundleValidForTask(bundle)) {
+                return;
+            }
+            taskName = 'copy:' + bundle.options.alias;
+            self.registerGulpTask(taskName, gulp, bundle, wrangler);
+            tasks.push(taskName);
+        });
 
-            Object.keys(copyTargets).forEach(function (file) {
-                var newFile = copyTargets[file],
-                    newFileBasePath = path.dirname(newFile);
-
-                // Pass the file source through gulp
-                gulp.src(file)
-
-                    // Output the file src
-                    .pipe(gulp.dest(newFileBasePath));
-            });
-
-        }); // end of concat task
-
-    }, // end of `registerBundle`
+        gulp.task('copy', function () {
+            if (skipCopy) {
+                wrangler.log(chalk.grey('\nSkipping copy task.'), '--mandatory');
+                return Promise.resolve();
+            }
+            wrangler.log('\n  Running "copy" task(s):', '--mandatory');
+            return wrangler.launchTasks(tasks, gulp);
+        });
+    },
 
     isBundleValidForTask: function (bundle) {
         return bundle.has('copy.files');

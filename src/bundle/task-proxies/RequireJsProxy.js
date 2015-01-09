@@ -1,7 +1,11 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
-'use strict'; require('sjljs');
+
+'use strict';
+
+require('sjljs');
+require('es6-promise').polyfill();
 
 // Import base task proxy to extend
 var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
@@ -10,11 +14,6 @@ var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     //duration = require('gulp-duration'),
     chalk = require('chalk');
     //path = require('path');
-
-// Ensure `Promise` constructor
-if (!global.Promise) {
-    global.Promise = require('es6-promise').Promise;
-}
 
 module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
     FilesHashTaskProxy.apply(this, options);

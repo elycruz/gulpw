@@ -3,7 +3,10 @@
  */
 
 // Global
-'use strict'; require('sjljs');
+'use strict';
+
+require('sjljs');
+require('es6-promise').polyfill();
 
 var path = require('path'),
 
@@ -53,7 +56,7 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
 
             // Set up global `concat` task
             gulp.task(taskPrefix, function () {
-                self.launchTasks(tasks, gulp, wrangler);
+                return self.launchTasks(tasks, gulp, wrangler);
             });
 
         }, // end of `registerBundles`
@@ -86,7 +89,7 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
                     fileContent = jsStringEscape(fs.readFileSync(file));
 
                     // Remove white space if necessary
-                    fileContent = compressWhitespace ? fileContent.replace(/\s/, '') : fileContent;
+                    fileContent = compressWhitespace ? fileContent.replace(/[\s\t]{2,}/, ' ') : fileContent;
 
                     // Write file contents to key value pair on templates object
                     output += lodash.template(template, sjl.extend({fileBasename: path.basename(file, '.' + key),

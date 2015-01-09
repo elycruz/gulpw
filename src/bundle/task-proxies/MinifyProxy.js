@@ -72,7 +72,7 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
                 tmplsString = ext === 'js' ? self.getTemplatesString(bundle, gulp, wrangler) : null;
 
                 // Give gulp the list of sources to process
-                gulp.src(bundle.options.files[ext])
+                return gulp.src(bundle.options.files[ext])
 
                     .pipe(gulpif(ext === 'js' && !skipJsLinting, jsHintPipe()))
 
@@ -82,11 +82,6 @@ module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
 
                     // Add templates output string to end of file
                     .pipe(gulpif( !sjl.empty(tmplsString), footer(tmplsString)))
-
-                    //    callback(function (file, enc, cb) {
-                    //    file.contents = new Buffer(file.contents.toString() + tmplsString);
-                    //    return sjl.classOfIs(cb, 'Function') ? cb() : file;
-                    //}) ))
 
                     .pipe(duration(chalk.cyan(self.alias + ' "' + bundle.options.alias + ':' + ext + '" duration')))
 

@@ -5,12 +5,12 @@
 'use strict';
 
 require('sjljs');
+require('es6-promise').polyfill();
 
 var mocha = require('gulp-mocha'),
     duration = require('gulp-duration'),
     TaskProxy = require('../TaskProxy'),
     fncallback = require('gulp-fncallback'),
-    Promise = require('es6-promise').Promise,
     chalk = require('chalk');
 
 module.exports = TaskProxy.extend('MochaProxy', {
@@ -52,7 +52,6 @@ module.exports = TaskProxy.extend('MochaProxy', {
         this.registerGulpTask('mocha:' + bundle.options.alias, gulp, bundle, wrangler);
     },
 
-
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             taskName,
@@ -71,7 +70,7 @@ module.exports = TaskProxy.extend('MochaProxy', {
         gulp.task('mocha', function () {
             if (skipTests) {
                 wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
-                return;
+                return Promise.resolve();
             }
             wrangler.log('\n  Running "mocha" task(s):', '--mandatory');
             return wrangler.launchTasks(tasks, gulp);

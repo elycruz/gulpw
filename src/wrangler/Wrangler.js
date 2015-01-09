@@ -16,6 +16,8 @@ var fs = require('fs'),
 
     Bundle = require(path.join(__dirname, '../bundle/Bundle.js')),
 
+    Promise = Promise || require('es6-promise').Promise,
+
     log;
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
@@ -321,14 +323,45 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
-        if (sjl.empty(tasks)) {
-            return;
-        }
-        // loop through tasks and call gulp.start on each
-        tasks.forEach(function (item) {
-            // Run task
-            gulp.start(item);
-        });
+        return (new Promise(function (fulfill, reject) {
+            var intervalSpeed = 100,
+                completedTasks,
+                completionInterval = null;
+
+            if (sjl.empty(tasks)) {
+                reject();
+                log('`Wrangler.prototype.launchTasks` recieved an empty tasks list.')
+                return;
+            }
+
+            // loop through tasks and call gulp.start on each
+            tasks.forEach(function (item) {
+                // Run task
+                try {
+                    gulp.start(item);
+                }
+                catch (e) {
+                    log.log(e);
+                    reject();
+                }
+            });
+
+            completionInterval = setInterval(function () {
+                completedTasks = tasks.filter(function (key) {
+                    return sjl.isset(gulp.tasks[key].done) && gulp.tasks[key].done === true;
+                });
+
+                //console.log(completedTasks.length, tasks.length);
+                //console.log(completedTasks, tasks);
+
+                if (completedTasks.length === tasks.length) {
+                    fulfill();
+                    clearInterval(completionInterval);
+                }
+
+            }, intervalSpeed);
+
+        })); // end of promise
     },
 
     skipTesting: function () {

@@ -5,6 +5,7 @@
 'use strict';
 
 require('sjljs');
+require('es6-promise').polyfill();
 
 var jasmine = require('gulp-jasmine'),
     duration = require('gulp-duration'),
@@ -20,15 +21,21 @@ module.exports = TaskProxy.extend('JasmineProxy', {
             skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
         gulp.task(taskName, function () {
-            if (skipTests) {
-                wrangler.log(chalk.grey('\nSkipping jasmine tests.'), '--mandatory');
-                return;
-            }
-            wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
-            return gulp.src(taskConfig.files)
-                .pipe(jasmine(jasmineOptions))
-                .pipe(duration(chalk.cyan('jasmine \"' + bundle.options.alias + '\' duration')));
+            return (new Promise(function (fulfill, reject) {
+                if (skipTests) {
+                    wrangler.log(chalk.grey('\nSkipping jasmine tests.'), '--mandatory');
+                    return fulfill();
+                }
+                wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
+                gulp.src(taskConfig.files)
+                    .pipe(jasmine(jasmineOptions))
+                    .pipe(duration(chalk.cyan('jasmine \"' + bundle.options.alias + '\' duration')))
+                    .pipe(fncallback(function () {
+                            fulfill();
+                        }));
+            }));
         });
+
     },
 
     /**
@@ -62,10 +69,10 @@ module.exports = TaskProxy.extend('JasmineProxy', {
         gulp.task('jasmine', function () {
             if (skipTests) {
                 wrangler.log(chalk.grey('\nSkipping jasmine tests.'), '--mandatory');
-                return;
+                return Promise.resolve();
             }
             wrangler.log('\n  Running "jasmine" task(s):', '--mandatory');
-            wrangler.launchTasks(tasks, gulp);
+            return wrangler.launchTasks(tasks, gulp);
         });
     },
 

@@ -11,6 +11,7 @@ var TaskProxy = require('../TaskProxy'),
 	path = require('path'),
 	child_process = require('child_process'),
 	exec = child_process.exec,
+	Promise = Promise || require('es6-promise').Promise,
 	chalk = require('chalk');
 
 module.exports = TaskProxy.extend('CompassProxy', {
@@ -35,44 +36,50 @@ module.exports = TaskProxy.extend('CompassProxy', {
 		// Register compass task
 		gulp.task(taskName, function () {
 
-			var startDate = new Date();
+			return (new Promise(function (fulfill, reject) {
 
-			wrangler.log(chalk.cyan(' \nRunning "' + taskName + '" task:\n'), '--mandatory');
+				var startDate = new Date();
 
-			var compassTask = exec('cd ' + compassProjectRoot + ' && compass compile', function (err, stdout, stderr) {
-				// Command(s) output
-				console.log(stdout);
+				wrangler.log(chalk.cyan(' \nRunning "' + taskName + '" task:\n'), '--mandatory');
 
-				// If stderr
-				if (stderr) {
-					console.log('`compass compile` stderr: ' + stderr);
-				}
+				var compassTask = exec('cd ' + compassProjectRoot + ' && compass compile', function (err, stdout, stderr) {
+					// Command(s) output
+					console.log(stdout);
 
-				// If error
-				if (err) {
-					console.log('`compass compile` error: ', err);
-				}
-			});
+					// If stderr
+					if (stderr) {
+						console.log('`compass compile` stderr: ' + stderr);
+					}
 
-			// On command close print duration
-			compassTask.on('close', function (code) {
-				var actionWord = '';
+					// If error
+					if (err) {
+						console.log('`compass compile` error: ', err);
+					}
+				});
 
-				// Figure out close state
-				switch (code) {
-					case 0:
-						actionWord = chalk.green('completed');
-						break;
-					default:
-						console.log('`compass compile` exited with code ' + code);
-						actionWord = chalk.red('did not complete');
-						break;
-				}
+				// On command close print duration
+				compassTask.on('close', function (code) {
+					var actionWord = '';
 
-				wrangler.log(chalk.cyan('"' + taskName + '" task ' + actionWord + '.  ' +
+					// Figure out close state
+					switch (code) {
+						case 0:
+							actionWord = chalk.green('completed');
+							fulfill();
+							break;
+						default:
+							console.log('`compass compile` exited with code ' + code);
+							actionWord = chalk.red('did not complete');
+							reject();
+							break;
+					}
+
+					wrangler.log(chalk.cyan('"' + taskName + '" task ' + actionWord + '.  ' +
 					'Duration: ' + chalk.magenta((((new Date()) - startDate) / 1000) +
-						'ms')), '--mandatory');
-			});
+					'ms')), '--mandatory');
+				});
+
+			})); // end of promise
 
 		}); // end of gulp task
 		
@@ -96,13 +103,13 @@ module.exports = TaskProxy.extend('CompassProxy', {
 
 		// Register global `compass` task
 		gulp.task('compass', function () {
-
 			wrangler.log(chalk.cyan(' \nRunning "compass" task:'), '--mandatory');
 
 			// Launch individual compass tasks that were found (if any)
 			if (targets.length > 0) {
-				wrangler.launchTasks(targets, gulp);
+				return wrangler.launchTasks(targets, gulp);
 			}
+			return Promise.resolve();
 		});
 	}
 
