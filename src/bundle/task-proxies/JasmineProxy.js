@@ -62,7 +62,6 @@ module.exports = TaskProxy.extend('JasmineProxy', {
                 return;
             }
             taskName = 'jasmine:' + bundle.options.alias;
-            self.registerGulpTask(taskName, gulp, bundle, wrangler);
             tasks.push(taskName);
         });
 

@@ -2,7 +2,10 @@
  * Created by edelacruz on 10/8/2014.
  */
 
-'use strict'; require('sjljs');
+'use strict';
+
+require('sjljs');
+require('es6-promise').polyfill();
 
 var path = require('path'),
     del = require('del'),
@@ -30,28 +33,34 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                 taskName = 'clean' + (taskSuffix ? taskSuffix : '');
 
             // Define 'clean' task
-            gulp.task(taskName, function (cb) {
+            gulp.task(taskName, function () {
 
-                // Log start of task
-                wrangler.log('Running "' + taskName + '"', '--mandatory');
+                return (new Promise(function (fulfill, reject) {
+                    // Log start of task
+                    wrangler.log('Running "' + taskName + '"', '--mandatory');
 
-                // Log files to delete
-                wrangler.log('Deleting the following files: \n', targets);
+                    // Log files to delete
+                    wrangler.log('Deleting the following files: \n', targets);
 
-                // Delete targets
-                del(targets, function (err) {
+                    // Delete targets
+                    del(targets, function (err) {
 
-                    // If error log it
-                    if (err) { console.log(err); }
+                        // If error log it
+                        if (err) {
+                            console.log(err);
+                            reject();
+                            return;
+                        }
 
-                    // Log completion of task
-                    wrangler.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
+                        // Log completion of task
+                        wrangler.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
                         + chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
 
-                }); // end of deletion of targets
+                        fulfill();
 
-                // Return callback
-                return cb();
+                    }); // end of deletion of targets
+
+                })); // end of promise
 
             }); // End of 'clean' task
 

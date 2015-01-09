@@ -66,7 +66,7 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [deploy](#deploy)
 - [jshint](#jshint)
 - [minify](#minify)
-- [template](#template)
+- ~~[template](#template)~~
 - [prompt:deploy](#promptdeploy)
 - [requirejs](#requirejs)
 - [watch](#watch)
@@ -637,11 +637,20 @@ tasks:
   - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
   up deploy task to take this into account)
   - [ ] - Make sure all tasks return promises or a stream:
-    - [X] - requirejs
-    - [X] - mocha
+    - [X] - all
+    - [X] - build
+    - [X] - clean
     - [X] - compass
+    - [X] - concat
+    - [X] - copy
+    - [X] - csslint
+    - [ ] - deploy
+    - [X] - jasmine
+    - [X] - jshint
     - [X] - minify
-    - [ ]
+    - [X] - mocha
+    - [X] - requirejs
+    - [ ] - watch
 
 ### ~~Notes~~ Caveats:
 

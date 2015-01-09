@@ -91,10 +91,6 @@ module.exports = TaskProxy.extend('CompassProxy', {
 
 		// Loop through bundles and register the ones that have `compass` key
 		bundles.forEach(function (bundle) {
-
-			// Call register bundle for each bundle
-			self.registerBundle(bundle, gulp, wrangler);
-
 			// If bundle has `compass` key push it's task name to targets array
 			if (bundle.has('compass')) {
 				targets.push('compass:' + bundle.options.alias);
@@ -104,8 +100,6 @@ module.exports = TaskProxy.extend('CompassProxy', {
 		// Register global `compass` task
 		gulp.task('compass', function () {
 			wrangler.log(chalk.cyan(' \nRunning "compass" task:'), '--mandatory');
-
-			// Launch individual compass tasks that were found (if any)
 			if (targets.length > 0) {
 				return wrangler.launchTasks(targets, gulp);
 			}

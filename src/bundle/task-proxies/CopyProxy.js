@@ -12,7 +12,6 @@ var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     chalk = require('chalk'),
     path = require('path');
 
-
 module.exports = FilesHashTaskProxy.extend(function CopyProxy (options) {
     FilesHashTaskProxy.apply(this, options);
 }, {

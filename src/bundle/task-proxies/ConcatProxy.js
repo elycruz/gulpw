@@ -29,7 +29,7 @@ module.exports = FilesHashTaskProxy.extend(function ConcatProxy (options) {
 
         gulp.task('concat:' + bundle.options.alias, function () {
             wrangler.argv.dev = true;
-            wrangler.launchTasks(['minify:' + bundle.options.alias], gulp);
+            return wrangler.launchTasks(['minify:' + bundle.options.alias], gulp);
         });
 
     } // end of `registerBundle`

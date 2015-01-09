@@ -58,16 +58,12 @@ module.exports = TaskProxy.extend('JsHintProxy', {
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = [];
-            //deps = [];
-
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
                 return;
             }
-            //self.registerBundle(bundle, gulp, wrangler);
             targets = self.getTasksForBundle(bundle, ['jshint'], wrangler).concat(targets);
         });
-
         self.registerGulpTasks('jshint', targets, gulp, wrangler);
     },
 

@@ -24,19 +24,15 @@ module.exports = TaskProxy.extend('CssLintProxy', {
 
         // Task string separator
         var self = this,
-            separator = wrangler.getTaskStrSeparator(),
             cssLintPipe = self.getPipe(bundle, gulp, wrangler);
 
         if (!self.isBundleValidForTask(bundle)) {
             return;
         }
 
-        gulp.task('csslint' + separator + bundle.options.alias, function () {
-
+        gulp.task('csslint:' + bundle.options.alias, function () {
             return gulp.src(bundle.options.files.css)
-
                 .pipe(cssLintPipe());
-
         });
 
     }, // end of `registerBundle`

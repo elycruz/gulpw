@@ -33,7 +33,7 @@ module.exports = TaskProxy.extend('AllTasksProxy', {
         });
 
         gulp.task('all', function () {
-            self.launchTasks(tasks, gulp, wrangler);
+            return self.launchTasks(tasks, gulp, wrangler);
         });
     },
 
