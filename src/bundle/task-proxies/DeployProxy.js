@@ -103,11 +103,24 @@ module.exports = TaskProxy.extend('DeployProxy', {
                         }); // end of files loop
 
                         var countTimeout = setInterval(function () {
+                            // @todo make this if check readble (reverse the logic)
                             if (totalFileCount <= uploadedFileCount) {
+
                                 wrangler.log(chalk.cyan('\n File deployment complete.'),
                                     chalk.grey('\n\n Closing connection...'));
+
+                                // Log task completion
+                                wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
+                                chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
+
                                 gulp.tasks[taskName].done = true;
+
                                 conn.end();
+
+                                wrangler.log('Connection closed.', '--mandatory');
+
+                                fulfill();
+
                                 clearInterval(countTimeout);
                             }
                         }, 500);
@@ -117,20 +130,10 @@ module.exports = TaskProxy.extend('DeployProxy', {
                 })
                     .on('close', function (hadError) {
 
-                        // Log 'Connection closed'
-                        wrangler.log(chalk.grey('\n Connection closed.'));
-
-                        // Log task completion
-                        wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
-                        chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
-
                         // If error log it
                         if (hadError) {
-                            reject('Connection closed due to an unknown error.');
+                            reject('Connection closed due to an unknown error.  Error received: ' + (sjl.classOfIs(hadError, 'String') ? hadError : ''));
                             wrangler.log('\n Connection closed due to an unknown error.', '--mandatory');
-                        }
-                        else {
-                            fulfill();
                         }
                     })
                     .connect(sshOptions);

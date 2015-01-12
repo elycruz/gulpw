@@ -22,45 +22,63 @@ module.exports = TaskProxy.extend(function WatchProxy () {
 
         gulp.task(taskName, function () {
 
-            wranger.log('\nWatching for changes...', '--mandatory');
+            return (new Promise(function (fulfill, reject) {
 
-            gulp.watch(targets, function (event) {
-                var fileShortPath = path.relative(process.cwd(), '.' + path.sep + event.path);
+                var waitingMessage = '\nWatching for changes...';
 
-                wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
-                wrangler.log('Change type: ' + event.type + ';');
-                wrangler.log(chalk.dim('Running tasks sub tasks...'), '--mandatory');
+                wrangler.log(waitingMessage, '--mandatory');
 
-                // Return launch promise (es6 Promise sweetness -> this script went from over 60 lines to 14 lines!)
-                // ----
-                // Run all task that are not deploy tasks first
-                return wrangler.launchTasks(tasks.filter(function (task) {
-                    return task.indexOf('deploy') === - 1;
-                }), gulp)
-
-                // On promise fulfillment..
-                .then(function () {
-
-                    // Run all deploy tasks
-                    return wrangler.launchTasks(tasks.filter(function (task) {
-                            return task.indexOf('deploy')  > -1;
-                        }), gulp)
-
-                        // Catch any promise rejections
-                        .catch(function (reason) {
+                gulp.watch(targets, function (event) {
+                    var fileShortPath = path.relative(process.cwd(), '.' + path.sep + event.path),
+                        catchFunc = function (reason) {
                             wrangler.log(reason, '--mandatory');
+                            reject(reason);
+                        };
+
+                    wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
+                    wrangler.log('Change type: ' + event.type + ';');
+                    wrangler.log(chalk.dim('Running tasks sub tasks...'), '--mandatory');
+
+                    // Return launch promise (es6 Promise sweetness -> this script went from over 60 lines to 14 lines!)
+                    // ----
+                    // Run all task that are not deploy tasks first
+                    return wrangler.launchTasks(tasks.filter(function (task) {
+                        return task.indexOf('deploy') === - 1;
+                    }), gulp)
+
+                    // On promise fulfillment..
+                    .then(function () {
+                        var deployTasks = tasks.filter(function (task) {
+                            return task.indexOf('deploy')  > -1;
                         });
-                })
 
-                // Catch any promise rejections
-                .catch(function (reason) {
-                    wrangler.log(reason, '--mandatory');
-                });
+                        if (deployTasks.length === - 1) {
+                            wrangler.log(waitingMessage, '--mandatory');
+                            fulfill();
+                            return;
+                        }
 
-            });
+                        // Run all deploy tasks
+                        return wrangler.launchTasks(deployTasks, gulp)
+                            .then(function () {
+                                wrangler.log(waitingMessage, '--mandatory');
+                                fulfill();
+                            })
 
-        });
-    },
+                            // Catch any promise rejections
+                            .catch(catchFunc);
+                    })
+
+                    // Catch any promise rejections
+                    .catch(catchFunc);
+
+                }); // end of watch call
+
+            })); // end of promise
+
+        }); // end of overall task
+
+    }, // end of register
 
     /**
      *

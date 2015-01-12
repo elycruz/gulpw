@@ -630,13 +630,13 @@ tasks:
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
 	  changed.
 - General:
-  - [ ] - Prettify console output in all tasks, and make all output look simliar (follow a matisse).
+  - [ ] - Prettify console output in all tasks, and make all output follow a matisse.
   - [ ] - Fix all non streaming tasks to return streams or promises so that other tasks can list them as
    dependencies.
   - [ ] - Clean up notes for deploy task.
   - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
   up deploy task to take this into account)
-  - [ ] - Make sure all tasks return promises or a stream:
+  - [X] - Make sure all tasks return promises or a stream:
     - [X] - all
     - [X] - build
     - [X] - clean
@@ -650,7 +650,8 @@ tasks:
     - [X] - minify
     - [X] - mocha
     - [X] - requirejs
-    - [ ] - watch
+    - [X] - watch
+  - [ ] - Cleanup callback hell from deploy task.
 
 ### ~~Notes~~ Caveats:
 
