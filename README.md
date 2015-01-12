@@ -4,25 +4,6 @@ gulp-bundle-wrangler (Beta)
 Allows the management of a project via bundle configuration files.
 
 ## Quick Start
-### Install
-Install the `gulpw` module globally and locally:
-1. `npm install elycruz/gulpw -g`
-2. `npm install elycruz/gulpw` from project root.
-
-### Setup
-1. Create your project's bundle configs folder.
-2. Create your project's `bundle.wrangler.config*` file (*.json, *.yaml, *.js) or optionally
-run `gulpw pro:mpt:default`.
-3. Tell your `bundle.wrangler.config*` file where your bundle configs folder is.
-
-### Run
-Run a `gulpw` task from the command line in the following format:
-
-`gulpw {task-alias}:{bundle-alias}` or `gulpw {task-alias}`
-
-where `{task-alias}` is the task you want to run ('build', 'minify' etc.)
-and `{bundle-alias}` is the bundle you want to run the task for (for './bundle-configs/hello-world.yaml'
- the bundle alias would be `hello-world`.
 
 ## Basic Idea
 So the idea is as follows:
@@ -33,10 +14,23 @@ That directory should contain "bundle-configuration" files which are used within
  other formats could be easily supported.
 
 ## Quick Nav
+- [Install](#install)
+- [Setup](#setup)
 - [Bundle config](#bundle-config)
 - [Running tasks](#running-tasks)
 - [Available tasks](#available-tasks)
 - [Todos](#minimal-viable-product-todos)
+
+### Install
+Install the `gulpw` module globally `npm install elycruz/gulpw -g` and
+locally  from project root `npm install elycruz/gulpw`.
+
+### Setup
+1. Create your project's bundle configs folder;  E.g., './bundle-configs' etc.
+2. Create your project's `bundle.wrangler.config*` file (*.json, *.yaml, *.js) or optionally run
+`gulpw prompt:default` (coming soon for now copy (https://github.com/elycruz/gulpw-sample-app/blob/master/bundle.wrangler.config.yaml) (minimalistic) or (all options) (https://github.com/elycruz/gulpw/blob/master/configs/default.wrangler.config.yaml)).
+3. Tell your `bundle.wrangler.config*` file where your bundle configs folder is:
+Set `bundlesPath` to your bundles config path inside of `bundle.wrangler.config*` file.
 
 ### Bundle config
 A bundle config is made typically of a yaml file with one or more attributes listed in it.
@@ -72,7 +66,11 @@ See the listed tasks below for ideas on what other sections you can use in your 
 `gulpw {task-name}:{bundle-name}` for one bundle
 `gulpw {task-name}` for all bundles
 
-E.g., `gulpw build:global build:some-other-bundle deploy:global deploy:some-other-bundle --dev`
+where `{task-alias}` is the task you want to run ('build', 'minify' etc.)
+and `{bundle-alias}` is the bundle you want to run the task for (for './bundle-configs/hello-world.yaml'
+ the bundle alias would be `hello-world`.
+
+Also, e.g., `gulpw build:global build:some-other-bundle deploy:global deploy:some-other-bundle --dev`
 The above example builds (see [build](#build) task for more info) some bundles (in development mode
 (unminified due to `--dev` flag)) and deploys them to
  the users selected server (see [deploy](#deploy) task section for more info).
@@ -646,18 +644,17 @@ tasks:
 	 bundle.
 	- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
 	- [ ] - vulcanize (for polymer build tool)
+  - [ ] - prompt:default - For generating default config.
 - For `Bundle`:
 	- [ ] - The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
 	  changed.
 - General:
-  - [ ] - Prettify console output in all tasks, and make all output follow a matisse.
-  - [ ] - Fix all non streaming tasks to return streams or promises so that other tasks can list them as
-   dependencies.
+  - [ ] - Prettify console output in all tasks, and make all output follow a similar structure.
   - [ ] - Clean up notes for deploy task.
   - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
   up deploy task to take this into account)
-  - [ ] - Change `prompt` to `config`.
+  - [X] - ~~Fix all non streaming tasks to return streams or promises so that other tasks can list them as dependencies.~~ Taken care of below.
   - [X] - Make sure all tasks return promises or a stream:
     - [X] - all
     - [X] - build
@@ -674,6 +671,8 @@ tasks:
     - [X] - requirejs
     - [X] - watch
   - [ ] - Cleanup callback hell from deploy task.
+  - [ ] - Change `prompt` to `config`.
+  - [ ] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
 
 ### ~~Notes~~ Caveats:
 
