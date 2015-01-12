@@ -3,6 +3,27 @@ gulp-bundle-wrangler (Beta)
 
 Allows the management of a project via bundle configuration files.
 
+## Quick Start
+### Install
+Install the `gulpw` module globally and locally:
+1.)  `npm install elycruz/gulpw -g`
+2.)  `npm install elycruz/gulpw` from project root.
+
+### Setup
+1.)  Create your project's bundle configs folder.
+2.)  Create your project's `bundle.wrangler.config*` file (*.json, *.yaml, *.js) or optionally
+run `gulpw prompt:default`.
+3.)  Tell your `bundle.wrangler.config*` file where your bundle configs folder is.
+
+### Run
+Run a `gulpw` task from the command line in the following format:
+
+`gulpw {task-alias}:{bundle-alias}` or `gulpw {task-alias}`
+
+where `{task-alias}` is the task you want to run ('build', 'minify' etc.)
+and `{bundle-alias}` is the bundle you want to run the task for (for './bundle-configs/hello-world.yaml'
+ the bundle alias would be `hello-world`.
+
 ## Basic Idea
 So the idea is as follows:
   We have a `gulp-bundles` directory (could be named anything via the `{bundle-wrangler}-config*` file).
@@ -636,6 +657,7 @@ tasks:
   - [ ] - Clean up notes for deploy task.
   - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
   up deploy task to take this into account)
+  - [ ] - Change `prompt` to `config`.
   - [X] - Make sure all tasks return promises or a stream:
     - [X] - all
     - [X] - build

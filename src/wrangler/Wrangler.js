@@ -57,7 +57,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         })).length > 0;
 
         // Create static tasks
-        if (argv._.indexOf('prompt:deploy') > -1) {
+        if (argv._.indexOf('prompt') > -1) {
             self.createStaticTaskProxies(gulp);
         }
 

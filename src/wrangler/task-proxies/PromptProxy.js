@@ -8,7 +8,8 @@ var WranglerTaskProxy = require('../WranglerTaskProxy'),
     fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
-    inquirer = require('inquirer');
+    inquirer = require('inquirer'),
+    lodash = require('lodash');
 
 module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
     WranglerTaskProxy.call(this, options);
@@ -53,6 +54,20 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
                 choices: domainToDevelop.hostnamePrefixes,
                 when: function (answers) {
                     return domainToDevelopKey === answers.developingDomain;
+                }
+            });
+
+            questions.push({
+                name: 'hostnamePrefixFolder',
+                type: 'list',
+                message: 'Which host prefix folder would you like to use?',
+                choices: (function () {
+                    return Object.keys(domainToDevelop.hostnamePrefixFolders).map(function (key) {
+                        return domainToDevelop.hostnamePrefixFolders[key];
+                    });
+                }),
+                when: function (answers) {
+                    return domainToDevelopKey === answers.developingDomain && !sjl.empty(domainToDevelop.hostnamePrefixFolders);
                 }
             });
         });
@@ -121,6 +136,7 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
             inquirer.prompt(questions, function (answers) {
                 var outFileTemplate = {
                     developingDomain: answers.developingDomain || null,
+                    hostnamePrefixFolder: answers.hostnamePrefixFolder || null,
                     hostnamePrefix: answers.hostnamePrefix || null,
                     hostname: answers.hostname || null,
                     port: answers.port || null,
