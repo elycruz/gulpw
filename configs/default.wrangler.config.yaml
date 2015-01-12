@@ -138,6 +138,8 @@ tasks:
           #web2: website2
           #web3: website3
 
+        hostnamePrefixFolder: null
+
         # Root folder on the server to use for deployments (prefix path for file paths being deployed)s)
         deployRootFolder: null # example: sites/<%= devHostnamePrefix %><%= devHostname %> (recieves the `deploy` has from this config)
 
