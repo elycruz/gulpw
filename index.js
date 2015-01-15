@@ -50,7 +50,6 @@ function init(env) {
 
     // Instantiate wrangler
     wrangler = new Wrangler(gulp, argv, env, userConfig);
-
 }
 
 cli.launch({

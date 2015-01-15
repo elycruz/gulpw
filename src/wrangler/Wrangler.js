@@ -34,7 +34,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         taskProxyMap: taskProxyMap,
         taskStrSeparator: ':',
         tasks: {},
-        staticTasks: {}
+        staticTasks: {},
+        configPath: env.configPath
     }, defaultOptions, config);
 
     // Resolve bundles path
@@ -57,7 +58,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         })).length > 0;
 
         // Create static tasks
-        if (argv._.indexOf('prompt') > -1) {
+        if (argv._.indexOf('prompt:deploy') > -1 || argv._.indexOf('prompt:config') > -1) {
             self.createStaticTaskProxies(gulp);
         }
 

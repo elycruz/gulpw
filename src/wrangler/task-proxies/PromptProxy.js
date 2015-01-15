@@ -17,7 +17,8 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
 
     registerStaticTasks: function (gulp, wrangler) {
         var self = this;
-        self.registerDeployTask(gulp, wrangler);
+        self.registerDeployTask(gulp, wrangler)
+            .registerConfigTask(gulp, wrangler);
     },
 
     registerDeployTask: function (gulp, wrangler) {
@@ -157,6 +158,91 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
                     yaml.safeDump(outFileTemplate) );
             });
         });
+
+        return this;
+    },
+
+    registerConfigTask: function (gulp, wrangler) {
+        var taskKeys = Object.keys(wrangler.tasks),
+            questions = [
+            {
+                name: 'configFormat',
+                type: 'list',
+                message: 'In what format would you like your config outputted?',
+                choices: [
+                    '.json',
+                    '.yaml'
+                ]
+            },
+            {
+                name: 'tasks',
+                type: 'checkbox',
+                //defaults: taskKeys,
+                message: 'Please deselect the tasks you don\'t plan on initially configuring from you newly generated bundle wrangler config file?',
+                choices: taskKeys
+            }
+        ];
+
+        gulp.task('prompt:config', function () {
+
+            inquirer.prompt(questions, function (answers) {
+
+                var newConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../configs/default.wrangler.config.yaml')),
+                    newConfigPath = null,
+                    oldConfig = wrangler.loadConfigFile(wrangler.configPath),
+                    oldFileName = path.basename(wrangler.configPath),
+                    oldFileExt = path.extname(oldFileName),
+                    backupPath = path.join(process.cwd(), wrangler.localConfigBackupPath),
+                    backupFilePath = path.join(backupPath, oldFileName),
+                    tmpFileName,
+                    tmpPathName,
+                    jsonSpace = '     ';
+
+                // Ensure backup file path exists
+                wrangler.ensurePathExists(backupPath);
+
+                // If backup file already exists create a timestamped version name
+                if (fs.existsSync(backupFilePath)) {
+                    tmpFileName = path.basename(oldFileName, oldFileExt);
+                    tmpFileName += '--' + (new Date()).getTime();
+                    backupFilePath = path.join(backupPath, tmpFileName + (oldFileExt === '.json' || oldFileExt === '.js' ? '.json' : '.yaml'));
+                }
+
+                // Get the content to backup based on file type
+                if (oldFileExt === '.json' || oldFileExt === '.js') {
+                    oldConfig = JSON.stringify(oldConfig, null, jsonSpace);
+                }
+                else {
+                    oldConfig = yaml.safeDump(oldConfig);
+                }
+
+                // Backup current config file
+                fs.writeFileSync(backupFilePath, oldConfig);
+
+                // Remove sections that were not specified to be kept by the user
+                taskKeys.forEach(function (key) {
+                   if (answers.tasks.indexOf(key) === -1) {
+                       newConfig.tasks[key] = null;
+                       delete newConfig.tasks[key];
+                   }
+                });
+
+                // Get new config's contents
+                newConfig = answers.configFormat === '.json' ?
+                    JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
+
+                // Get new config path
+                tmpPathName = path.dirname(wrangler.configPath);
+                // @todo No hard coding allowed (This is here temporarily because of a bug).
+                tmpFileName = 'bundle.wrangler.config'; //path.basename(wrangler.configPath, answers.configFormat);
+                newConfigPath = path.join(tmpPathName, tmpFileName + answers.configFormat);
+
+                // Write new config file
+                fs.writeFileSync(newConfigPath, newConfig);
+            });
+        });
+
+        return this;
     }
 
 });
