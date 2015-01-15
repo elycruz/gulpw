@@ -644,7 +644,7 @@ tasks:
 	 bundle.
 	- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
 	- [ ] - vulcanize (for polymer build tool)
-  - [ ] - prompt:default - For generating default config.
+  	- [ ] - prompt:config Generates a 'bundle.wrangler.config.*' file. ~~For generating default config.~~
 - For `Bundle`:
 	- [ ] - The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
@@ -670,9 +670,11 @@ tasks:
     - [X] - mocha
     - [X] - requirejs
     - [X] - watch
+    - [ ] - prompt:*
   - [ ] - Cleanup callback hell from deploy task.
   - [ ] - Change `prompt` to `config`.
   - [ ] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
+  - [ ] - Add notes for 'prompt:config' task.
 
 ### ~~Notes~~ Caveats:
 
