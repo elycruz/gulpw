@@ -1,7 +1,12 @@
 /**
  * Created by edelacruz on 11/19/2014.
  */
-'use strict'; require('sjljs');
+
+'use strict';
+
+require('sjljs');
+
+require('es6-promise').polyfill();
 
 // Import base task proxy to extend
 var WranglerTaskProxy = require('../WranglerTaskProxy'),
@@ -9,7 +14,7 @@ var WranglerTaskProxy = require('../WranglerTaskProxy'),
     path = require('path'),
     yaml = require('js-yaml'),
     inquirer = require('inquirer'),
-    lodash = require('lodash');
+    chalk = require('chalk');
 
 module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
     WranglerTaskProxy.call(this, options);
@@ -134,33 +139,41 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
         });
 
         gulp.task('prompt:deploy', function () {
-            inquirer.prompt(questions, function (answers) {
-                var outFileTemplate = {
-                    developingDomain: answers.developingDomain || null,
-                    hostnamePrefixFolder: answers.hostnamePrefixFolder || null,
-                    hostnamePrefix: answers.hostnamePrefix || null,
-                    hostname: answers.hostname || null,
-                    port: answers.port || null,
-                    username: answers.username || null,
-                    password: answers.password || null,
-                    privatekeyLocation: answers.privateKeyLocation || null,
-                    publickeyPassphrase: answers.publickeyPassphrase || null
-                };
 
-                // Ensure write path exists
-                wrangler.ensurePathExists(
-                    path.join(process.cwd(), wrangler.localConfigPath));
+            return (new Promise(function (fulfill, reject) {
 
-                // Write local deploy config file
-                fs.writeFileSync(path.join(process.cwd(),
-                    wrangler.localConfigPath,
-                    wrangler.tasks.deploy.localDeployFileName),
-                    yaml.safeDump(outFileTemplate) );
-            });
-        });
+                inquirer.prompt(questions, function (answers) {
+                    var outFileTemplate = {
+                        developingDomain: answers.developingDomain || null,
+                        hostnamePrefixFolder: answers.hostnamePrefixFolder || null,
+                        hostnamePrefix: answers.hostnamePrefix || null,
+                        hostname: answers.hostname || null,
+                        port: answers.port || null,
+                        username: answers.username || null,
+                        password: answers.password || null,
+                        privatekeyLocation: answers.privateKeyLocation || null,
+                        publickeyPassphrase: answers.publickeyPassphrase || null
+                    };
+
+                    // Ensure write path exists
+                    wrangler.ensurePathExists(
+                        path.join(process.cwd(), wrangler.localConfigPath));
+
+                    // Write local deploy config file
+                    fs.writeFileSync(path.join(process.cwd(),
+                        wrangler.localConfigPath,
+                        wrangler.tasks.deploy.localDeployFileName),
+                        yaml.safeDump(outFileTemplate) );
+
+                }); // end of inquiry
+
+            })); // end of promise
+
+        }); // end of task
 
         return this;
-    },
+
+    }, // end of register prompt:deploy task
 
     registerConfigTask: function (gulp, wrangler) {
         var taskKeys = Object.keys(wrangler.tasks),
@@ -184,65 +197,82 @@ module.exports = WranglerTaskProxy.extend(function PromptProxy (options) {
         ];
 
         gulp.task('prompt:config', function () {
+            return (new Promise(function (fulfill, reject) {
 
-            inquirer.prompt(questions, function (answers) {
+                console.log(chalk.cyan('Running "prompt:config" task.\n\n') +
+                    chalk.dim('** Note ** - Any existing config will be backed up to "' + wrangler.localConfigBackupPath + '" before generating a new one.'));
 
-                var newConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../configs/default.wrangler.config.yaml')),
-                    newConfigPath = null,
-                    oldConfig = wrangler.loadConfigFile(wrangler.configPath),
-                    oldFileName = path.basename(wrangler.configPath),
-                    oldFileExt = path.extname(oldFileName),
-                    backupPath = path.join(process.cwd(), wrangler.localConfigBackupPath),
-                    backupFilePath = path.join(backupPath, oldFileName),
-                    tmpFileName,
-                    tmpPathName,
-                    jsonSpace = '     ';
+                inquirer.prompt(questions, function (answers) {
+                    var newConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../configs/default.wrangler.config.yaml')),
+                        newConfigPath = null,
+                        oldConfig = wrangler.loadConfigFile(wrangler.configPath),
+                        oldFileName = path.basename(wrangler.configPath),
+                        oldFileExt = path.extname(oldFileName),
+                        backupPath = path.join(process.cwd(), wrangler.localConfigBackupPath),
+                        backupFilePath = path.join(backupPath, oldFileName),
+                        tmpFileName,
+                        tmpPathName,
+                        jsonSpace = '     ';
 
-                // Ensure backup file path exists
-                wrangler.ensurePathExists(backupPath);
+                    // Ensure backup file path exists
+                    wrangler.ensurePathExists(backupPath);
 
-                // If backup file already exists create a timestamped version name
-                if (fs.existsSync(backupFilePath)) {
-                    tmpFileName = path.basename(oldFileName, oldFileExt);
-                    tmpFileName += '--' + (new Date()).getTime();
-                    backupFilePath = path.join(backupPath, tmpFileName + (oldFileExt === '.json' || oldFileExt === '.js' ? '.json' : '.yaml'));
-                }
+                    // If backup file already exists create a timestamped version name
+                    if (fs.existsSync(backupFilePath)) {
+                        tmpFileName = path.basename(oldFileName, oldFileExt);
+                        tmpFileName += '--' + (new Date()).getTime();
+                        backupFilePath = path.join(backupPath, tmpFileName + (oldFileExt === '.json' || oldFileExt === '.js' ? '.json' : '.yaml'));
+                    }
 
-                // Get the content to backup based on file type
-                if (oldFileExt === '.json' || oldFileExt === '.js') {
-                    oldConfig = JSON.stringify(oldConfig, null, jsonSpace);
-                }
-                else {
-                    oldConfig = yaml.safeDump(oldConfig);
-                }
+                    // Get the content to backup based on file type
+                    if (oldFileExt === '.json' || oldFileExt === '.js') {
+                        oldConfig = JSON.stringify(oldConfig, null, jsonSpace);
+                    }
+                    else {
+                        oldConfig = yaml.safeDump(oldConfig);
+                    }
 
-                // Backup current config file
-                fs.writeFileSync(backupFilePath, oldConfig);
+                    // Backup current config file
+                    fs.writeFileSync(backupFilePath, oldConfig);
 
-                // Remove sections that were not specified to be kept by the user
-                taskKeys.forEach(function (key) {
-                   if (answers.tasks.indexOf(key) === -1) {
-                       newConfig.tasks[key] = null;
-                       delete newConfig.tasks[key];
-                   }
-                });
+                    // 'Backup complete' message
+                    console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
 
-                // Get new config's contents
-                newConfig = answers.configFormat === '.json' ?
-                    JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
+                    // Remove sections that were not specified to be kept by the user
+                    taskKeys.forEach(function (key) {
+                        if (answers.tasks.indexOf(key) === -1) {
+                            newConfig.tasks[key] = null;
+                            delete newConfig.tasks[key];
+                        }
+                    });
 
-                // Get new config path
-                tmpPathName = path.dirname(wrangler.configPath);
-                // @todo No hard coding allowed (This is here temporarily because of a bug).
-                tmpFileName = 'bundle.wrangler.config'; //path.basename(wrangler.configPath, answers.configFormat);
-                newConfigPath = path.join(tmpPathName, tmpFileName + answers.configFormat);
+                    // Get new config's contents
+                    newConfig = answers.configFormat === '.json' ?
+                        JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
 
-                // Write new config file
-                fs.writeFileSync(newConfigPath, newConfig);
-            });
-        });
+                    // Get new config path
+                    tmpPathName = path.dirname(wrangler.configPath);
+                    // @todo No hard coding allowed (This is here temporarily because of a bug).
+                    tmpFileName = 'bundle.wrangler.config'; //path.basename(wrangler.configPath, answers.configFormat);
+                    newConfigPath = path.join(tmpPathName, tmpFileName + answers.configFormat);
+
+                    // Write new config file
+                    fs.writeFileSync(newConfigPath, newConfig);
+
+                    // 'New config written successfully' message
+                    console.log(chalk.dim('New config file written to "' + newConfigPath + '".'));
+
+                    // Fullfill promise
+                    fulfill();
+
+                }); // end of inquiry
+
+            })); // end of promise
+
+        }); // end of task
 
         return this;
-    }
+
+    } // end of register prompt:config task
 
 });
