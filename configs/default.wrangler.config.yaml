@@ -11,6 +11,8 @@ localConfigBackupPath: ./.gulpw/backups
 
 staticTasks:
   prompt: {}
+  "deploy-config": {}
+  "config": {}
 
 tasks:
 

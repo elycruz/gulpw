@@ -62,6 +62,14 @@ prompt:
   constructorLocation: ./task-proxies/PromptProxy
   helpInfo: ""
 
+config:
+  constructorLocation: ./task-proxies/ConfigProxy
+  helpInfo: ""
+
+"deploy-config":
+  constructorLocation: ./task-proxies/DeployConfigProxy
+  helpInfo: ""
+
 mocha:
   constructorLocation: ./bundle/task-proxies/MochaProxy
   helpInfo: ""

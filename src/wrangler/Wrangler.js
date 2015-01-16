@@ -34,12 +34,18 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         taskProxyMap: taskProxyMap,
         taskStrSeparator: ':',
         tasks: {},
+        taskKeys: [],
         staticTasks: {},
+        staticTaskKeys: [],
         configPath: env.configPath
     }, defaultOptions, config);
 
     // Resolve bundles path
     self.bundlesPath = path.join(self.cwd, self.bundlesPath);
+
+    // Store task keys for later
+    self.taskKeys = Object.keys(self.tasks);
+    self.staticTaskKeys = Object.keys(self.staticTasks);
 
     // Initialize the pipeline call(s)
     self.init(gulp, self.argv);
@@ -48,7 +54,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 {
     init: function (gulp, argv) {
         var self = this,
-            anyGlobalTasksToRun;
+            anyGlobalTasksToRun,
+            anyStaticTasksToRun;
 
         self.log('Gulp Bundle Wrangler initializing...');
 
@@ -57,8 +64,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             return item.indexOf(':') === -1;
         })).length > 0;
 
+        anyStaticTasksToRun = self.staticTaskKeys.filter(function (item) {
+            return argv._.indexOf(item) > -1;
+        }).length > 0;
+
         // Create static tasks
-        if (argv._.indexOf('prompt:deploy') > -1 || argv._.indexOf('prompt:config') > -1) {
+        if (anyStaticTasksToRun) {
             self.createStaticTaskProxies(gulp);
         }
 
@@ -89,7 +100,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Creating task proxies message
         self.log('- Creating static task proxies.');
 
-        Object.keys(self.staticTasks).forEach(function (task) {
+        self.staticTaskKeys.forEach(function (task) {
             self.staticTasks[task].instance = self.createStaticTaskProxy(gulp, task);
         });
 
@@ -102,7 +113,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Creating task proxies message
         self.log(chalk.cyan('\n- Creating task proxies.'));
 
-        Object.keys(self.tasks).forEach(function (task) {
+        self.taskKeys.forEach(function (task) {
             self.tasks[task].instance = self.createTaskProxy(gulp, task);
         });
 
@@ -200,7 +211,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             //tasksPassedIn = self.argv._;
 
         // Register bundle with task
-        Object.keys(self.tasks).forEach(function (task) {
+        self.taskKeys.forEach(function (task) {
 
             // Only attempt to register bundle for tasks that were passed in the command line arguments
             //if (tasksPassedIn.indexOf(task + ':' + bundle.options.alias)
@@ -216,7 +227,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Pass all bundles to each task
         tasks.forEach(function (task) {
-            if (task.indexOf(':') > -1) {
+            if (task.indexOf(':') > -1 || self.staticTaskKeys.indexOf(task) > -1) {
                 return;
             }
             self.tasks[task].instance.registerBundles(bundles, gulp, self);
