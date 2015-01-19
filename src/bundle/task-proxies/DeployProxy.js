@@ -19,7 +19,9 @@ var TaskProxy = require('../TaskProxy'),
 
     //gutil = require('gulp-util');
 
-module.exports = TaskProxy.extend('DeployProxy', {
+module.exports = TaskProxy.extend(function DeployProxy (config) {
+    TaskProxy.call(this, config);
+}, {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
         var deployOptions = wrangler.tasks.deploy,
@@ -151,8 +153,6 @@ module.exports = TaskProxy.extend('DeployProxy', {
             return;
         }
 
-        this.mergeLocalConfigs(gulp, wrangler);
-
         // Task string separator
         var targets = this.getSrcForBundle(bundle, wrangler);
 
@@ -163,6 +163,8 @@ module.exports = TaskProxy.extend('DeployProxy', {
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = {};
+
+        this.mergeLocalConfigs(gulp, wrangler);
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
