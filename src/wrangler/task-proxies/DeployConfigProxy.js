@@ -61,19 +61,19 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
                 }
             });
 
-            questions.push({
-                name: 'hostnamePrefixFolder',
-                type: 'list',
-                message: 'Which host prefix folder would you like to use?',
-                choices: (function () {
-                    return Object.keys(domainToDevelop.hostnamePrefixFolders).map(function (key) {
-                        return domainToDevelop.hostnamePrefixFolders[key];
-                    });
-                }),
-                when: function (answers) {
-                    return domainToDevelopKey === answers.developingDomain && !sjl.empty(domainToDevelop.hostnamePrefixFolders);
-                }
-            });
+            //questions.push({
+            //    name: 'hostnamePrefixFolder',
+            //    type: 'list',
+            //    message: 'Which host prefix folder would you like to use?',
+            //    choices: (function () {
+            //        return Object.keys(domainToDevelop.hostnamePrefixFolders).map(function (key) {
+            //            return domainToDevelop.hostnamePrefixFolders[key];
+            //        });
+            //    }),
+            //    when: function (answers) {
+            //        return domainToDevelopKey === answers.developingDomain && !sjl.empty(domainToDevelop.hostnamePrefixFolders);
+            //    }
+            //});
         });
 
         questions.push({
@@ -139,12 +139,23 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
         gulp.task('deploy-config', function () {
 
             return (new Promise(function (fulfill, reject) {
-
                 inquirer.prompt(questions, function (answers) {
-                    var outFileTemplate = {
-                        developingDomain: answers.developingDomain || null,
-                        hostnamePrefixFolder: answers.hostnamePrefixFolder || null,
-                        hostnamePrefix: answers.hostnamePrefix || null,
+                    var developingDomain = answers.developingDomain || null,
+                        hostnamePrefixFolders = developingDomain ? developingDomain.hostnamePrefixFolders : null,
+                        hostnamePrefixFolder = null,
+                        hostnamePrefix = answers.hostnamePrefix || null,
+                        outFileTemplate;
+
+                    // Set hostname prefix folder
+                    if (!sjl.empty(hostnamePrefixFolders) && !sjl.empty(hostnamePrefix)) {
+                        hostnamePrefixFolder = hostnamePrefixFolders[hostnamePrefix];
+                    }
+
+                    // Set out file template
+                    outFileTemplate = {
+                        developingDomain: developingDomain,
+                        hostnamePrefixFolder: hostnamePrefixFolder,
+                        hostnamePrefix: hostnamePrefix,
                         hostname: answers.hostname || null,
                         port: answers.port || null,
                         username: answers.username || null,
