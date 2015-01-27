@@ -153,6 +153,8 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             return;
         }
 
+        this.mergeLocalConfigs(gulp, wrangler);
+
         // Task string separator
         var targets = this.getSrcForBundle(bundle, wrangler);
 
@@ -288,6 +290,8 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
     mergeLocalConfigs: function (gulp, wrangler) {
         var localConfigPath = path.join(wrangler.localConfigPath, wrangler.tasks.deploy.localDeployFileName),
             localConfig;
+
+
         // Get local deploy config if exists
         if (fs.existsSync(localConfigPath)) {
             localConfig = yaml.safeLoad(fs.readFileSync(localConfigPath));

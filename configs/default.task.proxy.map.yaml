@@ -66,6 +66,10 @@ config:
   constructorLocation: ./task-proxies/ConfigProxy
   helpInfo: ""
 
+"bundle-config":
+  constructorLocation: ./task-proxies/BundleConfigProxy
+  helpInfo: ""
+
 "deploy-config":
   constructorLocation: ./task-proxies/DeployConfigProxy
   helpInfo: ""

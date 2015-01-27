@@ -1,0 +1,57 @@
+# File: default.bundle-template.yaml
+# Description:  Sane recommended customizable tasks per bundle file.  The options and tasks that have
+# been ommitted from this file are better off being configured globally (bundle.wrangler.config*)
+# since they haven't been developed on a per bundle basis.
+
+# Browserify Defaults
+browserify: {}
+
+compass:
+  compassProjectRoot: null # config.rb home
+
+csslint:
+    csslintrc: null
+
+# Deploy Task
+deploy:
+
+  # Other files to be deployed
+  otherFiles: []
+
+  # Should files be linted before deploy
+  lintBeforeDeploy: false
+
+jasmine:
+  files: null # testDir or array of files (test files)
+  options: null
+
+jshint:
+  jshintrc: ./configs/.jshintrc
+  ignoreFiles: null
+  options:
+    predef:
+      - $
+      - _
+      - amplify
+      - Backbone
+      - browserify
+      - define
+      - jQuery
+      - Modernizr
+      - Mustache
+      - Marionette
+      - require
+      - sjl
+
+mocha:
+  files: null # testDir or array of files (test files)
+  options: null
+
+# RequireJs Defaults
+requirejs: {}
+
+# Watch Task Defaults
+watch:
+
+  # Other files to watch (can be overridden from the bundle level as well)
+  otherFiles: null
