@@ -13,6 +13,7 @@ staticTasks:
   prompt: {}
   "deploy-config": {}
   "config": {}
+  "bundle-config": {}
 
 tasks:
 

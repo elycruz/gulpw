@@ -45,9 +45,15 @@ module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
                     name: 'alias',
                     type: 'input',
                     message: 'What is your bundle\'s alias name (/^[a-z]+[a-z\-\d_]+$/i)?',
-                    validate: function (value) {
-                        return /^[a-z]+[a-z\-\d_]+$/i.test(value) ?
-                            true : 'The bundle name is in an incorrect format.  Value received: ' + value;
+                    validate: function (alias) {
+                        if (!/^[a-z]+[a-z\-\d_]+$/i.test(alias)) {
+                            return 'The bundle name is in an incorrect format.  Value received: ' + alias;
+                        }
+                        else if (fs.existsSync(path.join(wrangler.bundlesPath, alias + '.json'))
+                            || fs.existsSync(path.join(wrangler.bundlesPath, alias + '.yaml'))) {
+                            return 'A bundle file with that name already exists.  Try a different name.';
+                        }
+                        return true;
                     }
                 },
                 {
@@ -70,7 +76,7 @@ module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
                     name: 'amdOrUmd',
                     type: 'list',
                     message: 'Select your AMD or UMD task:',
-                    list: ['requirejs', 'browserify'],
+                    choices: ['requirejs', 'browserify'],
                     when: function (answers) {
                         return answers.useAmdOrUmd;
                     }
@@ -98,6 +104,11 @@ module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
                 }
             ];
 
+        function getBundlePathByAlias (alias, format) {
+            format  = format.indexOf('.') !== 0 ? '.' + format : format;
+            return path.join(wrangler.bundlesPath, answers.alias + format);
+        }
+
 
         gulp.task('bundle-config', function () {
             return (new Promise(function (fulfill, reject) {
@@ -112,23 +123,18 @@ module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
                         },
                         exampleConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../configs/default.bundle-template.yaml')),
                         jsonSpace = '     ',
-                        bundlesPath = path.join(process.cwd(), wrangler.bundlesPath),
-                        bundlePath = path.join(bundlesPath, answers.alias + answers.configFormat);
+                        bundlePath = path.join(wrangler.bundlesPath, answers.alias + answers.configFormat);
 
                     // Ensure bundles path exists
-                    wrangler.ensurePathExists(bundlesPath);
-
-                    // If bundle file already exists exit
-                    if (fs.existsSync(bundlePath)) {
-                        console.log(chalk.yellow('A bundle with that name already exists at ""'));
-                        return;
-                    }
+                    wrangler.ensurePathExists(wrangler.bundlesPath);
 
                     // Files hash
-                    if (answers.minifyAndConcat.length > 0) {
+                    if (answers.useMinifyAndConcat &&
+                        answers.minifyAndConcat &&
+                        answers.minifyAndConcat.length > 0) {
                         newConfig.files = {};
                         answers.minifyAndConcat.forEach(function (key) {
-                           newConfig[key] = [];
+                           newConfig.files[key] = [];
                         });
                     }
 
@@ -138,7 +144,7 @@ module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
                     }
 
                     // Other tasks
-                    if (answers.otherTasks.length > 0) {
+                    if (answers.otherTasks && answers.otherTasks.length > 0) {
                         answers.otherTasks.forEach(function (key) {
                             newConfig[key] = exampleConfig[key];
                         });
@@ -148,11 +154,13 @@ module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
                     newConfig = answers.configFormat === '.json' ?
                         JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
 
+                    console.log(bundlePath, newConfig);
+
                     // Write new config file
                     fs.writeFileSync(bundlePath, newConfig);
 
                     // 'New config written successfully' message
-                    console.log(chalk.dim('New bundle config file written to "' + newConfigPath + '".'));
+                    console.log(chalk.dim('New bundle config file written to "' + bundlePath + '".'));
 
                     // Fullfill promise
                     fulfill();
