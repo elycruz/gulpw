@@ -632,7 +632,7 @@ tasks:
   - [X] - Add testing (mocha, jasmine) tasks to 'build' task.
   - [X] - Make sure that 'concat' and 'minify' tasks have the same options (minus the ones that are exlusive
    to minify).
-  - [ ] - Supply example bundle config file with all sections listed in it.
+  - [X] - ~~Supply example bundle config file with all sections listed in it.~~  Moving this to version 0.2.0.
   - [X] - Add support for bundle config files in any one of 'js', 'json', or 'yaml' formats.
   - [X] - ~~Set up pipe transport function for 'mocha' and 'jasmine' proxies.~~  No longer needed.
 
@@ -674,9 +674,11 @@ tasks:
     - [X] - watch
     - [ ] - prompt:*
   - [ ] - Cleanup callback hell from deploy task.
-  - [ ] - Change `prompt` to `config`.
+  - [X] - Change `prompt` to `config`. (`prompt` still exists.  Will be removed in a later version)
   - [ ] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
-  - [ ] - Add notes for 'prompt:config' task.
+  - [ ] - Add notes for ~~'prompt:config'~~ 'config' task.
+  - [ ] - Supply example bundle config file with all sections listed in it.
+
 
 ### ~~Notes~~ Caveats:
 
