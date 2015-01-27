@@ -39,8 +39,7 @@ module.exports = WranglerTaskProxy.extend(function ConfigProxy (options) {
                 {
                     name: 'tasks',
                     type: 'checkbox',
-                    //defaults: taskKeys,
-                    message: 'Please deselect the tasks you don\'t plan on initially configuring from you newly generated bundle wrangler config file?',
+                    message: 'Please select the tasks you would like to configure from your newly generated wrangler config file:',
                     choices: taskKeys
                 }
             ];
@@ -61,15 +60,21 @@ module.exports = WranglerTaskProxy.extend(function ConfigProxy (options) {
                         backupFilePath = path.join(backupPath, oldFileName),
                         tmpFileName,
                         tmpPathName,
-                        jsonSpace = '     ';
+                        jsonSpace = '     ',
+                        date,
+                        month;
 
                     // Ensure backup file path exists
                     wrangler.ensurePathExists(backupPath);
 
                     // If backup file already exists create a timestamped version name
                     if (fs.existsSync(backupFilePath)) {
+                        date = new Date();
+                        month = date.getMonth() + 1;
+                        month = month < 10 ? '0' + month : month;
+                        date = [date.getFullYear(), month, date.getDate(), date.getHours(), date.getMinutes(), date.getMilliseconds()].join('-');
                         tmpFileName = path.basename(oldFileName, oldFileExt);
-                        tmpFileName += '--' + (new Date()).getTime();
+                        tmpFileName += '--' + date;
                         backupFilePath = path.join(backupPath, tmpFileName + (oldFileExt === '.json' || oldFileExt === '.js' ? '.json' : '.yaml'));
                     }
 
