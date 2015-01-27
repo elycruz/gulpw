@@ -1,0 +1,61 @@
+alias: "example-bundle-with-possible-options" # Dash separated bundle alias
+version: "0.0.0" # Semver version string
+description: "Example bundle." # description goes here
+
+# Minify and Concat tasks' sections go in this hash.  All keys in this hash are handled by
+# the 'minify' and 'concat' tasks (these tasks also perform hinting and linting
+# whereever possible (jshint and csslint only for now)).
+files:
+
+  # Javascript files to compile down to 'example-bundle(...).js'
+  js:
+    - ./fe-dev/bower_components/requirejs/require.js
+    - ./public/js/amd/init.js
+    - ./public/js/amd/modules/application/Application.js
+
+  # Html files to compile down to 'example-bundle(...).html'
+  html:
+    - ./fe-dev/amd.html
+
+  # Css files to compile down to 'example-bundle(...).css'
+  css:
+    - ./fe-dev/css/global/normalize.css
+    - ./fe-dev/css/global/main.css
+
+# RequireJs Task
+requirejs:
+
+  # Regular require js options go here
+  options:
+
+# Allows you to list other files to deploy.  Note only files in the
+# 'tasks.deploy.allowedFilesTypes' array of the 'bundle.wrangler.config.*' file will be uploaded.
+deploy:
+
+  # Other files' hash to deploy
+  otherFiles:
+    js:
+      - somejsfile.js
+      - etc.
+
+    # Relative to the deploy path (see 'deploy' task in 'bundle.wrangler.config.*'.
+    # Look at, particularly, the 'deployRootFolder' property and the 'hostnamePrefixFolders' property).
+    relative:
+      - ./public/js/vendors/require.js
+      - ./public/js/amd/init.js
+
+# Copies files from one location to another (@todo should run before 'deploy' task)
+copy:
+  files:
+    ./fe-dev/bower_components/requirejs/require.js: ./public/js/vendors/require.js
+
+# Doesn't exist yet.  Coming soon.
+browserify: {}
+
+#
+compass:
+  compassProjectRoot: null # config.rb home
+
+#
+csslint:
+    csslintrc: null
