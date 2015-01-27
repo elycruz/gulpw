@@ -561,7 +561,6 @@ tasks:
     options: null # - {Object} - Options if any.  Default `null`
 ```
 
-
 ### jasmine
 Jasmine tests task runs the jasmine module on your test 'files' array or string using `options` if any.
 
@@ -638,13 +637,16 @@ tasks:
   - [X] - ~~Set up pipe transport function for 'mocha' and 'jasmine' proxies.~~  No longer needed.
 
 ### Version 0.2.0 Todos
+- [X] - Static Tasks:
+    - [X] - config
+    - [X] - bundle-config
+    - [X] - deploy-config
 - [ ] - Tasks
 	- [ ] - browserify
-	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified
-	 bundle.
+	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
 	- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
 	- [ ] - vulcanize (for polymer build tool)
-  	- [ ] - prompt:config Generates a 'bundle.wrangler.config.*' file. ~~For generating default config.~~
+  	- [X] - ~~prompt:config Generates a 'bundle.wrangler.config.*' file.~~ ~~For generating default config.~~  Taken care of by `config` task (see above 'Static Tasks').
 - For `Bundle`:
 	- [ ] - The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
