@@ -23,7 +23,7 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         }, options);
 
         // If has init function run it
-        if (self.hasOwnProperty('init') && sjl.classOfIs(self.init, 'Function')) {
+        if (sjl.isset(self.init) && sjl.classOfIs(self.init, 'Function')) {
             self.init();
         }
 

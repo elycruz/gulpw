@@ -172,8 +172,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Parse bundle configs
         bundles.forEach(function (fileName) {
-            var bundle = self.createBundle(fileName);
-            self.registerTasksForBundle(gulp, bundle);
+            self.registerTasksForBundle(gulp, self.createBundle(fileName));
         });
     },
 
@@ -414,11 +413,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             || self.argv['skip-jslinting']) || false;
     },
 
-    /**
-     * Clones an object the dirty way.
-     * @param obj
-     * @returns {*}
-     */
     clone: function (obj) {
         return JSON.parse(JSON.stringify(obj));
     }
