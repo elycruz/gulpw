@@ -34,10 +34,6 @@ deploy:
   constructorLocation: ./bundle/task-proxies/DeployProxy
   helpInfo: ""
 
-gulpfile:
-  constructorLocation: ./bundle/task-proxies/GulpFileProxy
-  helpInfo: ""
-
 jshint:
   constructorLocation: ./bundle/task-proxies/JsHintProxy
   helpInfo: ""
@@ -52,10 +48,6 @@ requirejs:
 
 watch:
   constructorLocation: ./bundle/task-proxies/WatchProxy
-  helpInfo: ""
-
-wranglerfile:
-  constructorLocation: ./bundle/task-proxies/WranglerFileProxy
   helpInfo: ""
 
 prompt:

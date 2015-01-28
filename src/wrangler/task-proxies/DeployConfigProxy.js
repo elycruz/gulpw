@@ -24,8 +24,7 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
 }, {
 
     registerStaticTasks: function (gulp, wrangler) {
-        var self = this,
-            userPath = process.env.HOME || process.env.HOMEPATH
+        var userPath = process.env.HOME || process.env.HOMEPATH
                 || process.env.USERPROFILE,
             userIdRsaPath = path.normalize(userPath + '/.ssh/id_rsa'),
             questions = [],
@@ -138,13 +137,17 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
 
         gulp.task('deploy-config', function () {
 
+            // 'Running' message
+            console.log(chalk.cyan('Running `deploy-config` task:'));
+
             return (new Promise(function (fulfill, reject) {
                 inquirer.prompt(questions, function (answers) {
                     var developingDomain = answers.developingDomain || null,
                         hostnamePrefixFolders = developingDomain ? developingDomain.hostnamePrefixFolders : null,
                         hostnamePrefixFolder = null,
                         hostnamePrefix = answers.hostnamePrefix || null,
-                        outFileTemplate;
+                        outFileTemplate,
+                        newFilePath;
 
                     // Set hostname prefix folder
                     if (!sjl.empty(hostnamePrefixFolders) && !sjl.empty(hostnamePrefix)) {
@@ -168,11 +171,17 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
                     wrangler.ensurePathExists(
                         path.join(process.cwd(), wrangler.localConfigPath));
 
+                    newFilePath = path.join(process.cwd(),
+                        wrangler.localConfigPath,
+                        wrangler.tasks.deploy.localDeployFileName);
+
                     // Write local deploy config file
-                    fs.writeFileSync(path.join(process.cwd(),
-                            wrangler.localConfigPath,
-                            wrangler.tasks.deploy.localDeployFileName),
+                    fs.writeFileSync(newFilePath,
                         yaml.safeDump(outFileTemplate) );
+
+                    // 'Completion' message
+                    console.log(chalk.cyan('`deploy-config` complete.  ' +
+                        'A deployment configuration file has been wrritten to "' + newFilePath + '"'));
 
                 }); // end of inquiry
 

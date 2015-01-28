@@ -104,11 +104,6 @@ module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
                 }
             ];
 
-        function getBundlePathByAlias (alias, format) {
-            format  = format.indexOf('.') !== 0 ? '.' + format : format;
-            return path.join(wrangler.bundlesPath, answers.alias + format);
-        }
-
 
         gulp.task('bundle-config', function () {
             return (new Promise(function (fulfill, reject) {

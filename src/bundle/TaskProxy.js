@@ -6,6 +6,8 @@
 
 require('sjljs');
 
+var chalk = require('chalk');
+
 module.exports = sjl.Extendable.extend(function TaskProxy(options) {
         sjl.extend(true, this, {
             alias: 'Task\'s cli name goes here.',

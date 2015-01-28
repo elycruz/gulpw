@@ -11,7 +11,6 @@ require('sjljs');
 
 var chai = require('chai'),
     path = require('path'),
-    log = console.log,
     tutil = require(path.join(__dirname, '../src/test-utils/test-utils')),
     genericTest = function (error, stdout, stderr) {
         expect(sjl.empty(stderr)).to.equal(true);

@@ -8,7 +8,6 @@ require('sjljs');
 
 var chai = require('chai'),
     path = require('path'),
-    log = console.log,
     tutil = require('./../src/test-utils/test-utils'),
     genericTest = function (error, stdout, stderr) {
         expect(sjl.empty(stderr)).to.equal(true);

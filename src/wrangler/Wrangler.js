@@ -6,6 +6,8 @@
 
 require('sjljs');
 
+require('es6-promise').polyfill();
+
 var fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
@@ -15,8 +17,6 @@ var fs = require('fs'),
     mkdirp = require('mkdirp'),
 
     Bundle = require(path.join(__dirname, '../bundle/Bundle.js')),
-
-    Promise = Promise || require('es6-promise').Promise,
 
     log;
 
@@ -337,11 +337,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
                 completedTasks,
-                completionInterval = null;
+                completionInterval = null,
+                taskList;
 
             if (sjl.empty(tasks)) {
                 reject();
-                log('`Wrangler.prototype.launchTasks` recieved an empty tasks list.')
+                log('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
                 return;
             }
 
@@ -362,11 +363,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                     return sjl.isset(gulp.tasks[key].done) && gulp.tasks[key].done === true;
                 });
 
-                //console.log(completedTasks.length, tasks.length);
-                //console.log(completedTasks, tasks);
-
                 if (completedTasks.length === tasks.length) {
                     fulfill();
+                    taskList = tasks.map(function (key) { return '\n - `' + key + '`'; }).join('');
                     clearInterval(completionInterval);
                 }
 

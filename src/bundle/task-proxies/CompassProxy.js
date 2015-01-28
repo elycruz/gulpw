@@ -6,12 +6,13 @@
  */
 'use strict'; require('sjljs');
 
+require('es6-promise').polyfill();
+
 // Import base task proxy to extend
 var TaskProxy = require('../TaskProxy'),
 	path = require('path'),
 	child_process = require('child_process'),
 	exec = child_process.exec,
-	Promise = Promise || require('es6-promise').Promise,
 	chalk = require('chalk');
 
 module.exports = TaskProxy.extend('CompassProxy', {
@@ -86,8 +87,7 @@ module.exports = TaskProxy.extend('CompassProxy', {
     }, // end of `registerBundle`
 	
 	registerBundles: function (bundles, gulp, wrangler) {
-		var self = this,
-			targets = [];
+		var targets = [];
 
 		// Loop through bundles and register the ones that have `compass` key
 		bundles.forEach(function (bundle) {

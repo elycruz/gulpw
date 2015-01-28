@@ -10,6 +10,7 @@ require('es6-promise').polyfill();
 var jasmine = require('gulp-jasmine'),
     duration = require('gulp-duration'),
     TaskProxy = require('../TaskProxy'),
+    fncallback = require('gulp-fncallback'),
     chalk = require('chalk');
 
 module.exports = TaskProxy.extend('JasmineProxy', {

@@ -1,7 +1,8 @@
 gulp-bundle-wrangler (Beta)
 ====================
 
-Allows the management of a project via bundle configuration files.
+Allows the management of a project via bundle configuration files via a
+ familiar interface (uses gulp in the background).
 
 ## Quick Start
 
@@ -10,8 +11,7 @@ So the idea is as follows:
   We have a `gulp-bundles` directory (could be named anything via the `{bundle-wrangler}-config*` file).
 That directory should contain "bundle-configuration" files which are used within "task proxies" to run a
  task via the command line;  E.g., `$ gulpw build:global deploy:global deploy:other-bundle`.
- The configuration files will then hold the user's configurations in the yaml format decidedly though
- other formats could be easily supported.
+ The configuration files will then hold the user's configurations in the yaml or json format.
 
 ## Quick Nav
 - [Install](#install)
@@ -27,19 +27,18 @@ locally  from project root `npm install elycruz/gulpw`.
 
 ### Setup
 1. Create your project's bundle configs folder;  E.g., './bundle-configs' etc.
-2. Create your project's `bundle.wrangler.config*` file (*.json, *.yaml, *.js) or optionally run
-`gulpw prompt:default` (coming soon for now copy (https://github.com/elycruz/gulpw-sample-app/blob/master/bundle.wrangler.config.yaml) (minimalistic) or (all options) (https://github.com/elycruz/gulpw/blob/master/configs/default.wrangler.config.yaml)).
+2. Create your project's `bundle.wrangler.config*` file.  Run `gulpw config` after installing `gulpw`.
 3. Tell your `bundle.wrangler.config*` file where your bundle configs folder is:
-Set `bundlesPath` to your bundles config path inside of `bundle.wrangler.config*` file.
+Set `bundlesPath` to your bundles config path.
 
 ### Bundle config
-A bundle config is made typically of a yaml file with one or more attributes listed in it.
+A bundle config is made typically of a yaml or json file with one or more properties listed in it.
 A bundle config only requires an `alias` property to be a valid bundle config file.
 A bundle config file can have many sections representing and used by tasks.
 
 #####Valid Bundle Config file:
 ```
-#some-other-bundle.yaml
+# some-other-bundle.yaml
 alias: some-other-bundle
 ```
 
@@ -60,7 +59,9 @@ requirejs:
 		...
 ```
 
-See the listed tasks below for ideas on what other sections you can use in your bundle yaml files.
+See the listed tasks below for ideas on what other sections you can use in your bundle files.
+Also when running `gulpw config` you will be asked about the tasks you want to include which will
+then be included in your bundle file consequently depending on your answers.
 
 ### Running tasks
 `gulpw {task-name}:{bundle-name}` for one bundle
@@ -77,12 +78,15 @@ The above example builds (see [build](#build) task for more info) some bundles (
 
 ## Available Tasks
 - [build](#build)
+- [bundle-config](#bundleconfig)
 - [clean](#clean)
 - [compass](#compass)
 - [concat](#concat)
+- [config](#config)
 - [copy](#copy)
 - [csslint](#csslint)
 - [deploy](#deploy)
+- [deploy-config](#deployconfig)
 - [jshint](#jshint)
 - [minify](#minify)
 - ~~[template](#template)~~ This is part of the minify task.
@@ -135,6 +139,8 @@ tasks:
       - jshint
       - csslint
 ```
+
+### bundle-config
 
 - **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are
  included as conglomerate tasks).
@@ -243,6 +249,8 @@ tasks:
   '*.js' file.
  - **compressWhitespace:** Whether or not to compress white space in the collected template strings.
  - **templateTypeKeys:** Keys to look for in files to trigger the template string addition functionality.
+
+### config
 
 ### compass
 The 'compass' task calls compass compile at compass project root location (config.rb home).
@@ -386,6 +394,8 @@ tasks:
           css: public/css/
 
 ```
+
+### deploy-config
 
 ### jshint
 JsHint task.  If `jshintrc` is specified those options are used instead (maybe we'll merge these options

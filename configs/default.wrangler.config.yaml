@@ -157,6 +157,12 @@ tasks:
           js: public/js/
           css: public/css/
 
+#  develop:
+#    tasks:
+#      - open
+#      - watch
+#    livereload: null
+
   jasmine:
     files: null # testDir or array of files (test files)
     options: null
@@ -225,3 +231,6 @@ tasks:
 
     # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null
+
+    livereload:
+
