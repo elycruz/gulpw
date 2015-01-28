@@ -19,7 +19,7 @@ That directory should contain "bundle-configuration" files which are used within
 - [Bundle config](#bundle-config)
 - [Running tasks](#running-tasks)
 - [Available tasks](#available-tasks)
-- [Todos](#minimal-viable-product-todos)
+- [Todos](https://github.com/elycruz/gulpw/blob/master/TODOS.md)
 
 ### Install
 Install the `gulpw` module globally `npm install elycruz/gulpw -g` and
