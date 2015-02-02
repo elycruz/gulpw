@@ -93,3 +93,8 @@ gulp-bundle-wrangler (Beta)
   - [ ] - Add notes for ~~'prompt:config'~~ 'config' task.
   - [ ] - Supply example bundle config file with all sections listed in it.
 
+### Todos Version 0.3.0
+- [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).
+- [ ] - Page bundles should compile all artifacts from the 'included' bundles into it's own artifact(s) (in the order the bundles are listed).
+- [ ] - Page bundles should be able to have a `siblings` attribute which allows tasks called on page bundles themselves to also be called on it's 'sibling' bundles.
+- [ ] - All tasks called page bundle siblings should happen before page bundle tasks are called.
