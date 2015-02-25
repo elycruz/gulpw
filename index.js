@@ -8,6 +8,9 @@ require('sjljs');
 var Liftoff = require('liftoff'),
     argv = require('yargs').argv,
     gulp = require('gulp'),
+    path = require('path'),
+    fs = require('fs'),
+    chalk = require('chalk'),
     cli = new Liftoff({
         name: 'gulpw',
         processTitle: 'gulpw',
@@ -24,6 +27,7 @@ var Liftoff = require('liftoff'),
     wrangler;
 
 function init(env) {
+
     //if (argv.verbose) {
         //console.log('LIFTOFF SETTINGS:', this);
         //console.log('CLI OPTIONS:', argv);
@@ -37,8 +41,20 @@ function init(env) {
         //console.log('CLI PACKAGE.JSON', require('./package'));
     //}
 
+    // If the config path is empty
     if (sjl.empty(env.configPath)) {
-        console.log('No \'bundle.wrangler.config.*\' file found.');
+
+        // Copy default config to the environments root
+        fs.writeFileSync(path.join(env.cwd, 'bundle.wrangler.config.yaml'),
+            fs.readFileSync(path.join(__dirname, '/configs/default.wrangler.config.yaml')));
+
+        // Write message to user
+        console.log(chalk.yellow('No \'bundle.wrangler.config.*\' file found.'), '\n',
+                chalk.cyan('A \'bundle.wrangler.config.yaml\' file has been created at: \'./bundle.wrangler.config.yaml\'.' +
+                'Rerun/run `gulpw config` to help customize your \'bundle.wrangler.config.yaml\' file.')
+            );
+
+        // Exit
         return;
     }
 
