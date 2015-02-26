@@ -224,7 +224,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                     deployPath = path.join(deployRootFolder, bundle.options.alias + '.' + fileType);
                 }
 
-                // Check if we need styled unix paths and are on windows
+                // Check if we need unix styled paths and are on windows
                 if (deployUsingUnixStylePaths && ((os.type()).toLowerCase()).indexOf('windows') > -1) {
                     deployPath = deployPath.replace(/\\/g, '/');
                 }
@@ -299,7 +299,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
         }
         else {
             // Log a warning
-            wrangler.log('\n' + chalk.yellow('Please run the "prompt:deploy" task before ' +
+            wrangler.log('\n' + chalk.yellow('Please run the "deploy-config" task before ' +
                 'attempting to deploy (running the task now).') + '\n', '--mandatory');
 
             this.localConfigLoadFailed = true;
