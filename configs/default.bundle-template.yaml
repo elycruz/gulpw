@@ -1,7 +1,7 @@
 # File: default.bundle-template.yaml
 # Description:  Sane recommended customizable tasks per bundle file.  The options and tasks that have
 # been ommitted from this file are better off being configured globally (bundle.wrangler.config*)
-# since they haven't been developed on a per bundle basis.
+# since they haven't been developed on a per bundle basis (yet).
 
 # Browserify Defaults
 browserify: {}
@@ -10,7 +10,7 @@ compass:
   compassProjectRoot: null # config.rb home
 
 csslint:
-    csslintrc: null
+  csslintrc: null
 
 # Deploy Task
 deploy:

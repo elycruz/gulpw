@@ -473,7 +473,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
-    isTaskNameRegisteredWithGulp: function (taskName) {
+    isTaskRegistered: function (taskName) {
         return sjl.isset(this.gulp.tasks[taskName]);
     },
 
@@ -481,7 +481,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         bundle = sjl.classOfIs(bundle, 'Object') ? bundle.options.alias : bundle;
         task = sjl.classOfIs(task, 'Object') ? task.alias : task;
         var self = this;
-        if (!self.isTaskNameRegisteredWithGulp(bundle + ':' + task)) {
+        if (!self.isTaskRegistered(bundle + ':' + task)) {
             console.log(self.bundles[bundle]);
             self.tasks[task].instance.registerBundle(self.bundles[bundle], self.gulp, self);
         }
