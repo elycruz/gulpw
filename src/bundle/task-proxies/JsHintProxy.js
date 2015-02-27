@@ -25,7 +25,7 @@ module.exports = TaskProxy.extend('JsHintProxy', {
 
         // Task string separator
         var self = this,
-            separator = wrangler.getTaskStrSeparator(),
+            separator = ':',
             taskName = 'jshint' + separator + bundle.options.alias,
             filesToExclude = wrangler.tasks.jshint.ignoredFiles,
             src;

@@ -27,7 +27,7 @@ module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
 
             var self = this,
                 tasks = [],
-                separator = wrangler.getTaskStrSeparator(),
+                separator = ':',
                 taskPrefix = self.alias,
                 hasSection;
 

@@ -60,7 +60,7 @@ module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
         var self = this,
 
             // Task Separator
-            separator = wrangler.getTaskStrSeparator(),
+            separator = ':',
 
             // Bundle name for task
             bundleName = bundle.options.alias,
