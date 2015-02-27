@@ -38,7 +38,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         staticTasks: {},
         staticTaskKeys: [],
         configPath: env.configPath
-    }, defaultOptions, config);
+    }, defaultOptions);
+
+    // Merge local options
+    self.mergeLocalOptions(config);
 
     // Resolve bundles path
     self.bundlesPath = path.join(self.cwd, self.bundlesPath);
@@ -114,6 +117,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         self.log(chalk.cyan('\n- Creating task proxies.'));
 
         self.taskKeys.forEach(function (task) {
+            if (sjl.classOfIs(self.tasks[task], 'String')) {
+                self.tasks[task] = self.loadConfigFile(path.join(process.cwd(), self.tasks[task]));
+            }
             self.tasks[task].instance = self.createTaskProxy(gulp, task);
         });
 
@@ -121,6 +127,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     createTaskProxy: function (gulp, task) {
+
         // 'Creating task ...' message
         this.log(' - Creating task proxy \"' + task + '\'.');
 
@@ -414,5 +421,31 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     clone: function (obj) {
         return JSON.parse(JSON.stringify(obj));
+    },
+
+    mergeLocalOptions: function (options) {
+        var self = this,
+            tasks;
+        if (!options.tasks) {
+            sjl.extend(true, self, options);
+            return;
+        }
+
+        tasks = options.tasks;
+        options.tasks = undefined;
+        delete options.tasks;
+
+        sjl.extend(true, self, options);
+
+        Object.keys(tasks).forEach(function (key) {
+            var value = tasks[key],
+                objToMerge = sjl.classOfIs(value, 'String') ? self.loadConfigFile(path.join(process.cwd(), value)) : value;
+            if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key]), 'Object') {
+                sjl.extend(true, self.tasks[key], objToMerge)
+            }
+            else {
+                self.tasks[key] = objToMerge;
+            }
+        });
     }
 });

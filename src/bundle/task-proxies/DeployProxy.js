@@ -192,6 +192,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             deployOptions = wrangler.tasks.deploy,
             allowedFileTypes = deployOptions.allowedFileTypes,
             deployUsingUnixStylePaths = deployOptions.deployUsingUnixStylePaths,
+            prependDeployRootFolder = deployOptions.prependDeployRootFolder,
             selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
             // @todo this parsing and setting of `deployRootFolder` shouldn't happen here (happening here temporarily)
             deployRootFolder =
@@ -213,6 +214,10 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                 // Build local src path
                 localPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
                     bundle.options.alias + '.' + fileType);
+
+                if (prependDeployRootFolder) {
+
+                }
 
                 // Build deploy src path
                 if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
