@@ -32,7 +32,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         cwd: env.configBase,
         argv: argv,
         taskProxyMap: taskProxyMap,
-        taskStrSeparator: ':',
         tasks: {},
         taskKeys: [],
         staticTasks: {},
@@ -253,7 +252,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     registerGlobalTasks: function (gulp, tasks) {
         var self = this,
-            bundles = self.bundlesToArray();
+            bundles = Object.keys(self.bundles).map(function (key) {
+                return self.bundles[key];
+            });
 
         // Pass all bundles to each task
         tasks.forEach(function (task) {
@@ -262,21 +263,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             }
             self.tasks[task].instance.registerBundles(bundles, gulp, self);
         });
-    },
-
-    bundlesToArray: function () {
-        var self = this;
-        return Object.keys(self.bundles).map(function (key) {
-            return self.bundles[key];
-        });
-    },
-
-    getTaskStrSeparator: function () {
-        var self = this,
-            separator = self.taskStrSeparator;
-        // Return the separator
-        return sjl.classOfIs(separator, 'String') && separator.length > 0
-            ? separator : self.defaultTaskStrSeparator;
     },
 
     extractBundleNamesFromArray: function (list) {

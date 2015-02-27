@@ -78,7 +78,7 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
             var self = this,
                 bundleName = bundle.options.alias,
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
-                separator = wrangler.taskStrSeparator,
+                separator = ':',
                 targets = [];
 
             // Register separate `clean` tasks for each section in `files` key
