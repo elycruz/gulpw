@@ -94,12 +94,17 @@ module.exports = TaskProxy.extend('BuildProxy', {
                 return;
             }
 
+            // Ensure bundle is registered with task
+            wrangler.registerBundleWithTask(bundleName, task);
+
             // Push task to run later
             targets.push(task + ':' + bundleName);
         });
 
         // If bundle has minifiable or concatable sources build
         if (isBundleValidForMinAndConcat) {
+            // Ensure bundle is registered with task
+            wrangler.registerBundleWithTask(bundleName, 'minify');
             targets.push('minify' + ':' + bundleName);
         }
 

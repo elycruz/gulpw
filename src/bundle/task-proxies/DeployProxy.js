@@ -24,7 +24,8 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
 }, {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
-        var deployOptions = wrangler.tasks.deploy,
+        var self = this,
+            deployOptions = wrangler.tasks.deploy,
             host = deployOptions.hostnamePrefix + deployOptions.hostname,
             sshOptions = {
                 host: host,
@@ -141,8 +142,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                     .connect(sshOptions);
             }));
 
-
-
         });
     },
 
@@ -165,7 +164,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = {};
-
+console.log('here');
         this.mergeLocalConfigs(gulp, wrangler);
 
         bundles.forEach(function (bundle) {
@@ -296,7 +295,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
         var localConfigPath = path.join(wrangler.localConfigPath, wrangler.tasks.deploy.localDeployFileName),
             localConfig;
 
-
         // Get local deploy config if exists
         if (fs.existsSync(localConfigPath)) {
             localConfig = yaml.safeLoad(fs.readFileSync(localConfigPath));
@@ -317,5 +315,13 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             console.log(dirPath + ' created');
         });
     }
+    //
+    //getSshConnection: function () {
+    //    var conn = this.sshConnection;
+    //    if (!sjl.isset(conn)) {
+    //        conn = this.sshConnection = new ssh();
+    //    }
+    //    return conn;
+    //}
 
 }); // end of export

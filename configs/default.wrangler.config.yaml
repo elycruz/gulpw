@@ -122,56 +122,56 @@ tasks:
     # Hash of domains to develop for:
     domainsToDevelop:
 
-      # Hostname to develop for:
-      gulpw-sample.somedomain.com:
-
-        # Servers where user can develop for `domainToDevelopFor` (in the case that this domain is the one chosen
-        # for development (in the `gulpw deploy-config` prompt then `domainToDevelopFor` is equal to the
-        # value of `gulpw-sample.somedomain.com`)
-        hostnames: # slots/hosts
-          - -devslot1.gulpw-sample.somedomain.com
-          - -devslot2.gulpw-sample.somedomain.com
-          - -devslot3.gulpw-sample.somedomain.com
-
-        # All website instance prefixes represent the same website just different
-        # instances of the website.
-
-        # Array of possible prefixes per `hostname` (in above `hostnames`)
-        hostnamePrefixes:
-          - web1
-          - web2
-          - web3
-
-        # If set will be passed to all/any of the following template vars: `deployRootFolder`,
-        # `deployRootFoldersByFileType[x]` (where `x` is the 'key' of a key within the hash map);
-        hostnamePrefixFolders: null
-          #web1: website1
-          #web2: website2
-          #web3: website3
-
-        # Host name prefix folder (determined by `gulpw deploy-config`) can be set to a default though.
-        hostnamePrefixFolder: null
-
-        # Root folder on the server to use for deployments (used as a prefix path for file paths being deployed)
-        # example: sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
-        deployRootFolder: null
-
-        # Whether or not to prepend deploy root folders:
-        prependDeployRootFolder: true,
-
-        # Deploy roots by file types;  E.g., File types can have different deploy roots or can be deployed to
-        # any directory within the remote servers file system via this hash map.
-        deployRootFoldersByFileType: null
-
-        # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
-        # @todo change this to `deployRootFoldersByFileType`
-        typesAndDeployPathsMap:
-          font: public/media/fonts/
-          html: public/
-          video: public/media/videos/
-          image: public/media/images/
-          js: public/js/
-          css: public/css/
+#      # Hostname to develop for:
+#      gulpw-sample.somedomain.com:
+#
+#        # Servers where user can develop for `domainToDevelopFor` (in the case that this domain is the one chosen
+#        # for development (in the `gulpw deploy-config` prompt then `domainToDevelopFor` is equal to the
+#        # value of `gulpw-sample.somedomain.com`)
+#        hostnames: # slots/hosts
+#          - -devslot1.gulpw-sample.somedomain.com
+#          - -devslot2.gulpw-sample.somedomain.com
+#          - -devslot3.gulpw-sample.somedomain.com
+#
+#        # All website instance prefixes represent the same website just different
+#        # instances of the website.
+#
+#        # Array of possible prefixes per `hostname` (in above `hostnames`)
+#        hostnamePrefixes:
+#          - web1
+#          - web2
+#          - web3
+#
+#        # If set will be passed to all/any of the following template vars: `deployRootFolder`,
+#        # `deployRootFoldersByFileType[x]` (where `x` is the 'key' of a key within the hash map);
+#        hostnamePrefixFolders: null
+#          #web1: website1
+#          #web2: website2
+#          #web3: website3
+#
+#        # Host name prefix folder (determined by `gulpw deploy-config`) can be set to a default though.
+#        hostnamePrefixFolder: null
+#
+#        # Root folder on the server to use for deployments (used as a prefix path for file paths being deployed)
+#        # example: sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
+#        deployRootFolder: null
+#
+#        # Whether or not to prepend deploy root folders:
+#        prependDeployRootFolder: true,
+#
+#        # Deploy roots by file types;  E.g., File types can have different deploy roots or can be deployed to
+#        # any directory within the remote servers file system via this hash map.
+#        deployRootFoldersByFileType: null
+#
+#        # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
+#        # @todo change this to `deployRootFoldersByFileType`
+#        typesAndDeployPathsMap:
+#          font: public/media/fonts/
+#          html: public/
+#          video: public/media/videos/
+#          image: public/media/images/
+#          js: public/js/
+#          css: public/css/
 
 #  develop:
 #    tasks:

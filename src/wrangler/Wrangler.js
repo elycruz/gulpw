@@ -50,6 +50,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     self.taskKeys = Object.keys(self.tasks);
     self.staticTaskKeys = Object.keys(self.staticTasks);
 
+    self.gulp = gulp;
+
     // Initialize the pipeline call(s)
     self.init(gulp, self.argv);
 },
@@ -58,7 +60,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     init: function (gulp, argv) {
         var self = this,
             anyGlobalTasksToRun,
-            anyStaticTasksToRun;
+            anyStaticTasksToRun,
+            anyPerBundleTasksToRun;
 
         self.log('Gulp Bundle Wrangler initializing...');
 
@@ -71,6 +74,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             return argv._.indexOf(item) > -1;
         }).length > 0;
 
+        anyPerBundleTasksToRun = (argv._.filter(function (item) {
+            return item.indexOf(':') > -1;
+        })).length > 0;
+
         // Create static tasks
         if (anyStaticTasksToRun) {
             self.createStaticTaskProxies(gulp);
@@ -82,15 +89,20 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             // Create task proxies (~~@todo in the future only load needed tasks if it makes any difference in performance~~  Can't do this as some tasks access other task proxies internally at task runtime)
             self.createTaskProxies(gulp);
 
-            // If any global tasks to run create tasks proxies and register all bundles.
-            if (anyGlobalTasksToRun && argv._.length > 0) {
-                self.createBundles(gulp);
+            // If any global tasks to run create tasks proxies and all bundles.
+            if (anyGlobalTasksToRun && !anyPerBundleTasksToRun) {
+                self.log('Global tasks found and no Per-Bundle tasks found.', '\n', 'Preparing global tasks.');
+                self.createBundles(gulp, null, false);
                 self.registerGlobalTasks(gulp, argv._);
             }
-
-            // No global tasks to run (tasks on all modules) so register only passed in bundle(s)
-            else {
-                self.createBundles(gulp, self.extractBundlePathsFromArgv(argv));
+            else if (anyGlobalTasksToRun && anyPerBundleTasksToRun) {
+                self.log('Global tasks found and Per-Bundle tasks found.', '\n', 'Preparing global and per-bundle tasks.');
+                self.createBundles(gulp, null, true);
+                self.registerGlobalTasks(gulp, argv._);
+            }
+            else if (anyPerBundleTasksToRun && !anyGlobalTasksToRun) {
+                self.log('No global tasks found but found Per-Bundle tasks.', '\n', 'Preparing per-bundle tasks.');
+                self.createBundles(gulp, self.extractBundlePathsFromArgv(argv), true);
             }
         }
 
@@ -160,27 +172,32 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return TaskProxyClass;
     },
 
-    createBundles: function (gulp, bundles) {
-        var self = this,
-            bundlesPath;
+    createBundles: function (gulp, bundles, registerBundles) {
+        registerBundles = registerBundles || true;
+        var self = this;
 
         // Creating task proxies message
         self.log(chalk.cyan('\n- Creating bundles.'));
 
-        bundlesPath = self.bundlesPath;
-
-        // Get bundle paths if bundles is not set
-        if (!bundles) {
-            bundles = fs.readdirSync(bundlesPath);
-            bundles = bundles.map(function (fileName) {
-                return path.join(bundlesPath, fileName);
+        // Create bundles if necessary
+        if (!sjl.isset(bundles)) {
+            bundles = fs.readdirSync(self.bundlesPath).map(function (fileName) {
+                return self.createBundle(path.join(self.bundlesPath, fileName));
+            });
+        }
+        // Else expect an array of file paths
+        else {
+            bundles = bundles.map(function (bundle) {
+                return self.createBundle(bundle);
             });
         }
 
-        // Parse bundle configs
-        bundles.forEach(function (fileName) {
-            self.registerTasksForBundle(gulp, self.createBundle(fileName));
-        });
+        // Register bundles with tasks if necessary
+        if (registerBundles) {
+            self.registerBundles(gulp, bundles);
+        }
+
+        return self;
     },
 
     createBundle: function (config) {
@@ -210,6 +227,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Return bundle
         return bundle;
+    },
+
+    registerBundles: function (gulp, bundles) {
+        var self = this;
+        bundles.forEach(function (bundle) {
+            self.registerTasksForBundle(gulp, bundle);
+        });
     },
 
     registerTasksForBundle: function (gulp, bundle) {
@@ -447,5 +471,30 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 self.tasks[key] = objToMerge;
             }
         });
+    },
+
+    isTaskNameRegisteredWithGulp: function (taskName) {
+        return sjl.isset(this.gulp.tasks[taskName]);
+    },
+
+    registerBundleWithTask: function (bundle, task) {
+        bundle = sjl.classOfIs(bundle, 'Object') ? bundle.options.alias : bundle;
+        task = sjl.classOfIs(task, 'Object') ? task.alias : task;
+        var self = this;
+        if (!self.isTaskNameRegisteredWithGulp(bundle + ':' + task)) {
+            console.log(self.bundles[bundle]);
+            self.tasks[task].instance.registerBundle(self.bundles[bundle], self.gulp, self);
+        }
+        return self;
+    },
+
+    hasBundle: function (bundle) {
+        bundle = sjl.classOfIs(bundle, 'Object') ? bundle.options.alias : bundle;
+        return sjl.isset(this.bundles[bundle]);
+    },
+
+    hasTaskProxy: function (taskProxy) {
+        taskProxy = sjl.classOfIs(taskProxy, 'Object') ? taskProxy.alias : taskProxy;
+        return sjl.isset(this.tasks[taskProxy]);
     }
 });
