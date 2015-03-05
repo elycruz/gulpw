@@ -10,9 +10,8 @@ localConfigPath: ./.gulpw
 localConfigBackupPath: ./.gulpw/backups
 
 staticTasks:
-  "prompt": {}
-  "deploy-config": {}
   "config": {}
+  "deploy-config": {}
   "bundle-config": {}
 
 tasks:

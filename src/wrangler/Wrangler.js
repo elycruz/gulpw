@@ -208,8 +208,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             config = this.loadConfigFile(config);
         }
 
+        // If no config passed throw an Error
         if (sjl.empty(config)) {
-            return; // @todo throw exception here
+            throw new Error('A valid configuration object or file location is ' +
+                'expected in/for `Wrangler.createBundle`.');
         }
 
         // 'Creating task ...' message
@@ -474,11 +476,48 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return self;
     },
 
-    hasBundle: function (bundle) {
-        bundle = sjl.classOfIs(bundle, 'Object') ? bundle.options.alias : bundle;
-        return sjl.isset(this.bundles[bundle]);
+    getBundle: function (bundle) {
+        var self = this,
+            originalBundleValue = bundle,
+            i, item;
+
+        bundle = this.bundles[this.getBundleAlias(bundle)];
+
+        if (!sjl.isset(bundle)) {
+            // Try to create bundle
+            for (i = 0; i < self.bundleConfigFormats.length; i += 1) {
+                try {
+                    bundle = self.createBundle(
+                        self.loadConfigFile(
+                            path.join(self.bundlesPath, originalBundleValue + self.bundleConfigFormats)));
+                    break;
+                }
+                catch (e) {}
+            }
+            if (sjl.empty(bundle)) {
+                bundle = null;
+            }
+        }
+
+        return bundle;
     },
 
+    getBundleAlias: function (bundle) {
+        return sjl.classOfIs(bundle, 'Object') ? bundle.options.alias : bundle;
+    },
+
+    hasBundle: function (bundle) {
+        return sjl.isset(this.bundles[this.getBundleAlias(bundle)]);
+    },
+
+    getTaskProxy: function (taskProxy) {
+        return this.taskProxys[this.getTaskProxyAlias(taskProxy)] || null;
+    },
+
+    getTaskProxyAlias: function (taskProxy) {
+        return sjl.classOfIs(taskProxy, 'Object') ? taskProxy.alias : taskProxy;
+    },
+    
     hasTaskProxy: function (taskProxy) {
         taskProxy = sjl.classOfIs(taskProxy, 'Object') ? taskProxy.alias : taskProxy;
         return sjl.isset(this.tasks[taskProxy]);
