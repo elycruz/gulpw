@@ -90,17 +90,17 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             // If any global tasks to run create tasks proxies and all bundles.
             if (anyGlobalTasksToRun && !anyPerBundleTasksToRun) {
-                self.log('Global tasks found and no Per-Bundle tasks found.', '\n', 'Preparing global tasks.');
+                self.log('\nGlobal tasks found and no Per-Bundle tasks found.', '\n', 'Preparing global tasks.', '--debug');
                 self.createBundles(gulp, null, false);
                 self.registerGlobalTasks(gulp, argv._);
             }
             else if (anyGlobalTasksToRun && anyPerBundleTasksToRun) {
-                self.log('Global tasks found and Per-Bundle tasks found.', '\n', 'Preparing global and per-bundle tasks.');
+                self.log('\nGlobal tasks found and Per-Bundle tasks found.', '\n', 'Preparing global and per-bundle tasks.', '--debug');
                 self.createBundles(gulp, null, true);
                 self.registerGlobalTasks(gulp, argv._);
             }
             else if (anyPerBundleTasksToRun && !anyGlobalTasksToRun) {
-                self.log('No global tasks found but found Per-Bundle tasks.', '\n', 'Preparing per-bundle tasks.');
+                self.log('\nNo global tasks found but found Per-Bundle tasks.', '\n', 'Preparing per-bundle tasks.', '--debug');
                 self.createBundles(gulp, self.extractBundlePathsFromArgv(argv), true);
             }
         }
@@ -470,7 +470,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         task = sjl.classOfIs(task, 'Object') ? task.alias : task;
         var self = this;
         if (!self.isTaskRegistered(bundle + ':' + task)) {
-            console.log(self.bundles[bundle]);
             self.tasks[task].instance.registerBundle(self.bundles[bundle], self.gulp, self);
         }
         return self;

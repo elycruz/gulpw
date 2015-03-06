@@ -158,9 +158,14 @@ tasks:
 #        # Whether or not to prepend deploy root folders:
 #        prependDeployRootFolder: true,
 #
+#        # Use deploy root folders by file type
+#        useDeployRootFoldersByFileType: false,
+#
 #        # Deploy roots by file types;  E.g., File types can have different deploy roots or can be deployed to
-#        # any directory within the remote servers file system via this hash map.
-#        deployRootFoldersByFileType: null
+#        # any directory within the remote server's file system via this hash map.
+#        #deployRootFoldersByFileType: null
+#        #  jsp: ...
+#        #  php: ...
 #
 #        # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
 #        # @todo change this to `deployRootFoldersByFileType`

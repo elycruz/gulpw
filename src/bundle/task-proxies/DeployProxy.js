@@ -191,12 +191,16 @@ console.log('here');
             deployOptions = wrangler.tasks.deploy,
             allowedFileTypes = deployOptions.allowedFileTypes,
             deployUsingUnixStylePaths = deployOptions.deployUsingUnixStylePaths,
-            prependDeployRootFolder = deployOptions.prependDeployRootFolder,
             selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
             // @todo this parsing and setting of `deployRootFolder` shouldn't happen here (happening here temporarily)
+            deployRootFolder = '';
+
+        // Check if
+        if (selectedServerEntry.deployRootFolder) {
             deployRootFolder =
                 selectedServerEntry.deployRootFolder =
                     lodash.template(selectedServerEntry.deployRootFolder, deployOptions);
+        }
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -214,14 +218,10 @@ console.log('here');
                 localPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
                     bundle.options.alias + '.' + fileType);
 
-                if (prependDeployRootFolder) {
-
-                }
-
                 // Build deploy src path
-                if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
-                    deployPath = path.join(deployRootFolder,
-                        selectedServerEntry.typesAndDeployPathsMap[fileType],
+                if (selectedServerEntry.useDeployRootFoldersByFileType && selectedServerEntry.deployRootFoldersByFileType[fileType]) {
+                    deployPath = path.join(
+                        lodash.template(selectedServerEntry.deployRootFoldersByFileType[fileType], deployOptions),
                         bundle.options.alias + '.' + fileType);
                 }
                 else {
@@ -238,7 +238,7 @@ console.log('here');
             }
 
             // Check allowedFileType in deploy.otherFiles key
-            if (hasDeployOtherFiles && !bundle.has('deploy.otherFiles' + fileType)) {
+            if (hasDeployOtherFiles && !bundle.has('deploy.otherFiles.' + fileType)) {
 
                 // Push array map entry
                 srcs[fileType] = self.mapFileArrayToDeployArrayMap(
@@ -260,26 +260,29 @@ console.log('here');
 
     },
 
-    mapFileArrayToDeployArrayMap: function (fileArray, fileType,
-                                            selectedServerEntry, wrangler) {
+    mapFileArrayToDeployArrayMap: function (fileArray, fileType, selectedServerEntry, wrangler) {
         return Array.isArray(fileArray) ? fileArray.map(function (item) {
-            var retVal;
-            if (selectedServerEntry.typesAndDeployPathsMap[fileType]) {
-                retVal = [item, path.join(selectedServerEntry.deployRootFolder, selectedServerEntry.typesAndDeployPathsMap[fileType],
-                    path.basename(item))];
+            var retVal,
+                deployOptions = wrangler.tasks.deploy;
+            if (selectedServerEntry.useDeployRootFoldersByFileType && selectedServerEntry.deployRootFoldersByFileType[fileType]) {
+                retVal = [item, path.join(
+                                    lodash.template(selectedServerEntry.deployRootFoldersByFileType[fileType], deployOptions),
+                                    path.basename(item))];
             }
             else {
-                retVal = [item, path.join(selectedServerEntry.deployRootFolder, item)];
+                retVal = [item, path.join(selectedServerEntry.deployRootFolder || '', item)];
             }
 
-            // Check if we need styled unix paths and are on windows
+            // Check if we need unix styled paths and are on windows
             if (wrangler.tasks.deploy.deployUsingUnixStylePaths && ((os.type()).toLowerCase()).indexOf('windows') > -1) {
                 retVal[1] = retVal[1].replace(/\\/g, '/');
             }
 
+            // Normalize path
             retVal[0] = path.normalize(retVal[0]);
 
             return retVal;
+
         }) : [];
     },
 
