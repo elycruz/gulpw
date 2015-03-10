@@ -50,10 +50,6 @@ watch:
   constructorLocation: ./bundle/task-proxies/WatchProxy
   helpInfo: ""
 
-prompt:
-  constructorLocation: ./task-proxies/PromptProxy
-  helpInfo: ""
-
 config:
   constructorLocation: ./task-proxies/ConfigProxy
   helpInfo: ""
