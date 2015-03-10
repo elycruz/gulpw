@@ -210,7 +210,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
 
                 // Build deploy src path
                 if (self._serverEntryHasDeployFolderType(selectedServerEntry, fileType)) {
-
                     deployPath = path.join(selectedServerEntry.deployRootFoldersByFileType[fileType],
                         bundle.options.alias + '.' + fileType);
                 }
@@ -255,8 +254,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
         return Array.isArray(fileArray) ? fileArray.map(function (item) {
             var retVal;
             if (self._serverEntryHasDeployFolderType(selectedServerEntry, fileType)) {
-                retVal = [item, path.join(selectedServerEntry.deployRootFoldersByFileType[fileType],
-                                    path.basename(item))];
+                retVal = [item, path.join(selectedServerEntry.deployRootFoldersByFileType[fileType], item)];
             }
             else {
                 retVal = [item, path.join(selectedServerEntry.deployRootFolder || '', item)];
@@ -311,17 +309,19 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                     lodash.template(selectedServerEntry.deployRootFolder, deployOptions);
         }
 
-        if (selectedServerEntry.deployRootFoldersByType) {
-            selectedServerEntry.deployRootFoldersByType =
-                selectedServerEntry.deployRootFoldersByType.map(function (entry) {
-                        return lodash.template(selectedServerEntry.deployRootFoldersByType[entry], deployOptions);
+        console.log(selectedServerEntry);
+
+        if (!sjl.empty(selectedServerEntry.deployRootFoldersByFileType)) {
+                Object.keys(selectedServerEntry.deployRootFoldersByFileType).forEach(function (key) {
+                        selectedServerEntry.deployRootFoldersByFileType[key] =
+                            lodash.template(selectedServerEntry.deployRootFoldersByFileType[key], deployOptions);
                     });
         }
         return this;
     },
 
     _serverEntryHasDeployFolderType: function (serverEntry, fileType) {
-        return sjl.classOfIs(serverEntry.deployRootFoldersByFileType) && serverEntry.deployRootFoldersByFileType[fileType];
+        return sjl.classOfIs(serverEntry.deployRootFoldersByFileType, 'Object') && serverEntry.deployRootFoldersByFileType[fileType];
     }
 
 }); // end of export
