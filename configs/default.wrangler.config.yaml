@@ -84,15 +84,6 @@ tasks:
     # Should files be linted before deploy
     lintBeforeDeploy: false
 
-    # Local deploy config used to override local bundle.wrangler.yaml deploy config options.
-    # Stored in `localConfigPath` whose default value is '.gulpw'
-    localDeployFileName: deploy.yaml
-
-    # Use one-to-one paths for undefined/null deploy paths.
-    # If this is false and an undefined/null deploy path is found for a type an error
-    # is thrown and the deploy tasks exits
-    useOneToOnePaths: false
-
     deployUsingUnixStylePaths: true
 
     # Options written by `gulpw deploy-config`
@@ -155,9 +146,6 @@ tasks:
 #        # example: sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
 #        deployRootFolder: null
 #
-#        # Whether or not to prepend deploy root folders:
-#        prependDeployRootFolder: true,
-#
 #        # Use deploy root folders by file type
 #        useDeployRootFoldersByFileType: false,
 #
@@ -167,15 +155,6 @@ tasks:
 #        #  jsp: ...
 #        #  php: ...
 #
-#        # Directories for deploying file types to specific paths within the selected {web-host}/[{web-host-prefix]
-#        # @todo change this to `deployRootFoldersByFileType`
-#        typesAndDeployPathsMap:
-#          font: public/media/fonts/
-#          html: public/
-#          video: public/media/videos/
-#          image: public/media/images/
-#          js: public/js/
-#          css: public/css/
 
 #  develop:
 #    tasks:

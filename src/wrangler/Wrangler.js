@@ -49,6 +49,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     self.taskKeys = Object.keys(self.tasks);
     self.staticTaskKeys = Object.keys(self.staticTasks);
 
+    // Preparing to give all gulpw components direct access to gulp and wrangler internally.
     self.gulp = gulp;
 
     // Initialize the pipeline call(s)
@@ -150,7 +151,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         options.alias = task;
         options.help = self.taskProxyMap.help;
 
-        return new TaskProxyClass(options);
+        return new TaskProxyClass(options, gulp, this);
     },
 
     createStaticTaskProxy: function (gulp, task) {

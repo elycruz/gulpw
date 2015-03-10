@@ -17,10 +17,12 @@ var TaskProxy = require('../TaskProxy'),
     yaml = require('js-yaml'),
     lodash = require('lodash');
 
-    //gutil = require('gulp-util');
-
 module.exports = TaskProxy.extend(function DeployProxy (config) {
-    TaskProxy.call(this, config);
+    TaskProxy.apply(this, config);
+    this.wrangler = arguments[2];
+    this.gulp = arguments[1];
+    this._mergeLocalConfigs()
+        ._resolveTemplateValues();
 }, {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
@@ -152,8 +154,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             return;
         }
 
-        this.mergeLocalConfigs(gulp, wrangler);
-
         // Task string separator
         var targets = this.getSrcForBundle(bundle, wrangler);
 
@@ -164,8 +164,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = {};
-console.log('here');
-        this.mergeLocalConfigs(gulp, wrangler);
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
@@ -192,15 +190,7 @@ console.log('here');
             allowedFileTypes = deployOptions.allowedFileTypes,
             deployUsingUnixStylePaths = deployOptions.deployUsingUnixStylePaths,
             selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
-            // @todo this parsing and setting of `deployRootFolder` shouldn't happen here (happening here temporarily)
-            deployRootFolder = '';
-
-        // Check if
-        if (selectedServerEntry.deployRootFolder) {
-            deployRootFolder =
-                selectedServerEntry.deployRootFolder =
-                    lodash.template(selectedServerEntry.deployRootFolder, deployOptions);
-        }
+            deployRootFolder = selectedServerEntry.deployRootFolder;
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -219,9 +209,9 @@ console.log('here');
                     bundle.options.alias + '.' + fileType);
 
                 // Build deploy src path
-                if (selectedServerEntry.useDeployRootFoldersByFileType && selectedServerEntry.deployRootFoldersByFileType[fileType]) {
-                    deployPath = path.join(
-                        lodash.template(selectedServerEntry.deployRootFoldersByFileType[fileType], deployOptions),
+                if (self._serverEntryHasDeployFolderType(selectedServerEntry, fileType)) {
+
+                    deployPath = path.join(selectedServerEntry.deployRootFoldersByFileType[fileType],
                         bundle.options.alias + '.' + fileType);
                 }
                 else {
@@ -238,7 +228,7 @@ console.log('here');
             }
 
             // Check allowedFileType in deploy.otherFiles key
-            if (hasDeployOtherFiles && !bundle.has('deploy.otherFiles.' + fileType)) {
+            if (hasDeployOtherFiles && bundle.has('deploy.otherFiles.' + fileType)) {
 
                 // Push array map entry
                 srcs[fileType] = self.mapFileArrayToDeployArrayMap(
@@ -261,12 +251,11 @@ console.log('here');
     },
 
     mapFileArrayToDeployArrayMap: function (fileArray, fileType, selectedServerEntry, wrangler) {
+        var self = this;
         return Array.isArray(fileArray) ? fileArray.map(function (item) {
-            var retVal,
-                deployOptions = wrangler.tasks.deploy;
-            if (selectedServerEntry.useDeployRootFoldersByFileType && selectedServerEntry.deployRootFoldersByFileType[fileType]) {
-                retVal = [item, path.join(
-                                    lodash.template(selectedServerEntry.deployRootFoldersByFileType[fileType], deployOptions),
+            var retVal;
+            if (self._serverEntryHasDeployFolderType(selectedServerEntry, fileType)) {
+                retVal = [item, path.join(selectedServerEntry.deployRootFoldersByFileType[fileType],
                                     path.basename(item))];
             }
             else {
@@ -293,38 +282,46 @@ console.log('here');
             || bundle.has('deploy.otherFiles') );
     },
 
-    // @todo throw an error when load fails here
-    mergeLocalConfigs: function (gulp, wrangler) {
-        var localConfigPath = path.join(wrangler.localConfigPath, wrangler.tasks.deploy.localDeployFileName),
+    _mergeLocalConfigs: function () {
+        // @todo don't forget to change this (hardcoded value)
+        var localConfigPath = path.join(this.wrangler.localConfigPath, 'deploy.yaml'),
             localConfig;
 
         // Get local deploy config if exists
         if (fs.existsSync(localConfigPath)) {
             localConfig = yaml.safeLoad(fs.readFileSync(localConfigPath));
-            sjl.extend(true, wrangler.tasks.deploy, localConfig);
+            sjl.extend(true, this.wrangler.tasks.deploy, localConfig);
         }
         else {
             // Log a warning
-            wrangler.log('\n' + chalk.yellow('Please run the "deploy-config" task before ' +
+            this.wrangler.log('\n' + chalk.yellow('Please run the "deploy-config" task before ' +
                 'attempting to deploy (running the task now).') + '\n', '--mandatory');
-
-            this.localConfigLoadFailed = true;
         }
         return this;
     },
 
-    mkdirpOnServer: function (sftp, dirPath) {
-        sftp.mkdir(dirPath, {}, function () {
-            console.log(dirPath + ' created');
-        });
+    _resolveTemplateValues: function (deployOptions) {
+
+        deployOptions = deployOptions || this.wrangler.tasks.deploy;
+
+        var selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain];
+
+        if (selectedServerEntry.deployRootFolder) {
+            selectedServerEntry.deployRootFolder =
+                    lodash.template(selectedServerEntry.deployRootFolder, deployOptions);
+        }
+
+        if (selectedServerEntry.deployRootFoldersByType) {
+            selectedServerEntry.deployRootFoldersByType =
+                selectedServerEntry.deployRootFoldersByType.map(function (entry) {
+                        return lodash.template(selectedServerEntry.deployRootFoldersByType[entry], deployOptions);
+                    });
+        }
+        return this;
+    },
+
+    _serverEntryHasDeployFolderType: function (serverEntry, fileType) {
+        return sjl.classOfIs(serverEntry.deployRootFoldersByFileType) && serverEntry.deployRootFoldersByFileType[fileType];
     }
-    //
-    //getSshConnection: function () {
-    //    var conn = this.sshConnection;
-    //    if (!sjl.isset(conn)) {
-    //        conn = this.sshConnection = new ssh();
-    //    }
-    //    return conn;
-    //}
 
 }); // end of export
