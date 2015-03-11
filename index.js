@@ -6,7 +6,12 @@
 require('sjljs');
 
 var Liftoff = require('liftoff'),
-    argv = require('yargs').argv,
+    argv = require('yargs')
+        .default('file-types', null)
+        .alias('d',     'debug')
+        .alias('v',     'verbose')
+        .alias('ext',   'file-types')
+        .argv,
     gulp = require('gulp'),
     path = require('path'),
     fs = require('fs'),

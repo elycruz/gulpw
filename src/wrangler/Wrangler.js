@@ -519,5 +519,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     hasTaskProxy: function (taskProxy) {
         taskProxy = sjl.classOfIs(taskProxy, 'Object') ? taskProxy.alias : taskProxy;
         return sjl.isset(this.tasks[taskProxy]);
+    },
+
+    getArgvFileTypes: function () {
+        if (!sjl.isset(this.argvFileTypes)) {
+            this.argvFileTypes = this.argv.fileTypes ? this.argv.fileTypes.split(',') : [];
+        }
+        return this.argvFileTypes;
     }
 });

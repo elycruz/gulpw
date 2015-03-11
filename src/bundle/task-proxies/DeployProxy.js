@@ -190,13 +190,23 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             deployOptions = wrangler.tasks.deploy,
             allowedFileTypes = deployOptions.allowedFileTypes,
             selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
-            deployRootFolder = selectedServerEntry.deployRootFolder;
+            deployRootFolder = selectedServerEntry.deployRootFolder,
+            argvFileTypes = wrangler.getArgvFileTypes(),
+            hasArgvFileTypes = !sjl.empty(argvFileTypes);
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
             var hasDeployOtherFiles = bundle.has('deploy.otherFiles.' + fileType),
                 hasFilesFileType = bundle.has('files.' + fileType),
                 deployPath, localPath;
+
+            // could've used array_diff between allowedFileTypes and argvFileTypes for this but
+            // may be more performant/cpu-intensive on cpu @todo take a look at this
+            // Ignore file type if necessary
+            if (hasArgvFileTypes && argvFileTypes.indexOf(fileType) === -1) {
+                wrangler.log('Ignoring *.' + fileType + ' files.', '--debug');
+                return;
+            }
 
             // Check if bundle has files [js, css, allowed file types etc.]
             if (hasFilesFileType) {
@@ -241,10 +251,16 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             srcs.relative = self.mapFileArrayToDeployArrayMap(
                 bundle.options.deploy.otherFiles.relative, 'relative',
                     selectedServerEntry, wrangler);
+
+            // Filter relative sources if argv.fileTypes is populated
+            if (hasArgvFileTypes) {
+                srcs.relative = srcs.relative.filter(function (item) {
+                    return argvFileTypes.indexOf(path.extname(item[0]).split('.')[1]) > -1;
+                });
+            }
         }
 
         return srcs;
-
     },
 
     mapFileArrayToDeployArrayMap: function (fileArray, fileType, selectedServerEntry, wrangler) {
