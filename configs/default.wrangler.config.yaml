@@ -10,23 +10,30 @@ localConfigPath: ./.gulpw
 localConfigBackupPath: ./.gulpw/backups
 
 staticTasks:
-  "config": {}
-  "deploy-config": {}
-  "bundle-config": {}
+  "config":
+    constructorLocation: ./task-proxies/ConfigProxy
+  "deploy-config":
+    constructorLocation: ./task-proxies/DeployConfigProxy
+  "bundle-config":
+    constructorLocation: ./task-proxies/BundleConfigProxy
 
 tasks:
 
   all:
+    constructorLocation: ./bundle/task-proxies/AllTasksProxy
     tasks:
       - build
       - deploy
+    help: ""
 
   # Browserify Defaults
-  browserify: {}
+  browserify:
+    constructorLocation: ./bundle/task-proxies/BrowserifyProxy
 
   # Build Task (Looks through {bundle-alias}.yaml file and runs
   # all tasks that are not in the `ignoredTasks` array in this config.
   build:
+    constructorLocation: ./bundle/task-proxies/BuildProxy
 
     prelimTasks:
       - mocha
@@ -38,16 +45,24 @@ tasks:
       - jshint
       - csslint
 
+    help: ""
+
+
   clean:
+    constructorLocation: ./bundle/task-proxies/CleanProxy
     allowedFileTypes:
       - js
       - css
       - html
+    help: ""
 
   compass:
+    constructorLocation: ./bundle/task-proxies/CompassProxy
     compassProjectRoot: null # config.rb home
+    help: ""
 
   concat:
+    constructorLocation: ./bundle/task-proxies/ConcatProxy
     header: |
       /*!
        * Company Name http://www.company-website.com
@@ -69,17 +84,21 @@ tasks:
         - mustache
         - handlebars
         - ejs
+    help: ""
 
-  copy: {}
+  copy:
+    constructorLocation: ./bundle/task-proxies/CopyProxy
+    help: ""
+
 
   csslint:
-      csslintrc: null
+    constructorLocation: ./bundle/task-proxies/CssLintProxy
+    csslintrc: null
+    help: ""
 
   # Deploy Task
   deploy:
-
-    # Other files to be deployed
-    otherFiles: []
+    constructorLocation: ./bundle/task-proxies/DeployProxy
 
     # Should files be linted before deploy
     lintBeforeDeploy: false
@@ -110,7 +129,8 @@ tasks:
       - mkd
 
     # Hash of domains to develop for:
-    domainsToDevelop:
+    domainsToDevelop: {}
+    help: ""
 
 #      # Hostname to develop for:
 #      gulpw-sample.somedomain.com:
@@ -163,10 +183,13 @@ tasks:
 #    livereload: null
 
   jasmine:
+    constructorLocation: ./bundle/task-proxies/JasmineProxy
     files: null # testDir or array of files (test files)
     options: null
+    help: ""
 
   jshint:
+    constructorLocation: ./bundle/task-proxies/JsHintProxy
     jshintrc: ./configs/.jshintrc
     ignoreFiles: null
     options:
@@ -183,8 +206,10 @@ tasks:
         - Marionette
         - require
         - sjl
+    help: ""
 
   minify:
+    constructorLocation: ./bundle/task-proxies/MinifyProxy
     header: |
       /*! Company Name http://www.company-website.com <%= bundle.alias %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
     cssBuildDir: some/path/to/build/path
@@ -207,16 +232,22 @@ tasks:
         - mustache
         - handlebars
         - ejs
+    help: ""
 
   mocha:
+    constructorLocation: ./bundle/task-proxies/MochaProxy
     files: null # testDir or array of files (test files)
     options: null
+    help: ""
 
   # RequireJs Defaults
-  requirejs: {}
+  requirejs:
+    constructorLocation: ./bundle/task-proxies/RequireJsProxy
+    help: ""
 
   # Watch Task Defaults
   watch:
+    constructorLocation: ./bundle/task-proxies/WatchProxy
 
     # Tasks to ignore on the bundle level (watch creates it's own
     # collection of deploy tasks from the bundle(s) registered with it)
@@ -232,5 +263,8 @@ tasks:
     # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null
 
-    livereload:
+    livereload: null
+
+    help: ""
+
 

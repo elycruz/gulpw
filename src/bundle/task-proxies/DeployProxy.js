@@ -18,9 +18,7 @@ var TaskProxy = require('../TaskProxy'),
     lodash = require('lodash');
 
 module.exports = TaskProxy.extend(function DeployProxy (config) {
-    TaskProxy.apply(this, config);
-    this.wrangler = arguments[2];
-    this.gulp = arguments[1];
+    TaskProxy.apply(this, arguments);
     this._mergeLocalConfigs()
         ._resolveTemplateValues();
 }, {
@@ -44,6 +42,9 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                 startDeployMessage = 'Deploying ',
                 conn = new ssh();
 
+            // Remove possible memory leak messages from within ssh plugin
+            conn.setMaxListeners(21);
+
             return (new Promise(function (fulfill, reject) {
                 // Get file count
                 Object.keys(targets).forEach(function (key, index, list) {
@@ -58,7 +59,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
 
                 startTime = new Date();
 
-                //console.log('DeployProxy -> targets\n', targets);
+                wrangler.log('\n DeployProxy -> targets\n', targets, '--debug');
 
                 conn.on('ready', function () {
 
@@ -308,8 +309,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             selectedServerEntry.deployRootFolder =
                     lodash.template(selectedServerEntry.deployRootFolder, deployOptions);
         }
-
-        console.log(selectedServerEntry);
 
         if (!sjl.empty(selectedServerEntry.deployRootFoldersByFileType)) {
                 Object.keys(selectedServerEntry.deployRootFoldersByFileType).forEach(function (key) {

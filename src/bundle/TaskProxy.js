@@ -8,12 +8,14 @@ require('sjljs');
 
 var chalk = require('chalk');
 
-module.exports = sjl.Extendable.extend(function TaskProxy(options) {
+module.exports = sjl.Extendable.extend(function TaskProxy(options, gulp, wrangler) {
         sjl.extend(true, this, {
             alias: 'Task\'s cli name goes here.',
             description: 'Task\'s description goes here.',
             help: 'Task\'s help details go here.'
         }, options);
+        this.wrangler = wrangler;
+        this.gulp = gulp;
     },
     {
         registerBundle: function (bundle) {
