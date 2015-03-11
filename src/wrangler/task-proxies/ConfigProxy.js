@@ -64,33 +64,37 @@ module.exports = WranglerTaskProxy.extend(function ConfigProxy (options) {
                         date,
                         month;
 
-                    // Ensure backup file path exists
-                    wrangler.ensurePathExists(backupPath);
+                    // If old config is not empty back it up
+                    if (!sjl.empty(oldConfig)) {
 
-                    // If backup file already exists create a timestamped version name
-                    if (fs.existsSync(backupFilePath)) {
-                        date = new Date();
-                        month = date.getMonth() + 1;
-                        month = month < 10 ? '0' + month : month;
-                        date = [date.getFullYear(), month, date.getDate(), date.getHours(), date.getMinutes(), date.getMilliseconds()].join('-');
-                        tmpFileName = path.basename(oldFileName, oldFileExt);
-                        tmpFileName += '--' + date;
-                        backupFilePath = path.join(backupPath, tmpFileName + (oldFileExt === '.json' || oldFileExt === '.js' ? '.json' : '.yaml'));
+                        // Ensure backup file path exists
+                        wrangler.ensurePathExists(backupPath);
+
+                        // If backup file already exists create a timestamped version name
+                        if (fs.existsSync(backupFilePath)) {
+                            date = new Date();
+                            month = date.getMonth() + 1;
+                            month = month < 10 ? '0' + month : month;
+                            date = [date.getFullYear(), month, date.getDate(), date.getHours(), date.getMinutes(), date.getMilliseconds()].join('-');
+                            tmpFileName = path.basename(oldFileName, oldFileExt);
+                            tmpFileName += '--' + date;
+                            backupFilePath = path.join(backupPath, tmpFileName + (oldFileExt === '.json' || oldFileExt === '.js' ? '.json' : '.yaml'));
+                        }
+
+                        // Get the content to backup based on file type
+                        if (oldFileExt === '.json' || oldFileExt === '.js') {
+                            oldConfig = JSON.stringify(oldConfig, null, jsonSpace);
+                        }
+                        else {
+                            oldConfig = yaml.safeDump(oldConfig);
+                        }
+
+                        // Backup current config file
+                        fs.writeFileSync(backupFilePath, oldConfig);
+
+                        // 'Backup complete' message
+                        console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
                     }
-
-                    // Get the content to backup based on file type
-                    if (oldFileExt === '.json' || oldFileExt === '.js') {
-                        oldConfig = JSON.stringify(oldConfig, null, jsonSpace);
-                    }
-                    else {
-                        oldConfig = yaml.safeDump(oldConfig);
-                    }
-
-                    // Backup current config file
-                    fs.writeFileSync(backupFilePath, oldConfig);
-
-                    // 'Backup complete' message
-                    console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
 
                     // Remove sections that were not specified to be kept by the user
                     taskKeys.forEach(function (key) {

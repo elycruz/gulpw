@@ -157,12 +157,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.log(chalk.cyan('\n- Creating static task proxy \"' + task + '\'.'));
 
         var self = this,
-            src = self.tasks[task].constructorLocation,
+            src = self.staticTasks[task].constructorLocation,
             TaskProxyClass = require(path.join(__dirname, src));
 
         TaskProxyClass = new TaskProxyClass({
             name: task,
-            help: self.tasks[task].help
+            help: self.staticTasks[task].help || ''
         });
 
         TaskProxyClass.registerStaticTasks(gulp, self);
@@ -437,6 +437,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     mergeLocalOptions: function (options) {
         var self = this,
             tasks;
+
+        if (sjl.empty(options)) {
+            return this;
+        }
+
         if (!options.tasks) {
             sjl.extend(true, self, options);
             return;

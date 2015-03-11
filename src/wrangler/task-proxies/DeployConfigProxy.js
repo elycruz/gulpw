@@ -156,9 +156,9 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
 
                     // Set out file template
                     outFileTemplate = {
-                        developingDomain: developingDomain,
-                        hostnamePrefixFolder: hostnamePrefixFolder,
-                        hostnamePrefix: hostnamePrefix,
+                        developingDomain: developingDomain || null,
+                        hostnamePrefixFolder: hostnamePrefixFolder || null,
+                        hostnamePrefix: hostnamePrefix || null,
                         hostname: answers.hostname || null,
                         port: answers.port || null,
                         username: answers.username || null,

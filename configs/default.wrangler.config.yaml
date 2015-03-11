@@ -12,10 +12,15 @@ localConfigBackupPath: ./.gulpw/backups
 staticTasks:
   "config":
     constructorLocation: ./task-proxies/ConfigProxy
+    help: ''
+
   "deploy-config":
     constructorLocation: ./task-proxies/DeployConfigProxy
+    help: ''
+
   "bundle-config":
     constructorLocation: ./task-proxies/BundleConfigProxy
+    help: ''
 
 tasks:
 
