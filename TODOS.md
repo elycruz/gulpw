@@ -4,7 +4,6 @@ gulp-bundle-wrangler (Beta)
 ## Todos
 
 ### MVP (Minimal Viable Product) Todos
-
 - [X] Build out and come up with base functionality/classes (MVP).
 - [X] Build out the baseline task proxies:
   - [X] - ~~all/default~~ Leaving this one for version 0.2.0
@@ -27,7 +26,7 @@ gulp-bundle-wrangler (Beta)
 	- [X] - ~~~The `deploy` task via the watch task should only deploy changed file types not everything for
 	 a bundle (takes to long for bigger bundles definitions).~~~  The previous was changed to only deploy the
 	 artifact files and specified `deploy.otherFiles` files.
-- [ ] General:
+- [X] General:
   - [X] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run
   (should happen from inside Wrangler.js for all tasks (if any configs present)).
   - [X] - ~~Make `Wrangler` constructor `Optionable`.~~  No longer necessary.
@@ -55,6 +54,9 @@ gulp-bundle-wrangler (Beta)
     - [X] - config
     - [X] - bundle-config
     - [X] - deploy-config
+- [ ] - Task Updates:
+    - [ ] - Deploy task should be able to take a parameter to only deploy certain file types;
+            E.g., `--file-types=css,js` or `-ft=css,js` or `--ext=js,css` ?
 - [ ] - Tasks
 	- [ ] - browserify
 	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
@@ -86,12 +88,15 @@ gulp-bundle-wrangler (Beta)
     - [X] - mocha
     - [X] - requirejs
     - [X] - watch
-    - [ ] - prompt:*
-  - [ ] - Cleanup callback hell from deploy task.
+    - [X] - ~~prompt:*~~ This task became the ones below
+    - [X] - bundle-config
+    - [X] - deploy-config
+    - [X] - config
+  - [ ] - Cleanup callbacks ~~hell~~ within deploy task to only go one level deep (inline) (will make code easier to read).
   - [X] - Change `prompt` to `config`. (`prompt` still exists.  Will be removed in a later version)
   - [ ] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
   - [ ] - Add notes for ~~'prompt:config'~~ 'config' task.
-  - [ ] - Supply example bundle config file with all sections listed in it.
+  - [X] - Supply example bundle config file with all sections listed in it.
 
 ### Todos Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).

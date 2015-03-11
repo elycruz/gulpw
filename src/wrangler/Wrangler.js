@@ -22,8 +22,7 @@ var fs = require('fs'),
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var self = this,
-        defaultOptions = self.loadConfigFile(path.join(__dirname, '/../../configs/default.wrangler.config.yaml')),
-        taskProxyMap = self.loadConfigFile(path.join(__dirname, '/../../configs/default.task.proxy.map.yaml'));
+        defaultOptions = self.loadConfigFile(path.join(__dirname, '/../../configs/default.wrangler.config.yaml'));
 
         log = self.log;
 
@@ -31,7 +30,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         bundles: {},
         cwd: env.configBase,
         argv: argv,
-        taskProxyMap: taskProxyMap,
         tasks: {},
         taskKeys: [],
         staticTasks: {},
@@ -144,12 +142,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.log(' - Creating task proxy \"' + task + '\'.');
 
         var self = this,
-            src = self.taskProxyMap[task].constructorLocation,
+            src = self.tasks[task].constructorLocation,
             TaskProxyClass = require(path.join(__dirname, '../', src)),
             options = self.tasks[task];
 
         options.alias = task;
-        options.help = self.taskProxyMap.help;
+        options.help = self.tasks[task].help;
 
         return new TaskProxyClass(options, gulp, this);
     },
@@ -159,12 +157,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.log(chalk.cyan('\n- Creating static task proxy \"' + task + '\'.'));
 
         var self = this,
-            src = self.taskProxyMap[task].constructorLocation,
+            src = self.tasks[task].constructorLocation,
             TaskProxyClass = require(path.join(__dirname, src));
 
         TaskProxyClass = new TaskProxyClass({
             name: task,
-            help: self.taskProxyMap.help
+            help: self.tasks[task].help
         });
 
         TaskProxyClass.registerStaticTasks(gulp, self);
