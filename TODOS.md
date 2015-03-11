@@ -105,9 +105,9 @@ gulp-bundle-wrangler (Beta)
 - [ ] - Page bundles should compile all artifacts from the 'included' bundles into it's own artifact(s) (in the order the bundles are listed).
 - [ ] - Page bundles should be able to have a `siblings` attribute which allows tasks called on page bundles themselves to also be called on it's 'sibling' bundles.
 - [ ] - All tasks called page bundle siblings should happen before page bundle tasks are called.
+- [ ] - Allow logging of runtime logs to a file via a parameter '--log' or '--l'
 - [ ] - Tasks
     - [ ] - Watch, Deploy, Build and other tasks should also take advantage of a file type parameter;
             E.g., `--ext=js,css` etc. the parameter should limit the task(s) scope
 	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
     - [ ] - vulcanize (for polymer build tool)
-
