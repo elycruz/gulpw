@@ -189,7 +189,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             srcs = {},
             deployOptions = wrangler.tasks.deploy,
             allowedFileTypes = deployOptions.allowedFileTypes,
-            deployUsingUnixStylePaths = deployOptions.deployUsingUnixStylePaths,
             selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
             deployRootFolder = selectedServerEntry.deployRootFolder;
 
@@ -219,9 +218,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                 }
 
                 // Check if we need unix styled paths and are on windows
-                if (deployUsingUnixStylePaths && ((os.type()).toLowerCase()).indexOf('windows') > -1) {
-                    deployPath = deployPath.replace(/\\/g, '/');
-                }
+                deployPath = self._ensureDeployPathByOs(deployPath);
 
                 // Push array map entry
                 srcs[fileType].push([localPath, deployPath]);
@@ -262,9 +259,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             }
 
             // Check if we need unix styled paths and are on windows
-            if (wrangler.tasks.deploy.deployUsingUnixStylePaths && ((os.type()).toLowerCase()).indexOf('windows') > -1) {
-                retVal[1] = retVal[1].replace(/\\/g, '/');
-            }
+            retVal[1] = self._ensureDeployPathByOs(retVal[1]);
 
             // Normalize path
             retVal[0] = path.normalize(retVal[0]);
@@ -279,6 +274,14 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             bundle.has('files')
             || (bundle.has('requirejs') || bundle.has('browserify'))
             || bundle.has('deploy.otherFiles') );
+    },
+
+    _ensureDeployPathByOs: function (value) {
+        value = value || '';
+        if (this.wrangler.tasks.deploy.deployUsingUnixStylePaths && ((os.type()).toLowerCase()).indexOf('windows') > -1) {
+            value = value.replace(/\\/g, '/');
+        }
+        return value;
     },
 
     _mergeLocalConfigs: function () {

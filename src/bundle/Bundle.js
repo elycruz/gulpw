@@ -11,7 +11,6 @@ require('sjljs');
  * @param options {Object} - Required
  * @constructor
  */
-
 module.exports = sjl.Optionable.extend(function Bundle(options) {
         var self = this;
 

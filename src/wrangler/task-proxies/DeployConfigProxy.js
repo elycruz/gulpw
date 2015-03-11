@@ -172,8 +172,7 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
                         path.join(process.cwd(), wrangler.localConfigPath));
 
                     newFilePath = path.join(process.cwd(),
-                        wrangler.localConfigPath,
-                        wrangler.tasks.deploy.localDeployFileName);
+                        wrangler.localConfigPath, 'deploy' + '.' + wrangler.bundleConfigFormat);
 
                     // Write local deploy config file
                     fs.writeFileSync(newFilePath,
@@ -182,6 +181,8 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
                     // 'Completion' message
                     console.log(chalk.cyan('`deploy-config` complete.  ' +
                         'A deployment configuration file has been wrritten to "' + newFilePath + '"'));
+
+                    fulfill();
 
                 }); // end of inquiry
 

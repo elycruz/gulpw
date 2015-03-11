@@ -103,10 +103,12 @@ tasks:
     # Should files be linted before deploy
     lintBeforeDeploy: false
 
+    # Whether to deploy files using unix paths (useful if you're on Windows and need to deploy to a *nix type server)
     deployUsingUnixStylePaths: true
 
     # Options written by `gulpw deploy-config`
     developingDomain: null
+    hostnamePrefixFolder: null
     hostnamePrefix: null
     hostname: null
     port: 22
@@ -159,15 +161,9 @@ tasks:
 #          #web2: website2
 #          #web3: website3
 #
-#        # Host name prefix folder (determined by `gulpw deploy-config`) can be set to a default though.
-#        hostnamePrefixFolder: null
-#
 #        # Root folder on the server to use for deployments (used as a prefix path for file paths being deployed)
 #        # example: sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
 #        deployRootFolder: null
-#
-#        # Use deploy root folders by file type
-#        useDeployRootFoldersByFileType: false,
 #
 #        # Deploy roots by file types;  E.g., File types can have different deploy roots or can be deployed to
 #        # any directory within the remote server's file system via this hash map.
