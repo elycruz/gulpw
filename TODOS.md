@@ -100,7 +100,7 @@ gulp-bundle-wrangler (Beta)
   - [ ] - Updated the example bundle config file with latest additions/changes (add more notes for it).
   - [ ] - Add LICENSE file.
 
-### Todos Version 0.3.0
+### Todos for Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).
 - [ ] - Page bundles should compile all artifacts from the 'included' bundles into it's own artifact(s) (in the order the bundles are listed).
 - [ ] - Page bundles should be able to have a `siblings` attribute which allows tasks called on page bundles themselves to also be called on it's 'sibling' bundles.
@@ -111,3 +111,7 @@ gulp-bundle-wrangler (Beta)
             E.g., `--ext=js,css` etc. the parameter should limit the task(s) scope
 	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
     - [ ] - vulcanize (for polymer build tool)
+
+### Todos for Version 0.4.0
+- [ ] - Move all utility styled functions from `Wrangler` into a utils class/namespace etc..
+
