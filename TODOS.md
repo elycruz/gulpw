@@ -59,19 +59,19 @@ gulp-bundle-wrangler (Beta)
             E.g., `--file-types=css,js` or `-ft=css,js` or `--ext=js,css` ?
 - [ ] - Tasks
 	- [ ] - browserify
-	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
-	- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
-	- [ ] - vulcanize (for polymer build tool)
+    - [X] - ~~develop - Task for launching browser with specified path and launching watch task for specified bundle.~~ Moved to version 0.3.0.
+    - [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
+    - [X] - ~~vulcanize (for polymer build tool)~~ Moved to version 0.3.0.
   	- [X] - ~~prompt:config Generates a 'bundle.wrangler.config.*' file.~~ ~~For generating default config.~~  Taken care of by `config` task (see above 'Static Tasks').
-- For `Bundle`:
-	- [ ] - The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files
+- [X] - ~~For `Bundle`~~ Moving to version 0.3.0:
+	- [X] - ~~The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
-	  changed.
+	  changed.~~
 - General:
   - [ ] - Prettify console output in all tasks, and make all output follow a similar structure.
   - [ ] - Clean up notes for deploy task.
   - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
-  up deploy task to take this into account)
+            up deploy task to take this into account)
   - [X] - ~~Fix all non streaming tasks to return streams or promises so that other tasks can list them as dependencies.~~ Taken care of below.
   - [X] - Make sure all tasks return promises or a stream:
     - [X] - all
@@ -97,9 +97,17 @@ gulp-bundle-wrangler (Beta)
   - [ ] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
   - [ ] - Add notes for ~~'prompt:config'~~ 'config' task.
   - [X] - Supply example bundle config file with all sections listed in it.
+  - [ ] - Updated the example bundle config file with latest additions/changes (add more notes for it).
+  - [ ] - Add LICENSE file.
 
 ### Todos Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).
 - [ ] - Page bundles should compile all artifacts from the 'included' bundles into it's own artifact(s) (in the order the bundles are listed).
 - [ ] - Page bundles should be able to have a `siblings` attribute which allows tasks called on page bundles themselves to also be called on it's 'sibling' bundles.
 - [ ] - All tasks called page bundle siblings should happen before page bundle tasks are called.
+- [ ] - Tasks
+    - [ ] - Watch, Deploy, Build and other tasks should also take advantage of a file type parameter;
+            E.g., `--ext=js,css` etc. the parameter should limit the task(s) scope
+	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
+    - [ ] - vulcanize (for polymer build tool)
+
