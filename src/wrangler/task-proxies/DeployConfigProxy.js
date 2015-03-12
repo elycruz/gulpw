@@ -1,9 +1,6 @@
 /**
  * Created by Ely on 1/15/2015.
  */
-/**
- * Created by edelacruz on 11/19/2014.
- */
 
 'use strict';
 
@@ -56,23 +53,12 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
                 message: 'Which host prefix would you like to use?',
                 choices: domainToDevelop.hostnamePrefixes,
                 when: function (answers) {
-                    return domainToDevelopKey === answers.developingDomain;
+                    return domainToDevelopKey === answers.developingDomain
+                        && Array.isArray(domainToDevelop.hostnamePrefixes)
+                        && domainToDevelop.hostnamePrefixes.length > 0;
                 }
             });
 
-            //questions.push({
-            //    name: 'hostnamePrefixFolder',
-            //    type: 'list',
-            //    message: 'Which host prefix folder would you like to use?',
-            //    choices: (function () {
-            //        return Object.keys(domainToDevelop.hostnamePrefixFolders).map(function (key) {
-            //            return domainToDevelop.hostnamePrefixFolders[key];
-            //        });
-            //    }),
-            //    when: function (answers) {
-            //        return domainToDevelopKey === answers.developingDomain && !sjl.empty(domainToDevelop.hostnamePrefixFolders);
-            //    }
-            //});
         });
 
         questions.push({
@@ -143,9 +129,10 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
             return (new Promise(function (fulfill, reject) {
                 inquirer.prompt(questions, function (answers) {
                     var developingDomain = answers.developingDomain || null,
-                        hostnamePrefixFolders = developingDomain ? developingDomain.hostnamePrefixFolders : null,
-                        hostnamePrefixFolder = null,
-                        hostnamePrefix = answers.hostnamePrefix || null,
+                        domainToDevelop = domainsToDevelop[developingDomain],
+                        hostnamePrefixFolders = developingDomain ? domainToDevelop.hostnamePrefixFolders : null,
+                        hostnamePrefixFolder = domainToDevelop.hostnamePrefixFolder || '',
+                        hostnamePrefix = answers.hostnamePrefix || '',
                         outFileTemplate,
                         newFilePath;
 
@@ -156,9 +143,9 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
 
                     // Set out file template
                     outFileTemplate = {
-                        developingDomain: developingDomain || null,
-                        hostnamePrefixFolder: hostnamePrefixFolder || null,
-                        hostnamePrefix: hostnamePrefix || null,
+                        developingDomain: developingDomain,
+                        hostnamePrefixFolder: hostnamePrefixFolder,
+                        hostnamePrefix: hostnamePrefix,
                         hostname: answers.hostname || null,
                         port: answers.port || null,
                         username: answers.username || null,
@@ -172,11 +159,10 @@ module.exports = WranglerTaskProxy.extend(function DeployConfigProxy (options) {
                         path.join(process.cwd(), wrangler.localConfigPath));
 
                     newFilePath = path.join(process.cwd(),
-                        wrangler.localConfigPath, 'deploy' + '.' + wrangler.bundleConfigFormat);
+                        wrangler.localConfigPath, 'deploy.yaml');
 
                     // Write local deploy config file
-                    fs.writeFileSync(newFilePath,
-                        yaml.safeDump(outFileTemplate) );
+                    fs.writeFileSync(newFilePath, yaml.safeDump(outFileTemplate));
 
                     // 'Completion' message
                     console.log(chalk.cyan('`deploy-config` complete.  ' +
