@@ -11,7 +11,7 @@ So the idea is as follows:
   We have a `gulp-bundles` directory (could be named anything via the `{bundle-wrangler}-config*` file).
 That directory should contain "bundle-configuration" files which are used within "task proxies" to run a
  task via the command line;  E.g., `$ gulpw build:global deploy:global deploy:other-bundle`.
- The configuration files will then hold the user's configurations in the yaml or json format.
+ The configuration files will then hold the user's configurations in the *.yaml, ~~or~~ *.json, or *.js format.
 
 ## Quick Nav
 - [Install](#install)
@@ -19,6 +19,9 @@ That directory should contain "bundle-configuration" files which are used within
 - [Bundle config](#bundle-config)
 - [Running tasks](#running-tasks)
 - [Available tasks](#available-tasks)
+- [Caveats](#caveats)
+- [Resources](#resources)
+- [Available flags](#available-flags)
 - [Todos](https://github.com/elycruz/gulpw/blob/master/TODOS.md)
 
 ### Install
@@ -27,14 +30,20 @@ locally  from project root `npm install elycruz/gulpw`.
 
 ### Setup
 1. Create your project's bundle configs folder;  E.g., './bundle-configs' etc.
-2. Create your project's `bundle.wrangler.config*` file.  Run `gulpw config` after installing `gulpw`.
+2. Create your project's `bundle.wrangler.config*` file.  Then run `gulpw config` to populate the file.
 3. Tell your `bundle.wrangler.config*` file where your bundle configs folder is:
-Set `bundlesPath` to your bundles config path.
+4. Set `bundlesPath` to your bundles config path within your bundle.
+5. Configure your tasks within your `bundle.wrangler.config*` file.
+6. Execute `gulpw deploy-config` to configure servers to deploy your work to (this step is not currently optional).
+7. Reap the benefits of using such a powerful tool.
 
 ### Bundle config
-A bundle config is made typically of a yaml or json file with one or more properties listed in it.
-A bundle config only requires an `alias` property to be a valid bundle config file.
-A bundle config file can have many sections representing and used by tasks.
+A bundle config:
+- is made typically of a yaml, ~~or~~ json, or javascriplt file with one or more properties listed in it.
+- only requires an `alias` property to be a valid bundle config file.
+- can have many sections used by tasks.
+- can be creaated by calling `gulpw bundle-config`.  Note this task will not overwrite existing bundles but will let
+you know when they already exists.
 
 #####Valid Bundle Config file:
 ```
@@ -50,7 +59,7 @@ files:
   js:
     - some/file/path.js
     - some/other/file/path.js
-	css:
+  css:
     - some/other/file/path1.css
     - some/other/file/path2.css
 requirejs:
@@ -64,8 +73,8 @@ Also when running `gulpw config` you will be asked about the tasks you want to i
 then be included in your bundle file consequently depending on your answers.
 
 ### Running tasks
-`gulpw {task-name}:{bundle-name}` for one bundle
-`gulpw {task-name}` for all bundles
+- `gulpw {task-name}:{bundle-name}` to run task for one bundle.
+- `gulpw {task-name}` to run tasks for all bundles.
 
 where `{task-alias}` is the task you want to run ('build', 'minify' etc.)
 and `{bundle-alias}` is the bundle you want to run the task for (for './bundle-configs/hello-world.yaml'
@@ -89,8 +98,6 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [deploy-config](#deployconfig)
 - [jshint](#jshint)
 - [minify](#minify)
-- ~~[template](#template)~~ This is part of the minify task.
-- [prompt:deploy](#promptdeploy)
 - [requirejs](#requirejs)
 - [watch](#watch)
 - [mocha](#mocha)
@@ -160,9 +167,6 @@ The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if 
  example a `js`, `css`, or `html` section(s).
 *See the ['minify'](#minify) section for more info on the possible sections supported by the `files` section.
 
-#####Usage:
-`gulpw clean:{bundle-name}` or for all bundles `gulpw clean`
-
 #####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
@@ -204,9 +208,6 @@ Linting/hinting can be skipped by passing anyone of the following flags:
 - `--skip-hinting`
 
 Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint`.
-
-#####Usage:
-`gulpw concat:{bundle-name}` or for all bundles `gulpw build`
 
 #####In 'bundle.wrangler.config.yaml':
 ```
@@ -255,9 +256,6 @@ tasks:
 ### compass
 The 'compass' task calls compass compile at compass project root location (config.rb home).
 
-#####Usage:
-`gulpw compass:{bundle-name}` or `gulpw compass`
-
 #####Global config:
 ```
 tasks:
@@ -277,18 +275,12 @@ copy:
 
 'copy' copies the 'key' to the 'value' location for every entry in the `files` hash.
 
-#####Usage:
-`gulpw copy:{bundle-name}` or for all bundles `gulpw copy`.
-
 #####Global config:
 none.
 
 ### csslint
 The 'csslint' task runs csslint on a bundle or all bundles using the listed '.csslintrc' file or runs with
  default options if no '.csslintrc' file is listed.
-
-#####Usage:
-`gulpw csslint:{bundle-name}` or for all bundles `gulpw csslint`
 
 #####In 'bundle.wrangler.config.yaml':
 ```
@@ -302,9 +294,6 @@ tasks:
 ### deploy
 Deploy's files using deploy section in 'bundle.wrangler.config.yaml' and deploy configuration generated by
 'prompt:deploy' task.  See notes in config section below.
-
-#####Usage:
-`gulpw deploy:{bundle-name}` or for all bundles `gulpw deploy`
 
 #####In 'bundle.wrangler.config.yaml':
 ```
@@ -401,9 +390,6 @@ tasks:
 JsHint task.  If `jshintrc` is specified those options are used instead (maybe we'll merge these options
  in the future?).
 
-#####Usage:
-`gulpw jshint:{bundle-name}` or for all bundles `gulpw jshint`
-
 #####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
@@ -451,9 +437,6 @@ Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint
 Development mode:
 `--dev` - Skips minification for all *.css, *.js, and *.html files.
 
-#####Usage:
-`gulpw minify:{bundle-name}` or for all bundles `gulpw minify`
-
 #####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
@@ -492,9 +475,6 @@ Launches an interactive questionnaire for generating a local 'deploy.yaml' file 
 ****Note**** File is put in the directory specified by `localConfigPath` of the
  'bundle.wrangler.config.yaml' file or the default is used ('./.gulpw').
 
-#####Usage:
-`gulpw prompt:deploy`
-
 #####In 'bundle.wrangler.config.yaml':
 No bundle.wrangler.config section at this time.
 
@@ -503,9 +483,6 @@ list the file name to use when generating a local deploy options file.
 
 ### requirejs
 RequireJs task.
-
-#####Usage:
-`gulpw requirejs:{bundle-name}` or for all bundles `gulpw requirejs`
 
 #####In 'bundle.wrangler.config.yaml':
 ```
@@ -520,9 +497,6 @@ tasks:
 
 ### watch
 Watch task.
-
-#####Usage:
-`gulpw watch:{bundle-name}` or for all bundles `gulpw watch`
 
 #####In 'bundle.wrangler.config.yaml':
 ```
@@ -557,9 +531,6 @@ Mocha tests task runs the mocha module on your test 'files' array or string usin
   - `--skip-mocha-tests`
   - `--skip-mocha-testing`
 
-#####Usage:
-`gulpw mocha:{bundle-name}` or for all bundles `gulpw mocha`
-
 #####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
@@ -583,9 +554,6 @@ Jasmine tests task runs the jasmine module on your test 'files' array or string 
   - `--skip-jasmine-tests`
   - `--skip-jasmine-testing`
 
-#####Usage:
-`gulpw jasmine:{bundle-name}` or for all bundles `gulpw jasmine`
-
 #####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
@@ -597,8 +565,20 @@ tasks:
     options: null # - {Object} - Options if any.  Default `null`
 ```
 
-### ~~Notes~~ Caveats:
+### Available Flags:
+**A Note on using flags:**
+- **`--file-types`:**  Used to pass a comma separated list of file extensions to your tasks.
+    - **Affected tasks:**
+        - `deploy` - Uses `--file-types` string to only deploy files of the types you passed in via `--file-types` or one of it's aliases.
+    - **Aliases:** `--ext`
+- **`--debug`:** Used for developing gulpw and allows you to keep your more pertinent debug logging declarations.
+    - **Aliases:** `-d`
+- **`--skip-tests`:**
+    - **Aliases:** `--no-tests`, `--skip-testing`
+- **`--verbose`:**
+    - **Aliases:** `-v`
 
+### Caveats:
 - ~~Be able to pass in multiple flags from the command line (some with values some without values).  Running
  multiple tasks and passing in multiple flags and flags with values are allowed  (flags and values need to
   be passed in last for this to work (cli doesn't differentiate between task names and param/flag values));
@@ -609,7 +589,6 @@ tasks:
  watch tasks;  I.e., `gulpw watch`
 
 ### Resources
-
 - [Initial UML Diagram](http://www.gliffy.com/go/publish/6312461) (http://www.gliffy.com/go/publish/6312461) (original design has diverged a bit from original diagram).
 - [gulp site](http://gulpjs.com/) (http://gulpjs.com/)
 - [gulp docs](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md) (https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md)

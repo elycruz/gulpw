@@ -54,8 +54,8 @@ gulp-bundle-wrangler (Beta)
     - [X] - config
     - [X] - bundle-config
     - [X] - deploy-config
-- [ ] - Task Updates:
-    - [ ] - Deploy task should be able to take a parameter to only deploy certain file types;
+- [X] - Task Updates:
+    - [X] - Deploy task should be able to take a parameter to only deploy certain file types;
             E.g., `--file-types=css,js` or `-ft=css,js` or `--ext=js,css` ?
 - [ ] - Tasks
 	- [ ] - browserify
@@ -70,7 +70,7 @@ gulp-bundle-wrangler (Beta)
 - General:
   - [ ] - Prettify console output in all tasks, and make all output follow a similar structure.
   - [ ] - Clean up notes for deploy task.
-  - [ ] - Make 'prompt:deploy' more robust by making some of the config parameters optional (also doctor
+  - [X] - Make ~~'prompt:deploy'~~ `deploy-config` more robust by making some of the config parameters optional (also doctor
             up deploy task to take this into account)
   - [X] - ~~Fix all non streaming tasks to return streams or promises so that other tasks can list them as dependencies.~~ Taken care of below.
   - [X] - Make sure all tasks return promises or a stream:
@@ -95,10 +95,11 @@ gulp-bundle-wrangler (Beta)
   - [ ] - Cleanup callbacks ~~hell~~ within deploy task to only go one level deep (inline) (will make code easier to read).
   - [X] - Change `prompt` to `config`. (`prompt` still exists.  Will be removed in a later version)
   - [ ] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
-  - [ ] - Add notes for ~~'prompt:config'~~ 'config' task.
+  - [ ] - Add notes for ~~'prompt:config'~~ `config` task.
   - [X] - Supply example bundle config file with all sections listed in it.
-  - [ ] - Updated the example bundle config file with latest additions/changes (add more notes for it).
-  - [ ] - Add LICENSE file.
+  - [ ] - Add all available flags to main readme.md.
+  - [ ] - Update the example bundle config file with latest additions/changes (add more notes for it).
+  - [X] - Add LICENSE file.
 
 ### Todos for Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).
@@ -113,5 +114,5 @@ gulp-bundle-wrangler (Beta)
     - [ ] - vulcanize (for polymer build tool)
 
 ### Todos for Version 0.4.0
-- [ ] - Move all utility styled functions from `Wrangler` into a utils class/namespace etc..
+- [ ] - Move all utility styled functions from `Wrangler` into a utils class/namespace etc.. (?)
 
