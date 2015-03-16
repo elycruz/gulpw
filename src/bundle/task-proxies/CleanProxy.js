@@ -13,7 +13,7 @@ var path = require('path'),
     TaskProxy = require('../TaskProxy.js');
 
 module.exports = TaskProxy.extend(function CleanProxy (options) {
-        TaskProxy.call(this, sjl.extend({name: 'clean'}, options));
+        TaskProxy.call(this, sjl.extend({alias: 'clean'}, options));
     }, {
 
         /**
@@ -90,8 +90,12 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                 if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                     // Get file path for `key` in `files`
-                    singularTaskTargets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
-                    singularTaskTargets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
+                    if (wrangler.tasks.concat[ext + 'BuildPath']) {
+                        singularTaskTargets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
+                    }
+                    if (wrangler.tasks.minify[ext + 'BuildPath']) {
+                        singularTaskTargets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
+                    }
 
                     // Pass off the `filePath` to `targets` for later use
                     targets = targets.concat(singularTaskTargets);
@@ -140,8 +144,12 @@ module.exports = TaskProxy.extend(function CleanProxy (options) {
                     if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                         // Get file path for `key` in `files`
-                        targets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
-                        targets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
+                        if (wrangler.tasks.concat[ext + 'BuildPath']) {
+                            targets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
+                        }
+                        if (wrangler.tasks.minify[ext + 'BuildPath']) {
+                            targets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
+                        }
                     }
 
                     // If requirejs config is availble

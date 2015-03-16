@@ -95,7 +95,6 @@ tasks:
     constructorLocation: ./bundle/task-proxies/CopyProxy
     help: ""
 
-
   csslint:
     constructorLocation: ./bundle/task-proxies/CssLintProxy
     csslintrc: null
@@ -166,8 +165,10 @@ tasks:
 #          #web2: website2
 #          #web3: website3
 #
+#        # @note deployRoot quirk/caveat: All paths for deployRootFolder and it's file type variant must use absolute paths
+#
 #        # Root folder on the server to use for deployments (used as a prefix path for file paths being deployed)
-#        # example: sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
+#        # example: /home/some-user/sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
 #        deployRootFolder: null
 #
 #        # Deploy roots by file types;  E.g., File types can have different deploy roots or can be deployed to

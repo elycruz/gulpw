@@ -15,7 +15,8 @@ var TaskProxy = require('../TaskProxy'),
     ssh = require('ssh2'),
     chalk = require('chalk'),
     yaml = require('js-yaml'),
-    lodash = require('lodash');
+    lodash = require('lodash'),
+    glob = require('glob');
 
 module.exports = TaskProxy.extend(function DeployProxy (config) {
     TaskProxy.apply(this, arguments);
@@ -65,11 +66,9 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
 
                     wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
 
-                    // Make sure directories exist
-
                     conn.sftp(function (err, sftp) {
 
-                        if (err) { console.log(err); }
+                        if (err) { console.log(chalk.red(' An `ssh2.sftp` error has been encountered:  ' + err), '--mandatory'); }
 
                         var target;
 
@@ -85,25 +84,29 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                             target.forEach(function (item) {
 
                                 // Make sure directories exist before trying to put files to them
-                                conn.exec('mkdir -p ' + path.dirname(item[1]), function (err2, stream) {
+                                self._ensurePathExistsOnServer(sftp, path.dirname(item[1]));
 
-                                    // If error
-                                    if (err) {
-                                        wrangler.log('', err2, '--debug');
-                                    }
+                                // Put file to server
+                                sftp.fastPut(item[0], item[1], function (err3) {
+                                        // File Put state
+                                        var stateColor = 'green',
 
-                                    // Put file to server
-                                    sftp.fastPut(item[0], item[1],
+                                            // An 'X' or a check mark depending on if there was an error uploading the file or not
+                                            stateGlyph = sjl.empty(err3) ? chalk.green(' ' + String.fromCharCode(8730)) : chalk.red('X');
 
-                                        // Callback
-                                        function (err3) {
-                                            wrangler.log(chalk.green(' ' + String.fromCharCode(8730)), item[0], '--mandatory');
-                                            wrangler.log(chalk.green(' => ', item[1]));
-                                            if (err3) { console.log(err3); }
-                                            uploadedFileCount += 1;
-                                        });
+                                        // Show file to be uploaded with state color (passed => green, failed => red
+                                        wrangler.log(stateGlyph, item[0], '--mandatory');
+
+                                        // If there was an error uploading the file show it
+                                        if (err3) { stateColor = 'red'; wrangler.log(
+                                            chalk.red(' An `ssh2.sftp.fastPut` error has occurred:  ' + err3), '--mandatory'); }
+
+                                        // Show the location the file was uploaded to if in `--verbose` mode
+                                        wrangler.log(chalk[stateColor](' => ', item[1]));
+
+                                        // Keep count of the number of files uploaded so far for this session
+                                        uploadedFileCount += 1;
                                 });
-
                             });
 
                         }); // end of files loop
@@ -132,7 +135,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                         }, 500);
 
                     });
-
                 })
                     .on('close', function (hadError) {
 
@@ -140,6 +142,10 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                         if (hadError) {
                             reject('Connection closed due to an unknown error.  Error received: ' + (sjl.classOfIs(hadError, 'String') ? hadError : ''));
                             wrangler.log('\n Connection closed due to an unknown error.', '--mandatory');
+                        }
+                        else {
+                            reject('Connection closed.');
+                            wrangler.log('\n Connection closed.', '--mandatory');
                         }
                     })
                     .connect(sshOptions);
@@ -209,7 +215,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             }
 
             // Check if bundle has files [js, css, allowed file types etc.]
-            if (hasFilesFileType) {
+            if (hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildPath']) {
 
                 // Initialize storage array
                 srcs[fileType] = [];
@@ -264,9 +270,23 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
     },
 
     mapFileArrayToDeployArrayMap: function (fileArray, fileType, selectedServerEntry, wrangler) {
-        var self = this;
-        return Array.isArray(fileArray) ? fileArray.map(function (item) {
+        var self = this, otherFiles = [];
+
+        fileArray = Array.isArray(fileArray) ? fileArray : [];
+
+        fileArray = fileArray.filter(function (item) {
+            if (glob.hasMagic(item)) {
+                otherFiles = otherFiles.concat(glob.sync(item));
+                return false;
+            }
+            else {
+                return true;
+            }
+        });
+
+        return fileArray.concat(otherFiles).map(function (item) {
             var retVal;
+
             if (self._serverEntryHasDeployFolderType(selectedServerEntry, fileType)) {
                 retVal = [item, path.join(selectedServerEntry.deployRootFoldersByFileType[fileType], item)];
             }
@@ -282,7 +302,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
 
             return retVal;
 
-        }) : [];
+        });
     },
 
     isBundleValidForTask: function (bundle) {
@@ -298,6 +318,40 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             value = value.replace(/\\/g, '/');
         }
         return value;
+    },
+
+    _ensurePathExistsOnServer: function (sftp, filePath) {
+        var self = this,
+            usingUnixPaths = self.wrangler.tasks.deploy.deployUsingUnixStylePaths,
+            separator = usingUnixPaths ? '/' : '\\',
+            pathParts = filePath.split(usingUnixPaths ? '/' : '\\'),
+            currPath = '';
+
+        // Remove empty parts
+        pathParts.forEach(function (part, i, arr) {
+            if (part.length === 0) {
+                arr[i] = null;
+                delete arr[i];
+            }
+        });
+
+        // Log debug message
+        self.wrangler.log(chalk.grey('Ensuring paths exists for "' + filePath + '"'), '--debug');
+
+        pathParts.forEach(function (part) {
+            currPath +=  separator + part;
+
+            // Make sure directories exist before trying to put files to them
+            sftp.mkdir(currPath, function (err2) {
+                // If error do nothing since `mkdir` will complain about directory if it already
+                // exists (we just want to ensure that the path already exists before trying to upload the file)
+                //if (err2) {
+                //wrangler.log(chalk.red(' An `mkdir -p` error has occurred:  ' + err2, path.dirname(item[1])));
+                //}
+            });
+        });
+
+        return sftp;
     },
 
     _mergeLocalConfigs: function () {
