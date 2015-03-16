@@ -92,9 +92,9 @@ gulp-bundle-wrangler (Beta)
     - [X] - bundle-config
     - [X] - deploy-config
     - [X] - config
-  - [ ] - Cleanup callbacks ~~hell~~ within deploy task to only go one level deep (inline) (will make code easier to read).
+  - [x] - Cleanup callbacks ~~hell~~ within deploy task to only go one level deep (inline) (will make code easier to read).
   - [X] - Change `prompt` to `config`. (`prompt` still exists.  Will be removed in a later version)
-  - [ ] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
+  - [X] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
   - [ ] - Add notes for ~~'prompt:config'~~ `config` task.
   - [X] - Supply example bundle config file with all sections listed in it.
   - [ ] - Add all available flags to main readme.md.
