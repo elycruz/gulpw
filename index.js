@@ -7,9 +7,23 @@ require('sjljs');
 
 var Liftoff = require('liftoff'),
     argv = require('yargs')
-        .default('file-types', null)
-        .alias('d',     'debug')
+        .alias('d',     'dev')
         .alias('v',     'verbose')
+        .alias('skip-css-hint',     'skip-css-linting')
+        .alias('skip-css-lint',     'skip-css-linting')
+        .alias('skip-css-hinting',  'skip-css-linting')
+        .alias('skip-js-hint',      'skip-js-linting')
+        .alias('skip-js-lint',      'skip-js-linting')
+        .alias('skip-js-hinting',   'skip-js-linting')
+        .alias('skip-hinting',  'skip-linting')
+        .alias('skip-hint',     'skip-linting')
+        .alias('skip-lint',     'skip-linting')
+        .alias('skip-jasmine-testing',  'skip-jasmine-tests')
+        .alias('skip-mocha-testing',  'skip-mocha-tests')
+        .alias('skip-testing',  'skip-tests')
+        .alias('no-tests',      'skip-tests')
+        .alias('t',     'file-types')
+        .alias('x',     'file-types')
         .alias('ext',   'file-types')
         .argv,
     gulp = require('gulp'),

@@ -393,41 +393,27 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     skipTesting: function () {
-        var self = this;
-        return (self.argv['skip-tests']
-            || self.argv['skip-testing']) || false;
+        return this.argv.skipTests;
     },
 
     skipMochaTesting: function () {
-        var self = this;
-        return (self.argv['skip-mocha-tests']
-            || self.argv['skip-mocha-testing']) || false;
+        return this.argv.skipMochaTests;
     },
 
     skipJasmineTesting: function () {
-        var self = this;
-        return (self.argv['skip-jasmine-tests']
-            || self.argv['skip-jasmine-testing']) || false;
+        return this.argv.skipJasmineTests;
     },
 
     skipLinting: function () {
-        var self = this;
-        return (self.argv['skip-lint']
-            || self.argv['skip-linting']
-            || self.argv['skip-hint']
-            || self.argv['skip-hinting']) || false;
+        return this.argv.skipLinting;
     },
 
     skipCssLinting: function () {
-        var self = this;
-        return (self.argv['skip-csslint']
-            || self.argv['skip-csslinting']) || false;
+        return this.argv.skipCsslinting;
     },
 
     skipJsLinting: function () {
-        var self = this;
-        return (self.argv['skip-jslint']
-            || self.argv['skip-jslinting']) || false;
+        return this.argv.skipJsLinting;
     },
 
     clone: function (obj) {
@@ -531,5 +517,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             this.argvFileTypes = this.argv.fileTypes ? this.argv.fileTypes.split(',') : [];
         }
         return this.argvFileTypes;
+    },
+
+    hasArgvFileTypes: function () {
+        return !sjl.empty(this.getArgvFileTypes());
     }
 });

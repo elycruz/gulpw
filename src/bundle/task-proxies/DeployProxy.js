@@ -60,11 +60,11 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
 
                 startTime = new Date();
 
-                wrangler.log('\n DeployProxy -> targets\n', targets, '--debug');
+                wrangler.log('\n DeployProxy -> targets\n', '--debug');
 
                 conn.on('ready', function () {
 
-                    wrangler.log(chalk.dim('\n Connected to ' + host), '--mandatory');
+                    wrangler.log(chalk.grey('\n Connected to ' + host + '\n'), '--mandatory');
 
                     conn.sftp(function (err, sftp) {
 
@@ -118,15 +118,15 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                                 wrangler.log(chalk.cyan('\n File deployment complete.'),
                                     chalk.grey('\n\n Closing connection...'));
 
-                                // Log task completion
-                                wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
-                                chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
-
                                 gulp.tasks[taskName].done = true;
 
                                 conn.end();
 
-                                wrangler.log('Connection closed.', '--mandatory');
+                                wrangler.log(chalk.grey('\n Connection closed.'), '--mandatory');
+
+                                // Log task completion
+                                wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
+                                chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
 
                                 fulfill();
 
@@ -142,10 +142,6 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                         if (hadError) {
                             reject('Connection closed due to an unknown error.  Error received: ' + (sjl.classOfIs(hadError, 'String') ? hadError : ''));
                             wrangler.log('\n Connection closed due to an unknown error.', '--mandatory');
-                        }
-                        else {
-                            reject('Connection closed.');
-                            wrangler.log('\n Connection closed.', '--mandatory');
                         }
                     })
                     .connect(sshOptions);
@@ -198,7 +194,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
             deployRootFolder = selectedServerEntry.deployRootFolder,
             argvFileTypes = wrangler.getArgvFileTypes(),
-            hasArgvFileTypes = !sjl.empty(argvFileTypes);
+            hasArgvFileTypes = wrangler.hasArgvFileTypes();
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -215,13 +211,13 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             }
 
             // Check if bundle has files [js, css, allowed file types etc.]
-            if (hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildPath']) {
+            if (hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildDir']) {
 
                 // Initialize storage array
                 srcs[fileType] = [];
 
                 // Build local src path
-                localPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
+                localPath = path.join(wrangler.tasks.minify[fileType + 'BuildDir'],
                     bundle.options.alias + '.' + fileType);
 
                 // Build deploy src path
@@ -230,6 +226,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
                         bundle.options.alias + '.' + fileType);
                 }
                 else {
+                    wrangler.log('Using deploy root path: ', fileType, deployRootFolder, '--debug');
                     deployPath = path.join(deployRootFolder, bundle.options.alias + '.' + fileType);
                 }
 
@@ -336,7 +333,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
         });
 
         // Log debug message
-        self.wrangler.log(chalk.grey('Ensuring paths exists for "' + filePath + '"'), '--debug');
+        //self.wrangler.log(chalk.grey('Ensuring paths exists for "' + filePath + '"'), '--debug');
 
         pathParts.forEach(function (part) {
             currPath +=  separator + part;
