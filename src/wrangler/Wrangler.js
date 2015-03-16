@@ -266,6 +266,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
+    extractTaskAliasesFromArgv: function () {
+        var tasks = [];
+        this.argv._.forEach(function (arg) {
+            tasks.push(arg.indexOf(':') ? arg.split(':')[0] : arg);
+        });
+        return tasks;
+    },
+
     extractBundleNamesFromArray: function (list) {
         var parts, extracted = [];
         list.filter(function (item) {
