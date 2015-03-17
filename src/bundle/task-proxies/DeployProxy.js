@@ -194,7 +194,8 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             selectedServerEntry = deployOptions.domainsToDevelop[deployOptions.developingDomain],
             deployRootFolder = selectedServerEntry.deployRootFolder,
             argvFileTypes = wrangler.getArgvFileTypes(),
-            hasArgvFileTypes = wrangler.hasArgvFileTypes();
+            hasArgvFileTypes = wrangler.hasArgvFileTypes(),
+            skipArtifacts = wrangler.argv.skipArtifacts;
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -211,7 +212,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             }
 
             // Check if bundle has files [js, css, allowed file types etc.]
-            if (hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildPath']) {
+            if (!skipArtifacts && hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildPath']) {
 
                 // Initialize storage array
                 srcs[fileType] = [];

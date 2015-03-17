@@ -7,6 +7,7 @@ require('sjljs');
 
 var Liftoff = require('liftoff'),
     argv = require('yargs')
+        .default('skip-artifacts', false)
         .alias('d',     'dev')
         .alias('v',     'verbose')
         .alias('skip-css-hint',     'skip-css-linting')
