@@ -211,13 +211,13 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
             }
 
             // Check if bundle has files [js, css, allowed file types etc.]
-            if (hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildDir']) {
+            if (hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildPath']) {
 
                 // Initialize storage array
                 srcs[fileType] = [];
 
                 // Build local src path
-                localPath = path.join(wrangler.tasks.minify[fileType + 'BuildDir'],
+                localPath = path.join(wrangler.tasks.minify[fileType + 'BuildPath'],
                     bundle.options.alias + '.' + fileType);
 
                 // Build deploy src path

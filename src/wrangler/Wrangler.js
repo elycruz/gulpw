@@ -59,7 +59,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this,
             anyGlobalTasksToRun,
             anyStaticTasksToRun,
-            anyPerBundleTasksToRun;
+            anyPerBundleTasksToRun,
+            taskAliasesFromArgv = self.getTaskAliasesFromArgv();
 
         self.log('Gulp Bundle Wrangler initializing...');
 
@@ -84,19 +85,19 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Else create task proxies and bundle(s) if necessary
         else {
 
-            // Create task proxies (~~@todo in the future only load needed tasks if it makes any difference in performance~~  Can't do this as some tasks access other task proxies internally at task runtime)
-            self.createTaskProxies(gulp);
+            // Create task proxies
+            self.createTaskProxies(gulp, taskAliasesFromArgv);
 
             // If any global tasks to run create tasks proxies and all bundles.
             if (anyGlobalTasksToRun && !anyPerBundleTasksToRun) {
                 self.log('\nGlobal tasks found and no Per-Bundle tasks found.', '\n', 'Preparing global tasks.', '--debug');
                 self.createBundles(gulp, null, false);
-                self.registerGlobalTasks(gulp, argv._);
+                self.registerGlobalTasks(gulp, taskAliasesFromArgv);
             }
             else if (anyGlobalTasksToRun && anyPerBundleTasksToRun) {
                 self.log('\nGlobal tasks found and Per-Bundle tasks found.', '\n', 'Preparing global and per-bundle tasks.', '--debug');
                 self.createBundles(gulp, null, true);
-                self.registerGlobalTasks(gulp, argv._);
+                self.registerGlobalTasks(gulp, taskAliasesFromArgv);
             }
             else if (anyPerBundleTasksToRun && !anyGlobalTasksToRun) {
                 self.log('\nNo global tasks found but found Per-Bundle tasks.', '\n', 'Preparing per-bundle tasks.', '--debug');
@@ -120,13 +121,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return self;
     },
 
-    createTaskProxies: function (gulp) {
-        var self = this;
+    createTaskProxies: function (gulp, taskKeys) {
+        var self = this,
+            taskKeys = taskKeys || self.getTaskAliasesFromArgv();
 
         // Creating task proxies message
         self.log(chalk.cyan('\n- Creating task proxies.'));
 
-        self.taskKeys.forEach(function (task) {
+        taskKeys.forEach(function (task) {
             if (sjl.classOfIs(self.tasks[task], 'String')) {
                 self.tasks[task] = self.loadConfigFile(path.join(process.cwd(), self.tasks[task]));
             }
@@ -236,18 +238,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
-    registerTasksForBundle: function (gulp, bundle) {
+    registerTasksForBundle: function (gulp, bundle, taskKeys) {
         var self = this;
-            //tasksPassedIn = self.argv._;
+            taskKeys = taskKeys || self.getTaskAliasesFromArgv();
 
         // Register bundle with task
-        self.taskKeys.forEach(function (task) {
-
-            // Only attempt to register bundle for tasks that were passed in the command line arguments
-            //if (tasksPassedIn.indexOf(task + ':' + bundle.options.alias)
-            //|| tasksPassedIn.indexOf(task)) {
-                self.tasks[task].instance.registerBundle(bundle, gulp, self);
-            //}
+        taskKeys.forEach(function (task) {
+            self.tasks[task].instance.registerBundle(bundle, gulp, self);
         });
     },
 
@@ -266,12 +263,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
-    extractTaskAliasesFromArgv: function () {
-        var tasks = [];
-        this.argv._.forEach(function (arg) {
-            tasks.push(arg.indexOf(':') ? arg.split(':')[0] : arg);
-        });
-        return tasks;
+    getTaskAliasesFromArgv: function () {
+        var self = this;
+        if (!sjl.isset(self.taskAliasesFromArgv)) {
+            self.taskAliasesFromArgv = [];
+            self.argv._.forEach(function (arg) {
+                self.taskAliasesFromArgv.push(arg.indexOf(':') ? arg.split(':')[0] : arg);
+            });
+        }
+        return self.taskAliasesFromArgv;
     },
 
     extractBundleNamesFromArray: function (list) {
@@ -432,27 +432,41 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this,
             tasks;
 
+        // Bail if empty options
         if (sjl.empty(options)) {
             return this;
         }
 
+        // Merge directly if no `tasks` in options
         if (!options.tasks) {
             sjl.extend(true, self, options);
             return;
         }
 
+        // Store options tasks value
         tasks = options.tasks;
+
+        // Remove tasks value from options
         options.tasks = undefined;
         delete options.tasks;
 
+        // Extend self with options
         sjl.extend(true, self, options);
 
+        // Copy task configs from copied tasks obj
         Object.keys(tasks).forEach(function (key) {
             var value = tasks[key],
-                objToMerge = sjl.classOfIs(value, 'String') ? self.loadConfigFile(path.join(process.cwd(), value)) : value;
+
+                // If task config is a string assume a path
+                // and load it as a config
+                objToMerge = sjl.classOfIs(value, 'String')
+                    ? self.loadConfigFile(path.join(process.cwd(), value)) : value;
+
+            // If task cofnig is an object extend it
             if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key]), 'Object') {
                 sjl.extend(true, self.tasks[key], objToMerge)
             }
+            // Else set it
             else {
                 self.tasks[key] = objToMerge;
             }
@@ -516,7 +530,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
     
     hasTaskProxy: function (taskProxy) {
-        taskProxy = sjl.classOfIs(taskProxy, 'Object') ? taskProxy.alias : taskProxy;
+        taskProxy = this.getTaskProxyAlias(taskProxy);
         return sjl.isset(this.tasks[taskProxy]);
     },
 
