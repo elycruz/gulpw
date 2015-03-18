@@ -50,7 +50,7 @@ module.exports = sjl.Extendable.extend(function TaskAdapter(options, gulp, wrang
             });
         },
 
-        getTaskDepsForBundle: function (bundle, gulp, wrangler) {
+        getPrelimTasksForBundle: function (bundle, gulp, wrangler) {
             // Overwrite from extending class
         },
 

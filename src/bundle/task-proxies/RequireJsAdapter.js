@@ -24,6 +24,8 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
     registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
         var self = this;
 
+        wrangler.log(' - Registering bundle "' + bundle.options.alias + '" with "requirejs" task.');
+
         // Create task for bundle
         gulp.task(taskName, function () {
             var classOfRequireJs = sjl.classOf(bundle.get('requirejs')),
@@ -59,14 +61,11 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
         // Task string separator
         var self = this,
 
-            // Task Separator
-            separator = ':',
-
             // Bundle name for task
             bundleName = bundle.options.alias,
 
             // Task name
-            taskName = self.alias + separator + bundleName,
+            taskName = self.alias + ':' + bundleName,
 
             // Rjs command (adding prefix for windows version)
             requireJsOptions = self.getRequireJsOptions(bundle, wrangler);

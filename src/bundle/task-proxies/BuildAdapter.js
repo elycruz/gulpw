@@ -5,7 +5,7 @@
 
 require('sjljs');
 
-// Import base task proxy to extend
+// Import base task adapter to extend
 var TaskAdapter = require('../TaskAdapter');
 
 module.exports = TaskAdapter.extend(function BuildAdapter () {
@@ -13,7 +13,6 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
 }, {
 
     registerBundle: function (bundle, gulp, wrangler) {
-        // Task string separator
         var self = this,
             bundleName = bundle.options.alias,
             taskName = 'build:' + bundleName,
@@ -25,9 +24,11 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
 
         targets = self.getTasksForBundle(bundle, wrangler);
 
-        deps = self.getTaskDepsForBundle(bundle, wrangler, targets);
+        deps = self.getPrelimTasksForBundle(bundle, wrangler, targets.targets);
 
-        targets = targets.filter(function (task) {
+        wrangler.registerTasksForBundle(gulp, bundle, targets.taskAliases);
+
+        targets = targets.targets.filter(function (task) {
             return deps.indexOf(task) === -1;
         });
 
@@ -37,16 +38,27 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
-            targets = [];
+            targets,
+            deps;
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
                 return;
             }
-            targets = self.getTasksForBundle(bundle, wrangler).concat(targets);
+            targets = self.getTasksForBundle(bundle, wrangler);
+
+            deps = self.getPrelimTasksForBundle(bundle, wrangler, targets.targets);
+
+            wrangler.registerTasksForBundle(gulp, bundle, targets.taskAliases);
         });
 
-        self.registerGulpTasks('build', targets, gulp, wrangler);
+        //targets = targets.targets.filter(function (task) {
+        //    return deps.indexOf(task) === -1;
+        //});
+
+        wrangler.log(targets, 'build');
+
+        self.registerGulpTasks('build', targets, gulp, wrangler, deps);
     },
 
     isBundleValidForTask: function (bundle) {
@@ -54,28 +66,30 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
     },
 
     isBundleValidForMinifyAndConcat: function (bundle) {
-       return bundle && (bundle.has('files.js') || bundle.has('files.css')
-           || bundle.has('files.html') || bundle.has('files.html'));
+        return bundle && (bundle.has('files.js') || bundle.has('files.css')
+            || bundle.has('files.html') || bundle.has('files.html'));
     },
 
-    getTaskDepsForBundle: function (bundle, wrangler, tasks) {
+    getPrelimTasksForBundle: function (bundle, wrangler, tasks) {
         var deps = [],
             prelimTasks = wrangler.tasks.build.prelimTasks;
 
         if (!sjl.empty(prelimTasks)) {
             deps = tasks.filter(function (task) {
                 return prelimTasks.filter(function (prelimTask) {
-                    return task.indexOf(prelimTask) > -1;
-                }).length > 0;
+                        return task.indexOf(prelimTask) > -1;
+                    }).length > 0;
             });
         }
 
         return deps;
     },
 
-    getTasksForBundle: function (bundle, wrangler) {
-        var bundleName = bundle.options.alias,
+    getTasksForBundle: function (bundle) {
+        var wrangler = this.wrangler,
+            bundleName = bundle.options.alias,
             targets = [],
+            taskAliases = [],
             ignoredTasks = wrangler.tasks.build.ignoredTasks,
             ignoreTask,
             isBundleValidForMinAndConcat = this.isBundleValidForMinifyAndConcat(bundle);
@@ -86,8 +100,8 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
 
             // Do we need to ignore current `task`?
             ignoreTask = ignoredTasks.filter(function (ignoredTask) {
-                    return task.indexOf(ignoredTask) > -1;
-                }).length > 0;
+                return task.indexOf(ignoredTask) > -1;
+            }).length > 0;
 
             // If it is not ok to push the current `task` in the loop to the return value bail
             if (sjl.empty(bundle.options[task])
@@ -96,8 +110,8 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
                 return;
             }
 
-            // Ensure bundle is registered with task
-            wrangler.registerBundleWithTask(bundleName, task);
+            // Capture task name for output
+            taskAliases.push(task);
 
             // Push task to run later
             targets.push(task + ':' + bundleName);
@@ -105,12 +119,16 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
 
         // If bundle has minifiable or concatable sources build
         if (isBundleValidForMinAndConcat) {
-            // Ensure bundle is registered with task
-            wrangler.registerBundleWithTask(bundleName, 'minify');
-            targets.push('minify' + ':' + bundleName);
+            taskAliases.push('minify');
+            targets.push('minify:' + bundleName);
         }
 
-        return targets;
+        if (bundle.has('requirejs')) {
+            taskAliases.push('requirejs');
+            targets.push('requirejs:' + bundleName);
+        }
+
+        return {targets: targets, taskAliases: taskAliases};
     }
 
 }); // end of export

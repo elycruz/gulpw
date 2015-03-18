@@ -18,9 +18,8 @@ var FilesHashTaskAdapter = require('../FilesHashTaskAdapter'),
     chalk = require('chalk'),
     path = require('path');
 
-module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter(options) {
-    FilesHashTaskAdapter.apply(this, options);
-    this.alias = 'minify';
+module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
+    FilesHashTaskAdapter.apply(this, arguments);
 }, {
 
     /**
@@ -54,8 +53,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter(options) {
             allowedFileTypes.forEach(function (ext) {
                 var buildPath = wrangler.tasks.minify[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext],
-                    jsHintPipe = wrangler.tasks.jshint.instance.getPipe(bundle, gulp, wrangler),
-                    cssLintPipe = wrangler.tasks.csslint.instance.getPipe(bundle, gulp, wrangler),
+                    jsHintPipe = wrangler.getTaskAdapter('jshint').getPipe(bundle, gulp, wrangler),
+                    cssLintPipe = wrangler.getTaskAdapter('csslint').getPipe(bundle, gulp, wrangler),
                     skipCssLinting = wrangler.skipLinting() || wrangler.skipCssLinting(),
                     skipJsLinting = wrangler.skipLinting() || wrangler.skipJsLinting(),
                     filePath,

@@ -70,7 +70,7 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
         getTemplatesString: function (bundle, gulp, wrangler) {
             var output = '',
                 fileContent,
-                templateOptions = wrangler.clone(wrangler.tasks.minify.template),
+                templateOptions = wrangler.clone(wrangler.getTaskAdapter('minify').template),
                 compressWhitespace = templateOptions.compressWhitespace,
                 template = templateOptions.templatePartial;
 

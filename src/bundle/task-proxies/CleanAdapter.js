@@ -79,7 +79,9 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
                 bundleName = bundle.options.alias,
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
                 separator = ':',
-                targets = [];
+                targets = [],
+                minifyConfig = wrangler.tasks.minify,
+                concatConfig = wrangler.tasks.concat;
 
             // Register separate `clean` tasks for each section in `files` key
             allowedFileTypes.forEach(function (ext) {
@@ -90,11 +92,11 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
                 if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                     // Get file path for `key` in `files`
-                    if (wrangler.tasks.concat[ext + 'BuildPath']) {
-                        singularTaskTargets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
+                    if (concatConfig[ext + 'BuildPath']) {
+                        singularTaskTargets.push(path.join(concatConfig[ext + 'BuildPath'], bundleName + '.' + ext));
                     }
-                    if (wrangler.tasks.minify[ext + 'BuildPath']) {
-                        singularTaskTargets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
+                    if (minifyConfig[ext + 'BuildPath']) {
+                        singularTaskTargets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
                     }
 
                     // Pass off the `filePath` to `targets` for later use
@@ -130,7 +132,9 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
         registerBundles: function (bundles, gulp, wrangler) {
             var self = this,
                 targets = [],
-                allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'];
+                allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
+                minifyConfig = wrangler.tasks.minify,
+                concatConfig = wrangler.tasks.concat;;
 
             bundles.forEach(function (bundle) {
                 var bundleName = bundle.options.alias;
@@ -144,11 +148,11 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
                     if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                         // Get file path for `key` in `files`
-                        if (wrangler.tasks.concat[ext + 'BuildPath']) {
-                            targets.push(path.join(wrangler.tasks.concat[ext + 'BuildPath'], bundleName + '.' + ext));
+                        if (concatConfig[ext + 'BuildPath']) {
+                            targets.push(path.join(concatConfig[ext + 'BuildPath'], bundleName + '.' + ext));
                         }
-                        if (wrangler.tasks.minify[ext + 'BuildPath']) {
-                            targets.push(path.join(wrangler.tasks.minify[ext + 'BuildPath'], bundleName + '.' + ext));
+                        if (minifyConfig[ext + 'BuildPath']) {
+                            targets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
                         }
                     }
 

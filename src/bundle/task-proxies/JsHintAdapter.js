@@ -25,8 +25,7 @@ module.exports = TaskAdapter.extend('JsHintAdapter', {
 
         // Task string separator
         var self = this,
-            separator = ':',
-            taskName = 'jshint' + separator + bundle.options.alias,
+            taskName = 'jshint:' + bundle.options.alias,
             filesToExclude = wrangler.tasks.jshint.ignoredFiles,
             src;
 
@@ -53,7 +52,6 @@ module.exports = TaskAdapter.extend('JsHintAdapter', {
         });
 
     }, // end of `registerBundle`
-
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
