@@ -202,11 +202,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     createBundle: function (config) {
         var filePath = config, //path.relative(process.cwd(), config),
-            bundle;
+            bundle,
+            bundleAlias;
 
         // If config is of type 'String' we assume a path
         if (sjl.classOfIs(config, 'String')) {
+            bundleAlias = config + "";
             config = this.loadConfigFile(config);
+            config.alias = path.basename(bundleAlias).split(/\.(yaml|js|json)$/)[0];
         }
 
         // If no config passed throw an Error
@@ -215,11 +218,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 'expected in/for `Wrangler.createBundle`.');
         }
 
-        // 'Creating task ...' message
-        this.log(' - Creating bundle "' + config.alias + '"');
-
         // Set original bundle file location to bundle.config
         config.filePath = '.' + path.sep + filePath;
+
+        // 'Creating task ...' message
+        this.log(' - Creating bundle "' + config.alias + '"');
 
         // Create bundle
         bundle = new Bundle(config);

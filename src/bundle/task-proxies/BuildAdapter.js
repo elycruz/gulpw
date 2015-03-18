@@ -8,7 +8,9 @@ require('sjljs');
 // Import base task proxy to extend
 var TaskAdapter = require('../TaskAdapter');
 
-module.exports = TaskAdapter.extend('BuildAdapter', {
+module.exports = TaskAdapter.extend(function BuildAdapter () {
+    TaskAdapter.apply(this, arguments);
+}, {
 
     registerBundle: function (bundle, gulp, wrangler) {
         // Task string separator
