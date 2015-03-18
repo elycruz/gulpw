@@ -30,7 +30,8 @@ locally  from project root `npm install gulpw`.
 
 ### Setup
 1. Create your project's bundle configs folder;  E.g., './bundle-configs' etc.
-2. Create your project's empty or non-empty `bundle.wrangler.config.*` file.  Then run `gulpw config` to populate the file.
+2. ~~Call `gulpw` from your projects root (a `bundle.wrangler.config.*` file will be generated there).
+    Then run `gulpw config` to populate the file.~~  This line is pending a rewrite.
 3. Tell your `bundle.wrangler.config.*` file where your bundle configs folder is: Set `bundlesPath` to your bundles config path.
 5. Configure your global tasks within your `bundle.wrangler.config.*` file.
 6. Execute `gulpw deploy-config` to configure servers to deploy your work to (this step is not currently optional).
