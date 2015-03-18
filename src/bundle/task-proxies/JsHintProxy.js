@@ -7,14 +7,14 @@
 var
     jshint = require('gulp-jshint'),
     duration = require('gulp-duration'),
-    TaskProxy = require('../TaskProxy'),
+    TaskAdapter = require('../TaskAdapter'),
     path = require('path'),
     chalk = require('chalk'),
     //callback = require('gulp-fncallback'),
     //gulpif = require('gulp-if'),
     lazypipe = require('lazypipe');
 
-module.exports = TaskProxy.extend('JsHintProxy', {
+module.exports = TaskAdapter.extend('JsHintAdapter', {
 
     /**
      * @param bundle {Bundle}

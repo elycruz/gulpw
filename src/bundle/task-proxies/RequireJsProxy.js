@@ -8,15 +8,15 @@ require('sjljs');
 require('es6-promise').polyfill();
 
 // Import base task proxy to extend
-var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
+var FilesHashTaskAdapter = require('../FilesHashTaskAdapter'),
     //header = require('gulp-header'),
     requirejs = require('requirejs'),
     //duration = require('gulp-duration'),
     chalk = require('chalk');
     //path = require('path');
 
-module.exports = FilesHashTaskProxy.extend(function RequireJsProxy(options) {
-    FilesHashTaskProxy.apply(this, options);
+module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) {
+    FilesHashTaskAdapter.apply(this, options);
     this.alias = 'requirejs';
 }, {
 

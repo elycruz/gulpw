@@ -7,13 +7,13 @@
 'use strict'; require('sjljs');
 
 // Import base task proxy to extend
-var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
+var FilesHashTaskAdapter = require('../FilesHashTaskAdapter'),
     //fs = require('fs'),
     chalk = require('chalk'),
     path = require('path');
 
-module.exports = FilesHashTaskProxy.extend(function CopyProxy (options) {
-    FilesHashTaskProxy.apply(this, options);
+module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
+    FilesHashTaskAdapter.apply(this, options);
 }, {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {

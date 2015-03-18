@@ -12,14 +12,14 @@ var path = require('path'),
 
     jsStringEscape = require('js-string-escape'),
 
-    TaskProxy = require(path.join(__dirname, 'TaskProxy.js')),
+    TaskAdapter = require(path.join(__dirname, 'TaskAdapter.js')),
 
     lodash = require('lodash'),
 
     fs = require('fs');
 
-module.exports = TaskProxy.extend(function FilesTaskProxy(options) {
-        TaskProxy.apply(this, arguments);
+module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
+        TaskAdapter.apply(this, arguments);
     },
     {
         // @todo use this method for minify tasks as well (methods will be almost identical

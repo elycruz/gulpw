@@ -7,10 +7,10 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var FilesHashTaskProxy = require('../FilesHashTaskProxy');
+var FilesHashTaskAdapter = require('../FilesHashTaskAdapter');
 
-module.exports = FilesHashTaskProxy.extend(function ConcatProxy (options) {
-    FilesHashTaskProxy.apply(this, sjl.extend(true, {name: 'concat'}, options));
+module.exports = FilesHashTaskAdapter.extend(function ConcatAdapter (options) {
+    FilesHashTaskAdapter.apply(this, sjl.extend(true, {name: 'concat'}, options));
     this.alias = 'concat';
 }, {
 

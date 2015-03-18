@@ -12,11 +12,11 @@ require('sjljs');
 require('es6-promise').polyfill();
 
 var duration = require('gulp-duration'),
-    TaskProxy = require('../TaskProxy'),
+    TaskAdapter = require('../TaskAdapter'),
     chalk = require('chalk');
 
-module.exports = TaskProxy.extend(function DevelopProxy (config) {
-    TaskProxy.call(this, config);
+module.exports = TaskAdapter.extend(function DevelopAdapter (config) {
+    TaskAdapter.call(this, config);
 }, {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {

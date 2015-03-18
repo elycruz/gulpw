@@ -9,11 +9,11 @@ require('es6-promise').polyfill();
 
 var mocha = require('gulp-mocha'),
     duration = require('gulp-duration'),
-    TaskProxy = require('../TaskProxy'),
+    TaskAdapter = require('../TaskAdapter'),
     fncallback = require('gulp-fncallback'),
     chalk = require('chalk');
 
-module.exports = TaskProxy.extend('MochaProxy', {
+module.exports = TaskAdapter.extend('MochaAdapter', {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true,

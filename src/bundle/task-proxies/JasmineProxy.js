@@ -9,11 +9,11 @@ require('es6-promise').polyfill();
 
 var jasmine = require('gulp-jasmine'),
     duration = require('gulp-duration'),
-    TaskProxy = require('../TaskProxy'),
+    TaskAdapter = require('../TaskAdapter'),
     fncallback = require('gulp-fncallback'),
     chalk = require('chalk');
 
-module.exports = TaskProxy.extend('JasmineProxy', {
+module.exports = TaskAdapter.extend('JasmineAdapter', {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true,

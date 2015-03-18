@@ -10,10 +10,10 @@ require('es6-promise').polyfill();
 var path = require('path'),
     del = require('del'),
     chalk = require('chalk'),
-    TaskProxy = require('../TaskProxy.js');
+    TaskAdapter = require('../TaskAdapter.js');
 
-module.exports = TaskProxy.extend(function CleanProxy (options) {
-        TaskProxy.call(this, sjl.extend({alias: 'clean'}, options));
+module.exports = TaskAdapter.extend(function CleanAdapter (options) {
+        TaskAdapter.call(this, sjl.extend({alias: 'clean'}, options));
     }, {
 
         /**

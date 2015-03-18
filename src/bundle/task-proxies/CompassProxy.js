@@ -9,13 +9,13 @@
 require('es6-promise').polyfill();
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy'),
+var TaskAdapter = require('../TaskAdapter'),
 	path = require('path'),
 	child_process = require('child_process'),
 	exec = child_process.exec,
 	chalk = require('chalk');
 
-module.exports = TaskProxy.extend('CompassProxy', {
+module.exports = TaskAdapter.extend('CompassAdapter', {
 
     /**
      * Regsiters bundle with `compass` or `sass` gulp task.

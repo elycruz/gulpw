@@ -4,13 +4,13 @@
 'use strict'; require('sjljs');
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy'),
+var TaskAdapter = require('../TaskAdapter'),
     chalk = require('chalk'),
     //spawn = require('child_process').spawn,
     path = require('path');
 
-module.exports = TaskProxy.extend(function WatchProxy () {
-    TaskProxy.apply(this, sjl.argsToArray(arguments));
+module.exports = TaskAdapter.extend(function WatchAdapter () {
+    TaskAdapter.apply(this, sjl.argsToArray(arguments));
 }, {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {

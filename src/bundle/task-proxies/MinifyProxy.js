@@ -4,7 +4,7 @@
 'use strict'; require('sjljs');
 
 // Import base task proxy to extend
-var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
+var FilesHashTaskAdapter = require('../FilesHashTaskAdapter'),
     //fs = require('fs'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
@@ -18,8 +18,8 @@ var FilesHashTaskProxy = require('../FilesHashTaskProxy'),
     chalk = require('chalk'),
     path = require('path');
 
-module.exports = FilesHashTaskProxy.extend(function MinifyProxy(options) {
-    FilesHashTaskProxy.apply(this, options);
+module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter(options) {
+    FilesHashTaskAdapter.apply(this, options);
     this.alias = 'minify';
 }, {
 

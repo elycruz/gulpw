@@ -9,10 +9,10 @@
 var csslint = require('gulp-csslint'),
     chalk = require('chalk'),
     duration = require('gulp-duration'),
-    TaskProxy = require('../TaskProxy'),
+    TaskAdapter = require('../TaskAdapter'),
     lazypipe = require('lazypipe');
 
-module.exports = TaskProxy.extend('CssLintProxy', {
+module.exports = TaskAdapter.extend('CssLintAdapter', {
 
     /**
      *

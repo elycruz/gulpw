@@ -115,7 +115,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         self.log('- Creating static task proxies.');
 
         self.staticTaskKeys.forEach(function (task) {
-            self.staticTasks[task].instance = self.createStaticTaskProxy(gulp, task);
+            self.staticTasks[task].instance = self.createStaticTaskAdapter(gulp, task);
         });
 
         return self;
@@ -132,44 +132,44 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             if (sjl.classOfIs(self.tasks[task], 'String')) {
                 self.tasks[task] = self.loadConfigFile(path.join(process.cwd(), self.tasks[task]));
             }
-            self.tasks[task].instance = self.createTaskProxy(gulp, task);
+            self.tasks[task].instance = self.createTaskAdapter(gulp, task);
         });
 
         return self;
     },
 
-    createTaskProxy: function (gulp, task) {
+    createTaskAdapter: function (gulp, task) {
 
         // 'Creating task ...' message
         this.log(' - Creating task proxy \"' + task + '\'.');
 
         var self = this,
             src = self.tasks[task].constructorLocation,
-            TaskProxyClass = require(path.join(__dirname, '../', src)),
+            TaskAdapterClass = require(path.join(__dirname, '../', src)),
             options = self.tasks[task];
 
         options.alias = task;
         options.help = self.tasks[task].help;
 
-        return new TaskProxyClass(options, gulp, this);
+        return new TaskAdapterClass(options, gulp, this);
     },
 
-    createStaticTaskProxy: function (gulp, task) {
+    createStaticTaskAdapter: function (gulp, task) {
         // 'Creating task ...' message
         this.log(chalk.cyan('\n- Creating static task proxy \"' + task + '\'.'));
 
         var self = this,
             src = self.staticTasks[task].constructorLocation,
-            TaskProxyClass = require(path.join(__dirname, src));
+            TaskAdapterClass = require(path.join(__dirname, src));
 
-        TaskProxyClass = new TaskProxyClass({
+        TaskAdapterClass = new TaskAdapterClass({
             name: task,
             help: self.staticTasks[task].help || ''
         });
 
-        TaskProxyClass.registerStaticTasks(gulp, self);
+        TaskAdapterClass.registerStaticTasks(gulp, self);
 
-        return TaskProxyClass;
+        return TaskAdapterClass;
     },
 
     createBundles: function (gulp, bundles, registerBundles) {
@@ -521,17 +521,17 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return sjl.isset(this.bundles[this.getBundleAlias(bundle)]);
     },
 
-    getTaskProxy: function (taskProxy) {
-        return this.taskProxys[this.getTaskProxyAlias(taskProxy)] || null;
+    getTaskAdapter: function (taskAdapter) {
+        return this.taskAdapters[this.getTaskAdapterAlias(taskAdapter)] || null;
     },
 
-    getTaskProxyAlias: function (taskProxy) {
-        return sjl.classOfIs(taskProxy, 'Object') ? taskProxy.alias : taskProxy;
+    getTaskAdapterAlias: function (taskAdapter) {
+        return sjl.classOfIs(taskAdapter, 'Object') ? taskAdapter.alias : taskAdapter;
     },
     
-    hasTaskProxy: function (taskProxy) {
-        taskProxy = this.getTaskProxyAlias(taskProxy);
-        return sjl.isset(this.tasks[taskProxy]);
+    hasTaskAdapter: function (taskAdapter) {
+        taskAdapter = this.getTaskAdapterAlias(taskAdapter);
+        return sjl.isset(this.tasks[taskAdapter]);
     },
 
     getArgvFileTypes: function () {

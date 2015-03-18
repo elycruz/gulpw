@@ -8,7 +8,7 @@ require('sjljs');
 require('es6-promise').polyfill();
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy'),
+var TaskAdapter = require('../TaskAdapter'),
     os = require('os'),
     path = require('path'),
     fs = require('fs'),
@@ -18,8 +18,8 @@ var TaskProxy = require('../TaskProxy'),
     lodash = require('lodash'),
     glob = require('glob');
 
-module.exports = TaskProxy.extend(function DeployProxy (config) {
-    TaskProxy.apply(this, arguments);
+module.exports = TaskAdapter.extend(function DeployAdapter (config) {
+    TaskAdapter.apply(this, arguments);
     this._mergeLocalConfigs()
         ._resolveTemplateValues();
 }, {
@@ -60,7 +60,7 @@ module.exports = TaskProxy.extend(function DeployProxy (config) {
 
                 startTime = new Date();
 
-                wrangler.log('\n DeployProxy -> targets\n', '--debug');
+                wrangler.log('\n DeployAdapter -> targets\n', '--debug');
 
                 conn.on('ready', function () {
 

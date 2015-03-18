@@ -16,7 +16,7 @@ require('sjljs');
 require('es6-promise').polyfill();
 
 // Import base task proxy to extend
-var WranglerTaskProxy = require('../WranglerTaskProxy'),
+var WranglerTaskAdapter = require('../WranglerTaskAdapter'),
     fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
@@ -24,8 +24,8 @@ var WranglerTaskProxy = require('../WranglerTaskProxy'),
     lodash = require('lodash'),
     chalk = require('chalk');
 
-module.exports = WranglerTaskProxy.extend(function BundleConfigProxy (options) {
-    WranglerTaskProxy.call(this, options);
+module.exports = WranglerTaskAdapter.extend(function BundleConfigAdapter (options) {
+    WranglerTaskAdapter.call(this, options);
 }, {
 
     registerStaticTasks: function (gulp, wrangler) {

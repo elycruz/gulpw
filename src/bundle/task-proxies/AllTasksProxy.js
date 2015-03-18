@@ -6,9 +6,9 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var TaskProxy = require('../TaskProxy');
+var TaskAdapter = require('../TaskAdapter');
 
-module.exports = TaskProxy.extend('AllTasksProxy', {
+module.exports = TaskAdapter.extend('AllTasksAdapter', {
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
