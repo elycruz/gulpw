@@ -95,6 +95,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 self.log('\nGlobal tasks found and Per-Bundle tasks found.', '\n', 'Preparing global and per-bundle tasks.', '--debug');
                 self.createBundles(gulp, null, false);
                 self.registerGlobalTasks(gulp, taskAliasesFromArgv);
+                self.registerBundles();
             }
             else if (anyPerBundleTasksToRun && !anyGlobalTasksToRun) {
                 self.log('\nNo global tasks found but found Per-Bundle tasks.', '\n', 'Preparing per-bundle tasks.', '--debug');

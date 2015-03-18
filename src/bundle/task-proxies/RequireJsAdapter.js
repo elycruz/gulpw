@@ -24,8 +24,6 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
     registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
         var self = this;
 
-        wrangler.log(' - Registering bundle "' + bundle.options.alias + '" with "requirejs" task.');
-
         // Create task for bundle
         gulp.task(taskName, function () {
             var classOfRequireJs = sjl.classOf(bundle.get('requirejs')),

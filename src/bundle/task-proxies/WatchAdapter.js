@@ -10,7 +10,7 @@ var TaskAdapter = require('../TaskAdapter'),
     path = require('path');
 
 module.exports = TaskAdapter.extend(function WatchAdapter () {
-    TaskAdapter.apply(this, sjl.argsToArray(arguments));
+    TaskAdapter.apply(this, arguments);
 }, {
 
     registerGulpTask: function (taskName, targets, gulp, wrangler, bundle, tasks) {
@@ -80,39 +80,34 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
 
     }, // end of register
 
-    /**
-     *
-     * @param bundle {Bundle}
-     * @param gulp {gulp}
-     * @param wrangler {Wrangler}
-     */
     registerBundle: function (bundle, gulp, wrangler) {
         var self = this,
             targets,
             tasks;
 
+        // Exit registration if bundle is not valid for task adapter
         if (!self.isBundleValidForTask(bundle)) {
-            return; // @todo log message/warning here
+            return;
         }
 
+        // Register bundle with tasks
+        wrangler.registerTasksForBundle(gulp, bundle, wrangler.tasks.watch.tasks);
+
+        // Get targets ({bundle}:{task})
         targets = self.getSrcForBundle(bundle);
 
         // Watch the bundle file for changes (restart the watch task on bundle file changes)
         targets.push(bundle.get('filePath'));
 
+        // Get tasks to run
         tasks = self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks, wrangler);
 
+        // Register watch task
         self.registerGulpTask(self.getTaskNameForBundle(bundle), targets,
             gulp, wrangler, bundle, tasks);
 
     }, // end of `registerBundle`
 
-    /**
-     *
-     * @param bundles {Array<Bundle>}
-     * @param gulp {gulp}
-     * @param wrangler {Wrangler}
-     */
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = [],
@@ -124,6 +119,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
             }
             targets = targets.concat(self.getSrcForBundle(bundle));
             tasks = tasks.concat(self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks));
+            wrangler.registerTasksForBundle(gulp, bundle,wrangler.tasks.watch.tasks);
         });
 
         self.registerGulpTask('watch', targets, gulp, wrangler, bundles, tasks);

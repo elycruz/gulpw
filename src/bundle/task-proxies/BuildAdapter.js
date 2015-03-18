@@ -38,25 +38,25 @@ module.exports = TaskAdapter.extend(function BuildAdapter () {
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
-            targets,
+            targets = [],
+            data,
             deps;
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
                 return;
             }
-            targets = self.getTasksForBundle(bundle, wrangler);
+            data = self.getTasksForBundle(bundle, wrangler);
 
-            deps = self.getPrelimTasksForBundle(bundle, wrangler, targets.targets);
+            deps = self.getPrelimTasksForBundle(bundle, wrangler, data.targets);
 
-            wrangler.registerTasksForBundle(gulp, bundle, targets.taskAliases);
+            wrangler.registerTasksForBundle(gulp, bundle, data.taskAliases);
+            targets = targets.concat(data.targets);
         });
 
-        //targets = targets.targets.filter(function (task) {
-        //    return deps.indexOf(task) === -1;
-        //});
-
-        wrangler.log(targets, 'build');
+        targets = targets.filter(function (task) {
+            return deps.indexOf(task) === -1;
+        });
 
         self.registerGulpTasks('build', targets, gulp, wrangler, deps);
     },
