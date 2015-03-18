@@ -8,10 +8,10 @@ command line (uses gulp in the background).
 
 ## Basic Idea
 So the idea is as follows:
-  We have a `bundles` directory (could be named anything via the `bundle.wrangler.config.*` file).
-That directory should contain "bundle-configuration" files which are used within "task proxies" to run a
- task via the command line;  E.g., `$ gulpw build:global deploy:global deploy:other-bundle`.
- The configuration files will then hold the user's configurations in the *.yaml, *.json, or *.js format.
+    We have a `bundles` directory (could be named anything via the `bundle.wrangler.config.*` file).
+That directory should contain "bundle-configuration" files which are used by "task adapters" to run a
+task via the command line;  E.g., `$ gulpw build:global deploy:global deploy:other-bundle`.
+The bundle files will then hold the user's configurations in the *.yaml, *.json, or *.js format.
 
 ## Quick Nav
 - [Install](#install)
@@ -30,8 +30,8 @@ locally  from project root `npm install gulpw`.
 
 ### Setup
 1. Create your project's bundle configs folder;  E.g., './bundle-configs' etc.
-2. ~~Call `gulpw` from your projects root (a `bundle.wrangler.config.*` file will be generated there).
-    Then run `gulpw config` to populate the file.~~  This line is pending a rewrite.
+2. Call `gulpw` from your projects root (a `bundle.wrangler.config.*` file will be generated there).
+    Then run `gulpw config` to help populate the file (file can be customzied manually instead).
 3. Tell your `bundle.wrangler.config.*` file where your bundle configs folder is: Set `bundlesPath` to your bundles config path.
 5. Configure your global tasks within your `bundle.wrangler.config.*` file.
 6. Execute `gulpw deploy-config` to configure servers to deploy your work to (this step is not currently optional).
@@ -40,18 +40,17 @@ locally  from project root `npm install gulpw`.
 ### Bundle config
 A bundle config:
 - is made of either a *.yaml, *.json, or *.js file with one or more properties listed in it.
-- only requires an `alias` property to be a valid bundle config file.
-- can have many sections used by tasks.
-- can be creaated by calling `gulpw bundle-config`.  Note this task will not overwrite existing bundles but will let
+- can have many config sections used by tasks.
+- can be created by calling `gulpw bundle-config`.  Note this task will not overwrite existing bundles but will let
 you know when they already exists and will prompt you to enter a new name/alias.
 
-#####Valid Bundle Config file:
+##### Valid Bundle Config file:
 ```
 # some-other-bundle.yaml
 alias: some-other-bundle
 ```
 
-#####Another Valid Bundle Config file:
+##### Another Valid Bundle Config file:
 ```
 # some-bunde.yaml
 alias: some-bundle
@@ -102,13 +101,6 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [watch](#watch)
 - [mocha](#mocha)
 
-## Available Flags
-- --dev (-d)
-- --file-types (-t, --ext)
-- --debug
-- --verbose (-v)
-- --skip-linting (--skip-hinting)
-
 ### build
 The 'build' task calls every sub task listed in a {bundle-name}.yaml config file except (by default can be
  altered in local wrangler config file):
@@ -123,30 +115,19 @@ is why they are being ignored as standalone tests.
 'build' also adds the 'minify' task to it's list of tasks 'to' run for a particular bundle or bundles
 depending on if an `html`, `css` or `js` section is found with the `files` section.
 
-#####Flags:
-Linting/hinting can be skipped by passing anyone of the following flags:
-- `--skip-lint`
-- `--skip-linting`
-- `--skip-hint`
-- `--skip-hinting`
+##### Options:
+- **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are
+ included as conglomerate tasks).
 
-Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint`.
+##### Flags:
+`--skip-linting`, `--skip-csslint`, `--skip-jshint`, `--dev`
 
-Development mode:
-`--dev` - Skips minification for all *.css, *.js, and *.html files.
-
-#####Usage:
-`gulpw build:{bundle-name}` or run it for all bundles
-`gulpw build`
-
-#####In 'bundle.wrangler.config.yaml':
+##### In 'bundle.wrangler.config.*':
 ```
 tasks:
-
   # Build Task (Looks through {bundle-alias}.yaml file and runs
-  # all tasks that are not in the `ignoreTasks` array in this config.
+  # all tasks that are not in the `ignoreTasks`
   build:
-
     ignoredTasks:
       - clean
       - deploy
@@ -154,15 +135,14 @@ tasks:
       - csslint
 ```
 
-### bundle-config
-
-- **ignoredTasks {Array}:**  List of standalone tasks to ignore when calling build (*note some tasks are
- included as conglomerate tasks).
+##### In {bundle}.*:
+None.
 
 ### clean
-The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a *`files` or
-*`requirejs` then the artifacts outputted by these sections are cleaned up (deleted) when clean is called.
+The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a `files` key or
+`requirejs` key then the artifacts outputted by these sections are cleaned up (deleted) when clean is called.
 'clean' also cleans/deletes any files listed in a `clean` section;  E.g.,
+
 ```
  clean:
    - some/file/path.js
@@ -174,7 +154,10 @@ The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if 
  example a `js`, `css`, or `html` section(s).
 *See the ['minify'](#minify) section for more info on the possible sections supported by the `files` section.
 
-#####In 'bundle.wrangler.config.yaml':
+##### Options:
+- **allowedFileTypes: {Array}:** A list of file types to allow for cleaning.
+
+##### In 'bundle.wrangler.config.*':
 ```
 tasks:
   clean:
@@ -184,51 +167,38 @@ tasks:
       - html
 ```
 
-- **allowedFileTypes {Array}:** A list of keys/file types to allow for cleaning.
-
-#####Bundle level config:
+##### In {bundle}.*:
 ```
  clean:
-   - some/file/path/to/clean.js
-   - some/file/path/to/clean.css
+   - some/file/path.js
+   - some/file/path.css
    - etc.
 ```
 
+
 ### concat
-The 'concat' task concatenates all files listed in the `files` section of a {bundle-name}.yaml file and
-outputs the results
-to the output destination listed in it's config section or 'minify''s config section (if they are not
+The 'concat' task concatenates all files listed in keys within the `files` section of a {bundle-name}.yaml file and
+outputs the results to the output destination listed in it's config section or 'minify''s config section (if they are not
 defined for the 'concat' config section).
 
-By default concat works only on works on the `js`, `css`, and/or `html` sections (currently hardcoded
+By default concat works only works on the `js`, `css`, and/or `html` sections (currently hardcoded
 (will be updated later)).
 
-***Note do not run this task in conjunction with 'build' or 'minify' for any particular bundle cause
-it's effects will
-be nullified by the other tasks.
+***Note Calling this task in conjunction with 'build' or 'minify' will nullify it's effects since both `minify`
+and `build` (calls `minify`) will overwrite it's output.
 
-#####Flags:
-Linting/hinting can be skipped by passing anyone of the following flags:
-- `--skip-lint`
-- `--skip-linting`
-- `--skip-hint`
-- `--skip-hinting`
-
-Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint`.
-
-#####In 'bundle.wrangler.config.yaml':
+##### In 'bundle.wrangler.config.yaml':
 ```
 tasks:
-
   concat:
     header: |
       /*!
        * Company Name http://www.company-website.com
        * <%= bundle.options.alias %>.<%= fileExt %> <%= bundle.options.version %> (<%= (new Date()).getTime() %>)
        */
-    cssBuildDir: some/path/to/build/path
-    jsBuildDir: some/path/to/build/path
-    htmlBuildDir: some/path/to/build/path
+    cssBuildPath: some/path/to/build/path
+    jsBuildPath: some/path/to/build/path
+    htmlBuildPath: some/path/to/build/path
     allowedFileTypes:
       - js
       - css
@@ -243,10 +213,11 @@ tasks:
         - ejs
 ```
 
+##### Options:
 - **header:** The header to output on the concatenated file.
-- **cssBuildDir:** Output location for concatenated `*.css` files.
-- **jsBuildDir:** Output location for concatenated `*.js` files.
-- **htmlBuildDir:** Output location for concatenated `*.html` files.
+- **cssBuildPath:** Output location for concatenated `*.css` files.
+- **jsBuildPath:** Output location for concatenated `*.js` files.
+- **htmlBuildPath:** Output location for concatenated `*.html` files.
 - **allowedFileTypes:** The keys through loop through in the `files` section.
 - **useVersionNumInFileName:** Whether to use the {bundle-name}.yaml file's version number suffixed to the
  concatenated file's name.
@@ -258,12 +229,43 @@ tasks:
  - **compressWhitespace:** Whether or not to compress white space in the collected template strings.
  - **templateTypeKeys:** Keys to look for in files to trigger the template string addition functionality.
 
+##### In {bundle}.*:
+```
+files:
+    js: # {Array} of file paths
+        ...
+    css: # {Array} of file paths
+        ...
+    html: # {Array} of file paths
+        ...
+    mustache: # {Array} of file paths
+        ...
+    handlbars: # {Array} of file paths
+        ...
+    ejs: # {Array} of file paths
+        ...
+```
+
+##### Flags:
+`--skip-linting`, `--skip-csslint`, `--skip-jshint`
+
+
 ### config
 The config task backs up an existing bundle.wrangler.config.* (file could be empty) and creates a new
 bundle.wrangler.config file in the chosen format.  The task also allows you to choose which sections
 (with defaults) to include in the file.
 
-** Usage **: `gulpw config`
+##### Options:
+None.
+
+##### Flags:
+None.
+
+##### In 'bundle.wrangler.config.*':
+None.
+
+##### In {bundle}.*:
+None.
 
 ### compass
 The 'compass' task calls compass compile at compass project root location (config.rb home).
@@ -276,6 +278,19 @@ tasks:
     compassProjectRoot: null # config.rb home
 ```
 
+##### In {bundle}.*:
+```
+  compass:
+  	# Compass project root dir
+    compassProjectRoot: null # config.rb home
+```
+
+##### Options:
+None.
+
+##### Flags:
+None.
+
 ### copy
 'copy' copies any files listed in a `copy` section's `files` hash within in a {bundle-name}.yaml config file.
 E.g.,
@@ -287,8 +302,11 @@ copy:
 
 'copy' copies the 'key' to the 'value' location for every entry in the `files` hash.
 
+##### Options:
+None.
+
 ##### In bundle.wrangler.config.*:
-none.
+None.
 
 ##### In {bundle}.*:
 ```
@@ -296,6 +314,10 @@ copy:
   files:
     ./this/path/gets/copied/to: ./this/path
 ```
+
+##### Flags:
+None.
+
 
 ### csslint
 The 'csslint' task runs csslint on a bundle or all bundles using the listed '.csslintrc' file or runs with
@@ -307,8 +329,15 @@ tasks:
   csslint:
       csslintrc: null
 ```
-
+##### Options:
 - **csslintrc:**  Location of '.csslintrc' file.
+
+##### In {bundle}.*:
+None.
+
+##### Flags:
+None.
+
 
 ### deploy
 Deploy's files using deploy section in 'bundle.wrangler.config.yaml' and deploy configuration generated by
@@ -319,9 +348,6 @@ Deploy's files using deploy section in 'bundle.wrangler.config.yaml' and deploy 
 tasks:
  # Deploy Task
   deploy:
-
-    # Should files be linted before deploy
-    lintBeforeDeploy: false
 
     # Use unix style paths for deployment
     deployUsingUnixStylePaths: true
@@ -337,7 +363,7 @@ tasks:
     privatekeyLocation: null
 
     # File types that are allowed for deployment
-    allowedFileTypes:
+    allowedFileTypes: # This will change to `ingoredFileTypes`
       - js
       - css
       - html
@@ -353,13 +379,14 @@ tasks:
     domainsToDevelop:
 
       # Hostname to develop for
-      gulpw-sample.somedomain.com:
+      somedomain.com:
 
-        # Servers where user can develop for `domainToDevelopFor` (in this case `domainToDevelopFor` is `gulpw-sample.somedomain.com`)
+        # Servers where user can deploy to `domainToDevelopFor`
+        # (in this case `domainToDevelopFor` is `somedomain.com`)
         hostnames: # slots/hosts
-          - -devslot1.gulpw-sample.somedomain.com
-          - -devslot2.gulpw-sample.somedomain.com
-          - -devslot3.gulpw-sample.somedomain.com
+          - -devslot1.somedomain.com
+          - -devslot2.somedomain.com
+          - -devslot3.somedomain.com
 
         # All website instance prefixes represent the same website just different
         # instances of the website.
@@ -377,24 +404,37 @@ tasks:
           #web2: website2
           #web3: website3
 
-        # Root folder on the server to use for deployments (prefix path for file paths being deployed that don't have
+        # Root folder on the server to use for deployments (prefix
+        # path for file paths being deployed that don't have
         # `deployRootFoldersByFileType` defined for their typ)))
-        deployRootFolder: null # example: /home/some-user/sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
+        # example: /home/some-user/sites/<%= hostnamePrefix %><%= hostname %>
+        # (recieves the `deploy` has from this config)
+        deployRootFolder: null
 
-        # Deploy roots by file type. If defined, file types that are keys in it's hash will have the deploy root for said key
-        # prepend as a deploy root to the file being deployed instead of the `deployRootFolder` root path.
+        # Deploy roots by file type. If defined, file types that are keys in
+        # it's hash will have the deploy root for said key
+        # prepend as a deploy root to the file being deployed instead of the
+        # `deployRootFolder` root path.
         deployRootFoldersByFileType:
           md: /home/some-user/docroot/md-files.<%= hostnamePrefix %><%= hostname %>/
 
 ```
 
+
 ### deploy-config
+
 
 ### jshint
 JsHint task.  If `jshintrc` is specified those options are used instead (maybe we'll merge these options
  in the future?).
 
-#####In 'bundle.wrangler.config.yaml':
+##### Options:
+See jshint module for options.
+
+##### Flags:
+`--skip-jshint`, `skip-jslint`, `skip-linting`
+
+##### In 'bundle.wrangler.config.*':
 ```
 tasks:
   jshint:
@@ -416,6 +456,15 @@ tasks:
         - sjl
 ```
 
+##### In {bundle}.*:
+```
+jshint:
+    jshintrc: ./.jshintrc
+    options:
+        ... # see jshint module for options
+```
+
+
 ### minify
 The 'minify' task is a big composite task due to the many subtasks it handles.
 The minify task launches the following tasks per file in it's sources array (task only launch for
@@ -429,30 +478,19 @@ corresponding file types):
 The `template` hash in the options for this task takes care of importing templates using a lodash template
 into your javascript file (appended to the bottom of the javascript file)(read notes in config description).
 
-#####Flags:
-Linting/hinting can be skipped by passing anyone of the following flags:
-- `--skip-lint`
-- `--skip-linting`
-- `--skip-hint`
-- `--skip-hinting`
+##### Flags:
+`--skip-linting`, `--skip-csslint`, `--skip-jshint`, `--skip-jslint`, `--dev`
 
-Or if you want to skip 'csslint' `--skip-csslint` and/or 'jshint' `--skip-jshint`.
-
-Development mode:
-`--dev` - Skips minification for all *.css, *.js, and *.html files.
-
-#####In 'bundle.wrangler.config.yaml':
+##### In 'bundle.wrangler.config.yaml':
 ```
 tasks:
-
   minify:
-
     # Header for top of file (lodash template)
     header: |
       /*! Company Name http://www.company-website.com <%= bundle.options.alias %>.js <%= bundle.options.version %> */
-    cssBuildDir: some/css/build/path
-    htmlBuildDir: some/html/build/path
-    jsBuildDir: some/js/build/path
+    cssBuildPath: some/css/build/path
+    htmlBuildPath: some/html/build/path
+    jsBuildPath: some/js/build/path
     allowedFileTypes: # allowed files types to process for the main tasks (css, js, and html)
       - js
       - css
@@ -472,18 +510,33 @@ tasks:
         - ejs
 ```
 
-### prompt:deploy
+##### In {bundle}.*:
+```
+files:
+    js: # {Array} of file paths
+        ...
+    css: # {Array} of file paths
+        ...
+    html: # {Array} of file paths
+        ...
+    mustache: # {Array} of file paths
+        ...
+    handlbars: # {Array} of file paths
+        ...
+    ejs: # {Array} of file paths
+        ...
+```
+
+### deploy-config
 Launches an interactive questionnaire for generating a local 'deploy.yaml' file with deployment details
  for current development environment.
 ****Note**** This task must be run before the `deploy` task in order for it to function.
 ****Note**** File is put in the directory specified by `localConfigPath` of the
- 'bundle.wrangler.config.yaml' file or the default is used ('./.gulpw').
+ 'bundle.wrangler.config.*' file or the default is used ('./.gulpw').
 
-#####In 'bundle.wrangler.config.yaml':
-No bundle.wrangler.config section at this time.
+##### In 'bundle.wrangler.config.*':
+None.
 
-- **localDeployFileName**: This property of the deploy task (`tasks.deploy.localDeployFileName`)
-list the file name to use when generating a local deploy options file.
 
 ### requirejs
 RequireJs task.
@@ -491,51 +544,65 @@ RequireJs task.
 #####In 'bundle.wrangler.config.yaml':
 ```
 tasks:
-
-  # RequireJs Defaults
-  requirejs:
-    options:
-      # requirejs options here
+  requirejs: null # requirejs options here
+    #options:
       ...
 ```
 
-### watch
-Watch task.
+##### In {bundle}.*:
+```
+requirejs:
+  options:
+    ...
+```
 
-#####In 'bundle.wrangler.config.yaml':
+
+### watch
+The 'watch' task watches any files listed in the `requirejs`, `files.*`, and `watch.otherFiles`
+keys (this will be dynamic in upcoming version so that you can say what keys should be watched by
+default.
+
+##### Options:
+- **ignoredTasks {Array}:** Tasks to ignore by default.
+- **tasks {Array}:** Tasks to run sequentially when a watched file change is detected.
+- Not implemented yet ~~**otherFiles {Array}:** Other files to watch globally.  Default `null`.~~
+
+##### Flags:
+- Not yet implement ~~`--file-type` (`--ext`, `-t`) - A list of comma separated file types to watch explicitly (ignores all other file types).~~
+
+##### In 'bundle.wrangler.config.*':
 ```
 tasks:
-
-  # Watch Task Defaults
   watch:
-
-    # Standalone tasks to ignore on the bundle level (watch creates it's own collection of deploy tasks from the bundle(s) registered with it)
     ignoredTasks:
       - clean
       - deploy
-
-    # Tasks to run on file changes.
     tasks:
       - build
       - deploy
-
-    # Other files to watch (can be overridden from the bundle level as well)
     otherFiles: null
+```
+
+##### In {bundle}.*:
+```
+watch:
+  otherFiles:
+    - path/to/some/file.js
+    - path/to/some/file.file
+    - ...
 ```
 
 ### mocha
 Mocha tests task runs the mocha module on your test 'files' array or string using `options` if any.
 
-#####Flags
+##### Flags
 - Skip Testing:
-  - `--no-tests`
-  - `--skip-tests`
-  - `--skip-testing`
-  - `--no-mocha-tests`
-  - `--skip-mocha-tests`
-  - `--skip-mocha-testing`
+  - `--skip-tests`, `--skip-testing`, `--skip-mocha-tests`, `--skip-mocha-testing`
 
-#####In 'bundle.wrangler.config.yaml':
+##### Options:
+Mocha options.  See Mocha module for options.
+
+##### In 'bundle.wrangler.config.yaml':
 ```
 tasks:
   mocha:
@@ -546,40 +613,56 @@ tasks:
     options: null # - {Object} - Options if any.  Default `null`
 ```
 
+##### In {bundle}.*:
+```
+mocha:
+  files:
+    - some/tests/folder/with/tests/**/*.js
+    - some/tests/file.js
+```
+
 ### jasmine
 Jasmine tests task runs the jasmine module on your test 'files' array or string using `options` if any.
 
-#####Flags
-- Skip Testing:
-  - `--no-tests`
-  - `--skip-tests`
-  - `--skip-testing`
-  - `--no-jasmine-tests`
-  - `--skip-jasmine-tests`
-  - `--skip-jasmine-testing`
+##### Options:
+Jasmine options (see jasmine module for available options).
 
-#####In 'bundle.wrangler.config.yaml':
+##### Flags:
+- Skip Testing:
+  - `--skip-tests`, `--skip-testing`, `--skip-jasmine-tests`, `--skip-jasmine-testing`
+
+##### In 'bundle.wrangler.config.*':
 ```
 tasks:
   jasmine:
-    # {String|Array} of files.  Default `null`
-    files: # or ./some/tests/**/*.js
+    files:
       - some/tests/folder/with/tests/**/*.js
       - some/tests/file.js
-    options: null # - {Object} - Options if any.  Default `null`
+    options: null # - {Object} - Jasmine options if any.  Default `null`
+```
+
+##### In {bundle}.*:
+```
+jasmine:
+  files:
+    - some/tests/folder/with/tests/**/*.js
+    - some/tests/file.js
 ```
 
 ### Available Flags:
-**A Note on using flags:**
-- **`--file-types`:**  Used to pass a comma separated list of file extensions to your tasks.
+**Note** All long forms of these flags use the `--{flag-name}` format.  Short forms use `-{flag-one-letter-alias}`.
+- **file-types:**  Used to pass a comma separated list of file extensions to the defined tasks.
     - **Affected tasks:**
         - `deploy` - Uses `--file-types` string to only deploy files of the types you passed in via `--file-types` or one of it's aliases.
-    - **Aliases:** `--ext`
-- **`--debug`:** Used for developing gulpw and allows you to keep your more pertinent debug logging declarations.
-    - **Aliases:** `-d`
-- **`--skip-tests`:**
+    - **Aliases:** `--ext`, `-t`
+- **debug:** Used for developing gulpw and allows you to keep your more pertinent debug logging declarations.
+    - **Aliases:** None.
+- **dev:** Used to ignore minification (at this time).
+    - **Affected tasks:**
+        - `minify` and `concat` - Minification is skipped when used with these tasks.
+- **skip-tests:** Causes `mocha` and `jasmine` tests to not run.
     - **Aliases:** `--no-tests`, `--skip-testing`
-- **`--verbose`:**
+- **verbose:** Used to print verbose mode logs.
     - **Aliases:** `-v`
 
 ### Caveats:
