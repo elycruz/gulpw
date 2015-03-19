@@ -177,7 +177,7 @@ tasks:
 ```
 
 
-### concat
+### ~~concat~~ This task has been removed used `minify` with the `--dev` flag instead
 The 'concat' task concatenates all files listed in keys within the `files` section of a {bundle-name}.yaml file and
 outputs the results to the output destination listed in it's config section or 'minify''s config section (if they are not
 defined for the 'concat' config section).

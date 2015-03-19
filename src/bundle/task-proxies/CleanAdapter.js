@@ -80,8 +80,7 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
                 separator = ':',
                 targets = [],
-                minifyConfig = wrangler.tasks.minify,
-                concatConfig = wrangler.tasks.concat;
+                minifyConfig = wrangler.tasks.minify;
 
             // Register separate `clean` tasks for each section in `files` key
             allowedFileTypes.forEach(function (ext) {
@@ -92,9 +91,6 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
                 if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                     // Get file path for `key` in `files`
-                    if (concatConfig[ext + 'BuildPath']) {
-                        singularTaskTargets.push(path.join(concatConfig[ext + 'BuildPath'], bundleName + '.' + ext));
-                    }
                     if (minifyConfig[ext + 'BuildPath']) {
                         singularTaskTargets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
                     }
@@ -133,8 +129,7 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
             var self = this,
                 targets = [],
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
-                minifyConfig = wrangler.tasks.minify,
-                concatConfig = wrangler.tasks.concat;;
+                minifyConfig = wrangler.tasks.minify;
 
             bundles.forEach(function (bundle) {
                 var bundleName = bundle.options.alias;
@@ -148,9 +143,6 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
                     if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                         // Get file path for `key` in `files`
-                        if (concatConfig[ext + 'BuildPath']) {
-                            targets.push(path.join(concatConfig[ext + 'BuildPath'], bundleName + '.' + ext));
-                        }
                         if (minifyConfig[ext + 'BuildPath']) {
                             targets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
                         }

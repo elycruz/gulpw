@@ -59,31 +59,6 @@ tasks:
     compassProjectRoot: null # config.rb home
     help: ""
 
-  concat:
-    constructorLocation: ./bundle/task-proxies/ConcatAdapter
-    header: |
-      /*!
-       * Company Name http://www.company-website.com
-       * <%= bundle.alias %>.<%= fileExt %> <%= bundle.version %> (<%= (new Date()).getTime() %>)
-       * <%= bundle[section-name].md5 %>
-       */
-    cssBuildPath: some/path/to/build/path
-    jsBuildPath: some/path/to/build/path
-    htmlBuildPath: some/path/to/build/path
-    allowedFileTypes:
-      - js
-      - css
-      - html
-    useVersionNumInFileName: false
-    template:
-      templatePartial: null # script partial to render for each file entry in the `templates` hash.
-      compressWhitespace: true
-      templateTypeKeys:
-        - mustache
-        - handlebars
-        - ejs
-    help: ""
-
   copy:
     constructorLocation: ./bundle/task-proxies/CopyAdapter
     help: ""

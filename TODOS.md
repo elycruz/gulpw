@@ -114,10 +114,9 @@ gulp-bundle-wrangler (Beta)
             E.g., `--ext=js,css` etc. the parameter should limit the task(s) scope
 	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
     - [ ] - vulcanize (for polymer build tool)
+    - [ ] - browserify
+    - [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
 - [ ] - Examine any fields named `allowedFileTypes` for candidates to rename to `ingoredFileTypes`.
-- [ ] - browserify
-- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
-
 
 ### Todos for Version 0.4.0
 - [ ] - Move all utility styled functions from `Wrangler` into a utils class/namespace etc.. (?)
