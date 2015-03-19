@@ -24,13 +24,6 @@ staticTasks:
 
 tasks:
 
-  all:
-    constructorLocation: ./bundle/task-proxies/AllTasksAdapter
-    tasks:
-      - build
-      - deploy
-    help: ""
-
   # Browserify Defaults
   browserify:
     constructorLocation: ./bundle/task-proxies/BrowserifyAdapter

@@ -120,7 +120,8 @@ depending on if an `html`, `css` or `js` section is found with the `files` secti
  included as conglomerate tasks).
 
 ##### Flags:
-`--skip-linting`, `--skip-csslint`, `--skip-jshint`, `--dev`
+`--skip-linting`, `--skip-csslint`, `--skip-jshint`, `--dev`,
+`--skip-testing`, `--skip-mocha-test`, `--skip-jasmine-tests`
 
 ##### In 'bundle.wrangler.config.*':
 ```

@@ -57,19 +57,19 @@ gulp-bundle-wrangler (Beta)
 - [X] - Task Updates:
     - [X] - Deploy task should be able to take a parameter to only deploy certain file types;
             E.g., `--file-types=css,js` or `-ft=css,js` or `--ext=js,css` ?
-- [ ] - Tasks
-	- [ ] - browserify
+- [X] - Tasks
+	- [X] - ~~browserify~~ Moved to version 0.3.0
     - [X] - ~~develop - Task for launching browser with specified path and launching watch task for specified bundle.~~ Moved to version 0.3.0.
-    - [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
+    - [X] - ~~jsdoc~~ ~~document (jsdoc, groco, etc)~~ Moved to version 0.3.0
     - [X] - ~~vulcanize (for polymer build tool)~~ Moved to version 0.3.0.
   	- [X] - ~~prompt:config Generates a 'bundle.wrangler.config.*' file.~~ ~~For generating default config.~~  Taken care of by `config` task (see above 'Static Tasks').
 - [X] - ~~For `Bundle`~~ Moving to version 0.3.0:
 	- [X] - ~~The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
-	  changed.~~
+	  changed.~~ Moved to version 0.4.0
 - General:
   - [ ] - Prettify console output in all tasks, and make all output follow a similar structure.
-  - [ ] - Clean up notes for deploy task.
+  - [X] - Clean up notes for deploy task.
   - [X] - Make ~~'prompt:deploy'~~ `deploy-config` more robust by making some of the config parameters optional (also doctor
             up deploy task to take this into account)
   - [X] - ~~Fix all non streaming tasks to return streams or promises so that other tasks can list them as dependencies.~~ Taken care of below.
@@ -95,14 +95,13 @@ gulp-bundle-wrangler (Beta)
   - [x] - Cleanup callbacks ~~hell~~ within deploy task to only go one level deep (inline) (will make code easier to read).
   - [X] - Change `prompt` to `config`. (`prompt` still exists.  Will be removed in a later version)
   - [X] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
-  - [ ] - Add notes for ~~'prompt:config'~~ `config` task.
+  - [X] - Add notes for `config` task.
   - [X] - Supply example bundle config file with all sections listed in it.
   - [ ] - Add all available flags to main readme.md.
-  - [ ] - Update the example bundle config file with latest additions/changes (add more notes for it).
+  - [X] - Update the example bundle config file with latest additions/changes (add more notes for it).
   - [X] - Add LICENSE file.
   - [X] - Bundle aliases/name's are now optional inside of a {bundle}.* config file.
   - [X] - Renamed all occurrences of 'Proxy' to 'Adapter' (since what Wrangler uses are actually adapters).
-  - [ ] - Examine any fields named `allowedFileTypes` for candidates to rename to `ingoredFileTypes`.
 
 ### Todos for Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).
@@ -115,7 +114,14 @@ gulp-bundle-wrangler (Beta)
             E.g., `--ext=js,css` etc. the parameter should limit the task(s) scope
 	- [ ] - develop - Task for launching browser with specified path and launching watch task for specified bundle.
     - [ ] - vulcanize (for polymer build tool)
+- [ ] - Examine any fields named `allowedFileTypes` for candidates to rename to `ingoredFileTypes`.
+- [ ] - browserify
+- [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
+
 
 ### Todos for Version 0.4.0
 - [ ] - Move all utility styled functions from `Wrangler` into a utils class/namespace etc.. (?)
+- [ ] - The watch task should be reset whenever the {bundle}.* file that it is using to watch files
+	 is changed and also when running the global watch the watch task should reset whenever a {bundle}.* is
+	  changed.
 
