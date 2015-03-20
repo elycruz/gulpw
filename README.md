@@ -89,7 +89,7 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [bundle-config](#bundleconfig)
 - [clean](#clean)
 - [compass](#compass)
-- [concat](#concat)
+- [~~concat~~](#~~concat~~)
 - [config](#config)
 - [copy](#copy)
 - [csslint](#csslint)
@@ -660,7 +660,7 @@ jasmine:
     - **Aliases:** None.
 - **dev:** Used to ignore minification (at this time).
     - **Affected tasks:**
-        - `minify` and `concat` - Minification is skipped when used with these tasks.
+        - `minify` ~~and `concat`~~ - Minification is skipped when used with these tasks.
 - **skip-tests:** Causes `mocha` and `jasmine` tests to not run.
     - **Aliases:** `--no-tests`, `--skip-testing`
 - **verbose:** Used to print verbose mode logs.
