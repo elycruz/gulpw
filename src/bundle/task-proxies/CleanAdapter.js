@@ -84,7 +84,7 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
 
             // Register separate `clean` tasks for each section in `files` key
             allowedFileTypes.forEach(function (ext) {
-                var section = bundle.options.files[ext],
+                var section = bundle.has('files.' + ext),
                     singularTaskTargets = [];
 
                 // Check if `key` in `files` is buildable (concatable/minifiable)

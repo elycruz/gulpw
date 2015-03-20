@@ -12,11 +12,12 @@ var FilesHashTaskAdapter = require('../FilesHashTaskAdapter'),
     minifyhtml = require('gulp-minify-html'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
-    //callback = require('gulp-fncallback'),
+    callback = require('gulp-fncallback'),
     gulpif = require('gulp-if'),
     duration = require('gulp-duration'),
     chalk = require('chalk'),
-    path = require('path');
+    path = require('path'),
+    crypto = require('crypto');
 
 module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
     FilesHashTaskAdapter.apply(this, arguments);
@@ -44,7 +45,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             //useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
             bundleName = bundle.options.alias,
             taskName = self.alias + ':' + bundleName,
-            allowedFileTypes = wrangler.tasks.minify.allowedFileTypes;
+            allowedFileTypes = wrangler.tasks.minify.allowedFileTypes,
+            createFileHash = wrangler.tasks.minify.createFileHashes || true;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -87,9 +89,16 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     // Minify current source in the {artifacts}/ext directory
                     .pipe(gulpif(!wrangler.argv.dev, taskInstanceConfig.instance(taskInstanceConfig.options)))
 
+                    .pipe(callback(function (file, enc) {
+                        if (createFileHash) {
+                            var hasher = crypto.createHash(wrangler.tasks.minify.fileHashType || 'sha256');
+                            hasher.update(file.contents.toString(enc));
+                            bundle[ext + 'Hash'] = hasher.digest('hex');
+                        }
+                    }))
+
                     // Add file header
-                    .pipe(gulpif(ext !== 'html', header(wrangler.tasks.minify.header,
-                            {bundle: bundle, fileExt: ext, fileHash: '{{file hash here}}'}) ))
+                    .pipe(gulpif(ext !== 'html', header(wrangler.tasks.minify.header, {bundle: bundle, fileExt: ext} )))
 
                     // Dump to the directory specified in the `minify` call above
                     .pipe(gulp.dest('./'));

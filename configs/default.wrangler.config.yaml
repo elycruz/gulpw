@@ -179,10 +179,12 @@ tasks:
   minify:
     constructorLocation: ./bundle/task-proxies/MinifyAdapter
     header: |
-      /*! Company Name http://www.company-website.com <%= bundle.alias %>.js <%= bundle.version %> <%= bundle[section-name].md5 %> */
+      /*! Company Name http://www.company-website.com <%= bundle.alias %>.js <%= bundle.version %> <%= bundle[fileExt + 'Hash'] %> */
     cssBuildPath: some/path/to/build/path
     htmlBuildPath: some/path/to/build/path
     jsBuildPath: some/path/to/build/path
+    fileHashType: sha256
+    createFileHashes: true
     allowedFileTypes:
       - js
       - css
