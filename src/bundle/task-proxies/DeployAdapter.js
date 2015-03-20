@@ -224,11 +224,11 @@ module.exports = TaskAdapter.extend(function DeployAdapter (config) {
                 // Build deploy src path
                 if (self._serverEntryHasDeployFolderType(selectedServerEntry, fileType)) {
                     deployPath = path.join(selectedServerEntry.deployRootFoldersByFileType[fileType],
-                        bundle.options.alias + '.' + fileType);
+                        localPath);
                 }
                 else {
                     wrangler.log('Using deploy root path: ', fileType, deployRootFolder, '--debug');
-                    deployPath = path.join(deployRootFolder, bundle.options.alias + '.' + fileType);
+                    deployPath = path.join(deployRootFolder, localPath);
                 }
 
                 // Check if we need unix styled paths and are on windows

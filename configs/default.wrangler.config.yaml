@@ -179,7 +179,7 @@ tasks:
   minify:
     constructorLocation: ./bundle/task-proxies/MinifyAdapter
     header: |
-      /*! Company Name http://www.company-website.com <%= bundle.alias %>.js <%= bundle.version %> <%= bundle[fileExt + 'Hash'] %> */
+      /*! Company Name * http://www.company-website.com * Filename: <%= bundle.options.alias + '.' + fileExt %> * Version: <%= bundle.options.version %> * Created: (<%= (new Date()).getTime() %>) * Hashsum: <%= fileHashType %>:<%= bundle[fileExt + 'Hash'] %> */
     cssBuildPath: some/path/to/build/path
     htmlBuildPath: some/path/to/build/path
     jsBuildPath: some/path/to/build/path
