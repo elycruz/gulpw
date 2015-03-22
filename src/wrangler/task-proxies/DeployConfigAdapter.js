@@ -16,11 +16,16 @@ var WranglerTaskAdapter = require('../WranglerTaskAdapter'),
     inquirer = require('inquirer'),
     chalk = require('chalk');
 
-module.exports = WranglerTaskAdapter.extend(function DeployConfigAdapter (options) {
-    WranglerTaskAdapter.call(this, options);
+module.exports = WranglerTaskAdapter.extend(function DeployConfigAdapter () {
+    WranglerTaskAdapter.call(this, arguments);
 }, {
 
     registerStaticTasks: function (gulp, wrangler) {
+
+        if (wrangler.tasks.deploy.notConfiguredByUser) {
+            return;
+        }
+
         var userPath = process.env.HOME || process.env.HOMEPATH
                 || process.env.USERPROFILE,
             userIdRsaPath = path.normalize(userPath + '/.ssh/id_rsa'),

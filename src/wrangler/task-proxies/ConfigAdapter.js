@@ -20,8 +20,8 @@ var WranglerTaskAdapter = require('../WranglerTaskAdapter'),
     inquirer = require('inquirer'),
     chalk = require('chalk');
 
-module.exports = WranglerTaskAdapter.extend(function ConfigAdapter (options) {
-    WranglerTaskAdapter.call(this, options);
+module.exports = WranglerTaskAdapter.extend(function ConfigAdapter () {
+    WranglerTaskAdapter.call(this, arguments);
 }, {
 
     registerStaticTasks: function (gulp, wrangler) {

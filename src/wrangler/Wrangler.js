@@ -76,16 +76,16 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Create static tasks
         if (anyStaticTasksToRun) {
-            self.createStaticTaskProxies(gulp);
+            self.createStaticTaskAdapters(gulp, taskAliasesFromArgv);
         }
 
         // Else create task proxies and bundle(s) if necessary
         else {
 
-            // Create task proxies
-            self.createTaskProxies(gulp, taskAliasesFromArgv);
+            // Create task adapters
+            self.createTaskAdapters(gulp, taskAliasesFromArgv);
 
-            // If any global tasks to run create tasks proxies and all bundles.
+            // If any global tasks to run create tasks adapters and all bundles.
             if (anyGlobalTasksToRun && !anyPerBundleTasksToRun) {
                 self.log('\nGlobal tasks found and no Per-Bundle tasks found.', '\n', 'Preparing global tasks.', '--debug');
                 self.createBundles(gulp, null, false);
@@ -106,26 +106,28 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         self.launchTasks(argv._, gulp);
     },
 
-    createStaticTaskProxies: function (gulp) {
+    createStaticTaskAdapters: function (gulp, taskAliases) {
         var self = this;
 
-        // Creating task proxies message
-        self.log('- Creating static task proxies.');
+        // Creating task adapters message
+        self.log('- Creating static task adapters.');
 
-        self.staticTaskKeys.forEach(function (task) {
-            self.staticTasks[task].instance = self.createStaticTaskAdapter(gulp, task);
+        taskAliases.forEach(function (task) {
+            if (sjl.isset(self.staticTasks[task])) {
+                self.staticTasks[task].instance = self.createStaticTaskAdapter(gulp, task);
+            }
         });
 
         return self;
     },
 
-    createTaskProxies: function (gulp, taskKeys) {
+    createTaskAdapters: function (gulp, taskKeys) {
         var self = this;
 
         taskKeys = taskKeys || self.getTaskAliasesFromArgv();
 
-        // Creating task proxies message
-        self.log(chalk.cyan('\n- Creating task proxies.'));
+        // Creating task adapters message
+        self.log(chalk.cyan('\n- Creating task adapters.'));
 
         taskKeys.forEach(function (task) {
             if (sjl.classOfIs(self.tasks[task], 'String')) {
@@ -162,7 +164,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             TaskAdapterClass = require(path.join(__dirname, src));
 
         TaskAdapterClass = new TaskAdapterClass({
-            name: task,
+            alias: task,
             help: self.staticTasks[task].help || ''
         });
 
@@ -175,7 +177,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         registerBundles = sjl.isset(registerBundles) ? registerBundles : true;
         var self = this;
 
-        // Creating task proxies message
+        // Creating task adapters message
         self.log(chalk.cyan('\n- Creating bundles.'));
 
         // Create bundles if necessary
