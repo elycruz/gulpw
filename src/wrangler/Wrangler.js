@@ -120,8 +120,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     createTaskProxies: function (gulp, taskKeys) {
-        var self = this,
-            taskKeys = taskKeys || self.getTaskAliasesFromArgv();
+        var self = this;
+
+        taskKeys = taskKeys || self.getTaskAliasesFromArgv();
 
         // Creating task proxies message
         self.log(chalk.cyan('\n- Creating task proxies.'));
@@ -205,7 +206,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // If config is of type 'String' we assume a path
         if (sjl.classOfIs(config, 'String')) {
-            bundleAlias = config + "";
+            bundleAlias = config + '';
             config = this.loadConfigFile(config);
             config.alias = path.basename(bundleAlias).split(/\.(yaml|js|json)$/)[0];
         }
@@ -496,7 +497,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             // If task config is an object extend it
             if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key]), 'Object') {
-                sjl.extend(true, self.tasks[key], objToMerge)
+                sjl.extend(true, self.tasks[key], objToMerge);
             }
             // Else set it
             else {
@@ -508,7 +509,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     getBundle: function (bundle) {
         var self = this,
             originalBundleValue = bundle,
-            i, item;
+            i;
 
         bundle = this.bundles[this.getBundleAlias(bundle)];
 
