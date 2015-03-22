@@ -199,7 +199,8 @@ module.exports = TaskAdapter.extend(function DeployAdapter (config) {
             deployRootFolder = selectedServerEntry.deployRootFolder,
             argvFileTypes = wrangler.getArgvFileTypes(),
             hasArgvFileTypes = wrangler.hasArgvFileTypes(),
-            skipArtifacts = wrangler.argv.skipArtifacts;
+            skipArtifacts = wrangler.argv.skipArtifacts,
+            isMinifyConfigured = !wrangler.tasks.minify.notConfiguredByUser;
 
         // Set file type arrays
         allowedFileTypes.forEach(function (fileType) {
@@ -216,7 +217,7 @@ module.exports = TaskAdapter.extend(function DeployAdapter (config) {
             }
 
             // Check if bundle has files [js, css, allowed file types etc.]
-            if (!skipArtifacts && hasFilesFileType && wrangler.tasks.minify[fileType + 'BuildPath']) {
+            if (!skipArtifacts && hasFilesFileType && isMinifyConfigured && wrangler.tasks.minify[fileType + 'BuildPath']) {
 
                 // Initialize storage array
                 srcs[fileType] = [];

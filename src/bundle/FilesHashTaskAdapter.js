@@ -31,6 +31,11 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
                 taskPrefix = self.alias,
                 hasSection;
 
+            // Bail if task is not configured by user
+            if (wrangler.tasks.minify.notConfiguredByUser) {
+                return;
+            }
+
             bundles.forEach(function (bundle) {
 
                 // If bundle doesn't have any of the required keys, bail

@@ -31,8 +31,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
      */
     registerBundle: function (bundle, gulp, wrangler) {
 
-        // If bundle doesn't have any of the required keys, bail
-        if (!this.isBundleValidForTask(bundle)) {
+        // If bundle doesn't have any of the required keys or task is not configured by user, bail
+        if (!this.isBundleValidForTask(bundle) || wrangler.tasks.minify.notConfiguredByUser) {
             return;
         }
 
