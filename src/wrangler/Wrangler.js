@@ -479,6 +479,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Extend self with options
         sjl.extend(true, self, options);
 
+        // Set 'notConfigured' value to be used by 'register*' task adapter functions.
+        self.taskKeys.forEach(function (key) {
+            if (sjl.empty(tasks[key])) {
+                self.tasks[key].notConfiguredByUser = true;
+            }
+        });
+
         // Copy task configs from copied tasks obj
         Object.keys(tasks).forEach(function (key) {
             var value = tasks[key],
@@ -487,7 +494,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 objToMerge = sjl.classOfIs(value, 'String')
                     ? self.loadConfigFile(path.join(process.cwd(), value)) : value;
 
-            // If task cofnig is an object extend it
+            // If task config is an object extend it
             if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key]), 'Object') {
                 sjl.extend(true, self.tasks[key], objToMerge)
             }

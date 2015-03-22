@@ -153,7 +153,7 @@ module.exports = TaskAdapter.extend(function DeployAdapter (config) {
     registerBundle: function (bundle, gulp, wrangler) {
 
         // If bundle is not valid for task, bail
-        if (!this.isBundleValidForTask(bundle)) {
+        if (!this.isBundleValidForTask(bundle) || wrangler.tasks.deploy.notConfiguredByUser) {
             return;
         }
 
@@ -167,6 +167,10 @@ module.exports = TaskAdapter.extend(function DeployAdapter (config) {
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = {};
+
+        if (wrangler.tasks.deploy.notConfiguredByUser) {
+            return;
+        }
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {

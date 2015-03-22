@@ -103,6 +103,7 @@ gulp-bundle-wrangler (Beta)
   - [X] - Bundle aliases/name's are now optional inside of a {bundle}.* config file.
   - [X] - Renamed all occurrences of 'Proxy' to 'Adapter' (since what Wrangler uses are actually adapters).
   - [ ] - Refresh docs
+  - [ ] - Ensure all tasks are optional
 
 ### Todos for Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).

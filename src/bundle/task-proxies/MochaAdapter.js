@@ -28,7 +28,7 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
                     fulfill();
                     return;
                 }
-                wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
+                wrangler.log(chalk.cyan('\nRunning "' + taskName + '":'), '--mandatory');
                 gulp.src(taskConfig.files)
                     .pipe(mocha(mochaOptions))
                     .pipe(duration(chalk.cyan('mocha \"' + bundle.options.alias + '\' duration')))
@@ -39,11 +39,6 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
         });
     },
 
-    /**
-     * @param bundle {Bundle}
-     * @param gulp {gulp}
-     * @param wrangler {Wrangler}
-     */
     registerBundle: function (bundle, gulp, wrangler) {
         var self = this;
         if (!self.isBundleValidForTask(bundle)) {
@@ -72,7 +67,7 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
                 wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
                 return Promise.resolve();
             }
-            wrangler.log('\n  Running "mocha" task(s):', '--mandatory');
+            wrangler.log('\nRunning "mocha" task(s):', '--mandatory');
             return wrangler.launchTasks(tasks, gulp);
         });
     },

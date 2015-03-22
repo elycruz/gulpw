@@ -8,56 +8,56 @@
 browserify: null
 
 # Compass task
-compass:
+compass: null
 
   # Compass project root (used to `cd` into to run
   #   `compass compile` and `compass watch` as sub processes)
   # {String}
-  compassProjectRoot: null # ./config.rb home
+  #compassProjectRoot: null # ./config.rb home
 
 # Copy task
-copy:
+copy: null
 
   # Files to copy (key => value hash)
   # {Object}
-  files: null
+  #files: null
 
 # Clean task
-clean:
+clean: null
 
   # Files to clean
   # {Array}
-  files: null
+  #files: null
 
 # Deploy Task
-deploy:
+deploy: null
 
   # Other files to be deployed.
   # Hash of file type keys with values of type {Array}.
   # {Object}
-  otherFiles: null
+  #otherFiles: null
 
 # Jasmin config
-jasmine:
+jasmine: null
 
   # Tests directory or array of files (test files)
   # {String|Array}
-  files: null
+  #files: null
 
   # Jasmine options
   # {Object}
-  options: null
+  #options: null
 
 # Mocha config
-mocha:
+mocha: null
 
   # Tests directory or array of files (test files)
   # {String|Array}
-  files: null
+  #files: null
 
   # Mocha options
   # {Object}
-  options: null
+  #options: null
 
 # RequireJs config
 # {Object}
@@ -65,8 +65,8 @@ requirejs: null
   #options: {}
 
 # Watch Task Defaults
-watch:
+watch: null
 
   # Other files to watch.
   # {Array}
-  otherFiles: null
+  #otherFiles: null

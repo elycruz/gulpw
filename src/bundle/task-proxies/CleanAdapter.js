@@ -136,7 +136,7 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
 
                 // Compile targets array
                 allowedFileTypes.forEach(function (ext) {
-                    var section = bundle.options.files[ext],
+                    var section = bundle.has('files.' + ext), //options.files[ext],
                         copyFiles = bundle.get('copy.files');
 
                     // Check if `key` in `files` is buildable (concatable/minifiable)
