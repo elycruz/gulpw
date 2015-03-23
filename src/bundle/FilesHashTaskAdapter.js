@@ -121,7 +121,7 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
                 templateKey = filePath,
                 useFilePathAsKey = templateOptions.useFilePathAsKey,
                 noExtension = templateOptions.removeFileExtensionsOnKeys,
-                splitAtKey = templateOptions.splitAtKey ;
+                splitKeyAt = templateOptions.splitKeyAt ;
 
             // Resolve whether to use file base name as key
             if (!useFilePathAsKey) {
@@ -134,9 +134,12 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
 
             templateKey = this.wrangler.pathToForwardSlashes(templateKey, true);
 
+            // Compensate for `path.dirname` which removes './' when returning the 'dirname'
+            splitKeyAt = splitKeyAt.indexOf('./') === 0 ? splitKeyAt.substr(2, splitKeyAt.length) : splitKeyAt;
+
             // Set template key to substring from `splitKeyAt` length to it's length
-            if (splitAtKey && templateKey.indexOf(splitAtKey) === 0) {
-                templateKey = templateKey.substr(splitAtKey.length, templateKey.length);
+            if (splitKeyAt && templateKey.indexOf(splitKeyAt) === 0) {
+                templateKey = templateKey.substr(splitKeyAt.length, templateKey.length);
             }
 
             // Return key

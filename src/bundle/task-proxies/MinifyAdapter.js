@@ -100,7 +100,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     }))
 
                     // Add file header
-                    .pipe(gulpif(ext !== 'html', header(wrangler.tasks.minify.header, {bundle: bundle, fileExt: ext, fileHashType: fileHashType} )))
+                    .pipe(gulpif(ext !== 'html', header(wrangler.tasks.minify.header,
+                        {bundle: bundle, fileExt: ext, fileHashType: fileHashType} )))
 
                     // Dump to the directory specified in the `minify` call above
                     .pipe(gulp.dest('./'));

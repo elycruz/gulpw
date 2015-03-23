@@ -164,7 +164,7 @@ tasks:
       # Removes the file extension on the key
       removeFileExtensionsOnKeys: true
 
-      # Sets the key to everything after this string except the file extension part (depending on `removeFileExtensionsOnKeys`)
+      # Sets the key to everything after this string (file extension part depends on `removeFileExtensionsOnKeys`)
       splitKeyAt: ./
 
     help: ""
