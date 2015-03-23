@@ -157,6 +157,16 @@ tasks:
         - mustache
         - handlebars
         - ejs
+
+      # Use the file path as they key
+      useFilePathAsKey: true
+
+      # Removes the file extension on the key
+      removeFileExtensionsOnKeys: true
+
+      # Sets the key to everything after this string except the file extension part (depending on `removeFileExtensionsOnKeys`)
+      splitKeyAt: ./
+
     help: ""
 
   mocha:

@@ -31,7 +31,8 @@ describe('#`build` task test', function () {
     before(function (done) {
         // Set timeout for test
         this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
+        //tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
+        done();
     });
 
     it('should build all bundles when no bundle name is passed in', function (done) {

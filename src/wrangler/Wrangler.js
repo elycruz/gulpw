@@ -15,7 +15,8 @@ var fs = require('fs'),
     // Recursive mkdir (makes all paths in passed path)
     mkdirp = require('mkdirp'),
     Bundle = require(path.join(__dirname, '../bundle/Bundle.js')),
-    log;
+    log,
+    os = require('os');
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var self = this,
@@ -571,5 +572,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     hasArgvFileTypes: function () {
         return !sjl.empty(this.getArgvFileTypes());
+    },
+
+    pathToForwardSlashes: function (filePath, checkForWindows) {
+        if (!sjl.empty(checkForWindows)) {
+            filePath = os.type().toLowerCase().indexOf('windows') > -1 ? filePath.replace(/\\/g, '/') : filePath;
+        }
+        else {
+            filePath = filePath.replace(/\\/g, '/');
+        }
+        return filePath;
     }
 });

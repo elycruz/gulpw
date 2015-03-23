@@ -29,7 +29,8 @@ describe('#`requirejs` task test', function () {
     before(function (done) {
         // Set timeout for test
         this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
+        //tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
+        done();
     });
 
     it ('should output build sources when using the `dir` option', function (done) {

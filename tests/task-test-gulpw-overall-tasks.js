@@ -32,7 +32,8 @@ describe('#global tasks test', function () {
     before(function (done) {
         // Set timeout for test
         this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
+        //tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
+        done();
     });
 
     it ('should be able to run all global tasks when passed in separately', function (done) {

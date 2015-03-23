@@ -16,7 +16,9 @@ var path = require('path'),
 
     lodash = require('lodash'),
 
-    fs = require('fs');
+    fs = require('fs'),
+
+    os = require('os');
 
 module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
         TaskAdapter.apply(this, arguments);
@@ -77,7 +79,9 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
                 fileContent,
                 templateOptions = wrangler.clone(wrangler.getTaskAdapter('minify').template),
                 compressWhitespace = templateOptions.compressWhitespace,
-                template = templateOptions.templatePartial;
+                template = templateOptions.templatePartial,
+                templateKey,
+                self = this;
 
             // Loop through allowed templates concatenation keys
             templateOptions.templateTypeKeys.forEach(function (key) {
@@ -94,17 +98,49 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
                     fileContent = jsStringEscape(fs.readFileSync(file));
 
                     // Remove white space if necessary
-                    fileContent = compressWhitespace ? fileContent.replace(/[\s\t]{2,}/, ' ') : fileContent;
+                    fileContent = compressWhitespace ? fileContent.replace(/(?:[\s\t]{1,}|\\n)+/gm, ' ') : fileContent;
+
+                    // Get the template key
+                    templateKey = self.getTemplateKey(file, key, templateOptions);
 
                     // Write file contents to key value pair on templates object
-                    output += lodash.template(template, sjl.extend({fileBasename: path.basename(file, '.' + key),
-                        fileContent: fileContent}, templateOptions));
+                    output += lodash.template(template, sjl.extend({templateKey: templateKey,
+                        templateContent: fileContent}, templateOptions));
 
                 }); // end of template files loop
 
             }); // end of template type keys loop
 
             return output;
+        },
+
+        getTemplateKey: function (filePath, ext, templateOptions) {
+
+            var fileBasename = path.basename(filePath, '.' + ext),
+                fileDirname = path.dirname(filePath),
+                templateKey = filePath,
+                useFilePathAsKey = templateOptions.useFilePathAsKey,
+                noExtension = templateOptions.removeFileExtensionsOnKeys,
+                splitAtKey = templateOptions.splitAtKey ;
+
+            // Resolve whether to use file base name as key
+            if (!useFilePathAsKey) {
+                templateKey = noExtension ? fileBasename : path.basename(file);
+            }
+            // Else use file path as key
+            else {
+                templateKey = noExtension ? path.join(fileDirname, fileBasename) : templateKey;
+            }
+
+            templateKey = this.wrangler.pathToForwardSlashes(templateKey, true);
+
+            // Set template key to substring from `splitKeyAt` length to it's length
+            if (splitAtKey && templateKey.indexOf(splitAtKey) === 0) {
+                templateKey = templateKey.substr(splitAtKey.length, templateKey.length);
+            }
+
+            // Return key
+            return templateKey;
         }
 
     });
