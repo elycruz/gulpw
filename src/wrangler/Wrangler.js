@@ -28,10 +28,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         bundles: {},
         cwd: env.configBase,
         argv: argv,
-        tasks: {},
-        taskKeys: [],
-        staticTasks: {},
-        staticTaskKeys: [],
+        tasks: defaultOptions.tasks,
+        taskKeys: Object.keys(defaultOptions.tasks),
+        staticTasks: defaultOptions.staticTasks,
+        staticTaskKeys: Object.keys(defaultOptions.staticTasks),
         configPath: env.configPath
     }, defaultOptions);
 
@@ -41,9 +41,22 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     // Resolve bundles path
     self.bundlesPath = path.join(self.cwd, self.bundlesPath);
 
-    // Store task keys for later
-    self.taskKeys = Object.keys(self.tasks);
-    self.staticTaskKeys = Object.keys(self.staticTasks);
+    // Tasks keys by priority
+    self.taskKeysByPriority = self.taskKeys.filter(function (key) {
+        return self.tasks[key];
+    })
+        .sort(function (key1, key2) {
+            var value1 = parseInt(self.tasks[key1].priority, 10),
+                value2 = parseInt(self.tasks[key2].priority, 10),
+                retVal = 0;
+            if (value1 > value2) {
+                retVal = 1;
+            }
+            else if (value1 < value2) {
+                retVal = -1;
+            }
+            return retVal;
+        });
 
     // Preparing to give all gulpw components direct access to gulp and wrangler internally.
     self.gulp = gulp;
@@ -460,7 +473,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     mergeLocalOptions: function (options) {
         var self = this,
-            tasks;
+            tasks,
+            userTaskKeys;
 
         // Bail if empty options
         if (sjl.empty(options)) {
@@ -483,15 +497,21 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Extend self with options
         sjl.extend(true, self, options);
 
+        userTaskKeys = Object.keys(tasks) || [];
+
+        // Add user task keys to stored default keys
+        self.taskKeys = self.taskKeys.concat(Object.keys(userTaskKeys));
+        self.staticTaskKeys = options.staticTasks ? Object.keys(options.staticTasks) : self.staticTaskKeys;
+
         // Set 'notConfigured' value to be used by 'register*' task adapter functions.
         self.taskKeys.forEach(function (key) {
-            if (sjl.empty(tasks[key])) {
+            if (sjl.empty(tasks[key]) && !sjl.empty(self.tasks[key])) {
                 self.tasks[key].notConfiguredByUser = true;
             }
         });
 
         // Copy task configs from copied tasks obj
-        Object.keys(tasks).forEach(function (key) {
+        userTaskKeys.forEach(function (key) {
             var value = tasks[key],
 
                 // If task config is a string assume a path
