@@ -16,6 +16,7 @@ var fs = require('fs'),
     mkdirp = require('mkdirp'),
     Bundle = require(path.join(__dirname, '../bundle/Bundle.js')),
     log,
+    util = require('util'),
     os = require('os');
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
@@ -42,21 +43,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     self.bundlesPath = path.join(self.cwd, self.bundlesPath);
 
     // Tasks keys by priority
-    self.taskKeysByPriority = self.taskKeys.filter(function (key) {
-        return self.tasks[key];
-    })
-        .sort(function (key1, key2) {
-            var value1 = parseInt(self.tasks[key1].priority, 10),
-                value2 = parseInt(self.tasks[key2].priority, 10),
-                retVal = 0;
-            if (value1 > value2) {
-                retVal = 1;
-            }
-            else if (value1 < value2) {
-                retVal = -1;
-            }
-            return retVal;
-        });
+    self.taskKeysByPriority = self.sortTaskKeysByPriority(
+        self.taskKeys.filter(function (key) {
+                return sjl.isset(self.tasks[key]);
+            }));
+
+    self.log('Tasks aliases by priority: ', self.taskKeysByPriority, '\n');
 
     // Preparing to give all gulpw components direct access to gulp and wrangler internally.
     self.gulp = gulp;
@@ -315,6 +307,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return out;
     },
 
+    splitWranglerCommand: function (command) {
+        var out = {taskAlias: command, bundleAlias: null, params: null};
+        if (command.indexOf(':')) {
+            var args = command.split(':');
+            out = {taskAlias: args[0], bundleAlias: args[1], params: args.length > 2 ? args.splice(2) : null};
+        }
+        return out;
+    },
+
     extractBundleNamesFromArray: function (list) {
         var parts, extracted = [];
         list.filter(function (item) {
@@ -402,6 +403,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
         var self = this;
+
+        //tasks = self.sortTaskKeysByPriority(tasks);
+        console.log(util.inspect(self.taskKeysDepsMap(tasks), {depth: 10}));
+
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
                 completedTasks,
@@ -441,6 +446,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             }, intervalSpeed);
 
         })); // end of promise
+    },
+
+    launchTasksSync: function (tasks) {
+
     },
 
     skipTesting: function () {
@@ -602,5 +611,104 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             filePath = filePath.replace(/\\/g, '/');
         }
         return filePath;
+    },
+
+    sortTaskKeysByPriority: function (tasks, direction) {
+        var self = this,
+            asc = 1,
+            desc = 0,
+            direction = sjl.isset(direction) ? direction : asc;
+        return tasks.sort(function (key1, key2) {
+            if (!self.tasks[key1] || !self.tasks[key2]) {
+                return 0;
+            }
+            var value1 = parseInt(self.tasks[key1].priority, 10),
+                value2 = parseInt(self.tasks[key2].priority, 10),
+                retVal = 0;
+            if (direction === desc && value1 < value2) {
+                retVal = 1;
+            }
+            else if (direction === desc && value1 > value2) {
+                retVal = -1;
+            }
+            else if (direction === asc && value1 > value2) {
+                retVal = 1;
+            }
+            else if (direction === asc && value1 < value2) {
+                retVal = -1;
+            }
+            return retVal;
+        });
+    },
+
+    taskKeysDepsMap: function (tasks) {
+        var self = this,
+            depsMap = [],
+            taskAliases = self.getTaskAliasesFromArray(tasks),
+            getPriority = function (key) {
+                return parseInt(self.tasks[key].priority, 10);
+            },
+            safeToPush = function (item) {
+                return depsMap[depsMap.length - 1] !== item
+                    && depsMap[depsMap.length - 2] !== item;
+            },
+            tasksAddedToDepsMap = new Set();
+
+        taskAliases = self.sortTaskKeysByPriority(taskAliases, 1).filter(function (key) {
+            return sjl.isset(self.tasks[key]) && sjl.isset(self.tasks[key].priority);
+        });
+
+        tasks = self.sortTaskKeysByPriority(tasks, 1).filter(function (key) {
+            key = self.splitWranglerCommand(key).taskAlias;
+            return sjl.isset(self.tasks[key]) && sjl.isset(self.tasks[key].priority);
+        });
+
+        if (tasks.length === 0) {
+            return depsMap;
+        }
+
+        // @todo take care of the `prevVal` is an array case for when values are equal
+
+        tasks.reduce(function (prevVal, currVal, i, list) {
+            prevVal = prevVal || list[i - 1];
+            var priority0 = getPriority(taskAliases[i - 1]),
+                priority1 = getPriority(taskAliases[i]),
+                isPrevValObj = sjl.classOfIs(prevVal, 'Object'),
+                item0 = !isPrevValObj ? {alias: prevVal, deps: [], priority: priority0} : prevVal,
+                item1 = {alias: currVal, deps: [], priority: priority1},
+                retVal;
+
+            self.log('index', i, currVal);
+            //self.log('index', i, currVal, depsMap[depsMap.length - 1]);
+
+            if (priority0 < priority1) {
+                item0.deps.push(item1);
+                if (safeToPush(item0)) {
+                    depsMap.push(item0);
+                }
+                retVal = item0;
+            }
+            else if (priority0 > priority1) {
+                item1.deps.push(item0);
+                if (safeToPush(item1)) {
+                    depsMap.push(item1);
+                }
+                retVal = item1;
+            }
+            else {
+                if (safeToPush(item0)) {
+                    depsMap.push(item0);
+                }
+                if (safeToPush(item1)) {
+                    depsMap.push(item1);
+                }
+                retVal = [item0, item1];
+            }
+
+            return retVal;
+        });
+
+        return depsMap;
     }
+
 });
