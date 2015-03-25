@@ -652,8 +652,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 return depsMap[depsMap.length - 1] !== item
                     && depsMap[depsMap.length - 2] !== item;
             },
-            processSimpleScenario = function (prevVal, currVal, priority0, priotity1) {
-                var retVal;
+            processSimpleScenario = function (prevVal, currVal, priority0, priority1) {
+                var retVal,
+                    item0 = !isPrevValObj ? {alias: prevVal, deps: [], priority: priority0} : prevVal,
+                    item1 = {alias: currVal, deps: [], priority: priority1};
+
                 if (priority0 < priority1) {
                     item0.deps.push(item1);
                     if (safeToPush(item0)) {
@@ -679,8 +682,21 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 }
                 return retVal;
             },
-            processComplexScenario = function () {
+            processComplexScenario = function (prevVal, currVal, priority0, priority1) {
                 // @todo process complex priority scenario
+                var _prevVal;
+
+                if (!Array.isArray(prevVal)) {
+                    return prevVal;
+                }
+                prevVal.forEach(function (item) {
+                    _prevVal = _prevVal || item;
+                    var classOfPrevVal = sjl.classOf(_prevVal);
+                    _prevVal = classOfPrevVal === 'Object' || classOfPrevVal === 'String' ?
+                        processSimpleScenario(_prevVal, currVal, priority0, priority1) :
+                            processComplexScenario(_prevVal, currVal, priority0, priority1);
+                });
+                return prevVal;
             },
             tasksAddedToDepsMap = new Set();
 
@@ -697,21 +713,18 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             return depsMap;
         }
 
-        // @todo take care of the `prevVal` is an array case for when values are equal
+        // @todo take care of the `prevVal` if is an array case for when values are equal
 
         tasks.reduce(function (prevVal, currVal, i, list) {
             prevVal = prevVal || list[i - 1];
             var priority0 = getPriority(taskAliases[i - 1]),
                 priority1 = getPriority(taskAliases[i]),
-                isPrevValObj = sjl.classOfIs(prevVal, 'Object'),
-                item0 = !isPrevValObj ? {alias: prevVal, deps: [], priority: priority0} : prevVal,
-                item1 = {alias: currVal, deps: [], priority: priority1},
-                retVal;
+                classOfPrevVal = sjl.classOf(prevVal);
 
-            self.log('index', i, currVal);
+            self.log('index', i, currVal, classOfPrevVal);
             //self.log('index', i, currVal, depsMap[depsMap.length - 1]);
 
-            return processSimpleScenario(prevVal, currVal, priority0, priority1);
+            return classOfPrevVal === 'Object' ? processSimpleScenario(prevVal, currVal, priority0, priority1) : processComplexScenario(prevVal, currVal, priority0, priority1);
         });
 
         return depsMap;
