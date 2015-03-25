@@ -652,6 +652,36 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 return depsMap[depsMap.length - 1] !== item
                     && depsMap[depsMap.length - 2] !== item;
             },
+            processSimpleScenario = function (prevVal, currVal, priority0, priotity1) {
+                var retVal;
+                if (priority0 < priority1) {
+                    item0.deps.push(item1);
+                    if (safeToPush(item0)) {
+                        depsMap.push(item0);
+                    }
+                    retVal = item0;
+                }
+                else if (priority0 > priority1) {
+                    item1.deps.push(item0);
+                    if (safeToPush(item1)) {
+                        depsMap.push(item1);
+                    }
+                    retVal = item1;
+                }
+                else {
+                    if (safeToPush(item0)) {
+                        depsMap.push(item0);
+                    }
+                    if (safeToPush(item1)) {
+                        depsMap.push(item1);
+                    }
+                    retVal = [item0, item1];
+                }
+                return retVal;
+            },
+            processComplexScenario = function () {
+                // @todo process complex priority scenario
+            },
             tasksAddedToDepsMap = new Set();
 
         taskAliases = self.sortTaskKeysByPriority(taskAliases, 1).filter(function (key) {
@@ -681,31 +711,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             self.log('index', i, currVal);
             //self.log('index', i, currVal, depsMap[depsMap.length - 1]);
 
-            if (priority0 < priority1) {
-                item0.deps.push(item1);
-                if (safeToPush(item0)) {
-                    depsMap.push(item0);
-                }
-                retVal = item0;
-            }
-            else if (priority0 > priority1) {
-                item1.deps.push(item0);
-                if (safeToPush(item1)) {
-                    depsMap.push(item1);
-                }
-                retVal = item1;
-            }
-            else {
-                if (safeToPush(item0)) {
-                    depsMap.push(item0);
-                }
-                if (safeToPush(item1)) {
-                    depsMap.push(item1);
-                }
-                retVal = [item0, item1];
-            }
-
-            return retVal;
+            return processSimpleScenario(prevVal, currVal, priority0, priority1);
         });
 
         return depsMap;
