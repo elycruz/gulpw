@@ -405,7 +405,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this;
 
         //tasks = self.sortTaskKeysByPriority(tasks);
-        console.log(util.inspect(self.taskKeysDepsMap(tasks), {depth: 10}));
+        console.log(util.inspect(self.taskKeysDepsMap(tasks, self), {depth: 10}));
 
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
@@ -641,93 +641,112 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
-    taskKeysDepsMap: function (tasks) {
-        var self = this,
-            depsMap = [],
-            taskAliases = self.getTaskAliasesFromArray(tasks),
-            getPriority = function (key) {
-                return parseInt(self.tasks[key].priority, 10);
-            },
-            safeToPush = function (item) {
-                return depsMap[depsMap.length - 1] !== item
-                    && depsMap[depsMap.length - 2] !== item;
-            },
-            processSimpleScenario = function (prevVal, currVal, priority0, priority1) {
-                var retVal,
-                    item0 = !isPrevValObj ? {alias: prevVal, deps: [], priority: priority0} : prevVal,
-                    item1 = {alias: currVal, deps: [], priority: priority1};
-
-                if (priority0 < priority1) {
-                    item0.deps.push(item1);
-                    if (safeToPush(item0)) {
-                        depsMap.push(item0);
-                    }
-                    retVal = item0;
-                }
-                else if (priority0 > priority1) {
-                    item1.deps.push(item0);
-                    if (safeToPush(item1)) {
-                        depsMap.push(item1);
-                    }
-                    retVal = item1;
-                }
-                else {
-                    if (safeToPush(item0)) {
-                        depsMap.push(item0);
-                    }
-                    if (safeToPush(item1)) {
-                        depsMap.push(item1);
-                    }
-                    retVal = [item0, item1];
-                }
-                return retVal;
-            },
-            processComplexScenario = function (prevVal, currVal, priority0, priority1) {
-                // @todo process complex priority scenario
-                var _prevVal;
-
-                if (!Array.isArray(prevVal)) {
-                    return prevVal;
-                }
-                prevVal.forEach(function (item) {
-                    _prevVal = _prevVal || item;
-                    var classOfPrevVal = sjl.classOf(_prevVal);
-                    _prevVal = classOfPrevVal === 'Object' || classOfPrevVal === 'String' ?
-                        processSimpleScenario(_prevVal, currVal, priority0, priority1) :
-                            processComplexScenario(_prevVal, currVal, priority0, priority1);
-                });
-                return prevVal;
-            },
-            tasksAddedToDepsMap = new Set();
-
-        taskAliases = self.sortTaskKeysByPriority(taskAliases, 1).filter(function (key) {
-            return sjl.isset(self.tasks[key]) && sjl.isset(self.tasks[key].priority);
-        });
-
-        tasks = self.sortTaskKeysByPriority(tasks, 1).filter(function (key) {
-            key = self.splitWranglerCommand(key).taskAlias;
-            return sjl.isset(self.tasks[key]) && sjl.isset(self.tasks[key].priority);
-        });
-
+    taskKeysDepsMap: function (tasks, wrangler) {
         if (tasks.length === 0) {
+            return [];
+        }
+
+        tasks = wrangler.sortTaskKeysByPriority(tasks, 0).filter(function (key) {
+            key = wrangler.splitWranglerCommand(key).taskAlias;
+            return sjl.isset(wrangler.tasks[key]) && sjl.isset(wrangler.tasks[key].priority);
+        });
+
+        function getPriority(key) {
+            return parseInt(wrangler.tasks[key].priority, 10);
+        }
+
+        function depsMapItem(item) {
+            var retVal = item,
+                topLevelTaskAlias = wrangler.splitWranglerCommand(item).taskAlias;
+            if (sjl.classOfIs(item, 'String')) {
+                retVal = {
+                    command: item,
+                    deps: [],
+                    priority: getPriority(topLevelTaskAlias),
+                    topLevelAlias: topLevelTaskAlias
+                };
+            }
+            return retVal;
+        }
+
+        function findClosestLowerPriorityObj (depsMapObjs, item) {
+            var prevDiff = Number.POSITIVE_INFINITY,
+                priority0 = parseInt(item.priority, 10),
+                priority1,
+                lowestObj;
+            depsMapObjs.forEach(function (obj) {
+                if (item.command === obj.command) {
+                    return null;
+                }
+                priority1 = parseInt(obj.priority, 10);
+                var diff = priority0 - priority1;
+                if (Math.abs(diff) < prevDiff) {
+                    lowestObj = obj;
+                    prevDiff = Math.abs(diff);
+                }
+            });
+
+            //wrangler.log('lowest', lowestObj, item);
+
+            return lowestObj;
+        }
+
+        function addToDepsMap(obj, depsMap, addedCommandsSet) {
+            if (!addedCommandsSet.has(obj.command)) {
+                depsMap.push(wrangler.clone(obj));
+                addedCommandsSet.add(obj.command);
+                wrangler.log(addedCommandsSet.values().next());
+            }
+        }
+
+        function mapObjsToDepsMap (objs, depsMap) {
+            var addedCommands = new Set(),
+                prevLowestPriorityObj;
+            if (objs.length === 1) {
+                return objs;
+            }
+            //
+            //objs.reduce(function (obj1, obj2) {
+            //    var lowestPriorityObj1 = findClosestLowerPriorityObj(objs, obj1),
+            //        lowestPriorityObj2 = findClosestLowerPriorityObj(objs, obj2);
+            //
+            //    prevLowestPriorityObj = getLowestPriorityObj(lowestPriorityObj1, lowestPriorityObj2) || prevLowestPriorityObj;
+            //
+            //    if (obj1.priority < obj2.priority) {
+            //        if (prevLowestPriorityObj.priority < obj.priority) {
+            //            addToDepsMap(obj, prevLowestPriorityObj, addedCommands);
+            //        }
+            //
+            //    }
+            //
+            //    [lowestPriorityObj1, lowestPriorityObj2].forEach(function (obj) {
+            //        if (prevLowestPriorityObj.priority < obj.priority) {
+            //            addToDepsMap(obj, prevLowestPriorityObj, addedCommands);
+            //        }
+            //    });
+            //
+            //    return prevLowestPriorityObj;
+            //
+            //});
             return depsMap;
         }
 
-        // @todo take care of the `prevVal` if is an array case for when values are equal
+        function mapObjToDepsMap (obj, depsMap) {
+            //wrangler.log(lowestPriorityObj);
 
-        tasks.reduce(function (prevVal, currVal, i, list) {
-            prevVal = prevVal || list[i - 1];
-            var priority0 = getPriority(taskAliases[i - 1]),
-                priority1 = getPriority(taskAliases[i]),
-                classOfPrevVal = sjl.classOf(prevVal);
+        }
 
-            self.log('index', i, currVal, classOfPrevVal);
-            //self.log('index', i, currVal, depsMap[depsMap.length - 1]);
+        function getLowestPriorityObj(obj1, obj2) {
+            return obj1.priority > obj2.priority ? obj1 : (obj1.priority === obj2.priority ? undefined : obj2);
+        }
 
-            return classOfPrevVal === 'Object' ? processSimpleScenario(prevVal, currVal, priority0, priority1) : processComplexScenario(prevVal, currVal, priority0, priority1);
-        });
+        function getDepsMapObjs (list) {
+            return list.map(function (item) {
+                return depsMapItem(item);
+            });
+        }
 
-        return depsMap;
+        return mapObjsToDepsMap(getDepsMapObjs(tasks), []);
     }
 
 });
