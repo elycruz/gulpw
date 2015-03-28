@@ -87,13 +87,15 @@ module.exports = TaskAdapter.extend('CompassAdapter', {
     }, // end of `registerBundle`
 	
 	registerBundles: function (bundles, gulp, wrangler) {
-		var targets = [];
+		var self = this,
+            targets = [];
 
 		// Loop through bundles and register the ones that have `compass` key
 		bundles.forEach(function (bundle) {
 			// If bundle has `compass` key push it's task name to targets array
 			if (bundle.has('compass')) {
 				targets.push('compass:' + bundle.options.alias);
+                self.registerBundle(bundle, gulp, wrangler);
 			}
 		});
 

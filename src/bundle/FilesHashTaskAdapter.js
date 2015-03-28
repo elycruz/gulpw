@@ -56,6 +56,7 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
 
                 // Collect task name for use later
                 if (hasSection) {
+                    self.registerBundle(bundle, gulp, wrangler);
                     tasks.push(taskPrefix + separator + bundle.options.alias);
                 }
 

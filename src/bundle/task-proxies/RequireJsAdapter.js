@@ -99,6 +99,8 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
             // Push task name to targets list
             targets.push(taskName);
 
+            self.registerBundle(bundle, gulp, wrangler);
+
             // Register singular task
             self.registerGulpTask(taskName, self.getRequireJsOptions(bundle), gulp, wrangler, bundle);
         });
