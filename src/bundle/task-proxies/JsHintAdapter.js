@@ -60,6 +60,7 @@ module.exports = TaskAdapter.extend('JsHintAdapter', {
             if (!self.isBundleValidForTask(bundle)) {
                 return;
             }
+            self.registerBundle(bundle, gulp, wrangler);
             targets = self.getTasksForBundle(bundle, ['jshint'], wrangler).concat(targets);
         });
         self.registerGulpTasks('jshint', targets, gulp, wrangler);

@@ -63,6 +63,7 @@ module.exports = TaskAdapter.extend('JasmineAdapter', {
                 return;
             }
             taskName = 'jasmine:' + bundle.options.alias;
+            self.registerBundle(bundle, gulp, wrangler);
             tasks.push(taskName);
         });
 

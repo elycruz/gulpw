@@ -27,13 +27,13 @@ tasks:
   # Browserify Defaults
   browserify:
     constructorLocation: ./bundle/task-proxies/BrowserifyAdapter
-    priority: -92
+    priority: 92
 
   # Build Task (Looks through {bundle-alias}.yaml file and runs
   # all tasks that are not in the `ignoredTasks` array in this config.
   build:
     constructorLocation: ./bundle/task-proxies/BuildAdapter
-    priority: 99
+    priority: -98
 
     prelimTasks:
       - mocha
@@ -50,7 +50,7 @@ tasks:
 
   clean:
     constructorLocation: ./bundle/task-proxies/CleanAdapter
-    priority: -100
+    priority: 100
     allowedFileTypes:
       - js
       - css
@@ -59,17 +59,17 @@ tasks:
 
   compass:
     constructorLocation: ./bundle/task-proxies/CompassAdapter
-    priority: -98
+    priority: 98
     compassProjectRoot: null # config.rb home
     help: ""
 
   copy:
     constructorLocation: ./bundle/task-proxies/CopyAdapter
-    priority: -99
+    priority: 99
     help: ""
 
   csslint:
-    priority: -97
+    priority: 97
     constructorLocation: ./bundle/task-proxies/CssLintAdapter
     csslintrc: null
     help: ""
@@ -78,7 +78,7 @@ tasks:
   deploy:
     # @todo add a flag for ignoring the deployment of artifacts
     constructorLocation: ./bundle/task-proxies/DeployAdapter
-    priority: 100
+    priority: -100
 
     # Whether to deploy files using unix paths (useful if you're on Windows and need to deploy to a *nix type server)
     deployUsingUnixStylePaths: true
@@ -114,14 +114,14 @@ tasks:
 
   jasmine:
     constructorLocation: ./bundle/task-proxies/JasmineAdapter
-    priority: -95
+    priority: 95
     files: null # testDir or array of files (test files)
     options: null
     help: ""
 
   jshint:
     constructorLocation: ./bundle/task-proxies/JsHintAdapter
-    priority: -96
+    priority: 96
     jshintrc: ./.jshintrc
     ignoreFiles: null
     options:
@@ -142,7 +142,7 @@ tasks:
 
   minify:
     constructorLocation: ./bundle/task-proxies/MinifyAdapter
-    priority: -91
+    priority: 91
     header: |
       /*! Company Name * http://www.company-website.com * Filename: <%= bundle.options.alias + '.' + fileExt %> * Version: <%= bundle.options.version %> * Created: (<%= (new Date()).getTime() %>) * Hashsum: <%= fileHashType %>:<%= bundle[fileExt + 'Hash'] %> */
     cssBuildPath: some/path/to/build/path
@@ -181,7 +181,7 @@ tasks:
 
   mocha:
     constructorLocation: ./bundle/task-proxies/MochaAdapter
-    priority: -94
+    priority: 94
     files: null # testDir or array of files (test files)
     options: null
     help: ""
@@ -189,13 +189,13 @@ tasks:
   # RequireJs Defaults
   requirejs:
     constructorLocation: ./bundle/task-proxies/RequireJsAdapter
-    priority: -93
+    priority: 93
     help: ""
 
   # Watch Task Defaults
   watch:
     constructorLocation: ./bundle/task-proxies/WatchAdapter
-    priority: -100
+    priority: -99
 
     # Tasks to ignore on the bundle level (watch creates it's own
     # collection of deploy tasks from the bundle(s) registered with it)
@@ -209,5 +209,4 @@ tasks:
       - deploy
 
     help: ""
-
 

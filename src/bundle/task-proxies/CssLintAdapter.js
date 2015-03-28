@@ -47,6 +47,7 @@ module.exports = TaskAdapter.extend('CssLintAdapter', {
             if (!self.isBundleValidForTask(bundle)) {
                 return;
             }
+            self.registerBundle(bundle, gulp, wrangler);
             targets = targets.concat(bundle.options.files.css);
         });
 

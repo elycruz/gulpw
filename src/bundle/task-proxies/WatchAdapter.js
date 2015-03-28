@@ -115,7 +115,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
-                return; // @todo log message/warning here
+                return;
             }
             targets = targets.concat(self.getSrcForBundle(bundle));
             tasks = tasks.concat(self.getTasksForBundle(bundle, wrangler.tasks.watch.tasks));
