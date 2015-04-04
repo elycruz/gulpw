@@ -276,14 +276,14 @@ The 'compass' task calls compass compile at compass project root location (confi
 tasks:
   compass:
   	# Compass project root dir
-    compassProjectRoot: null # config.rb home
+    configrb: null # config.rb home
 ```
 
 ##### In {bundle}.*:
 ```
   compass:
   	# Compass project root dir
-    compassProjectRoot: null # config.rb home
+    configrb: null # config.rb home
 ```
 
 ##### Options:

@@ -64,19 +64,17 @@ function init(env) {
     // If the config path is empty
     if (sjl.empty(env.configPath)) {
 
-        // Copy default config to the environments root
-        fs.writeFileSync(path.join(env.cwd, 'bundle.wrangler.config.yaml'),
-            fs.readFileSync(path.join(__dirname, '/configs/default.wrangler.config.yaml')));
-
         // Write message to user
         console.log(chalk.yellow('No \'bundle.wrangler.config.*\' file found.'), '\n',
-                chalk.cyan('A \'bundle.wrangler.config.yaml\' file has been created at: \'./bundle.wrangler.config.yaml\'.' +
-                'Rerun/run `gulpw config` to help customize your \'bundle.wrangler.config.yaml\' file.')
+                chalk.cyan('Create an empty one and then run `gulpw config` to populate it.')
             );
 
         // Exit
-        return;
+        return process.exit(0);
     }
+
+    // Set process' working directory
+    env.pwd = __dirname;
 
     // Change to config's path
     process.chdir(env.configBase);

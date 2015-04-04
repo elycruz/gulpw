@@ -54,7 +54,7 @@ browserify: {}
 
 #
 compass:
-  compassProjectRoot: null # config.rb home
+  configrb: null # config.rb home
 
 #
 csslint:

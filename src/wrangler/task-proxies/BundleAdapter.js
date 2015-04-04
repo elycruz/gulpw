@@ -86,11 +86,11 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
             ];
 
 
-        gulp.task('bundle-config', function () {
+        gulp.task('bundle', function () {
 
             return (new Promise(function (fulfill, reject) {
 
-                console.log(chalk.cyan('Running "bundle-config" task.\n\n'));
+                console.log(chalk.cyan('Running "bundle" task.\n\n'));
 
                 inquirer.prompt(questions, function (answers) {
 

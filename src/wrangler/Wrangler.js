@@ -28,6 +28,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     sjl.extend(true, self, {
         bundles: {},
         cwd: env.configBase,
+        pwd: env.pwd,
         argv: argv,
         tasks: defaultOptions.tasks,
         taskKeys: Object.keys(defaultOptions.tasks),

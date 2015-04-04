@@ -31,7 +31,7 @@ module.exports = TaskAdapter.extend('CompassAdapter', {
 		}
 
 		// Compass project root directory (config.rb home)
-		var compassProjectRoot = path.normalize(bundle.options.compass.compassProjectRoot),
+		var configrb = path.normalize(bundle.options.compass.configrb),
 			taskName = 'compass:' + bundle.options.alias;
 
 		// Register compass task
@@ -41,9 +41,9 @@ module.exports = TaskAdapter.extend('CompassAdapter', {
 
 				var startDate = new Date();
 
-				wrangler.log(chalk.cyan(' \nRunning "' + taskName + '" task:\n'), '--mandatory');
+				wrangler.log(chalk.cyan(' \nRunning "' + taskName + '" task:\n ' + path.dirname(configrb)), '--mandatory');
 
-				var compassTask = exec('cd ' + compassProjectRoot + ' && compass compile', function (err, stdout, stderr) {
+				var compassTask = exec('cd ' + path.dirname(configrb) + ' && compass compile', function (err, stdout, stderr) {
 					// Command(s) output
 					console.log(stdout);
 

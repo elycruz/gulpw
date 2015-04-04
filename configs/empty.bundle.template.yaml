@@ -1,0 +1,46 @@
+#**
+# File: empty-bundle-template.yaml
+# Description: This file is a defaults file for pulling defaults for
+#   generating a {bundle}.yaml file from the `BundleAdapter`.
+# Author: Ely De La Cruz <elycruz@elycruz.com>
+# Created: 04/03/2015
+#*
+
+alias: "example-bundle-with-possible-options" # Dash separated bundle alias
+description: "Example bundle."                # description goes here
+version: "0.0.0"                              # Semver version string
+
+browserify: {}
+
+deploy:
+  otherFiles:
+    ext: []
+
+compass:
+  configrb: null
+
+copy:
+  files:
+    ./file/path/to/copy.ext: ./file/path/to/copy/to.ext
+
+csslint:
+  csslintrc: null
+
+jasmine:
+  files: []
+  options: {}
+
+jshint:
+  jshintrc: null
+  ignoredFiles: null
+  options: {}
+
+mocha:
+  files: []
+  options: {}
+
+requirejs:
+  options: {}
+
+watch:
+  otherFiles: []

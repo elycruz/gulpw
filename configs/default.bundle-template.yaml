@@ -13,7 +13,7 @@ compass: null
   # Compass project root (used to `cd` into to run
   #   `compass compile` and `compass watch` as sub processes)
   # {String}
-  #compassProjectRoot: null # ./config.rb home
+  #configrb: null # ./config.rb home
 
 # Copy task
 copy: null

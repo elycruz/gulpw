@@ -16,15 +16,19 @@ staticTasks:
   "deploy-config":
     constructorLocation: ./task-proxies/DeployConfigAdapter
     
-  "bundle-config":
-    constructorLocation: ./task-proxies/BundleConfigAdapter
-    configurableTasks:
+  "bundle":
+    constructorLocation: ./task-proxies/BundleAdapter
+    emptyBundleFile: ./configs/empty.bundle.template.yaml
+    allowedTasks:
+      - browserify
       - compass
       - copy
       - csslint
+      - deploy
       - jasmine
       - jshint
       - mocha
+      - requirejs
       - watch
     
 tasks:
@@ -50,9 +54,6 @@ tasks:
       - jshint
       - csslint
 
-    help: ""
-
-
   clean:
     constructorLocation: ./bundle/task-proxies/CleanAdapter
     priority: 100
@@ -64,20 +65,17 @@ tasks:
   compass:
     constructorLocation: ./bundle/task-proxies/CompassAdapter
     priority: 98
-    compassProjectRoot: null # config.rb home
-    help: ""
-
+    configrb: null # config.rb home
+    
   copy:
     constructorLocation: ./bundle/task-proxies/CopyAdapter
     priority: 99
-    help: ""
-
+    
   csslint:
     priority: 97
     constructorLocation: ./bundle/task-proxies/CssLintAdapter
     csslintrc: null
-    help: ""
-
+    
   # Deploy Task
   deploy:
     # @todo add a flag for ignoring the deployment of artifacts
@@ -114,15 +112,12 @@ tasks:
     # Hash of domains to develop for:
     domainsToDevelop: null
 
-    help: ""
-
   jasmine:
     constructorLocation: ./bundle/task-proxies/JasmineAdapter
     priority: 95
     files: null # testDir or array of files (test files)
     options: null
-    help: ""
-
+    
   jshint:
     constructorLocation: ./bundle/task-proxies/JsHintAdapter
     priority: 96
@@ -142,8 +137,7 @@ tasks:
         - Marionette
         - require
         - sjl
-    help: ""
-
+    
   minify:
     constructorLocation: ./bundle/task-proxies/MinifyAdapter
     priority: 91
@@ -181,21 +175,17 @@ tasks:
       # Sets the key to everything after this string (file extension part depends on `removeFileExtensionsOnKeys`)
       splitKeyAt: ./
 
-    help: ""
-
   mocha:
     constructorLocation: ./bundle/task-proxies/MochaAdapter
     priority: 94
     files: null # testDir or array of files (test files)
     options: null
-    help: ""
-
+    
   # RequireJs Defaults
   requirejs:
     constructorLocation: ./bundle/task-proxies/RequireJsAdapter
     priority: 93
-    help: ""
-
+    
   # Watch Task Defaults
   watch:
     constructorLocation: ./bundle/task-proxies/WatchAdapter
@@ -211,6 +201,3 @@ tasks:
     tasks:
       - build
       - deploy
-
-    help: ""
-
