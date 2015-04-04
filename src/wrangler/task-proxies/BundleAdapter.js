@@ -21,7 +21,6 @@ var WranglerTaskAdapter = require('../WranglerTaskAdapter'),
     path = require('path'),
     yaml = require('js-yaml'),
     inquirer = require('inquirer'),
-    lodash = require('lodash'),
     chalk = require('chalk');
 
 module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {

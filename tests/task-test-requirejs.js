@@ -9,10 +9,6 @@ require('sjljs');
 var chai = require('chai'),
     path = require('path'),
     tutil = require(path.join(__dirname, '../src/test-utils/test-utils')),
-    genericTest = function (error, stdout, stderr) {
-        expect(sjl.empty(stderr)).to.equal(true);
-        expect(sjl.empty(error)).to.equal(true);
-    },
     timeout = 13000,
     commandOptions = {
         cwd: path.join(__dirname, '..', '..', 'gulpw-sample-app'),

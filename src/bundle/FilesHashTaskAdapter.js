@@ -16,9 +16,7 @@ var path = require('path'),
 
     lodash = require('lodash'),
 
-    fs = require('fs'),
-
-    os = require('os');
+    fs = require('fs');
 
 module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
         TaskAdapter.apply(this, arguments);
@@ -126,7 +124,7 @@ module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
 
             // Resolve whether to use file base name as key
             if (!useFilePathAsKey) {
-                templateKey = noExtension ? fileBasename : path.basename(file);
+                templateKey = noExtension ? fileBasename : path.basename(filePath);
             }
             // Else use file path as key
             else {

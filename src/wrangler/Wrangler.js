@@ -16,7 +16,6 @@ var fs = require('fs'),
     mkdirp = require('mkdirp'),
     Bundle = require(path.join(__dirname, '../bundle/Bundle.js')),
     log,
-    util = require('util'),
     os = require('os');
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
@@ -622,7 +621,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     sortTaskKeysByPriority: function (tasks, direction) {
         var self = this,
             asc = 1,
-            desc = 0,
+            desc = 0;
             direction = sjl.isset(direction) ? direction : asc;
         return tasks.sort(function (key1, key2) {
             if (!self.tasks[key1] || !self.tasks[key2]) {
