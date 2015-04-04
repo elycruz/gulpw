@@ -29,14 +29,14 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
 }, {
 
     registerStaticTasks: function (gulp, wrangler) {
-        var taskKeys = Object.keys(wrangler.tasks),
-            otherTaskKeys = lodash.difference(taskKeys, wrangler.staticTasks['bundle-config'].configurableTasks),
+        var bundleConfig = wrangler.staticTasks.bundle,
+            otherTaskKeys = bundleConfig.allowedTasks,
 
             questions = [
                 {
                     name: 'configFormat',
                     type: 'list',
-                    message: 'In what format would you like your bundle config outputted in?',
+                    message: 'Choose a bundle config format:',
                     choices: [
                         '.json',
                         '.yaml'
@@ -45,10 +45,10 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
                 {
                     name: 'alias',
                     type: 'input',
-                    message: 'What is your bundle\'s name?',
+                    message: 'Input name for bundle file:',
                     validate: function (alias) {
                         if (!/^[a-z]+[a-z\-\d_]+$/i.test(alias)) {
-                            return 'The bundle name is in an incorrect format.  Only `(/^[a-z]+[a-z\-\d_]+$/i)` pattern is allowed.  Value received: ' + alias;
+                            return 'The bundle name format is invalid.  Only [a-z,0-9,-,_,.] allowed.  Value received: ' + alias;
                         }
                         else if (fs.existsSync(path.join(wrangler.bundlesPath, alias + '.json'))
                             || fs.existsSync(path.join(wrangler.bundlesPath, alias + '.yaml'))) {
@@ -58,29 +58,9 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
                     }
                 },
                 {
-                    name: 'version',
-                    type: 'input',
-                    message: 'Version number (recommended: SemVer)(optional):'
-                },
-                {
                     name: 'description',
                     type: 'input',
                     message: 'Describe your bundle (optional):'
-                },
-                {
-                    name: 'useAmdOrUmd',
-                    type: 'confirm',
-                    default: false,
-                    message: 'Would you like to configure an AMD or UMD task from your bundle?'
-                },
-                {
-                    name: 'amdOrUmd',
-                    type: 'list',
-                    message: 'Select your AMD or UMD task:',
-                    choices: ['requirejs', 'browserify'],
-                    when: function (answers) {
-                        return answers.useAmdOrUmd;
-                    }
                 },
                 {
                     name: 'useMinifyAndConcat',
@@ -107,17 +87,19 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
 
 
         gulp.task('bundle-config', function () {
+
             return (new Promise(function (fulfill, reject) {
 
                 console.log(chalk.cyan('Running "bundle-config" task.\n\n'));
 
                 inquirer.prompt(questions, function (answers) {
+
                     var newConfig = {
                             alias: answers.alias,
-                            description: answers.description,
-                            version: answers.version
+                            version: '0.0.0',
+                            description: ''
                         },
-                        exampleConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../configs/default.bundle-template.yaml')),
+                        exampleConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../', bundleConfig.emptyBundleFile)),
                         jsonSpace = '     ',
                         bundlePath = path.join(wrangler.bundlesPath, answers.alias + answers.configFormat);
 
@@ -134,11 +116,6 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
                         });
                     }
 
-                    // AMD and/or UMD
-                    if (answers.useAmdOrUmd) {
-                        newConfig[answers.amdOrUmd] = {options: {}};
-                    }
-
                     // Other tasks
                     if (answers.otherTasks && answers.otherTasks.length > 0) {
                         answers.otherTasks.forEach(function (key) {
@@ -150,13 +127,13 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
                     newConfig = answers.configFormat === '.json' ?
                         JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
 
-                    console.log(bundlePath, newConfig);
+                    console.log('Generated file:', chalk.grey(bundlePath), newConfig, '\n');
 
                     // Write new config file
                     fs.writeFileSync(bundlePath, newConfig);
 
                     // 'New config written successfully' message
-                    console.log(chalk.dim('New bundle config file written to "' + bundlePath + '".'));
+                    console.log(chalk.dim('New bundle config file written to "' + bundlePath + '".\n'));
 
                     // Fullfill promise
                     fulfill();
