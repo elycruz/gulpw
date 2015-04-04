@@ -16,14 +16,6 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
         TaskAdapter.call(this, sjl.extend({alias: 'clean'}, options));
     }, {
 
-        /**
-         * Registers the clean gulp task for a `taskSuffix`.
-         * @param taskSuffix {String} - Required
-         * @param targets {Array|String} - Required
-         * @param gulp {gulp} - Required
-         * @param wrangler {Wrangler} - Required
-         * @return {void}
-         */
         registerGulpTask: function (taskSuffix, targets, gulp, wrangler) {
 
             // Get task start time

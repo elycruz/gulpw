@@ -12,16 +12,21 @@ localConfigBackupPath: ./.gulpw/backups
 staticTasks:
   "config":
     constructorLocation: ./task-proxies/ConfigAdapter
-    help: ''
-
+    
   "deploy-config":
     constructorLocation: ./task-proxies/DeployConfigAdapter
-    help: ''
-
+    
   "bundle-config":
     constructorLocation: ./task-proxies/BundleConfigAdapter
-    help: ''
-
+    configurableTasks:
+      - compass
+      - copy
+      - csslint
+      - jasmine
+      - jshint
+      - mocha
+      - watch
+    
 tasks:
 
   # Browserify Defaults
@@ -55,7 +60,6 @@ tasks:
       - js
       - css
       - html
-    help: ""
 
   compass:
     constructorLocation: ./bundle/task-proxies/CompassAdapter

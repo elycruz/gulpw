@@ -24,13 +24,14 @@ var WranglerTaskAdapter = require('../WranglerTaskAdapter'),
     lodash = require('lodash'),
     chalk = require('chalk');
 
-module.exports = WranglerTaskAdapter.extend(function BundleConfigAdapter (options) {
+module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
     WranglerTaskAdapter.call(this, options);
 }, {
 
     registerStaticTasks: function (gulp, wrangler) {
         var taskKeys = Object.keys(wrangler.tasks),
-            otherTaskKeys = lodash.difference(taskKeys, ['all', 'minify', 'concat', 'requirejs', 'browserify']),
+            otherTaskKeys = lodash.difference(taskKeys, wrangler.staticTasks['bundle-config'].configurableTasks),
+
             questions = [
                 {
                     name: 'configFormat',
@@ -44,14 +45,14 @@ module.exports = WranglerTaskAdapter.extend(function BundleConfigAdapter (option
                 {
                     name: 'alias',
                     type: 'input',
-                    message: 'What is your bundle\'s alias name (/^[a-z]+[a-z\-\d_]+$/i)?',
+                    message: 'What is your bundle\'s name?',
                     validate: function (alias) {
                         if (!/^[a-z]+[a-z\-\d_]+$/i.test(alias)) {
-                            return 'The bundle name is in an incorrect format.  Value received: ' + alias;
+                            return 'The bundle name is in an incorrect format.  Only `(/^[a-z]+[a-z\-\d_]+$/i)` pattern is allowed.  Value received: ' + alias;
                         }
                         else if (fs.existsSync(path.join(wrangler.bundlesPath, alias + '.json'))
                             || fs.existsSync(path.join(wrangler.bundlesPath, alias + '.yaml'))) {
-                            return 'A bundle file with that name already exists.  Try a different name.';
+                            return 'A bundle file with that name "' + alias + '" already exists.  Try a different name.';
                         }
                         return true;
                     }
