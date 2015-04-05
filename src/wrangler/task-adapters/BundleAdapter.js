@@ -98,7 +98,7 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
                             version: '0.0.0',
                             description: ''
                         },
-                        exampleConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../', bundleConfig.emptyBundleFile)),
+                        exampleConfig = wrangler.loadConfigFile(path.join(wrangler.pwd, bundleConfig.emptyBundleFile)),
                         jsonSpace = '     ',
                         bundlePath = path.join(wrangler.bundlesPath, answers.alias + answers.configFormat);
 

@@ -12,15 +12,14 @@ var fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
     chalk = require('chalk'),
-    // Recursive mkdir (makes all paths in passed path)
     mkdirp = require('mkdirp'),
-    Bundle = require(path.join(__dirname, '../bundle/Bundle.js')),
+    Bundle = require(path.normalize('./../bundle/Bundle.js')),
     log,
     os = require('os');
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var self = this,
-        defaultOptions = self.loadConfigFile(path.join(__dirname, '/../../configs/default.wrangler.config.yaml'));
+        defaultOptions = self.loadConfigFile(path.join(env.pwd, '/configs/default.wrangler.config.yaml'));
 
         log = self.log;
 
@@ -152,7 +151,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         var self = this,
             src = self.tasks[task].constructorLocation,
-            TaskAdapterClass = require(path.join(__dirname, '../', src)),
+            TaskAdapterClass = require(path.join(self.pwd, src)),
             options = self.tasks[task];
 
         options.alias = task;
@@ -167,7 +166,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         var self = this,
             src = self.staticTasks[task].constructorLocation,
-            TaskAdapterClass = require(path.join(__dirname, src));
+            TaskAdapterClass = require(src);
 
         TaskAdapterClass = new TaskAdapterClass({
             alias: task,

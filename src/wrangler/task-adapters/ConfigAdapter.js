@@ -51,7 +51,7 @@ module.exports = WranglerTaskAdapter.extend(function ConfigAdapter () {
                 chalk.dim('** Note ** - Any existing config will be backed up to "' + wrangler.localConfigBackupPath + '" before generating a new one.'));
 
                 inquirer.prompt(questions, function (answers) {
-                    var newConfig = wrangler.loadConfigFile(path.join(__dirname, '/../../../configs/default.wrangler.config.yaml')),
+                    var newConfig = wrangler.loadConfigFile(path.join(wrangler.pwd, '/configs/default.wrangler.config.yaml')),
                         newConfigPath = null,
                         oldConfig = wrangler.loadConfigFile(wrangler.configPath),
                         oldFileName = path.basename(wrangler.configPath),

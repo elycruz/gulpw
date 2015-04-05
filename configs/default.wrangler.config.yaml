@@ -11,13 +11,13 @@ localConfigBackupPath: ./.gulpw/backups
 
 staticTasks:
   "config":
-    constructorLocation: ./task-proxies/ConfigAdapter
+    constructorLocation: ./task-adapters/ConfigAdapter
     
   "deploy-config":
-    constructorLocation: ./task-proxies/DeployConfigAdapter
+    constructorLocation: ./task-adapters/DeployConfigAdapter
     
   "bundle":
-    constructorLocation: ./task-proxies/BundleAdapter
+    constructorLocation: ./task-adapters/BundleAdapter
     emptyBundleFile: ./configs/empty.bundle.template.yaml
     allowedTasks:
       - browserify
@@ -35,13 +35,13 @@ tasks:
 
   # Browserify Defaults
   browserify:
-    constructorLocation: ./bundle/task-proxies/BrowserifyAdapter
+    constructorLocation: ./src/bundle/task-adapters/BrowserifyAdapter
     priority: 92
 
   # Build Task (Looks through {bundle-alias}.yaml file and runs
   # all tasks that are not in the `ignoredTasks` array in this config.
   build:
-    constructorLocation: ./bundle/task-proxies/BuildAdapter
+    constructorLocation: ./src/bundle/task-adapters/BuildAdapter
     priority: -98
 
     prelimTasks:
@@ -55,7 +55,7 @@ tasks:
       - csslint
 
   clean:
-    constructorLocation: ./bundle/task-proxies/CleanAdapter
+    constructorLocation: ./src/bundle/task-adapters/CleanAdapter
     priority: 100
     allowedFileTypes:
       - js
@@ -63,23 +63,23 @@ tasks:
       - html
 
   compass:
-    constructorLocation: ./bundle/task-proxies/CompassAdapter
+    constructorLocation: ./src/bundle/task-adapters/CompassAdapter
     priority: 98
     configrb: null # config.rb home
     
   copy:
-    constructorLocation: ./bundle/task-proxies/CopyAdapter
+    constructorLocation: ./src/bundle/task-adapters/CopyAdapter
     priority: 99
     
   csslint:
     priority: 97
-    constructorLocation: ./bundle/task-proxies/CssLintAdapter
+    constructorLocation: ./src/bundle/task-adapters/CssLintAdapter
     csslintrc: null
     
   # Deploy Task
   deploy:
     # @todo add a flag for ignoring the deployment of artifacts
-    constructorLocation: ./bundle/task-proxies/DeployAdapter
+    constructorLocation: ./src/bundle/task-adapters/DeployAdapter
     priority: -100
 
     # Whether to deploy files using unix paths (useful if you're on Windows and need to deploy to a *nix type server)
@@ -113,13 +113,13 @@ tasks:
     domainsToDevelop: null
 
   jasmine:
-    constructorLocation: ./bundle/task-proxies/JasmineAdapter
+    constructorLocation: ./src/bundle/task-adapters/JasmineAdapter
     priority: 95
     files: null # testDir or array of files (test files)
     options: null
     
   jshint:
-    constructorLocation: ./bundle/task-proxies/JsHintAdapter
+    constructorLocation: ./src/bundle/task-adapters/JsHintAdapter
     priority: 96
     jshintrc: ./.jshintrc
     ignoreFiles: null
@@ -139,7 +139,7 @@ tasks:
         - sjl
     
   minify:
-    constructorLocation: ./bundle/task-proxies/MinifyAdapter
+    constructorLocation: ./src/bundle/task-adapters/MinifyAdapter
     priority: 91
     header: |
       /*! Company Name * http://www.company-website.com * Filename: <%= bundle.options.alias + '.' + fileExt %> * Version: <%= bundle.options.version %> * Created: (<%= (new Date()).getTime() %>) * Hashsum: <%= fileHashType %>:<%= bundle[fileExt + 'Hash'] %> */
@@ -176,19 +176,19 @@ tasks:
       splitKeyAt: ./
 
   mocha:
-    constructorLocation: ./bundle/task-proxies/MochaAdapter
+    constructorLocation: ./src/bundle/task-adapters/MochaAdapter
     priority: 94
     files: null # testDir or array of files (test files)
     options: null
     
   # RequireJs Defaults
   requirejs:
-    constructorLocation: ./bundle/task-proxies/RequireJsAdapter
+    constructorLocation: ./src/bundle/task-adapters/RequireJsAdapter
     priority: 93
     
   # Watch Task Defaults
   watch:
-    constructorLocation: ./bundle/task-proxies/WatchAdapter
+    constructorLocation: ./src/bundle/task-adapters/WatchAdapter
     priority: -99
 
     # Tasks to ignore on the bundle level (watch creates it's own
