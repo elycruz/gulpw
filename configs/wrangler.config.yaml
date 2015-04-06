@@ -20,9 +20,12 @@ localHelpPath: null
 helpPath: ./docs
 
 staticTasks:
+  "help":
+    constructorLocation: ./task-adapters/HelpAdapter
+
   "config":
     constructorLocation: ./task-adapters/ConfigAdapter
-    
+
   "deploy-config":
     constructorLocation: ./task-adapters/DeployConfigAdapter
     

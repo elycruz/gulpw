@@ -142,7 +142,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.log(' - Creating task adapter \"' + task + '\'.');
 
         var self = this,
-            localConstructor = self.tasks[task].localConstructor || null,
+            localConstructor = self.tasks[task].hasOwnProperty('localConstructor') ?  self.tasks[task].localConstructor : null,
             src = localConstructor ? path.join(self.cwd, localConstructor) :
                 path.join(self.pwd, self.tasks[task].constructorLocation),
             TaskAdapterClass = require(src),
@@ -405,11 +405,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
         var self = this;
-
-        tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 0)
-            .map(function (obj) {
-                    return obj.command;
-                });
+        //
+        //tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 0)
+        //    .map(function (obj) {
+        //            return obj.command;
+        //        });
 
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
@@ -687,7 +687,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         if (key.indexOf(':') !== -1) {
             key = this.splitWranglerCommand(key).taskAlias;
         }
-        return parseInt(this.tasks[key].priority, 10);
+        return parseInt(this.tasks[key].hasOwnProperty('priority') ? this.tasks[key].priority : 0, 10);
     },
 
     getTaskSortData: function (command) {

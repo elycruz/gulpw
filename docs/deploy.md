@@ -78,4 +78,3 @@ tasks:
           md: /home/some-user/docroot/md-files.<%= hostnamePrefix %><%= hostname %>/
 
 ```
-
