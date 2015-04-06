@@ -1,13 +1,23 @@
+# Path to bundle configurations
 bundlesPath: ./path/to/bundles
 
+# Allowed bundle configuration formats
 bundleConfigFormats:
   - .yaml
   - .js
   - .json
 
+# Local user level config path
 localConfigPath: ./.gulpw
 
+# Local backup path for local config files
 localConfigBackupPath: ./.gulpw/backups
+
+# Path where user would store help files for their custom tasks (if necessary @see `tasks` section)
+localHelpPath: null
+
+# Wrangler help docs
+helpPath: ./docs
 
 staticTasks:
   "config":
@@ -32,6 +42,15 @@ staticTasks:
       - watch
     
 tasks:
+
+  # task:
+  #   localConstructor: constructor/path/to/your/task's/constructor.{extension-here}
+  #   localHelpFile: null # If help instructions are extensive use this parameter
+  #   help: ""            # If help instructions are minimal use this parameter
+  #   priority: null      # The task's priority (recommended when running with '--async' flag
+  #   dependencies:       # Dependencies that are needed by this 'task'  (@tentative Wrangler
+  #                         looks up the dependencies and saves them if they are not already saved)
+  #
 
   # Browserify Defaults
   browserify:

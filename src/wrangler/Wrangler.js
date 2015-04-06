@@ -20,7 +20,7 @@ var fs = require('fs'),
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var self = this,
-        defaultOptions = self.loadConfigFile(path.join(env.pwd, '/configs/default.wrangler.config.yaml'));
+        defaultOptions = self.loadConfigFile(path.join(env.pwd, '/configs/wrangler.config.yaml'));
 
         log = self.log;
 

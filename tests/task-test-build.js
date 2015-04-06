@@ -50,7 +50,7 @@ describe('#`build` task test', function () {
     it('should be able to build multiple singular bundles', function (done) {
         // Set timeout for this test
         this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw build:global build:amd build:amd-outfile',
+        tutil.executeTaskAsChild('gulpw build:global build:amd build:amd-outfile --async',
             commandOptions, genericTest, done);
     });
 
