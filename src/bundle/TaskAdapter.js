@@ -26,7 +26,8 @@ module.exports = sjl.Extendable.extend(function TaskAdapter(options, gulp, wrang
 
         registerGulpTasks: function (taskName, tasks, gulp, wrangler, deps) {
             gulp.task(taskName, deps || [], function () {
-                return wrangler.launchTasks(tasks, gulp);
+                var method = wrangler.argv.sync ? 'launchTasksSync' : 'launchTasks';
+                return wrangler[method](tasks, gulp);
             });
         },
 

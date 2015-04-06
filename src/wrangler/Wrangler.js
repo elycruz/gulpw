@@ -41,21 +41,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     // Resolve bundles path
     self.bundlesPath = path.join(self.cwd, self.bundlesPath);
 
-    // Tasks keys by priority
-    self.taskKeysByPriority = self.sortTaskKeysByPriority(
-        self.taskKeys.filter(function (key) {
-                return sjl.isset(self.tasks[key]);
-            }));
-
-    self.log('Tasks aliases by priority: ', self.taskKeysByPriority, '\n');
-
     // Preparing to give all gulpw components direct access to gulp and wrangler internally.
     self.gulp = gulp;
 
     // Initialize the pipeline call(s)
     self.init(gulp, self.argv);
 },
-
 {
     init: function (gulp, argv) {
         var self = this,
@@ -271,7 +262,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this;
         bundle = self.getBundleAlias(bundle);
         task = self.getTaskAdapterAlias(task);
-        if (!self.isTaskRegistered(bundle + ':' + task)) {
+        if (!self.isTaskRegistered(task + ':' + bundle)) {
             self.getTaskAdapter(task).registerBundle(self.bundles[bundle], self.gulp, self);
             self.log(' ~ Bundle "' + bundle + '" registered with task "' + task + '".');
         }
@@ -413,7 +404,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     launchTasks: function (tasks, gulp) {
         var self = this;
 
-        tasks = self.sortTaskKeysByPriority(tasks, 0);
+        tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 0)
+            .map(function (obj) {
+                    return obj.command;
+                });
 
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
@@ -435,8 +429,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                     gulp.start(item);
                 }
                 catch (e) {
-                    self.log(e, '--mandatory');
-                    reject();
+                    self.log('`Wrangler.launchTasks` encountered the following error:', e, '--mandatory');
+                    reject('`Wrangler.launchTasks` encountered the following error:' + e);
                 }
             });
 
@@ -454,6 +448,48 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             }, intervalSpeed);
 
         })); // end of promise
+    },
+
+    launchTasksSync: function (tasks, gulp) {
+        var self = this,
+            lastPriority,
+            lastPromise,
+            priorityList = [];
+
+        tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 0);
+
+        tasks.forEach(function (task) {
+            if (!sjl.isset(lastPriority)) {
+                lastPriority = task.priority;
+                priorityList.push([task.command]);
+            }
+            else if (lastPriority !== task.priority) {
+                priorityList.push([task.command]);
+            }
+            else if (priorityList[priorityList.length-1].indexOf(task.command) === -1) {
+                priorityList[priorityList.length-1].push(task.command);
+            }
+            lastPriority = task.priority;
+        });
+
+        priorityList.reduce(function (val1, val2, index, list) {
+            if (Array.isArray(val1)) {
+                lastPromise = self.launchTasks(val1, gulp);
+            }
+            else {
+                lastPromise = val1;
+            }
+
+            if (Array.isArray(val2)) {
+                lastPromise = lastPromise.then(function () {
+                    return self.launchTasks(val2, gulp);
+                });
+            }
+
+            return lastPromise;
+        });
+
+        return lastPromise;
     },
 
     skipTesting: function () {
@@ -617,17 +653,17 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return filePath;
     },
 
-    sortTaskKeysByPriority: function (tasks, direction) {
+    sortTaskKeysByPriority: function (tasksSortDataObjs, direction) {
         var self = this,
             asc = 1,
             desc = 0;
             direction = sjl.isset(direction) ? direction : asc;
-        return tasks.sort(function (key1, key2) {
-            if (!self.tasks[key1] || !self.tasks[key2]) {
+        return tasksSortDataObjs.sort(function (obj1, obj2) {
+            if (!self.tasks[obj1.taskAlias] || !self.tasks[obj2.taskAlias]) {
                 return 0;
             }
-            var value1 = parseInt(self.tasks[key1].priority, 10),
-                value2 = parseInt(self.tasks[key2].priority, 10),
+            var value1 = parseInt(self.tasks[obj1.taskAlias].priority, 10),
+                value2 = parseInt(self.tasks[obj2.taskAlias].priority, 10),
                 retVal = 0;
             if (direction === desc && value1 < value2) {
                 retVal = 1;
@@ -643,136 +679,33 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             }
             return retVal;
         });
-    }
+    },
 
-    // @todo figure out if this is going to be necessary
-    //
-    //taskKeysDepsMap: function (tasks, wrangler) {
-    //    if (tasks.length === 0) {
-    //        return [];
-    //    }
-    //
-    //    tasks = wrangler.sortTaskKeysByPriority(tasks, 0).filter(function (key) {
-    //        key = wrangler.splitWranglerCommand(key).taskAlias;
-    //        return sjl.isset(wrangler.tasks[key]) && sjl.isset(wrangler.tasks[key].priority);
-    //    });
-    //
-    //    function getPriority(key) {
-    //        return parseInt(wrangler.tasks[key].priority, 10);
-    //    }
-    //
-    //    function depsMapItem(item) {
-    //        var retVal = item,
-    //            topLevelTaskAlias = wrangler.splitWranglerCommand(item).taskAlias;
-    //        if (sjl.classOfIs(item, 'String')) {
-    //            retVal = {
-    //                command: item,
-    //                deps: [],
-    //                priority: getPriority(topLevelTaskAlias),
-    //                topLevelAlias: topLevelTaskAlias
-    //            };
-    //        }
-    //        return retVal;
-    //    }
-    //
-    //    function findClosestLowerPriorityObj (depsMapObjs, item) {
-    //        var prevDiff = Number.POSITIVE_INFINITY,
-    //            priority0 = parseInt(item.priority, 10),
-    //            priority1,
-    //            lowestObj = null;
-    //        depsMapObjs.forEach(function (obj) {
-    //            if (item.command === obj.command) {
-    //                return;
-    //            }
-    //            priority1 = parseInt(obj.priority, 10);
-    //            var diff = priority0 > priority1 ? priority0 - priority1 : priority1 - priority0;
-    //            if (diff < prevDiff && diff !== 0) {
-    //                lowestObj = obj;
-    //                prevDiff = diff;
-    //            }
-    //        });
-    //
-    //        return lowestObj;
-    //    }
-    //
-    //    function addToDepsMap(obj, depsMap, addedCommandsSet) {
-    //        if (obj && addedCommandsSet.indexOf(obj.command) === -1) {
-    //            depsMap.push(obj);
-    //            addedCommandsSet.push(obj.command);
-    //        }
-    //    }
-    //
-    //    function mapObjsToDepsMap (objs, depsMap) {
-    //        var addedCommands = [],
-    //            obj0;
-    //
-    //        if (objs.length === 1) {
-    //            return objs;
-    //        }
-    //
-    //        objs.forEach(function (obj2) {
-    //            var obj1 = findClosestLowerPriorityObj(objs, obj2);
-    //            console.log(obj1, objs.length, objs);
-    //                var sorted = [obj0 || obj1, obj1, obj2].sort(function (v1, v2) {
-    //                    return sjl.isset(v1) && sjl.isset(v2) ? (v1.priority > v2.priority ? 1 : (v1.priority < v2.priority ? -1 : 0)) : 1; })
-    //                    .filter(function (item) {
-    //                        return sjl.isset(item);
-    //                    });
-    //
-    //            if (sorted.length === 1) {
-    //                addToDepsMap(sorted[0], depsMap, addedCommands);
-    //                return;
-    //            }
-    //
-    //            obj0 = sorted[0];
-    //            obj1 = sorted[1];
-    //            obj2 = sorted[2];
-    //
-    //            [obj0, obj1, obj2].forEach(function (item) {
-    //                console.log(item.command + ' ' + item.priority);
-    //            });
-    //
-    //            if (obj1.priority < obj2.priority) {
-    //                addToDepsMap(obj2, obj1.deps, addedCommands);
-    //                if (obj1.priority > obj0.priority) {
-    //                    addToDepsMap(obj1, obj0.deps, addedCommands);
-    //                }
-    //                else {
-    //                    addToDepsMap(obj1, depsMap, addedCommands);
-    //                }
-    //            }
-    //            else if (obj1.priority > obj2.priority) {
-    //                addToDepsMap(obj1, obj2.deps, addedCommands);
-    //                if (obj2.priority > obj0.priority) {
-    //                    addToDepsMap(obj2, obj0.deps, addedCommands);
-    //                }
-    //                else {
-    //                    addToDepsMap(obj2, depsMap, addedCommands);
-    //                }
-    //            }
-    //            else if (obj1.priority > obj0.priority) {
-    //                addToDepsMap(obj1, obj0.deps, addedCommands);
-    //                addToDepsMap(obj2, obj0.deps, addedCommands);
-    //            }
-    //            else {
-    //                addToDepsMap(obj1, depsMap, addedCommands);
-    //                addToDepsMap(obj2, depsMap, addedCommands);
-    //            }
-    //
-    //            addToDepsMap(obj0, depsMap, addedCommands);
-    //
-    //        });
-    //
-    //        return depsMap;
-    //    }
-    //
-    //    function getDepsMapObjs (list) {
-    //        return list.map(function (item) {
-    //            return depsMapItem(item);
-    //        });
-    //    }
-    //
-    //    return mapObjsToDepsMap(getDepsMapObjs(tasks), []);
-    //}
+    getTaskPriority: function (key) {
+        if (key.indexOf(':') !== -1) {
+            key = this.splitWranglerCommand(key).taskAlias;
+        }
+        return parseInt(this.tasks[key].priority, 10);
+    },
+
+    getTaskSortData: function (command) {
+        var retVal = command,
+            topLevelTaskAlias = this.splitWranglerCommand(command).taskAlias;
+        if (sjl.classOfIs(command, 'String')) {
+            retVal = {
+                command: command,
+                priority: this.getTaskPriority(topLevelTaskAlias),
+                taskAlias: topLevelTaskAlias
+            };
+        }
+        return retVal;
+    },
+
+    getTaskListToTaskDataObjs: function (list) {
+        var self = this;
+        return list.map(function (item) {
+            return self.getTaskSortData(item);
+        });
+    }
 
 });

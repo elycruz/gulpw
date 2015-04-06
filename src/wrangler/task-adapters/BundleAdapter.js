@@ -30,6 +30,7 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
     registerStaticTasks: function (gulp, wrangler) {
         var bundleConfig = wrangler.staticTasks.bundle,
             otherTaskKeys = bundleConfig.allowedTasks,
+            defaultBundleName = process.argv.length === 4 ? process.argv[3] : 'bundle',
 
             questions = [
                 {
@@ -45,6 +46,7 @@ module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
                     name: 'alias',
                     type: 'input',
                     message: 'Input name for bundle file:',
+                    default: defaultBundleName,
                     validate: function (alias) {
                         if (!/^[a-z]+[a-z\-\d_]+$/i.test(alias)) {
                             return 'The bundle name format is invalid.  Only [a-z,0-9,-,_,.] allowed.  Value received: ' + alias;
