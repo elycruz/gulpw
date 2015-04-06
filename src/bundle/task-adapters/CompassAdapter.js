@@ -6,7 +6,7 @@
  */
 'use strict'; require('sjljs');
 
-require('es6-promise').polyfill();
+
 
 // Import base task proxy to extend
 var TaskAdapter = require('../TaskAdapter'),
@@ -41,7 +41,7 @@ module.exports = TaskAdapter.extend('CompassAdapter', {
 
 				var startDate = new Date();
 
-				wrangler.log(chalk.cyan(' \nRunning "' + taskName + '" task:\n ' + path.dirname(configrb)), '--mandatory');
+				wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task:\n ' + path.dirname(configrb)), '--mandatory');
 
 				var compassTask = exec('cd ' + path.dirname(configrb) + ' && compass compile', function (err, stdout, stderr) {
 					// Command(s) output

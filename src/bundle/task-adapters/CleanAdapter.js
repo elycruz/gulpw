@@ -5,7 +5,7 @@
 'use strict';
 
 require('sjljs');
-require('es6-promise').polyfill();
+
 
 var path = require('path'),
     del = require('del'),
@@ -28,18 +28,22 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
             gulp.task(taskName, function () {
 
                 return (new Promise(function (fulfill, reject) {
+
+                    // Explode
+                    targets = wrangler.explodeGlobs(targets);
+
                     // Log start of task
-                    wrangler.log('Running "' + taskName + '"', '--mandatory');
+                    wrangler.log(chalk.cyan('Running "' + taskName + '"'), '--mandatory');
 
                     // Log files to delete
-                    wrangler.log('Deleting the following files: \n', targets);
+                    wrangler.log(chalk.grey('Deleting the following files: \n'), chalk.grey(targets));
 
                     // Delete targets
                     del(targets, function (err) {
 
                         // If error log it
                         if (err) {
-                            console.log(err);
+                            wrangler.log(err, '--mandatory');
                             reject(err);
                             return;
                         }
@@ -78,14 +82,17 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
             // Register separate `clean` tasks for each section in `files` key
             allowedFileTypes.forEach(function (ext) {
                 var section = bundle.has('files.' + ext),
-                    singularTaskTargets = [];
+                    singularTaskTargets = [],
+                    artifactPath = path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext);
 
                 // Check if `key` in `files` is buildable (concatable/minifiable)
                 if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                     // Get file path for `key` in `files`
-                    if (isMinifyConfigured && minifyConfig[ext + 'BuildPath']) {
-                        singularTaskTargets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
+                    if (isMinifyConfigured
+                        && minifyConfig[ext + 'BuildPath']
+                        && singularTaskTargets.indexOf(artifactPath) === -1) {
+                        singularTaskTargets.push(artifactPath);
                     }
 
                     // Pass off the `filePath` to `targets` for later use
@@ -130,32 +137,36 @@ module.exports = TaskAdapter.extend(function CleanAdapter (options) {
 
                 // Compile targets array
                 allowedFileTypes.forEach(function (ext) {
-                    var section = bundle.has('files.' + ext), //options.files[ext],
+
+                    var section = bundle.has('files.' + ext) ? bundle.options.files[ext] : [],
                         copyFiles = bundle.get('copy.files');
 
                     // Check if `key` in `files` is buildable (concatable/minifiable)
                     if (bundle.has('files') && self.isValidTaskSrc(section)) {
 
                         // Get file path for `key` in `files`
-                        if (isMinifyConfigured && minifyConfig[ext + 'BuildPath']) {
-                            targets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
-                        }
+                        if (isMinifyConfigured && minifyConfig[ext + 'BuildPath']
+                            && targets.indexOf(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext)) === -1) {
+                                    targets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
+                                }
                     }
 
                     // If requirejs config is availble
-                    if (bundle.has('requirejs.options.out')) {
+                    if (bundle.has('requirejs.options.out') && targets.indexOf(bundle.options.requirejs.options.out) === -1) {
                         targets.push(bundle.options.requirejs.options.out);
                     }
-                    else if (bundle.has('requirejs.options.dir')) {
+                    else if (bundle.has('requirejs.options.dir') && targets.indexOf(bundle.options.requirejs.options.dir) === -1) {
                         targets.push(path.join(bundle.options.requirejs.options.dir, '/**/*'));
                         // @todo should we also delete the actual dir ?
-                        //targets.push(bundle.options.requirejs.options.dir);
+                        targets.push(bundle.options.requirejs.options.dir);
                     }
 
                     // If copy tasks is setup
                     if (bundle.has('copy.files')) {
                         Object.keys(copyFiles).forEach(function (key) {
-                            targets.push(copyFiles[key]);
+                            if (targets.indexOf(copyFiles[key]) === -1) {
+                                targets.push(copyFiles[key]);
+                            }
                         });
                     }
                 });

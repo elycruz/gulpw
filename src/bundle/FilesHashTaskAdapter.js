@@ -6,7 +6,7 @@
 'use strict';
 
 require('sjljs');
-require('es6-promise').polyfill();
+
 
 var path = require('path'),
 

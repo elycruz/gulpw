@@ -5,7 +5,7 @@
 'use strict';
 
 require('sjljs');
-require('es6-promise').polyfill();
+
 
 var jasmine = require('gulp-jasmine'),
     duration = require('gulp-duration'),

@@ -5,7 +5,7 @@
 'use strict';
 
 require('sjljs');
-require('es6-promise').polyfill();
+
 
 var mocha = require('gulp-mocha'),
     duration = require('gulp-duration'),

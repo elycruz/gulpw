@@ -13,7 +13,7 @@
 
 require('sjljs');
 
-require('es6-promise').polyfill();
+
 
 // Import base task proxy to extend
 var WranglerTaskAdapter = require('../WranglerTaskAdapter'),

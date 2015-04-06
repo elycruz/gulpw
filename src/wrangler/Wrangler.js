@@ -6,13 +6,14 @@
 
 require('sjljs');
 
-require('es6-promise').polyfill();
+
 
 var fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
     chalk = require('chalk'),
     mkdirp = require('mkdirp'),
+    glob = require('glob'),
     Bundle = require(path.normalize('./../bundle/Bundle.js')),
     log,
     os = require('os');
@@ -141,12 +142,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.log(' - Creating task adapter \"' + task + '\'.');
 
         var self = this,
-            src = self.tasks[task].constructorLocation,
-            TaskAdapterClass = require(path.join(self.pwd, src)),
+            localConstructor = self.tasks[task].localConstructor || null,
+            src = localConstructor ? path.join(self.cwd, localConstructor) :
+                path.join(self.pwd, self.tasks[task].constructorLocation),
+            TaskAdapterClass = require(src),
             options = self.tasks[task];
 
         options.alias = task;
-        options.help = self.tasks[task].help;
 
         return new TaskAdapterClass(options, gulp, this);
     },
@@ -706,6 +708,39 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return list.map(function (item) {
             return self.getTaskSortData(item);
         });
+    },
+
+    /**
+     * Returns the files located at glob string or the string passed in if it doesn't contain glob magic.
+     * @param string {String} - Glob string to parse.
+     * @returns {Array|String} - See description above.
+     */
+    explodeGlob: function (string) {
+        var out = string;
+        if (glob.hasMagic(string)) {
+            out = glob.sync(string);
+        }
+        return out;
+    },
+
+    /**
+     * Explodes any globs in an array of file paths and replaces the glob entries with actual file paths.
+     * @param fileList {Array} - Array of file paths.
+     * @returns {Array} - Array of file paths with globs replaced by actual file entries.
+     */
+    explodeGlobs: function (fileList) {
+        var self = this,
+            out = [];
+        fileList.forEach(function (file) {
+            var value = self.explodeGlob(file);
+            if (Array.isArray(value)) {
+                out = out.concat(value);
+            }
+            else {
+                out.push(value);
+            }
+        });
+        return out;
     }
 
 });
