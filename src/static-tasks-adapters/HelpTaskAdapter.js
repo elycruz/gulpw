@@ -18,7 +18,7 @@ module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter () {
     BaseStaticTaskAdapter.call(this, arguments);
 }, {
 
-    registerStaticTasks: function (gulp, wrangler) {
+    registerStaticTask: function (gulp, wrangler) {
         var self = this,
             helpSectionPaths = self.getHelpSectionPaths(wrangler),
             helpSectionPathKeys = self.getHelpSectionPathKeys(wrangler),

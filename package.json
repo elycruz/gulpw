@@ -16,6 +16,7 @@
     "gulp-concat": "~2.4.1",
     "gulp-csslint": "^0.1.5",
     "gulp-duration": "0.0.0",
+    "gulp-eslint": "^0.8.0",
     "gulp-fncallback": "^1.0.3",
     "gulp-footer": "^1.0.5",
     "gulp-header": "^1.2.2",

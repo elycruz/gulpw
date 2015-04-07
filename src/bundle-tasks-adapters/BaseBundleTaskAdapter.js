@@ -31,10 +31,6 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
             });
         },
 
-        launchTasks: function (tasks, gulp, wrangler) {
-            return wrangler.launchTasks(tasks, gulp);
-        },
-
         isBundleValidForTask: function (bundle) {
             // Overwrite from extending class
         },

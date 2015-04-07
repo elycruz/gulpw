@@ -60,9 +60,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(opti
             }); // end of bundles loop
 
             // Set up global `concat` task
-            gulp.task(taskPrefix, function () {
-                return self.launchTasks(tasks, gulp, wrangler);
-            });
+            self.registerGulpTasks(taskPrefix, tasks, gulp, wrangler);
 
         }, // end of `registerBundles`
 

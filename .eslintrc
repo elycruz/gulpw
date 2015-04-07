@@ -17,7 +17,7 @@ Rules in ESLint are divided into several categories to help you better understan
   "comma-dangle":         	false, //- disallow or enforce trailing commas
   "no-comma-dangle":        false, //- (deprecated) disallow trailing commas in object literals (off by default)
   "no-cond-assign":         true, //- disallow assignment in conditional expressions
-  "no-console":         	false, //- disallow use of console (off by default in the node environment)
+  "no-console":         	true, //- disallow use of console (off by default in the node environment)
   "no-constant-condition":  true, //- disallow use of constant expressions in conditions
   "no-control-regex":       false, //- disallow control characters in regular expressions
   "no-debugger":         	false, //- disallow use of debugger

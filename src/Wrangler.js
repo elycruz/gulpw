@@ -164,7 +164,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             help: self.staticTasks[task].help || ''
         });
 
-        TaskAdapterClass.registerStaticTasks(gulp, self);
+        TaskAdapterClass.registerStaticTask(gulp, self);
 
         return TaskAdapterClass;
     },

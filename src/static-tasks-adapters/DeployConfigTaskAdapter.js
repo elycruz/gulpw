@@ -18,7 +18,7 @@ module.exports = BaseStaticTaskAdapter.extend(function DeployConfigTaskAdapter (
     BaseStaticTaskAdapter.call(this, arguments);
 }, {
 
-    registerStaticTasks: function (gulp, wrangler) {
+    registerStaticTask: function (gulp, wrangler) {
 
         if (wrangler.tasks.deploy.notConfiguredByUser) {
             return;

@@ -24,7 +24,7 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter () {
     BaseStaticTaskAdapter.call(this, arguments);
 }, {
 
-    registerStaticTasks: function (gulp, wrangler) {
+    registerStaticTask: function (gulp, wrangler) {
         var taskKeys = Object.keys(wrangler.tasks),
             questions = [
                 {

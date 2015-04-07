@@ -10,7 +10,7 @@ module.exports = sjl.Optionable.extend(function BaseStaticTaskAdapter(options) {
         sjl.Optionable.call(this, options);
     },
     {
-        registerStaticTasks: function (gulp, wrangler) {
+        registerStaticTask: function (gulp, wrangler) {
             // override from extending class
         }
     });
