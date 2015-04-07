@@ -6,10 +6,10 @@
 require('sjljs');
 
 // Import base task adapter to extend
-var TaskAdapter = require('../TaskAdapter');
+var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter');
 
-module.exports = TaskAdapter.extend(function BuildAdapter () {
-    TaskAdapter.apply(this, arguments);
+module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
+    BaseBundleTaskAdapter.apply(this, arguments);
 }, {
 
     registerBundle: function (bundle, gulp, wrangler) {

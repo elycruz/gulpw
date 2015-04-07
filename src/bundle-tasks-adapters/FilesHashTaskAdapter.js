@@ -7,19 +7,18 @@
 
 require('sjljs');
 
-
 var path = require('path'),
 
     jsStringEscape = require('js-string-escape'),
 
-    TaskAdapter = require(path.join(__dirname, 'TaskAdapter.js')),
+    BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter.js'),
 
     lodash = require('lodash'),
 
     fs = require('fs');
 
-module.exports = TaskAdapter.extend(function FilesTaskAdapter(options) {
-        TaskAdapter.apply(this, arguments);
+module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(options) {
+        BaseBundleTaskAdapter.apply(this, arguments);
     },
     {
         // @todo use this method for minify tasks as well (methods will be almost identical

@@ -6,7 +6,7 @@
 
 require('sjljs');
 
-module.exports = sjl.Extendable.extend(function TaskAdapter(options, gulp, wrangler) {
+module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, gulp, wrangler) {
         sjl.extend(true, this, {
             alias: 'Task\'s cli name goes here.',
             description: 'Task\'s description goes here.',

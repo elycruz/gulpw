@@ -6,15 +6,13 @@
 
 require('sjljs');
 
-
-
 var fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
     chalk = require('chalk'),
     mkdirp = require('mkdirp'),
     glob = require('glob'),
-    Bundle = require(path.normalize('./../bundle/Bundle.js')),
+    Bundle = require('./Bundle'),
     log,
     os = require('os');
 
@@ -431,7 +429,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                     gulp.start(item);
                 }
                 catch (e) {
-                    self.log('`Wrangler.launchTasks` encountered the following error:', e, '--mandatory');
+                    self.log('`Wrangler.launchTasks` encountered the following error:', e, e.stack, e.message, e.lineNumber, '--mandatory');
                     reject('`Wrangler.launchTasks` encountered the following error:' + e);
                 }
             });

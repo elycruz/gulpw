@@ -9,13 +9,13 @@
 
 
 // Import base task proxy to extend
-var TaskAdapter = require('../TaskAdapter'),
+var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
 	path = require('path'),
 	child_process = require('child_process'),
 	exec = child_process.exec,
 	chalk = require('chalk');
 
-module.exports = TaskAdapter.extend('CompassAdapter', {
+module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
     /**
      * Regsiters bundle with `compass` or `sass` gulp task.

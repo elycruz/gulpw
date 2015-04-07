@@ -4,7 +4,7 @@
 'use strict'; require('sjljs');
 
 // Import base task proxy to extend
-var FilesHashTaskAdapter = require('../FilesHashTaskAdapter'),
+var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     //fs = require('fs'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),

@@ -67,7 +67,7 @@ gulp.task('readme', ['tasks-section'], function () {
         'docs/resources.md',
         'docs/licenses.md'
     ])
-        .pipe(concat('./readme.md'))
+        .pipe(concat('./README.md'))
         .pipe(gulp.dest('./'));
 });
 

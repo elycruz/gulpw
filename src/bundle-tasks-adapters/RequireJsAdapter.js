@@ -8,7 +8,7 @@ require('sjljs');
 
 
 // Import base task proxy to extend
-var FilesHashTaskAdapter = require('../FilesHashTaskAdapter'),
+var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     //header = require('gulp-header'),
     requirejs = require('requirejs'),
     //duration = require('gulp-duration'),

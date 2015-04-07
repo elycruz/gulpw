@@ -4,7 +4,7 @@
 'use strict'; require('sjljs');
 
 // Import base task proxy to extend
-var TaskAdapter = require('../TaskAdapter'),
+var TaskAdapter = require('./BaseBundleTaskAdapter'),
     chalk = require('chalk'),
     //spawn = require('child_process').spawn,
     path = require('path');

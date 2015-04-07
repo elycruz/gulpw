@@ -46,7 +46,7 @@ var Liftoff = require('liftoff'),
             '.yaml': 'js-yaml'
         }
     }),
-    Wrangler = require('./src/wrangler/Wrangler'),
+    Wrangler = require('./src/Wrangler'),
     userConfig,
     wrangler;
 

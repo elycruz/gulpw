@@ -21,17 +21,17 @@ helpPath: ./docs
 
 staticTasks:
   "help":
-    constructorLocation: ./task-adapters/HelpAdapter
+    constructorLocation: ./static-tasks-adapters/HelpTaskAdapter
 
   "config":
-    constructorLocation: ./task-adapters/ConfigAdapter
+    constructorLocation: ./static-tasks-adapters/ConfigTaskAdapter
 
   "deploy-config":
-    constructorLocation: ./task-adapters/DeployConfigAdapter
-    
+    constructorLocation: ./static-tasks-adapters/DeployConfigTaskAdapter
+
   "bundle":
-    constructorLocation: ./task-adapters/BundleAdapter
-    emptyBundleFile: ./configs/empty.bundle.template.yaml
+    constructorLocation: ./static-tasks-adapters/BundleConfigTaskAdapter
+    emptyBundleFile: ./configs/empty.bundle-tasks-adapters.template.yaml
     allowedTasks:
       - browserify
       - compass
@@ -57,13 +57,13 @@ tasks:
 
   # Browserify Defaults
   browserify:
-    constructorLocation: ./src/bundle/task-adapters/BrowserifyAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/BrowserifyAdapter
     priority: 92
 
   # Build Task (Looks through {bundle-alias}.yaml file and runs
   # all tasks that are not in the `ignoredTasks` array in this config.
   build:
-    constructorLocation: ./src/bundle/task-adapters/BuildAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/BuildAdapter
     priority: -98
 
     prelimTasks:
@@ -77,7 +77,7 @@ tasks:
       - csslint
 
   clean:
-    constructorLocation: ./src/bundle/task-adapters/CleanAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/CleanAdapter
     priority: 100
     allowedFileTypes:
       - js
@@ -85,23 +85,23 @@ tasks:
       - html
 
   compass:
-    constructorLocation: ./src/bundle/task-adapters/CompassAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/CompassAdapter
     priority: 98
     configrb: null # config.rb home
     
   copy:
-    constructorLocation: ./src/bundle/task-adapters/CopyAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/CopyAdapter
     priority: 99
     
   csslint:
     priority: 97
-    constructorLocation: ./src/bundle/task-adapters/CssLintAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/CssLintAdapter
     csslintrc: null
     
   # Deploy Task
   deploy:
     # @todo add a flag for ignoring the deployment of artifacts
-    constructorLocation: ./src/bundle/task-adapters/DeployAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/DeployAdapter
     priority: -100
 
     # Whether to deploy files using unix paths (useful if you're on Windows and need to deploy to a *nix type server)
@@ -135,13 +135,13 @@ tasks:
     domainsToDevelop: null
 
   jasmine:
-    constructorLocation: ./src/bundle/task-adapters/JasmineAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/JasmineAdapter
     priority: 95
     files: null # testDir or array of files (test files)
     options: null
     
   jshint:
-    constructorLocation: ./src/bundle/task-adapters/JsHintAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/JsHintAdapter
     priority: 96
     jshintrc: ./.jshintrc
     ignoreFiles: null
@@ -161,7 +161,7 @@ tasks:
         - sjl
     
   minify:
-    constructorLocation: ./src/bundle/task-adapters/MinifyAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/MinifyAdapter
     priority: 91
     header: |
       /*! Company Name * http://www.company-website.com * Filename: <%= bundle.options.alias + '.' + fileExt %> * Version: <%= bundle.options.version %> * Created: (<%= (new Date()).getTime() %>) * Hashsum: <%= fileHashType %>:<%= bundle[fileExt + 'Hash'] %> */
@@ -198,19 +198,19 @@ tasks:
       splitKeyAt: ./
 
   mocha:
-    constructorLocation: ./src/bundle/task-adapters/MochaAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/MochaAdapter
     priority: 94
     files: null # testDir or array of files (test files)
     options: null
     
   # RequireJs Defaults
   requirejs:
-    constructorLocation: ./src/bundle/task-adapters/RequireJsAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/RequireJsAdapter
     priority: 93
     
   # Watch Task Defaults
   watch:
-    constructorLocation: ./src/bundle/task-adapters/WatchAdapter
+    constructorLocation: ./src/bundle-tasks-adapters/WatchAdapter
     priority: -99
 
     # Tasks to ignore on the bundle level (watch creates it's own

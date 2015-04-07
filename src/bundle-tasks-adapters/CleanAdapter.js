@@ -10,10 +10,10 @@ require('sjljs');
 var path = require('path'),
     del = require('del'),
     chalk = require('chalk'),
-    TaskAdapter = require('../TaskAdapter.js');
+    BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter');
 
-module.exports = TaskAdapter.extend(function CleanAdapter (options) {
-        TaskAdapter.call(this, sjl.extend({alias: 'clean'}, options));
+module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter (options) {
+        BaseBundleTaskAdapter.call(this, sjl.extend({alias: 'clean'}, options));
     }, {
 
         registerGulpTask: function (taskSuffix, targets, gulp, wrangler) {

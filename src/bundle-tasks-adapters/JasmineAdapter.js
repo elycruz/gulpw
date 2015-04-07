@@ -9,11 +9,11 @@ require('sjljs');
 
 var jasmine = require('gulp-jasmine'),
     duration = require('gulp-duration'),
-    TaskAdapter = require('../TaskAdapter'),
+    BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     fncallback = require('gulp-fncallback'),
     chalk = require('chalk');
 
-module.exports = TaskAdapter.extend('JasmineAdapter', {
+module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true,

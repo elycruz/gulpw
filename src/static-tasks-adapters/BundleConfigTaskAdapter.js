@@ -16,15 +16,15 @@ require('sjljs');
 
 
 // Import base task proxy to extend
-var WranglerTaskAdapter = require('../WranglerTaskAdapter'),
+var BaseStaticTaskAdapter = require('./BaseStaticTaskAdapter'),
     fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
     inquirer = require('inquirer'),
     chalk = require('chalk');
 
-module.exports = WranglerTaskAdapter.extend(function BundleAdapter (options) {
-    WranglerTaskAdapter.call(this, options);
+module.exports = BaseStaticTaskAdapter.extend(function BundleConfigTaskAdapter (options) {
+    BaseStaticTaskAdapter.call(this, options);
 }, {
 
     registerStaticTasks: function (gulp, wrangler) {

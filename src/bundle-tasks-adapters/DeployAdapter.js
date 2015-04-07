@@ -8,7 +8,7 @@ require('sjljs');
 
 
 // Import base task proxy to extend
-var TaskAdapter = require('../TaskAdapter'),
+var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     os = require('os'),
     path = require('path'),
     fs = require('fs'),
@@ -18,8 +18,8 @@ var TaskAdapter = require('../TaskAdapter'),
     lodash = require('lodash'),
     glob = require('glob');
 
-module.exports = TaskAdapter.extend(function DeployAdapter (config) {
-    TaskAdapter.apply(this, arguments);
+module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
+    BaseBundleTaskAdapter.apply(this, arguments);
     this._mergeLocalConfigs()
         ._resolveTemplateValues();
 }, {

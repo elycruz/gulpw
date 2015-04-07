@@ -6,7 +6,7 @@
 
 require('sjljs');
 
-module.exports = sjl.Optionable.extend(function WranglerTaskAdapter(options) {
+module.exports = sjl.Optionable.extend(function BaseStaticTaskAdapter(options) {
         sjl.Optionable.call(this, options);
     },
     {

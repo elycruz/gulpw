@@ -9,6 +9,7 @@
 - [csslint](#csslint)
 - [deploy](#deploy)
 - [deploy-config](#deploy-config)
+- [help](#help)
 - [jasmine](#jasmine)
 - [jshint](#jshint)
 - [minify](#minify)
@@ -276,6 +277,7 @@ Launches an interactive questionnaire for generating a local 'deploy.yaml' file 
 
 ##### In 'bundle.wrangler.config.*':
 None.
+
 
 
 

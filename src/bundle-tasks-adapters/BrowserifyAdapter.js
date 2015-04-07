@@ -7,9 +7,9 @@
 'use strict'; require('sjljs');
 
 // Import base task proxy to extend
-var TaskAdapter = require('../TaskAdapter');
+var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter');
 
-module.exports = TaskAdapter.extend('BrowserifyAdapter', {
+module.exports = BaseBundleTaskAdapter.extend('BrowserifyAdapter', {
 
     /**
      * Regsiters bundle with `browserify` gulp task.
