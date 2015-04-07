@@ -425,11 +425,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             tasks.forEach(function (item) {
                 // Run task
                 try {
-                    self.log(chalk.grey(' Launching task "' + item + '".'));
+                    self.log(chalk.grey('- Launching gulp task "' + item + '".'), '--debug');
                     gulp.start(item);
                 }
                 catch (e) {
-                    self.log('`Wrangler.launchTasks` encountered the following error:', e, e.stack, e.message, e.lineNumber, '--mandatory');
+                    self.log(chalk.red('`Wrangler.launchTasks` encountered the following error:\n'),
+                        chalk.grey(e.message), chalk.grey(e.lineNumber), chalk.grey(e.stack), '--mandatory');
                     reject('`Wrangler.launchTasks` encountered the following error:' + e);
                 }
             });
