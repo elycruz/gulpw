@@ -388,7 +388,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return mkdirp.sync(dirPath);
     },
 
-    // Method is raw and has to be prepped
+    /**
+     * Loads a wrangler configuration file (which is simply a *.json, *.js, or *.yaml file).
+     * @param file {String} - File path.
+     * @returns {Object|*} - Returns the loaded returned value of loading `file` or file path
+     *  if it does not match one of the allowed file types [json,js,yaml].
+     */
     loadConfigFile: function (file) {
         if (file.lastIndexOf('.js') === file.length - 3
             || file.lastIndexOf('.json') === file.length - 5) {
@@ -398,6 +403,41 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             file = yaml.safeLoad(fs.readFileSync(file));
         }
         return file;
+    },
+
+    /**
+     * Writes a configuration file depending on file extension in the `filePath` parameter.
+     * @param obj {Object} - Object to convert to file.
+     * @param filePath {String} - File path to write `obj` to.
+     * @returns {exports}
+     */
+    writeConfigFile: function (obj, filePath) {
+        if (filePath.lastIndexOf('.json') === file.length - 5) {
+            obj = JSON.stringify(obj, '    ');
+        }
+        else if (filePath.lastIndexOf('.yaml') === file.length - 5) {
+            obj = yaml.safeDump(obj);
+        }
+        else if (filePath.lastIndexOf('.js') === file.length - 3) {
+            obj = '\'use strict\'; module.exports = ' + JSON.stringify(obj, '    ') + ';';
+        }
+        this.backupConfigFile(filePath);
+        fs.writeFileSync(filePath, obj);
+        return this;
+    },
+
+    /**
+     * Backs up a config file to `wrangler.localConfigBackupPath` if the file exists.
+     * @param filePath
+     * @returns {exports}
+     */
+    backupConfigFile: function (filePath) {
+        var self = this;
+        if (fs.existsSync(filePath)) {
+            self.ensurePathExists(path.dirname(filePath));
+            fs.writeFileSync(fs.readFileSync(filePath), path.join(self.cwd, self.localConfigBackupPath));
+        }
+        return self;
     },
 
     // @todo idea: make each one in argv._ depend on the next
