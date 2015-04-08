@@ -44,7 +44,7 @@ gulp.task('tasks-section', function () {
     });
 
     // Concat file contents
-    fileData += (availableTasksNav.join('\n') + '\n' +
+    fileData += (availableTasksNav.join('\n') + '\n\n' +
                     availableTasksContents.join('\n'))
                         .replace(/\n{2,}/, '\n\n');
 
