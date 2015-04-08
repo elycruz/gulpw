@@ -9,6 +9,7 @@ var Liftoff = require('liftoff'),
     argv = require('yargs')
         .default('skip-artifacts', false)
         .default('browser', false)
+        .default('bundle', null)
         .default('async', false)
         .alias('b',     'browser')
         .alias('a',     'async')

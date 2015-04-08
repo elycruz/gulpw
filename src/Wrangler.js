@@ -156,7 +156,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         this.log(chalk.cyan('\n- Creating static task adapter \"' + task + '\'.'));
 
         var self = this,
-            src = self.staticTasks[task].constructorLocation,
+            localConstructor = self.staticTasks[task].hasOwnProperty('localConstructor') ?  self.staticTasks[task].localConstructor : null,
+            src = localConstructor ? path.join(self.cwd, localConstructor) :
+                path.join(self.pwd, self.staticTasks[task].constructorLocation),
             TaskAdapterClass = require(src);
 
         TaskAdapterClass = new TaskAdapterClass({
@@ -399,7 +401,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             || file.lastIndexOf('.json') === file.length - 5) {
             file = require(file);
         }
-        else if (file.lastIndexOf('.yaml') === file.length - 5) {
+        else if (file.lastIndexOf('.yaml') === file.length - 5
+            || file.lastIndexOf('.yml') === file.length - 4) {
             file = yaml.safeLoad(fs.readFileSync(file));
         }
         return file;
@@ -412,16 +415,17 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
      * @returns {exports}
      */
     writeConfigFile: function (obj, filePath) {
-        if (filePath.lastIndexOf('.json') === file.length - 5) {
+        if (filePath.lastIndexOf('.json') === filePath.length - 5) {
             obj = JSON.stringify(obj, '    ');
         }
-        else if (filePath.lastIndexOf('.yaml') === file.length - 5) {
+        else if (filePath.lastIndexOf('.yaml') === filePath.length - 5
+            || filePath.lastIndexOf('.yml') === filePath.length - 4) {
             obj = yaml.safeDump(obj);
         }
-        else if (filePath.lastIndexOf('.js') === file.length - 3) {
+        else if (filePath.lastIndexOf('.js') === filePath.length - 3) {
             obj = '\'use strict\'; module.exports = ' + JSON.stringify(obj, '    ') + ';';
         }
-        this.backupConfigFile(filePath);
+        //this.backupConfigFile(filePath);
         fs.writeFileSync(filePath, obj);
         return this;
     },

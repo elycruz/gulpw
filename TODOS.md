@@ -104,6 +104,7 @@ gulp-bundle-wrangler (Beta)
   - [X] - Renamed all occurrences of 'Proxy' to 'Adapter' (since what Wrangler uses are actually adapters).
   - [ ] - Refresh docs
   - [ ] - Ensure all tasks are optional
+- [ ] - Make bundle names case insensitive.
 
 ### Todos for Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).
@@ -125,4 +126,5 @@ gulp-bundle-wrangler (Beta)
 - [ ] - The watch task should be reset whenever the {bundle}.* file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a {bundle}.* is
 	  changed.
+
 
