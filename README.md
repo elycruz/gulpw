@@ -367,7 +367,9 @@ None.
 
 ### eslint
 
+### help
 
+Coming soon
 
 ### jasmine
 Jasmine tests task runs the jasmine module on your test 'files' array or string using `options` if any.
