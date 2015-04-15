@@ -88,7 +88,12 @@ function init(env) {
     userConfig = Wrangler.prototype.loadConfigFile(env.configPath);
 
     // Instantiate wrangler
-    wrangler = new Wrangler(gulp, argv, env, userConfig);
+    try { wrangler = new Wrangler(gulp, argv, env, userConfig) } catch (e) {
+        console.log('Uncaught Error: \n',
+            e.message + ' \n',
+            'Line number: ' + e.lineNumber + ' \n',
+            e.stack);
+    }
 }
 
 cli.launch({
