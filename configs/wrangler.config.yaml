@@ -75,6 +75,7 @@ tasks:
       - deploy
       - jshint
       - csslint
+      - watch
 
   clean:
     constructorLocation: ./src/bundle-tasks-adapters/CleanAdapter
@@ -201,7 +202,6 @@ tasks:
     allowedFileTypes:
       - js
       - css
-      - html
     htmlTaskOptions:
       spare: true
       comments: false

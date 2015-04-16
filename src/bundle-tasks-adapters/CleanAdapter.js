@@ -12,8 +12,8 @@ var path = require('path'),
     chalk = require('chalk'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter');
 
-module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter (options) {
-        BaseBundleTaskAdapter.call(this, sjl.extend({alias: 'clean'}, options));
+module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
+        BaseBundleTaskAdapter.apply(this, arguments);
     }, {
 
         registerGulpTask: function (taskSuffix, targets, gulp, wrangler) {

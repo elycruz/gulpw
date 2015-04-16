@@ -22,7 +22,7 @@ var BaseStaticTaskAdapter = require('./BaseStaticTaskAdapter'),
     chalk = require('chalk');
 
 module.exports = BaseStaticTaskAdapter.extend(function BundleConfigTaskAdapter (options) {
-    BaseStaticTaskAdapter.call(this, options);
+    BaseStaticTaskAdapter.apply(this, arguments);
 }, {
 
     registerStaticTask: function (gulp, wrangler) {

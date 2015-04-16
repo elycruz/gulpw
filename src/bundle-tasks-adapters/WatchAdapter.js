@@ -81,6 +81,8 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
     }, // end of register
 
     registerBundle: function (bundle, gulp, wrangler) {
+        console.log('HEREIO', bundle.options.alias);
+
         var self = this,
             targets,
             tasks;

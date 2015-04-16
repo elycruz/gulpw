@@ -20,7 +20,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     crypto = require('crypto');
 
 module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
-    FilesHashTaskAdapter.apply(this, arguments);
+    FilesHashTaskAdapter.apply(this, sjl.argsToArray(arguments));
 }, {
 
     /**
@@ -31,14 +31,17 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
      */
     registerBundle: function (bundle, gulp, wrangler) {
 
+        //console.log('wrangler.tasks.minify.notConfiguredByUser: ', wrangler.tasks.minify.notConfiguredByUser);
+
         // If bundle doesn't have any of the required keys or task is not configured by user, bail
-        if (!this.isBundleValidForTask(bundle) || wrangler.tasks.minify.notConfiguredByUser) {
+        if (!this.isBundleValidForTask(bundle) || wrangler.tasks.minify.hasOwnProperty('notConfiguredByUser')
+            && wrangler.tasks.minify.notConfiguredByUser) {
             return;
         }
 
         var self = this,
             taskConfigMap = {
-                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
+                //html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
                 css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions},
                 js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
             },
@@ -88,7 +91,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     .pipe(duration(chalk.cyan(self.alias + ' "' + bundle.options.alias + ':' + ext + '" duration')))
 
                     // Minify current source in the {artifacts}/ext directory
-                    .pipe(gulpif(!wrangler.argv.dev, taskInstanceConfig.instance(taskInstanceConfig.options)))
+                    .pipe(gulpif(!wrangler.argv.dev && ext !== 'html', taskInstanceConfig.instance(taskInstanceConfig.options)))
 
                     .pipe(callback(function (file, enc, cb) {
                         if (createFileHash) {

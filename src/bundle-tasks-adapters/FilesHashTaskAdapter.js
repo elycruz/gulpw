@@ -17,8 +17,8 @@ var path = require('path'),
 
     fs = require('fs');
 
-module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(options) {
-        BaseBundleTaskAdapter.apply(this, arguments);
+module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(options, gulp, wrangler) {
+        BaseBundleTaskAdapter.apply(this, sjl.argsToArray(arguments));
     },
     {
         // @todo use this method for minify tasks as well (methods will be almost identical
@@ -66,7 +66,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(opti
 
         isBundleValidForTask: function (bundle) {
             // If bundle doesn't have any of the required keys, bail
-            return bundle && bundle.has('files')
+            return sjl.classOfIs(bundle, 'Object') && bundle.has('files')
                 && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html'));
         },
 

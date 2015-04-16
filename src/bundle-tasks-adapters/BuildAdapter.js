@@ -9,7 +9,7 @@ require('sjljs');
 var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter');
 
 module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
-    BaseBundleTaskAdapter.apply(this, arguments);
+    BaseBundleTaskAdapter.apply(this, sjl.argsToArray(arguments));
 }, {
 
     registerBundle: function (bundle, gulp, wrangler) {

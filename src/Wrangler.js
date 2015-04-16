@@ -246,6 +246,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             _bundles = bundles;
         }
         _bundles.forEach(function (bundle) {
+            self.log('Preparing to register bundle "' + bundle.options.alias + '"');
             self.registerTasksForBundle(gulp, bundle, taskKeys);
         });
     },
@@ -501,8 +502,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             lastPromise,
             priorityList = [];
 
+        // If only one task launch it and exit function
+        if (tasks.length === 1) {
+            return self.launchTasks(tasks, gulp);
+        }
+
+        // Get task list data objects (sorted)
         tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 0);
 
+        // Create priority list to reduce
         tasks.forEach(function (task) {
             if (!sjl.isset(lastPriority)) {
                 lastPriority = task.priority;
@@ -517,6 +525,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             lastPriority = task.priority;
         });
 
+        // If no priority list then bail
+        if (priorityList.length === 0) {
+            return Promise.resolve();
+        }
+
+        // Reduce priority list and call launchTask for all items in list
         priorityList.reduce(function (val1, val2, index, list) {
             if (Array.isArray(val1)) {
                 lastPromise = self.launchTasks(val1, gulp);
