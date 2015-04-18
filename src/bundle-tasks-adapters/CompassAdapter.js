@@ -41,7 +41,7 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
 				var startDate = new Date();
 
-				wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task:\n ' + path.dirname(configrb)), '--mandatory');
+				wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
 
 				var compassTask = exec('cd ' + path.dirname(configrb) + ' && compass compile', function (err, stdout, stderr) {
 					// Command(s) output
@@ -101,7 +101,7 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
 		// Register global `compass` task
 		gulp.task('compass', function () {
-			wrangler.log(chalk.cyan(' \nRunning "compass" task:'), '--mandatory');
+			wrangler.log(chalk.cyan(' \nRunning "compass" task(s).  Task(s) messages below -->'), '--mandatory');
 			if (targets.length > 0) {
 				return wrangler.launchTasks(targets, gulp);
 			}

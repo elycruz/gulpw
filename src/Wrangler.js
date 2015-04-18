@@ -448,11 +448,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
         var self = this;
-        //
-        //tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 0)
-        //    .map(function (obj) {
-        //            return obj.command;
-        //        });
+
+        self.log ('gulp tasks: \n', gulp.tasks, '--debug');
 
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
@@ -499,7 +496,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     launchTasksSync: function (tasks, gulp) {
         var self = this,
             lastPriority,
-            lastPromise,
             priorityList = [];
 
         // If only one task launch it and exit function
@@ -508,7 +504,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
 
         // Get task list data objects (sorted)
-        tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 0);
+        tasks = self.sortTaskKeysByPriority(self.getTaskListToTaskDataObjs(tasks), 1);
 
         // Create priority list to reduce
         tasks.forEach(function (task) {
@@ -530,25 +526,26 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             return Promise.resolve();
         }
 
-        // Reduce priority list and call launchTask for all items in list
-        priorityList.reduce(function (val1, val2, index, list) {
-            if (Array.isArray(val1)) {
-                lastPromise = self.launchTasks(val1, gulp);
-            }
-            else {
-                lastPromise = val1;
+        // Debug message
+        self.log('Priority list: \n', priorityList, '--debug');
+
+        priorityList.reduce(function (item1, item2, i, list) {
+            item1 = list[i-1];
+
+            if (!item2) {
+                return;
             }
 
-            if (Array.isArray(val2)) {
-                lastPromise = lastPromise.then(function () {
-                    return self.launchTasks(val2, gulp);
-                });
-            }
+            gulp.tasks[item1[0]].dep = gulp.tasks[item1[0]].dep || [];
+            gulp.tasks[item1[0]].dep = gulp.tasks[item1[0]].dep.concat(item2);
 
-            return lastPromise;
+            // Debug message
+            self.log('items:', item1, item2, i, '--debug');
+
+            return item1;
         });
 
-        return lastPromise;
+        return self.launchTasks(priorityList[0], gulp);
     },
 
     skipTesting: function () {
@@ -685,7 +682,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     getTaskAdapterAlias: function (taskAdapter) {
         return sjl.classOfIs(taskAdapter, 'Object') ? taskAdapter.alias : taskAdapter;
     },
-    
+
     hasTaskAdapter: function (taskAdapter) {
         taskAdapter = this.getTaskAdapterAlias(taskAdapter);
         return sjl.isset(this.tasks[taskAdapter]);

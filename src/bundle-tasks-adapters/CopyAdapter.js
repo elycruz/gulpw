@@ -20,6 +20,9 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
         // Create task for bundle
         gulp.task(taskName, function () {
             return (new Promise(function (fulfill, reject) {
+
+                wrangler.log('Running "' + taskName + '" task.', '--mandatory');
+
                 var copyTargets = bundle.options.copy.files;
 
                 Object.keys(copyTargets).forEach(function (file) {
@@ -68,6 +71,9 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
         });
 
         gulp.task('copy', function () {
+
+            wrangler.log('Running "copy" task.', '--mandatory');
+
             if (skipCopy) {
                 wrangler.log(chalk.grey('\nSkipping copy task.'), '--mandatory');
                 return Promise.resolve();

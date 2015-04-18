@@ -92,14 +92,14 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
                                         var stateColor = 'green',
 
                                             // An 'X' or a check mark depending on if there was an error uploading the file or not
-                                            stateGlyph = sjl.empty(err3) ? chalk.green(' ' + String.fromCharCode(8730)) : chalk.red('X');
+                                            stateGlyph = sjl.empty(err3) ? chalk.green(' ' + String.fromCharCode(8730)) : chalk.red(' X');
 
                                         // Show file to be uploaded with state color (passed => green, failed => red
                                         wrangler.log(stateGlyph, item[0], '--mandatory');
 
                                         // If there was an error uploading the file show it
                                         if (err3) { stateColor = 'red'; wrangler.log(
-                                            chalk.red(' An `ssh2.sftp.fastPut` error has occurred:  ' + err3), '--mandatory'); }
+                                            chalk.red('   An `ssh2.sftp.fastPut` error has occurred:  "' + err3 + '"'), '--mandatory'); }
 
                                         // Show the location the file was uploaded to if in `--verbose` mode
                                         wrangler.log(chalk[stateColor](' => ', item[1]));
