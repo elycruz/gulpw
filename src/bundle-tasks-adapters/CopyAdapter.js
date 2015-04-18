@@ -21,7 +21,7 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
         gulp.task(taskName, function () {
             return (new Promise(function (fulfill, reject) {
 
-                console.log('Running "' + taskName + '" task.');
+                console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
                 var copyTargets = bundle.options.copy.files;
 
@@ -72,13 +72,12 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
 
         gulp.task('copy', function () {
 
-            console.log('Running "copy" task.');
 
             if (skipCopy) {
-                console.log(chalk.grey('Skipping copy task.'));
+                console.log(chalk.grey('Skipping copy task.\n'));
                 return Promise.resolve();
             }
-            console.log('  Running "copy" task(s):');
+            console.log(chalk.cyan('Running "copy" task(s). Sub task messages below:\n'));
             return wrangler.launchTasks(tasks, gulp);
         });
     },

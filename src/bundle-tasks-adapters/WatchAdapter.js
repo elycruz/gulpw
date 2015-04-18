@@ -52,7 +52,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
                         });
 
                         if (deployTasks.length === - 1) {
-                            console.log(waitingMessage);
+                            console.log(waitingMessage + '\n');
                             fulfill();
                             return;
                         }
@@ -80,8 +80,6 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
     }, // end of register
 
     registerBundle: function (bundle, gulp, wrangler) {
-        console.log('HEREIO', bundle.options.alias);
-
         var self = this,
             targets,
             tasks;

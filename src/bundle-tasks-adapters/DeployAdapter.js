@@ -40,7 +40,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
         gulp.task(taskName, function () {
             var totalFileCount = 0,
                 uploadedFileCount = 0,
-                startDeployMessage = 'Deploying ',
+                startDeployMessage = ' Deploying ',
                 conn = new ssh();
 
             // Remove possible memory leak messages from within ssh plugin
@@ -54,17 +54,15 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
                     totalFileCount += targets[key].length;
                 });
 
-                startDeployMessage += ' files.';
+                startDeployMessage += ' files.\n';
 
-                console.log('Running ' + chalk.cyan('"' + taskName + '"') + ' task.\n');
+                console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
                 startTime = new Date();
 
-                wrangler.log(' DeployAdapter -> targets', '--debug');
-
                 conn.on('ready', function () {
 
-                    console.log(chalk.grey('Connected to ' + host + '\n'));
+                    console.log(chalk.grey(' Connected to ' + host + '\n'));
 
                     conn.sftp(function (err, sftp) {
 
@@ -117,18 +115,18 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
                             // @todo make this if check readble (reverse the logic)
                             if (totalFileCount <= uploadedFileCount) {
 
-                                wrangler.log(chalk.cyan('File deployment complete.'),
-                                    chalk.grey(' Closing connection...'));
+                                wrangler.log(chalk.cyan('\n File deployment complete.\n'),
+                                    chalk.grey('\n Closing connection...'));
 
                                 gulp.tasks[taskName].done = true;
 
                                 conn.end();
 
-                                console.log(chalk.grey(' Connection closed.\n'));
+                                console.log(chalk.grey('\n Connection closed.\n'));
 
                                 // Log task completion
                                 console.log(chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
-                                chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'));
+                                    chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'));
 
                                 fulfill();
 

@@ -54,6 +54,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             anyPerBundleTasksToRun,
             taskAliasesFromArgv = self.getTaskAliasesFromArgv();
 
+        // Insert a new line at the top of our ouptput to have a cleaner look
+        console.log('');
+
         self.log('Gulp Bundle Wrangler initializing...');
 
         // Check if we have any global tasks to run
@@ -196,6 +199,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             self.registerBundles(gulp, bundles);
         }
 
+        self.log('');
+
         return self;
     },
 
@@ -283,9 +288,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             if (task.indexOf(':') > -1 || self.staticTaskKeys.indexOf(task) > -1) {
                 return;
             }
-            self.log(chalk.cyan('Registering bundles for task "' + task + '".'));
+            self.log(chalk.cyan('Registering bundles for task "' + task + '".'), '--debug');
             self.tasks[task].instance.registerBundles(bundles, gulp, self);
-
         });
     },
 

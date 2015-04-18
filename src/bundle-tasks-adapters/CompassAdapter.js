@@ -69,7 +69,7 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 							fulfill();
 							break;
 						default:
-							console.log('`compass compile` exited with code ' + code);
+							console.log('`compass compile` exited with code ' + code + '\n');
 							actionWord = chalk.red('did not complete');
 							reject('`compass compile` exited with code "' + code + '".');
 							break;
@@ -77,7 +77,7 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
 					console.log(chalk.cyan('"' + taskName + '" task ' + actionWord + '.  ' +
 					'Duration: ' + chalk.magenta((((new Date()) - startDate) / 1000) +
-					'ms')));
+					'ms\n')));
 				});
 
 			})); // end of promise
@@ -101,7 +101,7 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
 		// Register global `compass` task
 		gulp.task('compass', function () {
-			console.log(chalk.cyan(' Running "compass" task(s).  Task(s) messages below -->'));
+			console.log(chalk.cyan(' Running "compass" task(s).  Task(s) messages below -->\n'));
 			if (targets.length > 0) {
 				return wrangler.launchTasks(targets, gulp);
 			}

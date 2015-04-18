@@ -12,8 +12,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     chalk = require('chalk');
 
 module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) {
-    FilesHashTaskAdapter.apply(this, options);
-    this.alias = 'requirejs';
+    FilesHashTaskAdapter.apply(this, arguments);
 }, {
 
     // @todo add a `getTaskNameForBundle` method
@@ -144,17 +143,20 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
                     //buildResponse is just a text output of the modules
                     //included. Load the built file for the contents.
                     //Use config.out to get the optimized file contents.
-                    console.log(buildResponse + '\n');
+                    console.log(chalk.grey('"' + taskName + '" outfile.txt output:'),
+                        buildResponse);
 
                     // Notify of task completion and task duration
                     console.log('[' + chalk.green('gulp') +  ']' +
-                        chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
+                        chalk.cyan(' "' + taskName + '" completed.  Duration: ') +
                         chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
+
                     fulfill();
+
                 }, function(err) {
                     //optimization err callback
                     console.log(chalk.red('r.js encountered an error:\n' + err + '\n'));
-                    reject('r.js encountered an error:\n' + err);
+                    reject('r.js encountered an error:\n' + err + '\n');
                 });
         });
 
