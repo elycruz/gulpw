@@ -24,11 +24,11 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
         gulp.task(taskName, function () {
             return (new Promise(function (fulfill, reject) {
                 if (skipTests) {
-                    wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
+                    console.log(chalk.grey('Skipping mocha tests.\n'));
                     fulfill();
                     return;
                 }
-                wrangler.log(chalk.cyan('\nRunning "' + taskName + '":'), '--mandatory');
+                console.log(chalk.cyan('Running "' + taskName + '":\n'));
                 gulp.src(taskConfig.files)
                     .pipe(mocha(mochaOptions))
                     .pipe(duration(chalk.cyan('mocha \"' + bundle.options.alias + '\' duration')))
@@ -64,10 +64,10 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
 
         gulp.task('mocha', function () {
             if (skipTests) {
-                wrangler.log(chalk.grey('\nSkipping mocha tests.'), '--mandatory');
+                console.log(chalk.grey('Skipping mocha tests.\n'));
                 return Promise.resolve();
             }
-            wrangler.log('\nRunning "mocha" task(s):', '--mandatory');
+            console.log('Running "mocha" task(s):\n');
             return wrangler.launchTasks(tasks, gulp);
         });
     },

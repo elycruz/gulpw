@@ -6,14 +6,10 @@
 
 require('sjljs');
 
-
 // Import base task proxy to extend
 var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
-    //header = require('gulp-header'),
     requirejs = require('requirejs'),
-    //duration = require('gulp-duration'),
     chalk = require('chalk');
-    //path = require('path');
 
 module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) {
     FilesHashTaskAdapter.apply(this, options);
@@ -35,8 +31,8 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
                         retVal = self.runRequireTaskAsCommand(taskName, bundle, requireJsOptions, gulp, wrangler);
                     }
                     else {
-                        wrangler.log('Requirejs task config is of invalid type.' +
-                            '  Type recieved: ' + classOfRequireJs, '--mandatory');
+                        console.log('Requirejs task config is of invalid type.' +
+                            '  Type recieved: ' + classOfRequireJs + '\n');
                     }
 
             return retVal;
@@ -140,7 +136,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
         }
 
         // Message 'Running task'
-        wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
+        console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
         promise = new Promise(function (fulfill, reject) {
             requirejs.optimize(sjl.extend({}, requireJsOptions, otherOptions),
@@ -148,16 +144,16 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) 
                     //buildResponse is just a text output of the modules
                     //included. Load the built file for the contents.
                     //Use config.out to get the optimized file contents.
-                    wrangler.log(buildResponse, '--mandatory');
+                    console.log(buildResponse + '\n');
 
                     // Notify of task completion and task duration
-                    wrangler.log('[' + chalk.green('gulp') +  ']' +
-                    chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
-                    chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+                    console.log('[' + chalk.green('gulp') +  ']' +
+                        chalk.cyan(' requirejs "' + taskName + '" completed.  Duration: ') +
+                        chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
                     fulfill();
                 }, function(err) {
                     //optimization err callback
-                    wrangler.log(chalk.red('r.js encountered an error:\n' + err), '--mandatory');
+                    console.log(chalk.red('r.js encountered an error:\n' + err + '\n'));
                     reject('r.js encountered an error:\n' + err);
                 });
         });

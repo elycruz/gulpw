@@ -29,7 +29,7 @@ module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
 
         gulp.task(taskName, function () {
 
-            wrangler.log(chalk.cyan('Running "' + taskName + '"'), '--mandatory');
+            console.log(chalk.cyan('Running "' + taskName + '"\n.'));
 
             return gulp.src(self.getTargetsForBundle(bundle, wrangler))
 
@@ -84,7 +84,7 @@ module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
         if (sjl.empty(self.pipe)) {
             self.pipe = lazypipe()
                 //.pipe(callback, function (file, enc, cb) {
-                //    wrangler.log(chalk.grey('Linting: ' + file.path), '--mandatory');
+                //    console.log(chalk.grey('Linting: ' + file.path));
                 //    return cb ? cb() : file;
                 //})
                 .pipe(eslint, esLintConfig)

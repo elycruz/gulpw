@@ -52,7 +52,7 @@ module.exports = BaseBundleTaskAdapter.extend('CssLintAdapter', {
         });
 
         gulp.task('csslint', function () {
-            wrangler.log(chalk.cyan('\n Running "csslint all bundles" task'), '--mandatory');
+            wrangler.log(chalk.cyan(' Running "csslint" task(s).  Task messages below:\n'));
             return gulp.src(targets)
                 .pipe(duration(chalk.cyan('csslint "all bundles" duration')))
                 .pipe(csslint(cssLintConfig))

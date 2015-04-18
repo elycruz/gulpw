@@ -6,7 +6,6 @@
 // Import base task proxy to extend
 var TaskAdapter = require('./BaseBundleTaskAdapter'),
     chalk = require('chalk'),
-    //spawn = require('child_process').spawn,
     path = require('path');
 
 module.exports = TaskAdapter.extend(function WatchAdapter () {
@@ -24,20 +23,20 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
 
             return (new Promise(function (fulfill, reject) {
 
-                var waitingMessage = '\nWatching for changes...';
+                var waitingMessage = 'Watching for changes...';
 
-                wrangler.log(waitingMessage, '--mandatory');
+                console.log(waitingMessage + '\n');
 
                 gulp.watch(targets, function (event) {
                     var fileShortPath = path.relative(process.cwd(), '.' + path.sep + event.path),
                         catchFunc = function (reason) {
-                            wrangler.log(reason, '--mandatory');
+                            console.log(reason + '\n');
                             reject(reason);
                         };
 
-                    wrangler.log('\n', chalk.dim('File change detected at ' + fileShortPath + ';'));
-                    wrangler.log('Change type: ' + event.type + ';');
-                    wrangler.log(chalk.dim('Running tasks sub tasks...'), '--mandatory');
+                    console.log(chalk.dim('File change detected at ' + fileShortPath + ';\n'));
+                    console.log('Change type: ' + event.type + ';\n');
+                    console.log(chalk.dim('Running sub tasks...\n'));
 
                     // Return launch promise (es6 Promise sweetness -> this script went from over 60 lines to 14 lines!)
                     // ----
@@ -53,7 +52,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
                         });
 
                         if (deployTasks.length === - 1) {
-                            wrangler.log(waitingMessage, '--mandatory');
+                            console.log(waitingMessage);
                             fulfill();
                             return;
                         }
@@ -61,7 +60,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
                         // Run all deploy tasks
                         return wrangler.launchTasks(deployTasks, gulp)
                             .then(function () {
-                                wrangler.log(waitingMessage, '--mandatory');
+                                console.log(waitingMessage + '\n');
                                 fulfill();
                             })
 

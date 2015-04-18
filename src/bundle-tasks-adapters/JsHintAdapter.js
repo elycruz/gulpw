@@ -43,7 +43,7 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
 
         gulp.task(taskName, function () {
 
-            wrangler.log(chalk.cyan('Running "' + taskName + '"'), '--mandatory');
+            console.log(chalk.cyan('Running "' + taskName + '"\n'));
 
             return gulp.src(src)
 
@@ -96,7 +96,7 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
         if (sjl.empty(self.pipe)) {
             self.pipe = lazypipe()
                 //.pipe(callback, function (file, enc, cb) {
-                //    wrangler.log(chalk.grey('Linting: ' + file.path), '--mandatory');
+                //    console.log(chalk.grey('Linting: ' + file.path));
                 //    return cb ? cb() : file;
                 //})
                 .pipe(jshint, jsHintConfig)

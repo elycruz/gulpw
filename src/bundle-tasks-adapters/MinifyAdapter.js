@@ -10,8 +10,6 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     uglify = require('gulp-uglify'),
     minifycss = require('gulp-minify-css'),
     minifyhtml = null, //require('gulp-minify-html'),
-    progress = require('../utils/gulp-progress'),
-    ProgressBar = require('progress'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
     callback = require('gulp-fncallback'),
@@ -80,8 +78,6 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
                 // Give gulp the list of sources to process
                 return gulp.src(bundle.options.files[ext])
-
-                    //.pipe(progress({total: bundle.options.files[ext].length}))
 
                     .pipe(gulpif(ext === 'js' && !skipJsLinting, jsHintPipe()))
 

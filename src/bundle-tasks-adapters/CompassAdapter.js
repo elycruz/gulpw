@@ -41,20 +41,20 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
 				var startDate = new Date();
 
-				wrangler.log(chalk.cyan('\nRunning "' + taskName + '" task.'), '--mandatory');
+				console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
 				var compassTask = exec('cd ' + path.dirname(configrb) + ' && compass compile', function (err, stdout, stderr) {
 					// Command(s) output
-					console.log(stdout);
+					console.log(stdout, '\n');
 
 					// If stderr
 					if (stderr) {
-						console.log('`compass compile` stderr: ' + stderr);
+						console.log('`compass compile` stderr: \n' + stderr + '\n');
 					}
 
 					// If error
 					if (err) {
-						console.log('`compass compile` error: ', err);
+						console.log('`compass compile` error: \n', err, '\n');
 					}
 				});
 
@@ -75,9 +75,9 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 							break;
 					}
 
-					wrangler.log(chalk.cyan('"' + taskName + '" task ' + actionWord + '.  ' +
+					console.log(chalk.cyan('"' + taskName + '" task ' + actionWord + '.  ' +
 					'Duration: ' + chalk.magenta((((new Date()) - startDate) / 1000) +
-					'ms')), '--mandatory');
+					'ms')));
 				});
 
 			})); // end of promise
@@ -101,7 +101,7 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
 		// Register global `compass` task
 		gulp.task('compass', function () {
-			wrangler.log(chalk.cyan(' \nRunning "compass" task(s).  Task(s) messages below -->'), '--mandatory');
+			console.log(chalk.cyan(' Running "compass" task(s).  Task(s) messages below -->'));
 			if (targets.length > 0) {
 				return wrangler.launchTasks(targets, gulp);
 			}

@@ -33,24 +33,24 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
                     targets = wrangler.explodeGlobs(targets);
 
                     // Log start of task
-                    wrangler.log(chalk.cyan('Running "' + taskName + '"'), '--mandatory');
+                    console.log(chalk.cyan('Running "' + taskName + '"\n'));
 
                     // Log files to delete
-                    wrangler.log(chalk.grey('Deleting the following files: \n'), chalk.grey(targets));
+                    wrangler.log(chalk.grey('Deleting the following files:\n'), chalk.grey(targets), '\n');
 
                     // Delete targets
                     del(targets, function (err) {
 
                         // If error log it
                         if (err) {
-                            wrangler.log(err, '--mandatory');
+                            console.log(err, '\n');
                             reject(err);
                             return;
                         }
 
                         // Log completion of task
-                        wrangler.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
-                        + chalk.magenta((((new Date()) - start) / 1000) + 'ms'), '--mandatory');
+                        console.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
+                        + chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
 
                         fulfill();
 

@@ -24,10 +24,10 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
         gulp.task(taskName, function () {
             return (new Promise(function (fulfill, reject) {
                 if (skipTests) {
-                    wrangler.log(chalk.grey('\nSkipping jasmine tests.'), '--mandatory');
+                    console.log(chalk.grey('Skipping jasmine tests.\n'));
                     return fulfill();
                 }
-                wrangler.log(chalk.cyan('\n  Running "' + taskName + '":'), '--mandatory');
+                console.log(chalk.cyan('  Running "' + taskName + '":\n'));
                 gulp.src(taskConfig.files)
                     .pipe(jasmine(jasmineOptions))
                     .pipe(duration(chalk.cyan('jasmine \"' + bundle.options.alias + '\' duration')))
@@ -69,10 +69,10 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
 
         gulp.task('jasmine', function () {
             if (skipTests) {
-                wrangler.log(chalk.grey('\nSkipping jasmine tests.'), '--mandatory');
+                console.log(chalk.grey('Skipping jasmine tests.\n'));
                 return Promise.resolve();
             }
-            wrangler.log('\n  Running "jasmine" task(s):', '--mandatory');
+            console.log('  Running "jasmine" task(s):\n');
             return wrangler.launchTasks(tasks, gulp);
         });
     },

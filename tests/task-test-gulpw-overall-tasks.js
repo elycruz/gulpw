@@ -1,9 +1,6 @@
 /**
  * Created by edelacruz on 1/6/2015.
  */
-/**
- * Created by ElyDeLaCruz on 10/29/2014.
- */
 
 'use strict';
 
@@ -32,14 +29,13 @@ describe('#global tasks test', function () {
     before(function (done) {
         // Set timeout for test
         this.timeout(timeout);
-        //tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
-        done();
+        tutil.executeTaskAsChild('gulpw clean', commandOptions, null, done);
     });
 
-    it ('should be able to run all global tasks when passed in separately', function (done) {
+    it ('should be able to run more than one global task when passed in separately', function (done) {
         // Set timeout for test
         this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw compass mocha jasmine csslint jshint minify requirejs deploy',
+        tutil.executeTaskAsChild('gulpw build deploy',
             commandOptions, genericTest, done);
     });
 

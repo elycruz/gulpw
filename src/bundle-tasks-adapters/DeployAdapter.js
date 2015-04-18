@@ -56,23 +56,23 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
 
                 startDeployMessage += ' files.';
 
-                wrangler.log('\n', 'Running ' + chalk.cyan('"' + taskName + '"') + ' task.', '--mandatory');
+                console.log('Running ' + chalk.cyan('"' + taskName + '"') + ' task.\n');
 
                 startTime = new Date();
 
-                wrangler.log('\n DeployAdapter -> targets\n', '--debug');
+                wrangler.log(' DeployAdapter -> targets', '--debug');
 
                 conn.on('ready', function () {
 
-                    wrangler.log(chalk.grey('\n Connected to ' + host + '\n'), '--mandatory');
+                    console.log(chalk.grey('Connected to ' + host + '\n'));
 
                     conn.sftp(function (err, sftp) {
 
-                        if (err) { console.log(chalk.red(' An `ssh2.sftp` error has been encountered:  ' + err), '--mandatory'); }
+                        if (err) { console.log(chalk.red(' An `ssh2.sftp` error has been encountered:  ' + err + '\n')); }
 
                         var target;
 
-                        wrangler.log('\n', chalk.grey(startDeployMessage), '\n');
+                        wrangler.log(chalk.grey(startDeployMessage));
 
                         // Loop through all target keys in targets
                         Object.keys(targets).forEach(function (key) {
@@ -95,11 +95,13 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
                                             stateGlyph = sjl.empty(err3) ? chalk.green(' ' + String.fromCharCode(8730)) : chalk.red(' X');
 
                                         // Show file to be uploaded with state color (passed => green, failed => red
-                                        wrangler.log(stateGlyph, item[0], '--mandatory');
+                                        console.log(stateGlyph, item[0]);
 
                                         // If there was an error uploading the file show it
-                                        if (err3) { stateColor = 'red'; wrangler.log(
-                                            chalk.red('   An `ssh2.sftp.fastPut` error has occurred:  "' + err3 + '"'), '--mandatory'); }
+                                        if (err3) {
+                                            stateColor = 'red';
+                                            console.log(chalk.red('   An `ssh2.sftp.fastPut` error has occurred:  "' + err3 + '"\n'));
+                                        }
 
                                         // Show the location the file was uploaded to if in `--verbose` mode
                                         wrangler.log(chalk[stateColor](' => ', item[1]));
@@ -115,18 +117,18 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
                             // @todo make this if check readble (reverse the logic)
                             if (totalFileCount <= uploadedFileCount) {
 
-                                wrangler.log(chalk.cyan('\n File deployment complete.'),
-                                    chalk.grey('\n\n Closing connection...'));
+                                wrangler.log(chalk.cyan('File deployment complete.'),
+                                    chalk.grey(' Closing connection...'));
 
                                 gulp.tasks[taskName].done = true;
 
                                 conn.end();
 
-                                wrangler.log(chalk.grey('\n Connection closed.'), '--mandatory');
+                                console.log(chalk.grey(' Connection closed.\n'));
 
                                 // Log task completion
-                                wrangler.log('\n', chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
-                                chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'), '--mandatory');
+                                console.log(chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
+                                chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'));
 
                                 fulfill();
 
@@ -140,8 +142,10 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
 
                         // If error log it
                         if (hadError) {
-                            reject('Connection closed due to an unknown error.  Error received: ' + (sjl.classOfIs(hadError, 'String') ? hadError : ''));
-                            wrangler.log('\n Connection closed due to an unknown error.', '--mandatory');
+                            var errorMsg = 'Connection closed due to an unknown error.\n  ' +
+                                'Error received: ' + (sjl.classOfIs(hadError, 'String') ? hadError : '') + '\n';
+                            reject(errorMsg);
+                            console.log(errorMsg);
                         }
                     })
                     .connect(sshOptions);
@@ -369,8 +373,8 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
         }
         else {
             // Log a warning
-            this.wrangler.log('\n' + chalk.yellow('Please run the "deploy-config" task before ' +
-                'attempting to deploy (running the task now).') + '\n', '--mandatory');
+            console.log(chalk.yellow('Please run the "deploy-config" task before ' +
+                'attempting to deploy (running the task now).\n'));
         }
         return this;
     },
