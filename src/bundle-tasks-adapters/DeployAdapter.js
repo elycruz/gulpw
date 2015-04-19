@@ -98,7 +98,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
                                         // If there was an error uploading the file show it
                                         if (err3) {
                                             stateColor = 'red';
-                                            console.log(chalk.red('   An `ssh2.sftp.fastPut` error has occurred:  "' + err3 + '"\n'));
+                                            console.log(chalk.red('   An `ssh2.sftp.fastPut` error has occurred:  "' + err3 + '".'));
                                         }
 
                                         // Show the location the file was uploaded to if in `--verbose` mode

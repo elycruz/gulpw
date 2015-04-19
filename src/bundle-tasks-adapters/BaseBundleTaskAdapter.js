@@ -25,10 +25,19 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
         },
 
         registerGulpTasks: function (taskName, tasks, gulp, wrangler, deps) {
-            gulp.task(taskName, deps || [], function () {
-                var method = !wrangler.argv.async ? 'launchTasksSync' : 'launchTasks';
-                return wrangler[method](tasks, gulp);
-            });
+            if (deps) {
+                gulp.task(taskName, deps, function () {
+                    var method = !wrangler.argv.async ? 'launchTasksSync' : 'launchTasks';
+                    return wrangler[method](tasks, gulp);
+                });
+            }
+            else {
+                gulp.task(taskName, function () {
+                    var method = !wrangler.argv.async ? 'launchTasksSync' : 'launchTasks';
+                    return wrangler[method](tasks, gulp);
+                });
+            }
+
         },
 
         isBundleValidForTask: function (bundle) {
