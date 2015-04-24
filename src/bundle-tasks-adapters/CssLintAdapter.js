@@ -6,7 +6,8 @@
  */
 'use strict'; require('sjljs');
 
-var csslint = require('gulp-csslint'),
+var fs = require('fs'),
+    csslint = require('gulp-csslint'),
     chalk = require('chalk'),
     duration = require('gulp-duration'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
@@ -67,6 +68,18 @@ module.exports = BaseBundleTaskAdapter.extend('CssLintAdapter', {
     getPipe: function (bundle, gulp, wrangler) {
         var self = this,
             cssLintConfig = wrangler.tasks.csslint.csslintrc || wrangler.tasks.csslint.options;
+
+        // Ensure an absolute path if `cssLintConfig` is a 'String'
+        if (sjl.classOfIs(cssLintConfig, 'String')) {
+            // If given path doesn't exist, throw an exception
+            if(!fs.existsSync(cssLintConfig)) {
+                throw new Error('The specified \'.csslintrc\' file specified in the `csslint` ' +
+                    'config could not be found.  \'.csslintrc\' path received: "' + cssLintConfig + '".');
+            }
+            else {
+                cssLintConfig = JSON.parse(fs.readFileSync(cssLintConfig));
+            }
+        }
 
         if (sjl.empty(self.pipe)) {
             self.pipe = lazypipe()
