@@ -140,25 +140,6 @@ tasks:
     priority: 96
     options:
       useEslintrc: true
-      #envs:      null
-      #rulePaths: null
-      #configFile:null
-      #reset:     null
-      #rules:     null
-      globals:
-        - $
-        - _
-        - amplify
-        - Backbone
-        - browserify
-        - define
-        - jQuery
-        - Modernizr
-        - Mustache
-        - Marionette
-        - require
-        - sjl
-
     failAfterError: false
     failOnError: false
     eslintrc: ./.eslintrc
