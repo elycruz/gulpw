@@ -1,6 +1,6 @@
 {
   "name": "gulpw",
-  "version": "0.1.123-beta",
+  "version": "0.1.1231-beta",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
   "bin": {
     "gulpw": "index.js"
@@ -55,14 +55,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/saksdirect/gulp-bundle-wrangler.git"
+    "url": "git://github.com/saksdirect/gulpw.git"
   },
   "author": "Ely De La Cruz <elycruz@elycruz.com>",
   "license": "GNU v2+, MIT",
   "bugs": {
-    "url": "https://github.com/saksdirect/gulp-bundle-wrangler/issues"
+    "url": "https://github.com/saksdirect/gulpw/issues"
   },
-  "homepage": "https://github.com/saksdirect/gulp-bundle-wrangler",
+  "homepage": "https://github.com/saksdirect/gulpw",
   "directories": {
     "test": "tests"
   }
