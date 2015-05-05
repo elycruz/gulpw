@@ -10,8 +10,6 @@
 
 require('sjljs');
 
-
-
 // Import base task proxy to extend
 var BaseStaticTaskAdapter = require('./BaseStaticTaskAdapter'),
     fs = require('fs'),
@@ -51,7 +49,7 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter () {
                 chalk.dim('** Note ** - Any existing config will be backed up to "' + wrangler.localConfigBackupPath + '" before generating a new one.'));
 
                 inquirer.prompt(questions, function (answers) {
-                    var newConfig = wrangler.loadConfigFile(path.join(wrangler.pwd, '/configs/default.wrangler.config.yaml')),
+                    var newConfig = wrangler.loadConfigFile(path.join(wrangler.pwd, '/configs/wrangler.config.yaml')),
                         newConfigPath = null,
                         oldConfig = wrangler.loadConfigFile(wrangler.configPath),
                         oldFileName = path.basename(wrangler.configPath),

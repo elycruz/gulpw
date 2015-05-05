@@ -21,17 +21,17 @@ helpPath: ./docs
 
 staticTasks:
   "help":
-    constructorLocation: ./static-tasks-adapters/HelpTaskAdapter
+    constructorLocation: ./src/static-tasks-adapters/HelpTaskAdapter
 
   "config":
-    constructorLocation: ./static-tasks-adapters/ConfigTaskAdapter
+    constructorLocation: ./src/static-tasks-adapters/ConfigTaskAdapter
 
   "deploy-config":
-    constructorLocation: ./static-tasks-adapters/DeployConfigTaskAdapter
+    constructorLocation: ./src/static-tasks-adapters/DeployConfigTaskAdapter
 
   "bundle":
-    constructorLocation: ./static-tasks-adapters/BundleConfigTaskAdapter
-    emptyBundleFile: ./configs/empty.bundle-tasks-adapters.template.yaml
+    constructorLocation: ./src/static-tasks-adapters/BundleConfigTaskAdapter
+    emptyBundleFile: ./configs/empty.bundle.template.yaml
     allowedTasks:
       - browserify
       - compass
