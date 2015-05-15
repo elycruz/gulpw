@@ -1,7 +1,10 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-'use strict'; require('sjljs');
+
+'use strict';
+
+require('sjljs');
 
 // Import base task proxy to extend
 var TaskAdapter = require('./BaseBundleTaskAdapter'),
@@ -42,7 +45,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
                     // ----
                     // Run all task that are not deploy tasks first
                     return wrangler.launchTasks(tasks.filter(function (task) {
-                        return task.indexOf('deploy') === - 1;
+                        return task.indexOf('deploy') === -1;
                     }), gulp)
 
                     // On promise fulfillment..
@@ -51,7 +54,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
                             return task.indexOf('deploy')  > -1;
                         });
 
-                        if (deployTasks.length === - 1) {
+                        if (deployTasks.length === -1) {
                             console.log(waitingMessage + '\n');
                             fulfill();
                             return;
@@ -173,7 +176,5 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         return bundle && (bundle.has('files') || bundle.has('requirejs')
             || bundle.has('browserify') || bundle.has('watch') || bundle.has('deploy.otherFiles'));
     }
-
-
 
 }); // end of export

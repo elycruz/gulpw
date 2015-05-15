@@ -7,7 +7,7 @@
 require('sjljs');
 
 var gulp = require('gulp'),
-    jshint = require('gulp-jshint'),
+    eslint = require('gulp-eslint'),
     srcs = ['./src/**/*.js', './tests/**/*.js'],
     concat = require('gulp-concat'),
     fs = require('fs'),
@@ -71,14 +71,15 @@ gulp.task('readme', ['tasks-section'], function () {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('jshint', function () {
+gulp.task('eslint', function () {
     gulp.src(srcs)
-        .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'));
+        .pipe(eslint({useEslintrc: true}))
+        .pipe(eslint.format('stylish'))
+        .pipe(eslint.failAfterError());
 });
 
 gulp.task('watch', function () {
-    gulp.watch(srcs, ['jshint']);
+    gulp.watch(srcs, ['eslint']);
 });
 
-gulp.task('default', ['jshint', 'watch']);
+gulp.task('default', ['eslint', 'watch']);

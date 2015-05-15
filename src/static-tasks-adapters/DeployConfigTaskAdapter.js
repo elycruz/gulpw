@@ -129,7 +129,7 @@ module.exports = BaseStaticTaskAdapter.extend(function DeployConfigTaskAdapter (
             // 'Running' message
             console.log(chalk.cyan('Running `deploy-config` task:'));
 
-            return (new Promise(function (fulfill, reject) {
+            return (new Promise(function (fulfill/*, reject*/) {
                 inquirer.prompt(questions, function (answers) {
                     var developingDomain = answers.developingDomain || null,
                         domainToDevelop = domainsToDevelop[developingDomain],

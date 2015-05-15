@@ -16,11 +16,13 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
         this.gulp = gulp;
     },
     {
-        registerBundle: function (bundle) {
+        // Declare for extending class
+        registerBundle: function (/*bundle*/) {
             // Overwrite from extending class
         },
 
-        registerBundles: function (bundles, gulp, wrangler) {
+        // Declare for extending class
+        registerBundles: function (/*bundles, gulp, wrangler*/) {
             // Overwrite from extending class
         },
 
@@ -40,7 +42,7 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
 
         },
 
-        isBundleValidForTask: function (bundle) {
+        isBundleValidForTask: function (/*bundle*/) {
             // Overwrite from extending class
         },
 
@@ -48,13 +50,13 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
             return (sjl.classOfIs(src, 'String') || sjl.classOfIs(src, 'Array')) && !sjl.empty(src);
         },
 
-        getTasksForBundle: function (bundle, targets, ignoredTasks) {
+        getTasksForBundle: function (bundle, targets /*, ignoredTasks*/) {
             return targets.map(function (task) {
                 return task + ':' + bundle.options.alias;
             });
         },
 
-        getPrelimTasksForBundle: function (bundle, gulp, wrangler) {
+        getPrelimTasksForBundle: function (/*bundle, gulp, wrangler*/) {
             // Overwrite from extending class
         },
 

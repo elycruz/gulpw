@@ -315,9 +315,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     splitWranglerCommand: function (command) {
-        var out = {taskAlias: command, bundleAlias: null, params: null};
+        var out = {taskAlias: command, bundleAlias: null, params: null},
+            args;
         if (command.indexOf(':')) {
-            var args = command.split(':');
+            args = command.split(':');
             out = {taskAlias: args[0], bundleAlias: args[1], params: args.length > 2 ? args.splice(2) : null};
         }
         return out;
@@ -458,8 +459,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
                 completedTasks,
-                completionInterval = null,
-                taskList;
+                completionInterval = null;
+                //taskList;
 
             if (sjl.empty(tasks)) {
                 reject();
@@ -488,7 +489,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
                 if (completedTasks.length === tasks.length) {
                     fulfill();
-                    taskList = tasks.map(function (key) { return '\n - `' + key + '`'; }).join('');
+                    //taskList = tasks.map(function (key) { return '\n - `' + key + '`'; }).join('');
                     clearInterval(completionInterval);
                 }
 
@@ -600,7 +601,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         tasks = options.tasks;
 
         // Remove tasks value from options
-        options.tasks = undefined;
+        options.tasks = null;
         delete options.tasks;
 
         // Extend self with options
@@ -628,7 +629,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                     ? self.loadConfigFile(path.join(process.cwd(), value)) : value;
 
             // If task config is an object extend it
-            if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key]), 'Object') {
+            if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key], 'Object')) {
                 sjl.extend(true, self.tasks[key], objToMerge);
             }
             // Else set it
@@ -648,13 +649,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         if (!sjl.isset(bundle)) {
             // Try to create bundle
             for (i = 0; i < self.bundleConfigFormats.length; i += 1) {
-                try {
-                    bundle = self.createBundle(
-                        self.loadConfigFile(
-                            path.join(self.bundlesPath, originalBundleValue + self.bundleConfigFormats)));
-                    break;
-                }
-                catch (e) {}
+                bundle = self.createBundle(
+                    self.loadConfigFile(
+                        path.join(self.bundlesPath, originalBundleValue + self.bundleConfigFormats)));
+                break;
             }
             if (sjl.empty(bundle)) {
                 bundle = null;
@@ -665,8 +663,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     getBundleAlias: function (bundle) {
-        return bundle instanceof Bundle ? bundle.options.alias :
-            (sjl.classOfIs(bundle, 'Object') ? bundle.alias : bundle);
+        var retVal = bundle;
+        if (bundle instanceof Bundle) {
+            retVal = bundle.options.alias;
+        }
+        else if (sjl.classOfIs(bundle, 'Object')) {
+            retVal = bundle.alias;
+        }
+        return retVal;
     },
 
     hasBundle: function (bundle) {

@@ -17,7 +17,7 @@ module.exports = BaseBundleTaskAdapter.extend('BrowserifyAdapter', {
      * @param gulp {gulp}
      * @param wrangler {Wrangler}
      */
-    registerBundle: function (bundle, gulp, wrangler) {
+    registerBundle: function (/*bundle, gulp, wrangler*/) {
         // Write code
     } // end of `registerBundle`
 

@@ -11,7 +11,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     requirejs = require('requirejs'),
     chalk = require('chalk');
 
-module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(options) {
+module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options*/) {
     FilesHashTaskAdapter.apply(this, arguments);
 }, {
 
