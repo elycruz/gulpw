@@ -1,6 +1,6 @@
 {
   "name": "gulpw",
-  "version": "0.2.5-rc",
+  "version": "0.2.6-rc",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
   "bin": {
     "gulpw": "index.js"
@@ -51,7 +51,7 @@
     "mocha": "^2.0.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha tests"
   },
   "repository": {
     "type": "git",
