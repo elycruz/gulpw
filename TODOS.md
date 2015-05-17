@@ -1,4 +1,4 @@
-gulp-bundle-wrangler (Beta)
+gulpw (gulp wrangler)
 ====================
 
 ## Todos
