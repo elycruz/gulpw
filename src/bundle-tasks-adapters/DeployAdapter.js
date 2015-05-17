@@ -393,13 +393,13 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
 
         if (selectedServerEntry.deployRootFolder) {
             selectedServerEntry.deployRootFolder =
-                    lodash.template(selectedServerEntry.deployRootFolder, deployOptions);
+                    lodash.template(selectedServerEntry.deployRootFolder)(deployOptions);
         }
 
         if (!sjl.empty(selectedServerEntry.deployRootFoldersByFileType)) {
                 Object.keys(selectedServerEntry.deployRootFoldersByFileType).forEach(function (key) {
                         selectedServerEntry.deployRootFoldersByFileType[key] =
-                            lodash.template(selectedServerEntry.deployRootFoldersByFileType[key], deployOptions);
+                            lodash.template(selectedServerEntry.deployRootFoldersByFileType[key])(deployOptions);
                     });
         }
         return this;

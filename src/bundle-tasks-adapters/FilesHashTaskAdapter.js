@@ -100,7 +100,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
                     templateKey = self.getTemplateKey(file, key, templateOptions);
 
                     // Write file contents to key value pair on templates object
-                    output += lodash.template(template, sjl.extend({templateKey: templateKey,
+                    output += lodash.template(template)(sjl.extend({templateKey: templateKey,
                         templateContent: fileContent}, templateOptions));
 
                 }); // end of template files loop
@@ -129,9 +129,9 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
             }
 
             templateKey = this.wrangler.pathToForwardSlashes(templateKey, true);
-
             // Compensate for `path.dirname` which removes './' when returning the 'dirname'
             splitKeyAt = splitKeyAt.indexOf('./') === 0 ? splitKeyAt.substr(2, splitKeyAt.length) : splitKeyAt;
+
 
             // Set template key to substring from `splitKeyAt` length to it's length
             if (splitKeyAt && templateKey.indexOf(splitKeyAt) === 0) {
