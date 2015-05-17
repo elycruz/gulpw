@@ -146,8 +146,12 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         if (bundle.has('files')) {
             Object.keys(bundle.options.files).forEach(function (key) {
                 var keyVal = bundle.options.files[key];
-                targets = Array.isArray(keyVal) ? targets.concat(keyVal) :
-                    (!sjl.empty(keyVal) ? targets.push(keyVal) : targets);
+                if (Array.isArray(keyVal)) {
+                    targets = targets.concat(keyVal);
+                }
+                else if (!sjl.empty(keyVal)) {
+                    targets.push(keyVal);
+                }
             });
         }
 

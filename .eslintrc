@@ -11,8 +11,8 @@
 {
   "envs": {
     "browser": true,
-    "node":     true,
-    "mocha":    true
+    "node":    true,
+    "mocha":   true
   },
 
   /** ---------------------------------------------------------------------------------------------------------------------
@@ -20,22 +20,22 @@
    * --------------------------------------------------------------------------------------------------------------------- **/
 
   "globals": {
-    "__dirname": true,
-    "after": true,
-    "before": true,
+    "__dirname":    true,
+    "after":        true,
+    "before":       true,
     "clearInterval": true,
     "clearTimeout": true,
-    "console": true,
-    "describe": true,
-    "expect": true,
-    "global": true,
-    "it": true,
-    "module": true,
-    "process": true,
-    "require": true,
-    "setInterval": true,
-    "setTimeout": true,
-    "sjl": true
+    "console":      true,
+    "describe":     true,
+    "expect":       true,
+    "global":       true,
+    "it":           true,
+    "module":       true,
+    "process":      true,
+    "require":      true,
+    "setInterval":  true,
+    "setTimeout":   true,
+    "sjl":          true
   },
 
   /** --------------------------------------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@
     "no-mixed-requires":      0,  // - disallow mixing regular variable and require declarations (off by default) (on by default in the node environment)
     "no-new-require":         1,  // - disallow use of new operator with the require function (off by default) (on by default in the node environment)
     "no-path-concat":         0,  // - disallow string concatenation with __dirname and __filename (off by default) (on by default in the node environment)
-    "no-process-exit":        1,  // - disallow process.exit() (on by default in the node environment)
+    "no-process-exit":        0,  // - disallow process.exit() (on by default in the node environment)
     "no-restricted-modules":  0,  // - restrict usage of specified node modules (off by default)
     "no-sync":                0,  // - disallow use of synchronous methods (off by default)
 
@@ -189,7 +189,7 @@
     "func-names":             0,  // - require function expressions to have a name (off by default)
     "func-style":             0,  // - enforces use of function declarations or expressions (off by default)
     "key-spacing":            2,  // - enforces spacing between keys and values in object literal properties
-    "max-nested-callbacks":   [2, 3],  // - specify the maximum depth callbacks can be nested (off by default)
+    "max-nested-callbacks":   0,   //[2, 3],  // - specify the maximum depth callbacks can be nested (off by default)
     "new-cap":                0,  // - require a capital letter for constructors ** Note ** Off because Cucumber uses uppercase functions causes error in that case.
     "new-parens":             2,  // - disallow the omission of parentheses when invoking a constructor with no arguments
     "newline-after-var":      0,  // - allow/disallow an empty newline after var statement (off by default)
@@ -245,10 +245,10 @@
 
     "max-depth":              [2, 5],  // - specify the maximum depth that blocks can be nested (off by default)
     "max-len":                0,  // [1, 120, 4],  // - specify the maximum length of a line in your program (off by default)
-    "max-params":             [2, 5],  // - limits the number of parameters that can be used in the function declaration. (off by default)
+    "max-params":             0,  //[2, 5],  // - limits the number of parameters that can be used in the function declaration. (off by default)
     "max-statements":         0,  // - specify the maximum number of statement allowed in a function (off by default)
     "no-bitwise":             2,  // - disallow use of bitwise operators (off by default)
-    "no-plusplus":            2  // - disallow use of unary operators, ++ and -- (off by default)
+    "no-plusplus":            2   // - disallow use of unary operators, ++ and -- (off by default)
 
   }
 }
