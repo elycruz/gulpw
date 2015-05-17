@@ -11,7 +11,7 @@ var chai = require('chai'),
     tutil = require(path.join(__dirname, '../src/test-utils/test-utils')),
     timeout = 13000,
     commandOptions = {
-        cwd: path.join(__dirname, '..', '..', 'gulpw-sample-app'),
+        cwd: path.join(__dirname, '..', 'node_modules', 'gulpw-sample-app'),
         timeout: timeout
     };
 
