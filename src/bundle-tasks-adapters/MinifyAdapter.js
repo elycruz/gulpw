@@ -9,7 +9,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
     minifycss = require('gulp-minify-css'),
-    //minifyhtml = null, //require('gulp-minify-html'),
+    minifyhtml = require('gulp-minify-html'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
     callback = require('gulp-fncallback'),
@@ -41,7 +41,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
         var self = this,
             taskConfigMap = {
-                //html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
+                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
                 css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions},
                 js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
             },
@@ -91,7 +91,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     .pipe(duration(chalk.cyan(self.alias + ' "' + bundle.options.alias + ':' + ext + '" duration')))
 
                     // Minify current source in the {artifacts}/ext directory
-                    .pipe(gulpif(!wrangler.argv.dev && ext !== 'html', taskInstanceConfig.instance(taskInstanceConfig.options)))
+                    .pipe(gulpif(!wrangler.argv.dev, taskInstanceConfig.instance(taskInstanceConfig.options)))
 
                     .pipe(callback(function (file, enc, cb) {
                         if (createFileHash) {

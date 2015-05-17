@@ -182,10 +182,11 @@ tasks:
     createFileHashes: true
     allowedFileTypes:
       - js
+      - html
       - css
     htmlTaskOptions:
       spare: true
-      comments: false
+      comments: true
     jsTaskOptions: {}
     useMinPreSuffix: false
     useVersionNumInFileName: false
