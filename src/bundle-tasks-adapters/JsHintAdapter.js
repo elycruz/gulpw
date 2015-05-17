@@ -66,7 +66,7 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
         self.registerGulpTasks('jshint', targets, gulp, wrangler);
     },
 
-    getTargetsForBundle: function (bundle, wrangler) {
+    getTargetsForBundle: function (bundle/*, wrangler*/) {
         var targets = [];
         if (bundle.has('files.js')) {
             targets = targets.concat(bundle.options.files.js);

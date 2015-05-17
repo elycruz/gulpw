@@ -22,7 +22,7 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
             skipTests = wrangler.skipTesting() || wrangler.skipMochaTesting();
 
         gulp.task(taskName, function () {
-            return (new Promise(function (fulfill, reject) {
+            return (new Promise(function (fulfill/*, reject*/) {
                 if (skipTests) {
                     console.log(chalk.grey('Skipping mocha tests.\n'));
                     fulfill();

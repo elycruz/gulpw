@@ -6,7 +6,6 @@
 
 require('sjljs');
 
-
 var path = require('path'),
     del = require('del'),
     chalk = require('chalk'),

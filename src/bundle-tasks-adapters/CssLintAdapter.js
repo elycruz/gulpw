@@ -72,7 +72,7 @@ module.exports = BaseBundleTaskAdapter.extend('CssLintAdapter', {
         // Ensure an absolute path if `cssLintConfig` is a 'String'
         if (sjl.classOfIs(cssLintConfig, 'String')) {
             // If given path doesn't exist, throw an exception
-            if(!fs.existsSync(cssLintConfig)) {
+            if (!fs.existsSync(cssLintConfig)) {
                 throw new Error('The specified \'.csslintrc\' file specified in the `csslint` ' +
                     'config could not be found.  \'.csslintrc\' path received: "' + cssLintConfig + '".');
             }

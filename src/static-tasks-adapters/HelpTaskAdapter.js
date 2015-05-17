@@ -10,8 +10,8 @@ require('sjljs');
 var BaseStaticTaskAdapter = require('./BaseStaticTaskAdapter'),
     fs = require('fs'),
     path = require('path'),
-    yaml = require('js-yaml'),
-    inquirer = require('inquirer'),
+    //yaml = require('js-yaml'),
+    //inquirer = require('inquirer'),
     chalk = require('chalk');
 
 module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter () {
@@ -20,7 +20,7 @@ module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter () {
 
     registerStaticTask: function (gulp, wrangler) {
         var self = this,
-            helpSectionPaths = self.getHelpSectionPaths(wrangler),
+            //helpSectionPaths = self.getHelpSectionPaths(wrangler),
             helpSectionPathKeys = self.getHelpSectionPathKeys(wrangler),
             helpSection = process.argv.length === 4 ? process.argv[3] : null;
 
@@ -42,7 +42,7 @@ module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter () {
         return this.helpSectionPaths;
     },
 
-    getHelpSectionPathKeys: function (wrangler) {
+    getHelpSectionPathKeys: function (/*wrangler*/) {
         if (!sjl.isset(this.helpSectionPathKeys)) {
             this.helpSectionPathKeys = this.getHelpSectionPaths().map(function (key) {
                 return path.basename(key, '.md');

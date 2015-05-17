@@ -18,7 +18,7 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     lodash = require('lodash'),
     glob = require('glob');
 
-module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
+module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/) {
     BaseBundleTaskAdapter.apply(this, arguments);
     this._mergeLocalConfigs()
         ._resolveTemplateValues();
@@ -49,8 +49,13 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
             return (new Promise(function (fulfill, reject) {
                 // Get file count
                 Object.keys(targets).forEach(function (key, index, list) {
-                    startDeployMessage += (index === 0 ? '' :
-                        (index < list.length - 1 ? ', ' : ' and ')) + (key !== 'relative' ? '*.' : '') + key;
+                    if (index < list.length - 1) {
+                        startDeployMessage += ', ';
+                    }
+                    else if (index === list.length -1) {
+                        startDeployMessage += ' and ';
+                    }
+                    startDeployMessage += (key !== 'relative' ? '*.' : '') + key;
                     totalFileCount += targets[key].length;
                 });
 
@@ -68,7 +73,8 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
 
                         if (err) { console.log(chalk.red(' An `ssh2.sftp` error has been encountered:  ' + err + '\n')); }
 
-                        var target;
+                        var target,
+                            countTimeout;
 
                         wrangler.log(chalk.grey(startDeployMessage));
 
@@ -111,7 +117,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
 
                         }); // end of files loop
 
-                        var countTimeout = setInterval(function () {
+                        countTimeout = setInterval(function () {
                             // @todo make this if check readble (reverse the logic)
                             if (totalFileCount <= uploadedFileCount) {
 
@@ -274,19 +280,21 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
         return srcs;
     },
 
-    mapFileArrayToDeployArrayMap: function (fileArray, fileType, selectedServerEntry, wrangler) {
+    mapFileArrayToDeployArrayMap: function (fileArray, fileType, selectedServerEntry/*, wrangler*/) {
         var self = this, otherFiles = [];
 
         fileArray = Array.isArray(fileArray) ? fileArray : [];
 
         fileArray = fileArray.filter(function (item) {
+            var includeInFileArray;
             if (glob.hasMagic(item)) {
                 otherFiles = otherFiles.concat(glob.sync(item));
-                return false;
+                includeInFileArray = false;
             }
             else {
-                return true;
+                includeInFileArray = true;
             }
+            return includeInFileArray;
         });
 
         return fileArray.concat(otherFiles).map(function (item) {
@@ -347,11 +355,11 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (config) {
             currPath +=  separator + part;
 
             // Make sure directories exist before trying to put files to them
-            sftp.mkdir(currPath, function (err2) {
+            sftp.mkdir(currPath, function (/*err2*/) {
                 // If error do nothing since `mkdir` will complain about directory if it already
                 // exists (we just want to ensure that the path already exists before trying to upload the file)
                 //if (err2) {
-                //wrangler.log(chalk.red(' An `mkdir -p` error has occurred:  ' + err2, path.dirname(item[1])));
+                    //wrangler.log(chalk.red(' An `mkdir -p` error has occurred:  ' + err2, path.dirname(item[1])));
                 //}
             });
         });

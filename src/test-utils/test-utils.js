@@ -6,8 +6,8 @@
 
 require('sjljs');
 
-var child_process = require('child_process'),
-    exec = child_process.exec,
+var childProcess = require('child_process'),
+    exec = childProcess.exec,
     log = console.log;
 
 module.exports = (function () {

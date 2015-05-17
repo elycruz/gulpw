@@ -22,7 +22,7 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
             skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
         gulp.task(taskName, function () {
-            return (new Promise(function (fulfill, reject) {
+            return (new Promise(function (fulfill/*, reject*/) {
                 if (skipTests) {
                     console.log(chalk.grey('Skipping jasmine tests.\n'));
                     return fulfill();

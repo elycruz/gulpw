@@ -1,18 +1,16 @@
 /**
- * Created by edelacruz on 10/8/2014.
- */
-/**
  * Created by ElyDeLaCruz on 11/18/2014.
  */
-'use strict'; require('sjljs');
 
+'use strict';
 
+require('sjljs');
 
 // Import base task proxy to extend
 var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
 	path = require('path'),
-	child_process = require('child_process'),
-	exec = child_process.exec,
+	childProcess = require('child_process'),
+	exec = childProcess.exec,
 	chalk = require('chalk');
 
 module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
@@ -23,7 +21,7 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
      * @param gulp {gulp}
      * @param wrangler {Wrangler}
      */
-    registerBundle: function (bundle, gulp, wrangler) {
+    registerBundle: function (bundle, gulp/*, wrangler*/) {
 
 		// Bail if bundle doesn't have `compass` key
 		if (!bundle.has('compass')) {
@@ -39,11 +37,12 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 
 			return (new Promise(function (fulfill, reject) {
 
-				var startDate = new Date();
+				var startDate = new Date(),
+                    compassTask;
 
 				console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
-				var compassTask = exec('cd ' + path.dirname(configrb) + ' && compass compile', function (err, stdout, stderr) {
+				compassTask = exec('cd ' + path.dirname(configrb) + ' && compass compile', function (err, stdout, stderr) {
 					// Command(s) output
 					console.log(stdout, '\n');
 

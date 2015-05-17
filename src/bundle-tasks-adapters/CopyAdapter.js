@@ -16,10 +16,10 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
     FilesHashTaskAdapter.apply(this, options);
 }, {
 
-    registerGulpTask: function (taskName, gulp, bundle, wrangler) {
+    registerGulpTask: function (taskName, gulp, bundle/*, wrangler*/) {
         // Create task for bundle
         gulp.task(taskName, function () {
-            return (new Promise(function (fulfill, reject) {
+            return (new Promise(function (fulfill/*, reject*/) {
 
                 console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 

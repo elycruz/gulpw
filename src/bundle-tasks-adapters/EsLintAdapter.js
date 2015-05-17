@@ -52,7 +52,7 @@ module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
         self.registerGulpTasks('eslint', targets, gulp, wrangler);
     },
 
-    getTargetsForBundle: function (bundle, wrangler) {
+    getTargetsForBundle: function (bundle/*, wrangler*/) {
         var targets = [];
         if (bundle.has('files.js')) {
             targets = targets.concat(bundle.options.files.js);

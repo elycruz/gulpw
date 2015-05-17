@@ -17,7 +17,7 @@ var path = require('path'),
 
     fs = require('fs');
 
-module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(options, gulp, wrangler) {
+module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*options, gulp, wrangler*/) {
         BaseBundleTaskAdapter.apply(this, sjl.argsToArray(arguments));
     },
     {
@@ -117,7 +117,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(opti
                 templateKey = filePath,
                 useFilePathAsKey = templateOptions.useFilePathAsKey,
                 noExtension = templateOptions.removeFileExtensionsOnKeys,
-                splitKeyAt = templateOptions.splitKeyAt ;
+                splitKeyAt = templateOptions.splitKeyAt;
 
             // Resolve whether to use file base name as key
             if (!useFilePathAsKey) {

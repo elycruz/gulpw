@@ -48,6 +48,7 @@
   "devDependencies": {
     "chai": "^1.9.2",
     "gulp": "^3.8.11",
+    "gulp-eslint": "^0.8.0",
     "mocha": "^2.0.1"
   },
   "scripts": {
