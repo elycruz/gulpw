@@ -5,12 +5,12 @@
 
 require('sjljs');
 
-var Liftoff = require('liftoff'),
-    argv = require('yargs')
-        .default('skip-artifacts', false)
-        .default('browser', false)
-        .default('bundle', null)
-        .default('async', false)
+var Liftoff =   require('liftoff'),
+    argv =      require('yargs')
+        .default('skip-artifacts',  false)
+        .default('browser',         false)
+        .default('bundle',          null)
+        .default('async',           false)
         .alias('b',     'browser')
         .alias('a',     'async')
         .alias('d',     'dev')
@@ -25,16 +25,16 @@ var Liftoff = require('liftoff'),
         .alias('skip-hint',     'skip-linting')
         .alias('skip-lint',     'skip-linting')
         .alias('skip-jasmine-testing',  'skip-jasmine-tests')
-        .alias('skip-mocha-testing',  'skip-mocha-tests')
+        .alias('skip-mocha-testing',    'skip-mocha-tests')
         .alias('skip-testing',  'skip-tests')
         .alias('no-tests',      'skip-tests')
         .alias('t',     'file-types')
         .alias('x',     'file-types')
         .alias('ext',   'file-types')
         .argv,
-    gulp = require('gulp'),
-    path = require('path'),
-    fs = require('fs'),
+    gulp =  require('gulp'),
+    path =  require('path'),
+    fs =    require('fs'),
     chalk = require('chalk'),
     cli = new Liftoff({
         name: 'gulpw',
@@ -53,18 +53,23 @@ var Liftoff = require('liftoff'),
 
 function init(env) {
 
-    //if (argv.verbose) {
-        //console.log('LIFTOFF SETTINGS:', this);
-        //console.log('CLI OPTIONS:', argv);
-        //console.log('CWD:', env.cwd);
-        //console.log('LOCAL MODULES PRELOADED:', env.require);
-        //console.log('SEARCHING FOR:', env.configNameRegex);
-        //console.log('FOUND CONFIG AT:', env.configPath);
-        //console.log('CONFIG BASE DIR:', env.configBase);
-        //console.log('YOUR LOCAL MODULE IS LOCATED:', env.modulePath);
-        //console.log('LOCAL PACKAGE.JSON:', env.modulePackage);
-        //console.log('CLI PACKAGE.JSON', require('./package'));
-    //}
+    // Dump pertinent environment variables
+    if (argv.dumpEnv) {
+        console.log('LIFTOFF SETTINGS:',             this);
+        console.log('CLI OPTIONS:',                  argv);
+        console.log('CWD:',                          env.cwd);
+        console.log('LOCAL MODULES PRELOADED:',      env.require);
+        console.log('SEARCHING FOR:',                env.configNameRegex);
+        console.log('FOUND CONFIG AT:',              env.configPath);
+        console.log('CONFIG BASE DIR:',              env.configBase);
+        console.log('YOUR LOCAL MODULE IS LOCATED:', env.modulePath);
+    }
+
+    // Dumps your local package and gulpw's package files
+    if (argv.dumpPackage) {
+        console.log('LOCAL PACKAGE.JSON:',           env.modulePackage);
+        console.log('CLI PACKAGE.JSON',              require('./package'));
+    }
 
     // If the config path is empty
     if (sjl.empty(env.configPath)) {

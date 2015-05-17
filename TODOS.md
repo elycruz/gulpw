@@ -97,7 +97,7 @@ gulp-bundle-wrangler (Beta)
   - [X] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
   - [X] - Add notes for `config` task.
   - [X] - Supply example bundle config file with all sections listed in it.
-  - [ ] - Add all available flags to main readme.md.
+  - [X] - Add all available flags to main readme.md.
   - [X] - Update the example bundle config file with latest additions/changes (add more notes for it).
   - [X] - Add LICENSE file.
   - [X] - Bundle aliases/name's are now optional inside of a {bundle}.* config file.
