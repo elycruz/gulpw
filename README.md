@@ -1,8 +1,3 @@
-[![Build Status](https://travis-ci.org/elycruz/gulpw.png)](https://travis-ci.org/elycruz/gulpw) 
-[![GitHub version](https://badge.fury.io/gh/elycruz%2Fgulpw.svg)](http://badge.fury.io/gh/elycruz%2Fgulpw) 
-[![NPM version](https://badge.fury.io/js/gulpw.svg)](http://badge.fury.io/js/gulpw)
-[![Dependencies](https://david-dm.org/elycruz/gulpw.png)](https://david-dm.org/elycruz/gulpw)
-
 gulpw (gulp wrangler)
 ====================
 
@@ -593,19 +588,33 @@ watch:
 
 ### Available Flags:
 **Note** All long forms of these flags use the `--{flag-name}` format.  Short forms use `-{flag-one-letter-alias}`.
+All flag default values are `null`/`false`.
+- **bundle:** Reserved but not yet used.
 - **file-types:**  Used to pass a comma separated list of file extensions to the defined tasks.
     - **Affected tasks:**
         - `deploy` - Uses `--file-types` string to only deploy files of the types you passed in via `--file-types` or one of it's aliases.
-    - **Aliases:** `--ext`, `-t`
+    - **Aliases:** `--ext`, `-t`, `-x`
 - **debug:** Used for developing gulpw and allows you to keep your more pertinent debug logging declarations.
     - **Aliases:** None.
 - **dev:** Used to ignore minification (at this time).
     - **Affected tasks:**
-        - `minify` ~~and `concat`~~ - Minification is skipped when used with these tasks.
-- **skip-tests:** Causes `mocha` and `jasmine` tests to not run.
-    - **Aliases:** `--no-tests`, `--skip-testing`
+        - `minify` Minification is skipped when used with this flag.
 - **verbose:** Used to print verbose mode logs.
     - **Aliases:** `-v`
+- **async:** Runs all tasks asynchronously.  **Note** This may cause race condition errors between certain tasks;  E.g.,
+    ``` gulpw build deploy ``` // If you have many bundles deploy may fire before all build sub-tasks are done cause a failure (deploy task will timeout while waiting for files to become available for deploy if they are being used). 
+    - **Aliases:** `-a`
+- **skip-artifacts:** Causes artifacts to be skipped on deploy task.
+- **skip-css-linting:** Causes any css linting/hinting to be skipped from the `minify` task.
+- **skip-jasmine-testing:** Causes Jasmine tests to be skipped.
+- **skip-js-linting:** Causes js linting tasks to be skipped (jshint/eslint).
+- **skip-linting:** Causes css and js linting/hinting to be skipped via 'minify' task.
+    - **Aliases:** --skip-jshint --skip-jslint --skip-linting
+- **skip-mocha-testing:** Causes mocha tests to be skipped.
+- **skip-tests:** Causes `mocha` and `jasmine` tests to not run.
+    - **Aliases:** 
+        - `--no-tests`
+        - `--skip-testing`
 
 ### Caveats:
 - ~~Be able to pass in multiple flags from the command line (some with values some without values).  Running
@@ -618,13 +627,13 @@ watch:
  watch tasks;  I.e., `gulpw watch`
 
 ### Resources
-- [Initial UML Diagram](http://www.gliffy.com/go/publish/6312461) (http://www.gliffy.com/go/publish/6312461) (original design has diverged a bit from original diagram).
+- [Initial Idea UML Diagram](http://www.gliffy.com/go/publish/6312461) (http://www.gliffy.com/go/publish/6312461)
 - [gulp site](http://gulpjs.com/) (http://gulpjs.com/)
 - [gulp docs](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md) (https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md)
 - [gulp plugins](http://gulpjs.com/plugins/) (http://gulpjs.com/plugins/)
-- [gulpw sample app](https://github.com/elycruz/gulpw-sample-app) (https://github.com/elycruz/gulpw-sample-app) (needed when running tests for `gulpw`)
+- [gulpw sample app](https://github.com/elycruz/gulpw-sample-app) (https://github.com/elycruz/gulpw-sample-app) (used by gulpw when running it's tests)
 
 ### License(s):
 - MIT (http://opensource.org/licenses/MIT)
-- ~~GNU v2+ (http://www.gnu.org/licenses/gpl-2.0.html)~~
-- ~~GNU v3 (http://www.gnu.org/licenses/gpl.html)~~
+- GNU v2+ (http://www.gnu.org/licenses/gpl-2.0.html)
+- GNU v3 (http://www.gnu.org/licenses/gpl.html)

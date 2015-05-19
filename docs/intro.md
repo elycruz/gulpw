@@ -1,4 +1,4 @@
-gulp-bundle-wrangler (Beta)
+gulpw (gulp wrangler)
 ====================
 
 Allows the management of a website or web application via bundle configuration files from the

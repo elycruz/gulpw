@@ -9,8 +9,7 @@
  * Environemnt Types:
  * --------------------------------------------------------------------------------------------------------------------- **/
 {
-  "envs": {
-    "browser": true,
+  "env": {
     "node":    true,
     "mocha":   true
   },
@@ -20,21 +19,12 @@
    * --------------------------------------------------------------------------------------------------------------------- **/
 
   "globals": {
-    "__dirname":    true,
     "after":        true,
     "before":       true,
-    "clearInterval": true,
-    "clearTimeout": true,
-    "console":      true,
     "describe":     true,
     "expect":       true,
     "global":       true,
     "it":           true,
-    "module":       true,
-    "process":      true,
-    "require":      true,
-    "setInterval":  true,
-    "setTimeout":   true,
     "sjl":          true
   },
 
