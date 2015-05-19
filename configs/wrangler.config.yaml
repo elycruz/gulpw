@@ -25,6 +25,9 @@ staticTasks:
 
   "config":
     constructorLocation: ./src/static-tasks-adapters/ConfigTaskAdapter
+    notAllowedInnerKeys:
+      - priority
+      - constructorLocation
 
   "deploy-config":
     constructorLocation: ./src/static-tasks-adapters/DeployConfigTaskAdapter
