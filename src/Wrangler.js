@@ -164,10 +164,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 path.join(self.pwd, self.staticTasks[task].constructorLocation),
             TaskAdapterClass = require(src);
 
-        TaskAdapterClass = new TaskAdapterClass({
+        TaskAdapterClass = new TaskAdapterClass(sjl.extend({
             alias: task,
             help: self.staticTasks[task].help || ''
-        });
+        }, self.clone(self.staticTasks[task])));
 
         TaskAdapterClass.registerStaticTask(gulp, self);
 
@@ -611,7 +611,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Add user task keys to stored default keys
         self.taskKeys = self.taskKeys.concat(Object.keys(userTaskKeys));
-        self.staticTaskKeys = options.staticTasks ? Object.keys(options.staticTasks) : self.staticTaskKeys;
+        self.staticTaskKeys = options.staticTasks ?
+            self.staticTaskKeys.concat(Object.keys(options.staticTasks)) : self.staticTaskKeys;
 
         // Set 'notConfigured' value to be used by 'register*' task adapter functions.
         self.taskKeys.forEach(function (key) {

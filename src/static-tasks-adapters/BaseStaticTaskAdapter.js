@@ -6,8 +6,8 @@
 
 require('sjljs');
 
-module.exports = sjl.Optionable.extend(function BaseStaticTaskAdapter() {
-        sjl.Optionable.call(this, arguments);
+module.exports = sjl.Optionable.extend(function BaseStaticTaskAdapter(/*options*/) {
+        sjl.Optionable.apply(this, arguments);
     },
     {
         registerStaticTask: function (/*gulp, wrangler*/) {

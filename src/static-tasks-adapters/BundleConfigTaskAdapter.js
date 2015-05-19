@@ -5,10 +5,6 @@
  * Created by Ely on 1/15/2015.
  */
 
-/**
- * Created by edelacruz on 11/19/2014.
- */
-
 'use strict';
 
 require('sjljs');
@@ -26,7 +22,7 @@ module.exports = BaseStaticTaskAdapter.extend(function BundleConfigTaskAdapter (
 }, {
 
     registerStaticTask: function (gulp, wrangler) {
-        var bundleConfig = wrangler.staticTasks.bundle,
+        var bundleConfig = this.options,
             otherTaskKeys = bundleConfig.allowedTasks,
             defaultBundleName = process.argv.length === 4 ? process.argv[3] : 'bundle',
 

@@ -15,11 +15,11 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         var self = this;
 
         // merged with our defaults
-        sjl.Optionable.call(self, {
+        sjl.Optionable.apply(self, [{
             alias: 'Alias goes here.',
             description: 'Description goes here.',
             version: 'Semver version string goes here.'
-        }, options);
+        }, options]);
 
         // If has init function run it
         if (sjl.isset(self.init) && sjl.classOfIs(self.init, 'Function')) {
