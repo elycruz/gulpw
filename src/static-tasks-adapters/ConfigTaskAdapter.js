@@ -23,7 +23,9 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
 }, {
 
     registerStaticTask: function (gulp, wrangler) {
-        var taskKeys = Object.keys(wrangler.tasks),
+        var self = this,
+            taskKeys = Object.keys(wrangler.tasks),
+            staticTaskKeys = Object.keys(wrangler.staticTasks),
             questions = [
                 {
                     name: 'configFormat',
@@ -39,6 +41,12 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
                     type: 'checkbox',
                     message: 'Please select the tasks you would like to configure from your newly generated wrangler config file:',
                     choices: taskKeys
+                },
+                {
+                    name: 'staticTasks',
+                    type: 'checkbox',
+                    message: 'Please select any static tasks you would like to configure from your newly generated wrangler config file:',
+                    choices: staticTaskKeys
                 }
             ];
 
@@ -50,7 +58,7 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
 
                 inquirer.prompt(questions, function (answers) {
                     var newConfig = wrangler.loadConfigFile(path.join(wrangler.pwd, '/configs/wrangler.config.yaml')),
-                        newConfigPath = null,
+                        newConfigPath,
                         oldConfig = wrangler.loadConfigFile(wrangler.configPath),
                         oldFileName = path.basename(wrangler.configPath),
                         oldFileExt = path.extname(oldFileName),
@@ -95,12 +103,22 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
                     }
 
                     // Remove sections that were not specified to be kept by the user
-                    taskKeys.forEach(function (key) {
-                        if (answers.tasks.indexOf(key) === -1) {
-                            newConfig.tasks[key] = null;
-                            delete newConfig.tasks[key];
+                    self.cleanUpNewTasksList(taskKeys, answers.tasks, newConfig.tasks, self)
+
+                        // Remove unwanted keys from static tasks
+                        .cleanUpNewTasksList(staticTaskKeys, answers.staticTasks, newConfig.staticTasks, self);
+
+                    // If empty tasks object then remove it
+                    ['tasks', 'staticTasks'].forEach(function(key) {
+                        if (sjl.empty(newConfig[key])) {
+                            newConfig[key] = null;
+                            delete newConfig[key];
                         }
                     });
+
+                    // Remove emptyBundle //@todo remove this one off deletion for a better alternative
+                    //newConfig.staticTasks.bundle.emptyBundleFile = null;
+                    //delete newConfig.staticTasks.bundle.emptyBundleFile;
 
                     // Get new config's contents
                     newConfig = answers.configFormat === '.json' ?
@@ -127,6 +145,30 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
 
         }); // end of task
 
-    } // end of register 'config' task
+    }, // end of register 'config' task
+
+    removeUnWantedKeysFromTaskOptions: function (taskOptions, self) {
+        Object.keys(taskOptions).forEach(function (taskItemInnerKey) {
+            if (self.options.notAllowedInnerKeys.indexOf(taskItemInnerKey) > -1) {
+                taskOptions[taskItemInnerKey] = null;
+                delete taskOptions[taskItemInnerKey];
+            }
+        });
+        return self;
+    },
+
+    cleanUpNewTasksList: function (taskKeys, taskKeysToKeep, tasksList, self) {
+        taskKeys.forEach(function (key) {
+            // Remove tasks not listed in answers.tasks
+            if (taskKeysToKeep.indexOf(key) === -1) {
+                tasksList[key] = null;
+                delete tasksList[key];
+            }
+            else {
+                self.removeUnWantedKeysFromTaskOptions(tasksList[key], self);
+            }
+        });
+        return self;
+    }
 
 });
