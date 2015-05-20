@@ -6,6 +6,8 @@ All flag default values are `null`/`false`.
     - **Affected tasks:**
         - `deploy` - Uses `--file-types` string to only deploy files of the types you passed in via `--file-types` or one of it's aliases.
     - **Aliases:** `--ext`, `-t`, `-x`
+- **force:** Used to force the task runner to continue despite any errors.
+    - **Aliases:** -f
 - **debug:** Used for developing gulpw and allows you to keep your more pertinent debug logging declarations.
     - **Aliases:** None.
 - **dev:** Used to ignore minification (at this time).

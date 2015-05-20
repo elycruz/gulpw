@@ -35,7 +35,7 @@ describe('#global tasks test', function () {
     it ('should be able to run more than one global task when passed in separately', function (done) {
         // Set timeout for test
         this.timeout(timeout);
-        tutil.executeTaskAsChild('gulpw build deploy',
+        tutil.executeTaskAsChild('gulpw build' /*deploy*/,
             commandOptions, genericTest, done);
     });
 

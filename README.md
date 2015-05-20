@@ -594,6 +594,8 @@ All flag default values are `null`/`false`.
     - **Affected tasks:**
         - `deploy` - Uses `--file-types` string to only deploy files of the types you passed in via `--file-types` or one of it's aliases.
     - **Aliases:** `--ext`, `-t`, `-x`
+- **force:** Used to force the task runner to continue despite any errors.
+    - **Aliases:** -f
 - **debug:** Used for developing gulpw and allows you to keep your more pertinent debug logging declarations.
     - **Aliases:** None.
 - **dev:** Used to ignore minification (at this time).
@@ -625,6 +627,8 @@ All flag default values are `null`/`false`.
 - Build files cannot be shared amongst bundles when wanting to use the 'watch' task cause they cause a
  cyclic dependency when running global
  watch tasks;  I.e., `gulpw watch`
+- Inorder to run tests you must have run `gulpw deploy-config` since the deploy task will expect local deploy options to be
+setup for the gulpw-sample-app.
 
 ### Resources
 - [Initial Idea UML Diagram](http://www.gliffy.com/go/publish/6312461) (http://www.gliffy.com/go/publish/6312461)

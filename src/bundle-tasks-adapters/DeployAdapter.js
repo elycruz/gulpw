@@ -20,8 +20,13 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
 
 module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/) {
     BaseBundleTaskAdapter.apply(this, arguments);
-    this._mergeLocalConfigs()
-        ._resolveTemplateValues();
+    this._mergeLocalConfigs();
+
+    // If task is runnable resolve template values on it's config
+    if (!this.wrangler.tasks.deploy.notConfiguredByUser) {
+        this._resolveTemplateValues();
+    }
+
 }, {
 
     registerGulpTask: function (taskPrefix, targets, gulp, wrangler) {
@@ -378,9 +383,16 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
             sjl.extend(true, this.wrangler.tasks.deploy, localConfig);
         }
         else {
+            // Make task skippable
+            this.wrangler.tasks.deploy.notConfiguredByUser = true;
+
             // Log a warning
             console.log(chalk.yellow('Please run the "deploy-config" task before ' +
-                'attempting to deploy (running the task now).\n'));
+                'attempting to deploy.  Attempted to load path: ' + localConfigPath + ' but path doesn\'t exist.\n'));
+            //throw new Error('Could not run the deploy task due to missing config file.');
+            if (!this.wrangler.argv.force) {
+                process.exit(0);
+            }
         }
         return this;
     },
