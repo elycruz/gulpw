@@ -28,6 +28,8 @@ var Liftoff =   require('liftoff'),
         .alias('skip-mocha-testing',    'skip-mocha-tests')
         .alias('skip-testing',  'skip-tests')
         .alias('no-tests',      'skip-tests')
+        .alias('filetypes',     'file-types')
+        .alias('filetype',     'file-types')
         .alias('t',     'file-types')
         .alias('x',     'file-types')
         .alias('ext',   'file-types')
