@@ -646,11 +646,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 // If file is unloadable warn the user about unloadable file path
                 if (!fs.existsSync(value)) {
                     /*throw new Error*/
-                    console.warn(chalk.yellow('\n!`Wrangler.mergeLocalOptions` encountered a string for ' +
-                        'a task value but could not find a loadable config file for it.' +
-                        '  Path attempted to load: ' + value +
-                        '  Task key "' + key + '" will not be merged in from the' +
-                        ' user\'s bundle.wrangler.config.* file.'));
+                    //console.warn(chalk.yellow('\n!`Wrangler.mergeLocalOptions` encountered a string for ' +
+                    //    'a task value but could not find a loadable config file for it.' +
+                    //    '  Path attempted to load: ' + value +
+                    //    '  Task key "' + key + '" will not be merged in from the' +
+                    //    ' user\'s bundle.wrangler.config.* file.'));
                     objToMerge = null;
                 }
                 // load file
