@@ -16,12 +16,17 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
         this.gulp = gulp;
     },
     {
-        // Declare for extending class
+        /**
+         * @return {Boolean}
+         */
         registerBundle: function (/*bundle*/) {
             // Overwrite from extending class
         },
 
-        // Declare for extending class
+        /**
+         * @returns {Array<String>|Boolean} - Returns an array if any bundles failed registration, `true` if all registrations passed,
+         * and `false` if all registrations failed.
+         */
         registerBundles: function (/*bundles, gulp, wrangler*/) {
             // Overwrite from extending class
         },
@@ -39,7 +44,6 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
                     return wrangler[method](tasks, gulp);
                 });
             }
-
         },
 
         isBundleValidForTask: function (/*bundle*/) {

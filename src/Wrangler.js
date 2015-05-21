@@ -31,7 +31,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         taskKeys: Object.keys(defaultOptions.tasks),
         staticTasks: defaultOptions.staticTasks,
         staticTaskKeys: Object.keys(defaultOptions.staticTasks),
-        configPath: env.configPath
+        configPath: env.configPath,
+        registrationResults: {
+            failedRegistrationFor: {
+                /*taskName: []*/
+            },
+            passedRegistrationFor: {
+                /*taskName: []*/
+            }
+        }
     }, defaultOptions);
 
     // Merge local options
@@ -284,7 +292,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         bundle = self.getBundleAlias(bundle);
         task = self.getTaskAdapterAlias(task);
         if (!self.isTaskRegistered(task + ':' + bundle)) {
-            self.getTaskAdapter(task).registerBundle(self.bundles[bundle], self.gulp, self);
+            self.getTaskAdapter(task).registerBundle(self.bundles[bundle], self.gulp, self) ?
+                '...' : '...'; // @todo fill this in;
             self.log(' ~ Bundle "' + bundle + '" registered with task "' + task + '".');
         }
         return self;
