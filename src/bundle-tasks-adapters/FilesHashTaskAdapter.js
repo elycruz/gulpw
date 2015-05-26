@@ -8,13 +8,10 @@
 require('sjljs');
 
 var path = require('path'),
-
     jsStringEscape = require('js-string-escape'),
-
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter.js'),
-
     lodash = require('lodash'),
-
+    chalk = require('chalk'),
     fs = require('fs');
 
 module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*options, gulp, wrangler*/) {
@@ -90,11 +87,18 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
                 // Loop through template files in bundle
                 bundle.options.files[key].forEach(function (file) {
 
+                    // Ensure file exists before attempting to load it
+                    if (!fs.existsSync(file)) {
+                        console.log(chalk.yellow(' ! Template file doesn\'s exist: ' + file));
+                        return;
+                    }
+
                     // Get file contents and make string safe for javascript
                     fileContent = jsStringEscape(fs.readFileSync(file));
 
                     // Remove white space if necessary
-                    fileContent = compressWhitespace ? fileContent.replace(/(?:[\s\t]{1,}|\\n)+/gm, ' ') : fileContent;
+                    fileContent = compressWhitespace ? fileContent.replace(/(?:[\s\t]{1,}|\\r|\\n)+/gm, ' ') //.replace(/>\s</gm, '><')
+                        : fileContent;
 
                     // Get the template key
                     templateKey = self.getTemplateKey(file, key, templateOptions);

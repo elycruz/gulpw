@@ -391,7 +391,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
                 'attempting to deploy.  Attempted to load path: ' + localConfigPath + ' but path doesn\'t exist.\n'));
             //throw new Error('Could not run the deploy task due to missing config file.');
             if (!this.wrangler.argv.force) {
-                process.exit(0);
+                //process.exit(0);
             }
         }
         return this;

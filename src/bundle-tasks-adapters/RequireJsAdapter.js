@@ -15,7 +15,6 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
     FilesHashTaskAdapter.apply(this, arguments);
 }, {
 
-    // @todo add a `getTaskNameForBundle` method
     registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
         var self = this;
 

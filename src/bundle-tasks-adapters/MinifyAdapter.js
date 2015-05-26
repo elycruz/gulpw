@@ -62,7 +62,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             allowedFileTypes.forEach(function (ext) {
                 var buildPath = minifyConfig[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext],
-                    jsHintPipe = wrangler.getTaskAdapter('jshint').getPipe(bundle, gulp, wrangler),
+                    eslintPipe = wrangler.getTaskAdapter('eslint').getPipe(bundle, gulp, wrangler),
                     cssLintPipe = wrangler.getTaskAdapter('csslint').getPipe(bundle, gulp, wrangler),
                     skipCssLinting = wrangler.skipLinting() || wrangler.skipCssLinting(),
                     skipJsLinting = wrangler.skipLinting() || wrangler.skipJsLinting(),
@@ -82,7 +82,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                 // Give gulp the list of sources to process
                 return gulp.src(bundle.options.files[ext])
 
-                    .pipe(gulpif(ext === 'js' && !skipJsLinting, jsHintPipe()))
+                    .pipe(gulpif(ext === 'js' && !skipJsLinting, eslintPipe()))
 
                     .pipe(gulpif(ext === 'css' && !skipCssLinting, cssLintPipe()))
 

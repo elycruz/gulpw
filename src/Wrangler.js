@@ -1,5 +1,6 @@
 /**
  * Created by Ely on 10/4/2014.
+ * @todo filter out tasks that have no bundle registered with them before running `launchTasks`.
  */
 
 'use strict';
@@ -292,8 +293,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         bundle = self.getBundleAlias(bundle);
         task = self.getTaskAdapterAlias(task);
         if (!self.isTaskRegistered(task + ':' + bundle)) {
-            self.getTaskAdapter(task).registerBundle(self.bundles[bundle], self.gulp, self) ?
-                '...' : '...'; // @todo fill this in;
+            self.getTaskAdapter(task).registerBundle(self.bundles[bundle], self.gulp, self);
             self.log(' ~ Bundle "' + bundle + '" registered with task "' + task + '".');
         }
         return self;
@@ -472,7 +472,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return self;
     },
 
-    // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
         var self = this;
 
