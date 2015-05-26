@@ -52,7 +52,7 @@
   },
   "scripts": {
     "test": "mocha tests",
-    "pretest": "npm install -g gulpw bower && cd node_modules/gulpw-sample-app/fe-dev && bower install && cd ../../../"
+    "pretest": "npm install -g gulpw bower && cd node_modules/gulpw-sample-app && npm install gulpw && cd fe-dev && bower install && cd /home/travis/build/elycruz/gulpw"
   },
   "repository": {
     "type": "git",
