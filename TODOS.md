@@ -27,7 +27,7 @@ gulpw (gulp wrangler)
 	 a bundle (takes to long for bigger bundles definitions).~~~  The previous was changed to only deploy the
 	 artifact files and specified `deploy.otherFiles` files.
 - [X] General:
-  - [X] - Should merge local config on top of bundle.wrangler.config.yaml when ever tasks are run
+  - [X] - Should merge local config on top of gulpw-config.yaml when ever tasks are run
   (should happen from inside Wrangler.js for all tasks (if any configs present)).
   - [X] - ~~Make `Wrangler` constructor `Optionable`.~~  No longer necessary.
   - [X] - Deploy task should reference local deploy file name from `prompt` task config.
@@ -62,7 +62,7 @@ gulpw (gulp wrangler)
     - [X] - ~~develop - Task for launching browser with specified path and launching watch task for specified bundle.~~ Moved to version 0.3.0.
     - [X] - ~~jsdoc~~ ~~document (jsdoc, groco, etc)~~ Moved to version 0.3.0
     - [X] - ~~vulcanize (for polymer build tool)~~ Moved to version 0.3.0.
-  	- [X] - ~~prompt:config Generates a 'bundle.wrangler.config.*' file.~~ ~~For generating default config.~~  Taken care of by `config` task (see above 'Static Tasks').
+  	- [X] - ~~prompt:config Generates a 'gulpw-config.*' file.~~ ~~For generating default config.~~  Taken care of by `config` task (see above 'Static Tasks').
 - [X] - ~~For `Bundle`~~ Moving to version 0.3.0:
 	- [X] - ~~The watch task should be reset whenever the {bundle}.yaml file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a bundle is
@@ -94,7 +94,7 @@ gulpw (gulp wrangler)
     - [X] - config
   - [x] - Cleanup callbacks ~~hell~~ within deploy task to only go one level deep (inline) (will make code easier to read).
   - [X] - Change `prompt` to `config`. (`prompt` still exists.  Will be removed in a later version)
-  - [X] - Remove seemengliy repetative instructions in main readme ("In 'bundle.wrangler.config.yaml':" etc.)
+  - [X] - Remove seemengliy repetative instructions in main readme ("In 'gulpw-config.yaml':" etc.)
   - [X] - Add notes for `config` task.
   - [X] - Supply example bundle config file with all sections listed in it.
   - [X] - Add all available flags to main readme.md.

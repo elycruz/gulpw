@@ -29,7 +29,7 @@ requirejs:
   options:
 
 # Allows you to list other files to deploy.  Note only files in the
-# 'tasks.deploy.allowedFilesTypes' array of the 'bundle.wrangler.config.*' file will be uploaded.
+# 'tasks.deploy.allowedFilesTypes' array of the 'gulpw-config.*' file will be uploaded.
 deploy:
 
   # Other files' hash to deploy
@@ -38,7 +38,7 @@ deploy:
       - somejsfile.js
       - etc.
 
-    # Relative to the deploy path (see 'deploy' task in 'bundle.wrangler.config.*'.
+    # Relative to the deploy path (see 'deploy' task in 'gulpw-config.*'.
     # Look at, particularly, the 'deployRootFolder' property and the 'hostnamePrefixFolders' property).
     relative:
       - ./public/js/vendors/require.js

@@ -385,9 +385,9 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
             console.log(chalk.yellow('! Please run the "deploy-config" task before ' +
                 'attempting to deploy.  Attempted to load path: ' + localConfigPath + ' but path doesn\'t exist.\n'));
             //throw new Error('Could not run the deploy task due to missing config file.');
-            if (!this.wrangler.argv.force) {
+            //if (!this.wrangler.argv.force) {
                 //process.exit(0);
-            }
+            //}
         }
         return this;
     },

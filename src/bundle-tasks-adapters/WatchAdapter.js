@@ -124,7 +124,11 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
     }, // end of `registerBundles`
 
     getSrcForBundle: function (bundle) {
-        var targets = [];
+        var self = this,
+            ignoredTasks = self.wrangler.tasks.watch.ignoredFiles,
+            targets = [];
+
+        ignoredTasks = Array.isArray(ignoredTasks) && ignoredTasks.length > 0 ? ignoredTasks : null;
 
         // Bail if bundle is not valid for task
         if (!this.isBundleValidForTask(bundle)) {
@@ -167,6 +171,13 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         //            (!sjl.empty(keyVal) ? targets.push(keyVal) : targets);
         //    });
         //}
+
+        // If ignored tasks then filter targets against them
+        if (ignoredTasks) {
+            targets = self.wrangler.explodeGlobs(targets).filter(function(item) {
+                return ignoredTasks.indexOf(item) === -1;
+            });
+        }
 
         return targets;
     },

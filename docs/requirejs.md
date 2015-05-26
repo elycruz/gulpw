@@ -1,7 +1,7 @@
 ### requirejs
 RequireJs task.
 
-#####In 'bundle.wrangler.config.yaml':
+#####In 'gulpw-config.yaml':
 ```
 tasks:
   requirejs: null # requirejs options here

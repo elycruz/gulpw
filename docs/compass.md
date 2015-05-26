@@ -1,7 +1,7 @@
 ### compass
 The 'compass' task calls 'compass compile' at compass project root location (config.rb home).
 
-##### In bundle.wrangler.config.*:
+##### In gulpw-config.*:
 ```
 tasks:
   compass:

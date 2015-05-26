@@ -15,7 +15,7 @@ into your javascript file (appended to the bottom of the javascript file)(read n
 ##### Flags:
 `--skip-linting`, `--skip-csslint`, `--skip-jshint`, `--skip-jslint`, `--dev`
 
-##### In 'bundle.wrangler.config.yaml':
+##### In 'gulpw-config.yaml':
 ```
 tasks:
   minify:

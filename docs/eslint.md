@@ -2,7 +2,7 @@
 The `eslint` task expects `gulp-eslint` options (link to gulp-eslint: https://github.com/adametry/gulp-eslint)
 along with a couple of custom optional attributes:
 
-##### In bundle.wrangler.config.*:
+##### In gulpw-config.*:
 ```
 tasks:
     eslint:

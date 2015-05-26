@@ -8,7 +8,7 @@ See jshint module for options.
 ##### Flags:
 `--skip-jshint`, `skip-jslint`, `skip-linting`
 
-##### In 'bundle.wrangler.config.*':
+##### In 'gulpw-config.*':
 ```
 tasks:
   jshint:

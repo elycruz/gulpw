@@ -18,7 +18,7 @@ The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if 
 ##### Options:
 - **allowedFileTypes: {Array}:** A list of file types to allow for cleaning.
 
-##### In 'bundle.wrangler.config.*':
+##### In 'gulpw-config.*':
 ```
 tasks:
   clean:

@@ -12,7 +12,7 @@ copy:
 ##### Options:
 None.
 
-##### In bundle.wrangler.config.*:
+##### In gulpw-config.*:
 None.
 
 ##### In {bundle}.*:

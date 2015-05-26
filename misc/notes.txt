@@ -8,7 +8,7 @@ I.)  Brainstorming:
 
     2.) Suggested directories for default setup:
         - bundle-configs/
-        - bundle.wrangler.config.yaml
+        - gulpw-config.yaml
         - bundle-wrangler-configs/
 
     3.) How do we allow users to have a config and not merge their config

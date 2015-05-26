@@ -1,8 +1,8 @@
 ### bundle
 Creates a bundle config file in the designated 'bundlesPath' property
-described in your bundle.wrangler.config.* file.
+described in your gulpw-config.* file.
 
-##### In bundle.wrangler.config.*:
+##### In gulpw-config.*:
 ```
 static-tasks:
   bundle:

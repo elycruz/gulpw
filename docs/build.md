@@ -20,7 +20,7 @@ depending on if an `html`, `css` or `js` section is found with the `files` secti
 `--skip-linting`, `--skip-csslint`, `--skip-jshint`, `--dev`,
 `--skip-testing`, `--skip-mocha-test`, `--skip-jasmine-tests`
 
-##### In 'bundle.wrangler.config.*':
+##### In 'gulpw-config.*':
 ```
 tasks:
   # Build Task (Looks through {bundle-alias}.yaml file and runs

@@ -9,7 +9,7 @@ Mocha tests task runs the mocha module on your test 'files' array or string usin
 ##### Options:
 Mocha options.  See Mocha module for options.
 
-##### In 'bundle.wrangler.config.yaml':
+##### In 'gulpw-config.yaml':
 ```
 tasks:
   mocha:

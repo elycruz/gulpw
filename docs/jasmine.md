@@ -9,7 +9,7 @@ Jasmine options (see jasmine module for available options).
 - Skip Testing:
   - `--skip-tests`, `--skip-testing`, `--skip-jasmine-tests`, `--skip-jasmine-testing`
 
-##### In 'bundle.wrangler.config.*':
+##### In 'gulpw-config.*':
 ```
 tasks:
   jasmine:

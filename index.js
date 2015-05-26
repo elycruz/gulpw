@@ -44,7 +44,7 @@ var Liftoff =   require('liftoff'),
         name: 'gulpw',
         processTitle: 'gulpw',
         moduleName: 'gulpw',
-        configName: 'bundle.wrangler.config',
+        configName: 'gulpw-config',
         extensions: {
             '.js': null,
             '.json': null,
@@ -79,7 +79,7 @@ function init(env) {
     if (sjl.empty(env.configPath)) {
 
         // Write message to user
-        console.log(chalk.yellow('No \'bundle.wrangler.config.*\' file found.'), '\n',
+        console.log(chalk.yellow('No \'gulpw-config.*\' file found.'), '\n',
                 chalk.cyan('Create an empty one and then run `gulpw config` to populate it.')
             );
 

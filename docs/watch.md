@@ -11,7 +11,7 @@ default.
 ##### Flags:
 - Not yet implement ~~`--file-type` (`--ext`, `-t`) - A list of comma separated file types to watch explicitly (ignores all other file types).~~
 
-##### In 'bundle.wrangler.config.*':
+##### In 'gulpw-config.*':
 ```
 tasks:
   watch:

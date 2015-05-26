@@ -486,14 +486,16 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             // Ensure only registered tasks get run
             tasks = tasks.filter(function (item) {
+                var retVal;
                 if (gulp.tasks.hasOwnProperty(item)) {
-                    return true;
+                    retVal = true;
                 }
                 else {
                     self.log(chalk.yellow('! Could not run the task "' + item + '".  ' +
                         'Task not properly configured.'), '--mandatory');
-                    return false;
+                    retVal = false;
                 }
+                return retVal;
             });
 
             // loop through tasks and call gulp.start on each
@@ -665,7 +667,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                     //    'a task value but could not find a loadable config file for it.' +
                     //    '  Path attempted to load: ' + value +
                     //    '  Task key "' + key + '" will not be merged in from the' +
-                    //    ' user\'s bundle.wrangler.config.* file.'));
+                    //    ' user\'s gulpw-config.* file.'));
                     objToMerge = null;
                 }
                 // load file
