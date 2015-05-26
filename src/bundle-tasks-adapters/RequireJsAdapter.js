@@ -171,9 +171,9 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
     },
 
     isBundleValidForTask: function (bundle) {
-        var requirejs = bundle.get('requirejs');
-        return !sjl.empty(requirejs)
-            && (sjl.classOfIs(requirejs, 'String') || sjl.classOfIs(requirejs, 'Object'));
+        var requirejsSection = bundle.get('requirejs');
+        return !sjl.empty(requirejsSection)
+            && (sjl.classOfIs(requirejsSection, 'String') || sjl.classOfIs(requirejsSection, 'Object'));
     }
 
 }); // end of export
