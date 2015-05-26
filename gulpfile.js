@@ -80,6 +80,7 @@ gulp.task('eslint', function () {
 
 gulp.task('watch', function () {
     gulp.watch(srcs, ['eslint']);
+    gulp.watch('./docs/*.md', ['readme']);
 });
 
-gulp.task('default', ['eslint', 'watch']);
+gulp.task('default', ['eslint', 'readme', 'watch']);

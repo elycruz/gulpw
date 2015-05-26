@@ -60,6 +60,39 @@ None.
 
 
 ### bundle
+Creates a bundle config file in the designated 'bundlesPath' property
+described in your bundle.wrangler.config.* file.
+
+##### In bundle.wrangler.config.*:
+```
+static-tasks:
+  bundle:
+    allowedTasks:
+      - browserify
+      - compass
+      - copy
+      - csslint
+      - deploy
+      - jasmine
+      - jshint
+      - mocha
+      - requirejs
+      - watch
+```
+
+##### Options:
+- **allowedTasks:**  List of tasks that the user is allowed to choose
+from when generating a new bundle config.
+
+##### In {bundle}.*:
+None.
+
+##### Flags:
+- **bundle:** Sets the default bundle name to use for the new bundle
+config file for the current bundle generation session.  Default 'bundle'.
+Optional (will ask the user for the name of the bundle to generate
+ but will have the passed in --bundle value as the default).
+
 
 ### clean
 The 'clean' task cleans out any artifact files outputted by a bundle;  E.g., if a bundle has a `files` key or
@@ -282,6 +315,33 @@ None.
 
 
 ### eslint
+The `eslint` task expects `gulp-eslint` options (link to gulp-eslint: https://github.com/adametry/gulp-eslint)
+along with a couple of custom optional attributes:
+
+##### In bundle.wrangler.config.*:
+```
+tasks:
+    eslint:
+        options:
+            useEslintrc: true // Whether to use .eslintrc file
+        failAfterError: false
+        failOnError: false
+        eslintrc: ./.eslintrc // deprecated.  Use options hash map instead
+```
+
+##### Options:
+- **options:**  `gulp-eslint` options (https://github.com/adametry/gulp-eslint)
+    - **useEslintrc:** {Boolean} - Whether to use .eslintrc files found in the directories checked.  Default 'true'.
+- **failAfterError:** {Boolean} - Whether to fail the task after an error or not.  Default 'false'.
+- **failOnError:** {Boolean} - Whether to fail the task on an error or not.  Default 'false'.
+
+##### In {bundle}.*:
+None.
+
+##### Flags:
+- **skip-lint{ing}**
+- **skip-jshint{ing}**
+- **skip-jslint{int}**
 
 ### help
 
