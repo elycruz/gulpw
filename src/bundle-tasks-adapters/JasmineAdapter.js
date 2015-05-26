@@ -16,8 +16,7 @@ var jasmine = require('gulp-jasmine'),
 module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
-        var taskConfig = sjl.extend(true,
-                JSON.parse(JSON.stringify(wrangler.tasks.jasmine)), bundle.options.jasmine),
+        var taskConfig = sjl.extend(true, JSON.parse(JSON.stringify(wrangler.tasks.jasmine)), bundle.options.jasmine),
             jasmineOptions = taskConfig.options,
             skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
@@ -27,7 +26,7 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
                     console.log(chalk.grey('Skipping jasmine tests.\n'));
                     return fulfill();
                 }
-                console.log(chalk.cyan('  Running "' + taskName + '":\n'));
+                console.log(chalk.cyan('Running "' + taskName + '":\n'));
                 gulp.src(taskConfig.files)
                     .pipe(jasmine(jasmineOptions))
                     .pipe(duration(chalk.cyan('jasmine \"' + bundle.options.alias + '\' duration')))
@@ -36,7 +35,6 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
                         }));
             }));
         });
-
     },
 
     /**
@@ -72,7 +70,7 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
                 console.log(chalk.grey('Skipping jasmine tests.\n'));
                 return Promise.resolve();
             }
-            console.log('  Running "jasmine" task(s):\n');
+            console.log('Running "jasmine" task(s):\n');
             return wrangler.launchTasks(tasks, gulp);
         });
     },
