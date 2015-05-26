@@ -30,15 +30,6 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-
-        //console.log('wrangler.tasks.minify.notConfiguredByUser: ', wrangler.tasks.minify.notConfiguredByUser);
-
-        // If bundle doesn't have any of the required keys or task is not configured by user, bail
-        if (!this.isBundleValidForTask(bundle) || wrangler.tasks.minify.hasOwnProperty('notConfiguredByUser')
-            && wrangler.tasks.minify.notConfiguredByUser) {
-            return;
-        }
-
         var self = this,
             minifyConfig = bundle.has('minify') ?
                 sjl.extend(true, wrangler.clone(wrangler.tasks.minify), bundle.get('minify'))

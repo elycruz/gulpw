@@ -49,9 +49,6 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-        if (!this.isBundleValidForTask(bundle)) {
-            return;
-        }
         this.registerGulpTask('copy:' + bundle.options.alias, gulp, bundle, wrangler);
     },
 

@@ -87,11 +87,6 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
             targets,
             tasks;
 
-        // Exit registration if bundle is not valid for task adapter
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
-
         // Register bundle with tasks
         wrangler.registerTasksForBundle(gulp, bundle, wrangler.tasks.watch.tasks);
 

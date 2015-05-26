@@ -27,10 +27,6 @@ module.exports = BaseBundleTaskAdapter.extend('CssLintAdapter', {
         var self = this,
             cssLintPipe = self.getPipe(bundle, gulp, wrangler);
 
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
-
         gulp.task('csslint:' + bundle.options.alias, function () {
             return gulp.src(bundle.options.files.css)
                 .pipe(cssLintPipe());

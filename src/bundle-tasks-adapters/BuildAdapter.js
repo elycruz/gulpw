@@ -18,10 +18,6 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
             taskName = 'build:' + bundleName,
             targets, deps;
 
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
-
         targets = self.getTasksForBundle(bundle, wrangler);
 
         deps = self.getPrelimTasksForBundle(bundle, wrangler, targets.targets);

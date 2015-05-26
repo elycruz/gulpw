@@ -40,10 +40,6 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
     },
 
     registerBundle: function (bundle, gulp, wrangler) {
-        var self = this;
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
         this.registerGulpTask('mocha:' + bundle.options.alias, gulp, bundle, wrangler);
     },
 

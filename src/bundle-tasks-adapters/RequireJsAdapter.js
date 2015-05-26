@@ -44,25 +44,16 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-
-        // If bundle doesn't have any of the required keys, bail
-        if (!this.isBundleValidForTask(bundle)) {
-            return;
-        }
-
-        // Task string separator
-        var self = this,
-
-            // Bundle name for task
-            bundleName = bundle.options.alias,
+        // Bundle name for task
+        var bundleName = bundle.options.alias,
 
             // Task name
-            taskName = self.alias + ':' + bundleName,
+            taskName = this.alias + ':' + bundleName,
 
             // Rjs command (adding prefix for windows version)
-            requireJsOptions = self.getRequireJsOptions(bundle, wrangler);
+            requireJsOptions = this.getRequireJsOptions(bundle, wrangler);
 
-        self.registerGulpTask(taskName, requireJsOptions, gulp, wrangler, bundle);
+        this.registerGulpTask(taskName, requireJsOptions, gulp, wrangler, bundle);
 
     }, // end of `registerBundle`
 

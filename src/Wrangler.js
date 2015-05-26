@@ -32,15 +32,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         taskKeys: Object.keys(defaultOptions.tasks),
         staticTasks: defaultOptions.staticTasks,
         staticTaskKeys: Object.keys(defaultOptions.staticTasks),
-        configPath: env.configPath,
-        registrationResults: {
-            failedRegistrationFor: {
-                /*taskName: []*/
-            },
-            passedRegistrationFor: {
-                /*taskName: []*/
-            }
-        }
+        configPath: env.configPath
     }, defaultOptions);
 
     // Merge local options
@@ -289,11 +281,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     registerBundleWithTask: function (bundle, task) {
-        var self = this;
+        var self = this,
+            taskAdapter = self.getTaskAdapter(task);
         bundle = self.getBundleAlias(bundle);
         task = self.getTaskAdapterAlias(task);
-        if (!self.isTaskRegistered(task + ':' + bundle)) {
-            self.getTaskAdapter(task).registerBundle(self.bundles[bundle], self.gulp, self);
+        if (!self.isTaskRegistered(task + ':' + bundle)
+            && taskAdapter.isBundleValidForTask(self.bundles[bundle])) {
+            // Register bundle with task and capture registration result
+            taskAdapter.registerBundle(self.bundles[bundle], self.gulp, self);
             self.log(' ~ Bundle "' + bundle + '" registered with task "' + task + '".');
         }
         return self;
@@ -488,6 +483,18 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 log('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
                 return;
             }
+
+            // Ensure only registered tasks get run
+            tasks = tasks.filter(function (item) {
+                if (gulp.tasks.hasOwnProperty(item)) {
+                    return true;
+                }
+                else {
+                    self.log(chalk.yellow('! Could not run the task "' + item + '".  ' +
+                        'Task not properly configured.'), '--mandatory');
+                    return false;
+                }
+            });
 
             // loop through tasks and call gulp.start on each
             tasks.forEach(function (item) {

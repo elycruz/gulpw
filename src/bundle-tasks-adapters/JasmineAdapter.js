@@ -43,27 +43,31 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-        var self = this;
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
         this.registerGulpTask('jasmine:' + bundle.options.alias, gulp, bundle, wrangler);
+        return true;
     },
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             taskName,
             tasks = [],
+            failedRegistrations = [],
             skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
+                failedRegistrations.push('jasmine:' + bundle.options.alias);
                 return;
             }
             taskName = 'jasmine:' + bundle.options.alias;
             self.registerBundle(bundle, gulp, wrangler);
             tasks.push(taskName);
         });
+
+        // If no bundles were registered do not register overall task
+        if (failedRegistrations.length === bundles.length) {
+            return;
+        }
 
         gulp.task('jasmine', function () {
             if (skipTests) {

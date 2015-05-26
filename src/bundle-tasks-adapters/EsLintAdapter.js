@@ -18,35 +18,23 @@ var
 module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
 
     registerBundle: function (bundle, gulp, wrangler) {
-
-        // Task string separator
         var self = this,
             taskName = 'eslint:' + bundle.options.alias;
 
-        if (!self.isBundleValidForTask(bundle)) {
-            return false;
-        }
-
         gulp.task(taskName, function () {
-
             console.log(chalk.cyan('Running "' + taskName + '"\n.'));
-
             return gulp.src(self.getTargetsForBundle(bundle, wrangler))
 
                 // Get prebuilt pipe
                 .pipe(self.getPipe(bundle, gulp, wrangler)());
         });
-
-        return true;
-
-    }, // end of `registerBundle`
+    },
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = [],
             failedRegistrations = [],
-            taskName,
-            retVal;
+            taskName;
 
         bundles.forEach(function (bundle) {
             taskName = self.getTaskNameForBundle(bundle) || 'No Alias';
@@ -64,14 +52,10 @@ module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
             }
         });
 
-        retVal = failedRegistrations.length !== bundles.length;
-
         // Make sure some of the bundles passed registration else do not register the overall gulp task
-        if (retVal) {
+        if (failedRegistrations.length !== bundles.length) {
             self.registerGulpTasks('eslint', targets, gulp, wrangler);
         }
-
-        return retVal;
     },
 
     getTargetsForBundle: function (bundle/*, wrangler*/) {

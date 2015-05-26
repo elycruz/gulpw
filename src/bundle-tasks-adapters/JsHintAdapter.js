@@ -27,13 +27,7 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
         var self = this,
             taskName = 'jshint:' + bundle.options.alias,
             filesToExclude = wrangler.tasks.jshint.ignoredFiles,
-            src;
-
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
-
-        src = self.getTargetsForBundle(bundle, wrangler);
+            src = self.getTargetsForBundle(bundle, wrangler);
 
         if (filesToExclude && Array.isArray(filesToExclude)) {
             src = src.filter(function (item) {

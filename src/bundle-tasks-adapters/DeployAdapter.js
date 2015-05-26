@@ -164,26 +164,20 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
     },
 
     registerBundle: function (bundle, gulp, wrangler) {
-
-        // If bundle is not valid for task, bail
-        if (!this.isBundleValidForTask(bundle) || wrangler.tasks.deploy.notConfiguredByUser) {
-            return;
+        if (this.wrangler.tasks.deploy.notConfiguredByUser) {
+            return false;
         }
 
-        // Task string separator
         var targets = this.getSrcForBundle(bundle, wrangler);
 
         this.registerGulpTask(':' + bundle.options.alias, targets, gulp, wrangler);
 
+        return true;
     }, // end of `registerBundle`
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = {};
-
-        if (wrangler.tasks.deploy.notConfiguredByUser) {
-            return;
-        }
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
@@ -324,7 +318,8 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && (
+        return !this.wrangler.tasks.deploy.notConfiguredByUser
+            && bundle && (
             bundle.has('files')
             || (bundle.has('requirejs') || bundle.has('browserify'))
             || bundle.has('deploy.otherFiles') );
@@ -387,7 +382,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
             this.wrangler.tasks.deploy.notConfiguredByUser = true;
 
             // Log a warning
-            console.log(chalk.yellow('Please run the "deploy-config" task before ' +
+            console.log(chalk.yellow('! Please run the "deploy-config" task before ' +
                 'attempting to deploy.  Attempted to load path: ' + localConfigPath + ' but path doesn\'t exist.\n'));
             //throw new Error('Could not run the deploy task due to missing config file.');
             if (!this.wrangler.argv.force) {
