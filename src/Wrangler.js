@@ -1,5 +1,6 @@
 /**
  * Created by Ely on 10/4/2014.
+ * @todo filter out tasks that have no bundle registered with them before running `launchTasks`.
  */
 
 'use strict';
@@ -31,7 +32,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         taskKeys: Object.keys(defaultOptions.tasks),
         staticTasks: defaultOptions.staticTasks,
         staticTaskKeys: Object.keys(defaultOptions.staticTasks),
-        configPath: env.configPath
+        configPath: env.configPath,
+        registrationResults: {
+            failedRegistrationFor: {
+                /*taskName: []*/
+            },
+            passedRegistrationFor: {
+                /*taskName: []*/
+            }
+        }
     }, defaultOptions);
 
     // Merge local options
@@ -119,6 +128,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return self;
     },
 
+    /**
+     * Create task adapters for passed in keys
+     * @param gulp {gulp}
+     * @param taskKeys {Array}
+     * @returns {Wrangler}
+     */
     createTaskAdapters: function (gulp, taskKeys) {
         var self = this;
 
@@ -129,6 +144,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         taskKeys.forEach(function (task) {
             if (sjl.classOfIs(self.tasks[task], 'String')) {
+                // If file is unloadable throw an error
+                if (!fs.existsSync(self.tasks[task])) {
+                    throw new Error('Wrangler.createTaskAdapters encountered a string for ' +
+                        'a task value but could not find a loadable file for it.' +
+                        'Path attempted to load: ' + self.tasks[task]);
+                }
+                // Load config file
                 self.tasks[task] = self.loadConfigFile(path.join(process.cwd(), self.tasks[task]));
             }
             self.tasks[task].instance = self.createTaskAdapter(gulp, task);
@@ -450,7 +472,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return self;
     },
 
-    // @todo idea: make each one in argv._ depend on the next
     launchTasks: function (tasks, gulp) {
         var self = this;
 
@@ -626,15 +647,33 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             var value = tasks[key],
 
                 // If task config is a string assume a path
-                objToMerge = sjl.classOfIs(value, 'String')
-                    ? self.loadConfigFile(path.join(process.cwd(), value)) : value;
+                objToMerge = value;
+
+            // Attempt to load file if `value` is a string
+            if (sjl.classOfIs(value, 'String')) {
+                // If file is unloadable warn the user about unloadable file path
+                if (!fs.existsSync(value)) {
+                    /*throw new Error*/
+                    //console.warn(chalk.yellow('\n!`Wrangler.mergeLocalOptions` encountered a string for ' +
+                    //    'a task value but could not find a loadable config file for it.' +
+                    //    '  Path attempted to load: ' + value +
+                    //    '  Task key "' + key + '" will not be merged in from the' +
+                    //    ' user\'s bundle.wrangler.config.* file.'));
+                    objToMerge = null;
+                }
+                // load file
+                else {
+                    objToMerge = self.loadConfigFile(path.join(process.cwd(), value));
+                }
+            }
 
             // If task config is an object extend it
-            if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key], 'Object')) {
+            if (sjl.isset(self.tasks[key]) && sjl.classOfIs(self.tasks[key], 'Object')
+            && sjl.classOfIs(objToMerge, 'Object')) {
                 sjl.extend(true, self.tasks[key], objToMerge);
             }
             // Else set it
-            else {
+            else if (objToMerge !== null) {
                 self.tasks[key] = objToMerge;
             }
         });
@@ -804,6 +843,30 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             }
         });
         return out;
+    },
+
+    /**
+     * Clones some options from wrangler based on key and extends those options with your passed in object.
+     * @param key {String} - String / Namespace string ('some.path.within.an.object')
+     * @param extendWithObj {Object|*} - Optional.  Only gets merged with the key in wrangler if this variable is an `Object`.
+     * @returns {*}
+     */
+    extendWranglerOptions: function (key, extendWithObj) {
+        var options = sjl.namespace(key, this),
+            classOfOptions = sjl.classOf(options),
+            classOfObj = sjl.classOf(extendWithObj),
+            retVal = null;
+        if (sjl.empty(options) && !sjl.empty(extendWithObj)) {
+            retVal = extendWithObj;
+        }
+        else if (!sjl.empty(options) && sjl.empty(extendWithObj)) {
+            retVal = options;
+        }
+        else if (!sjl.empty(options) && !sjl.empty(extendWithObj) &&
+            classOfOptions === 'Object' && classOfObj === 'Object') {
+            retVal = sjl.extend(true, this.clone(options), extendWithObj);
+        }
+        return retVal;
     }
 
 });

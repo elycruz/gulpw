@@ -44,7 +44,7 @@ deploy:
       - ./public/js/vendors/require.js
       - ./public/js/amd/init.js
 
-# Copies files from one location to another (@todo should run before 'deploy' task)
+# Copies files from one location to another (Runs before 'deploy' task)
 copy:
   files:
     ./fe-dev/bower_components/requirejs/require.js: ./public/js/vendors/require.js

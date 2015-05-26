@@ -7,3 +7,5 @@
 - Build files cannot be shared amongst bundles when wanting to use the 'watch' task cause they cause a
  cyclic dependency when running global
  watch tasks;  I.e., `gulpw watch`
+- Inorder to run tests you must have run `gulpw deploy-config` since the deploy task will expect local deploy options to be
+setup for the gulpw-sample-app.

@@ -40,26 +40,29 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
         }
 
         var self = this,
+            minifyConfig = bundle.has('minify') ?
+                sjl.extend(true, wrangler.clone(wrangler.tasks.minify), bundle.get('minify'))
+                    : wrangler.tasks.minify,
             taskConfigMap = {
-                html: {instance: minifyhtml, options: wrangler.tasks.minify.htmlTaskOptions},
-                css: {instance: minifycss, options: wrangler.tasks.minify.cssTaskOptions},
-                js: {instance: uglify, options: wrangler.tasks.minify.jsTaskOptions}
+                html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
+                css: {instance: minifycss, options: minifyConfig.cssTaskOptions},
+                js: {instance: uglify, options: minifyConfig.jsTaskOptions}
             },
-            //useMinPreSuffix = wrangler.tasks.minify.useMinPreSuffix,
+            //useMinPreSuffix = minifyConfig.useMinPreSuffix,
             bundleName = bundle.options.alias,
             taskName = self.alias + ':' + bundleName,
-            allowedFileTypes = wrangler.tasks.minify.allowedFileTypes,
-            createFileHash = wrangler.tasks.minify.createFileHashes || true,
-            fileHashType = wrangler.tasks.minify.fileHashType || 'sha256';
+            allowedFileTypes = minifyConfig.allowedFileTypes,
+            createFileHash = minifyConfig.createFileHashes || true,
+            fileHashType = minifyConfig.fileHashType || 'sha256';
 
         // Create task for bundle
         gulp.task(taskName, function () {
 
             // Check for sections on bundle that can be minified
             allowedFileTypes.forEach(function (ext) {
-                var buildPath = wrangler.tasks.minify[ext + 'BuildPath'],
+                var buildPath = minifyConfig[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext],
-                    jsHintPipe = wrangler.getTaskAdapter('jshint').getPipe(bundle, gulp, wrangler),
+                    eslintPipe = wrangler.getTaskAdapter('eslint').getPipe(bundle, gulp, wrangler),
                     cssLintPipe = wrangler.getTaskAdapter('csslint').getPipe(bundle, gulp, wrangler),
                     skipCssLinting = wrangler.skipLinting() || wrangler.skipCssLinting(),
                     skipJsLinting = wrangler.skipLinting() || wrangler.skipJsLinting(),
@@ -79,7 +82,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                 // Give gulp the list of sources to process
                 return gulp.src(bundle.options.files[ext])
 
-                    .pipe(gulpif(ext === 'js' && !skipJsLinting, jsHintPipe()))
+                    .pipe(gulpif(ext === 'js' && !skipJsLinting, eslintPipe()))
 
                     .pipe(gulpif(ext === 'css' && !skipCssLinting, cssLintPipe()))
 
@@ -103,7 +106,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     }))
 
                     // Add file header
-                    .pipe(gulpif(ext !== 'html', header(wrangler.tasks.minify.header,
+                    .pipe(gulpif(ext !== 'html', header(minifyConfig.header,
                         {bundle: bundle, fileExt: ext, fileHashType: fileHashType} )))
 
                     // Dump to the directory specified in the `minify` call above

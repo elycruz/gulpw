@@ -24,7 +24,7 @@ module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
             taskName = 'eslint:' + bundle.options.alias;
 
         if (!self.isBundleValidForTask(bundle)) {
-            return;
+            return false;
         }
 
         gulp.task(taskName, function () {
@@ -37,19 +37,41 @@ module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
                 .pipe(self.getPipe(bundle, gulp, wrangler)());
         });
 
+        return true;
+
     }, // end of `registerBundle`
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
-            targets = [];
+            targets = [],
+            failedRegistrations = [],
+            taskName,
+            retVal;
+
         bundles.forEach(function (bundle) {
+            taskName = self.getTaskNameForBundle(bundle) || 'No Alias';
             if (!self.isBundleValidForTask(bundle)) {
+                failedRegistrations.push(taskName);
                 return;
             }
-            self.registerBundle(bundle, gulp, wrangler);
-            targets = self.getTasksForBundle(bundle, ['eslint'], wrangler).concat(targets);
+
+            // Register bundle and record whether it was successfully registered or not
+            if (self.registerBundle(bundle, gulp, wrangler) === false) {
+                failedRegistrations.push(taskName);
+            }
+            else {
+                targets = self.getTasksForBundle(bundle, ['eslint'], wrangler).concat(targets);
+            }
         });
-        self.registerGulpTasks('eslint', targets, gulp, wrangler);
+
+        retVal = failedRegistrations.length !== bundles.length;
+
+        // Make sure some of the bundles passed registration else do not register the overall gulp task
+        if (retVal) {
+            self.registerGulpTasks('eslint', targets, gulp, wrangler);
+        }
+
+        return retVal;
     },
 
     getTargetsForBundle: function (bundle/*, wrangler*/) {

@@ -11,6 +11,8 @@ All flag default values are `null`/`false`.
         - `--ext`
         - `-t`
         - `-x`
+- **force:** Used to force the task runner to continue despite any errors.
+    - **Aliases:** -f
 - **debug:** Used for developing gulpw and allows you to keep your more pertinent debug logging declarations.
     - **Aliases:** None.
 - **dev:** Used to ignore minification (at this time).

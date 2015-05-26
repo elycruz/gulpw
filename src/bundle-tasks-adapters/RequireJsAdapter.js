@@ -15,7 +15,6 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
     FilesHashTaskAdapter.apply(this, arguments);
 }, {
 
-    // @todo add a `getTaskNameForBundle` method
     registerGulpTask: function (taskName, requireJsOptions, gulp, wrangler, bundle) {
         var self = this;
 
@@ -97,7 +96,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
             self.registerBundle(bundle, gulp, wrangler);
 
             // Register singular task
-            self.registerGulpTask(taskName, self.getRequireJsOptions(bundle), gulp, wrangler, bundle);
+            self.registerGulpTask(taskName, self.getRequireJsOptions(bundle, wrangler), gulp, wrangler, bundle);
         });
 
         // If we have targets register them
@@ -108,18 +107,20 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
     },
 
     getRequireJsOptions: function (bundle, wrangler) {
-        var rjsOptions = null;
+        var rjsOptions = bundle.get('requirejs');
         if (bundle.has('requirejs.buildConfigPath')) {
-            // Load build config
-            rjsOptions = wrangler.loadConfigFile(
-                bundle.options.requirejs.buildConfigPath);
+            rjsOptions = wrangler.loadConfigFile(rjsOptions.buildConfigPath);
         }
         else if (bundle.has('requirejs.options')) {
-            rjsOptions = bundle.options.requirejs.options;
+            rjsOptions = rjsOptions.options;
         }
-        else {
-            rjsOptions = bundle.get('requirejs');
+        else if (sjl.classOfIs(rjsOptions, 'String') && rjsOptions.length > 0) {
+            rjsOptions = wrangler.loadConfigFile(rjsOptions);
         }
+        if (sjl.empty(rjsOptions)) {
+            throw new Error ('`RequireJsAdapter.getRequireJs` expects resolved `requirejs.options` to be a non empty object.');
+        }
+        rjsOptions = wrangler.extendWranglerOptions('tasks.requirejs.options', rjsOptions);
         return rjsOptions;
     },
 
@@ -169,7 +170,9 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle.has('requirejs.buildConfigPath') || bundle.has('requirejs.options');
+        var requirejsSection = bundle.get('requirejs');
+        return !sjl.empty(requirejsSection)
+            && (sjl.classOfIs(requirejsSection, 'String') || sjl.classOfIs(requirejsSection, 'Object'));
     }
 
 }); // end of export

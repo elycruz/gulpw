@@ -18,7 +18,7 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
         sjl.Optionable.apply(self, [{
             alias: 'Alias goes here.',
             description: 'Description goes here.',
-            version: 'Semver version string goes here.'
+            version: '0.0.0' // semver version
         }, options]);
 
         // If has init function run it
