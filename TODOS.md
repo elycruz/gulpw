@@ -104,10 +104,10 @@ gulpw (gulp wrangler)
   - [X] - Renamed all occurrences of 'Proxy' to 'Adapter' (since what Wrangler uses are actually adapters).
   - [ ] - Refresh docs
   - [ ] - Ensure all tasks are optional
-  - [ ] - Ensure that `registerBundle` and `registerBundles` returns a boolean so we can track which bundles registered
-  successfully or not.
-  - [ ] - Track which bundles register successfully and which ones do not on and pull out their tasks
-        before sending tasks to gulp.
+  - [X] - ~~Ensure that `registerBundle` and `registerBundles` returns a boolean so we can track which bundles registered
+  successfully or not.~~  Instead we just check `gulp.tasks` to see if task is registered before trying to run it.
+  - [X] - ~~Track which bundles register successfully and which ones do not on and pull out their tasks
+        before sending tasks to gulp.~~ Same as above (makes for less processing and less code).
 - [ ] - Make bundle names case insensitive.
 
 ### Todos for Version 0.3.0

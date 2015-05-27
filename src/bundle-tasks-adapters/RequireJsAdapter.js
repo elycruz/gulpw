@@ -162,7 +162,10 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
 
     isBundleValidForTask: function (bundle) {
         var requirejsSection = bundle.get('requirejs');
-        return !sjl.empty(requirejsSection)
+        // If argv.fileTypes was passed in but no 'js' file type was passed as one of it's values
+        // Do not run the requirejs task (as it builds 'js' files).
+        return (sjl.empty(this.wrangler.argv.fileTypes) || this.wrangler.argv.fileTypes.split(',').indexOf('js') > -1)
+            && !sjl.empty(requirejsSection)
             && (sjl.classOfIs(requirejsSection, 'String') || sjl.classOfIs(requirejsSection, 'Object'));
     }
 

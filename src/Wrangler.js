@@ -311,7 +311,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     isTaskRegistered: function (taskName) {
-        return sjl.isset(this.gulp.tasks[taskName]);
+        return this.gulp.tasks.hasOwnProperty(taskName) && !sjl.empty(this.gulp.tasks[taskName]);
     },
 
     getTaskAliasesFromArgv: function () {
@@ -472,31 +472,29 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         self.log ('gulp tasks: \n', gulp.tasks, '--debug');
 
+        if (sjl.empty(tasks)) {
+            log('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
+            return Promise.reject('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
+        }
+
+        // Ensure only registered tasks get run
+        tasks = tasks.filter(function (item) {
+            var retVal;
+            if (self.isTaskRegistered(item)) {
+                retVal = true;
+            }
+            else {
+                self.log(chalk.yellow('! Could not run the task "' + item + '".  ' +
+                'Task not properly configured.'), '--mandatory');
+                retVal = false;
+            }
+            return retVal;
+        });
+
         return (new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
                 completedTasks,
                 completionInterval = null;
-                //taskList;
-
-            if (sjl.empty(tasks)) {
-                reject();
-                log('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
-                return;
-            }
-
-            // Ensure only registered tasks get run
-            tasks = tasks.filter(function (item) {
-                var retVal;
-                if (gulp.tasks.hasOwnProperty(item)) {
-                    retVal = true;
-                }
-                else {
-                    self.log(chalk.yellow('! Could not run the task "' + item + '".  ' +
-                        'Task not properly configured.'), '--mandatory');
-                    retVal = false;
-                }
-                return retVal;
-            });
 
             // loop through tasks and call gulp.start on each
             tasks.forEach(function (item) {
@@ -571,8 +569,16 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 return;
             }
 
-            gulp.tasks[item1[0]].dep = gulp.tasks[item1[0]].dep || [];
-            gulp.tasks[item1[0]].dep = gulp.tasks[item1[0]].dep.concat(item2);
+            var deps1 = self.onlyDefinedTaskAliases(gulp.tasks[item1[0]].dep || []),
+                deps2 = self.onlyDefinedTaskAliases(item2);
+
+            if (deps1.length > 0) {
+                gulp.tasks[item1[0]].dep = deps1;
+            }
+
+            if (deps2.length > 0) {
+                gulp.tasks[item1[0]].dep = (gulp.tasks[item1[0]].dep || []).concat(deps2);
+            }
 
             // Debug message
             self.log('items:', item1, item2, i, '--debug');
@@ -685,6 +691,13 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             else if (objToMerge !== null) {
                 self.tasks[key] = objToMerge;
             }
+        });
+    },
+
+    onlyDefinedTaskAliases: function (aliases) {
+        var self = this;
+        return aliases.filter(function (item) {
+            return self.isTaskRegistered(item);
         });
     },
 

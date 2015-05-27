@@ -90,7 +90,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
 
                     // Ensure file exists before attempting to load it
                     if (!fs.existsSync(file)) {
-                        console.log(chalk.yellow(' ! Template file doesn\'s exist: ' + file));
+                        console.log(chalk.yellow(' ! Template file doesn\'s exist: "' + file + '"\n'));
                         return;
                     }
 
