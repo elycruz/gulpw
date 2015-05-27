@@ -280,7 +280,15 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
     },
 
     mapFileArrayToDeployArrayMap: function (fileArray, fileType, selectedServerEntry/*, wrangler*/) {
-        var self = this, otherFiles = [];
+        var self = this, otherFiles = [],
+            itemTransformRegexMap = selectedServerEntry.hasOwnProperty('localPathsToServerPathsRegexMap')
+                && !sjl.empty(selectedServerEntry.localPathsToServerPathsRegexMap) ?
+                selectedServerEntry.localPathsToServerPathsRegexMap : null,
+            itemTransformRegexMapKeys = null;
+
+            if (itemTransformRegexMap) {
+                itemTransformRegexMapKeys = new Set(Object.keys(itemTransformRegexMap))
+            }
 
         fileArray = Array.isArray(fileArray) ? fileArray : [];
 
@@ -297,13 +305,31 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
         });
 
         return fileArray.concat(otherFiles).map(function (item) {
-            var retVal;
+            var retVal,
+                deployItem = item,
+                matchedRegex,
+                matchedRegexKeyVal;
+
+            if (itemTransformRegexMapKeys !== null && itemTransformRegexMapKeys.size > 0) {
+                itemTransformRegexMapKeys.forEach(function (regexItem) {
+                    var regex = new RegExp(regexItem);
+                    if (regex.test(item)) {
+                        matchedRegex = regex;
+                        matchedRegexKeyVal = itemTransformRegexMap[regexItem];
+                    }
+                });
+
+                if (matchedRegex) {
+                    deployItem = item.replace(matchedRegex, matchedRegexKeyVal);
+                    matchedRegex = matchedRegexKeyVal = null;
+                }
+            }
 
             if (self._serverEntryHasDeployFolderType(selectedServerEntry, fileType)) {
-                retVal = [item, path.join(selectedServerEntry.deployRootFoldersByFileType[fileType], item)];
+                retVal = [item, path.join(selectedServerEntry.deployRootFoldersByFileType[fileType], deployItem)];
             }
             else {
-                retVal = [item, path.join(selectedServerEntry.deployRootFolder || '', item)];
+                retVal = [item, path.join(selectedServerEntry.deployRootFolder || '', deployItem)];
             }
 
             // Check if we need unix styled paths and are on windows
