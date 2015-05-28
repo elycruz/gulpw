@@ -59,7 +59,7 @@
     "url": "git://github.com/saksdirect/gulpw.git"
   },
   "author": "Ely De La Cruz <elycruz@elycruz.com>",
-  "license": "GNU v2+, MIT",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/saksdirect/gulpw/issues"
   },
