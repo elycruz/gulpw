@@ -21,8 +21,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     var self = this,
         defaultOptions = self.loadConfigFile(path.join(env.pwd, '/configs/wrangler.config.yaml'));
 
-        log = self.log;
-
     sjl.extend(true, self, {
         bundles: {},
         cwd: env.configBase,
@@ -34,6 +32,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         staticTaskKeys: Object.keys(defaultOptions.staticTasks),
         configPath: env.configPath
     }, defaultOptions);
+
+    log = self.log;
 
     // Merge local options
     self.mergeLocalOptions(config);
@@ -473,7 +473,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         self.log ('gulp tasks: \n', gulp.tasks, '--debug');
 
         if (sjl.empty(tasks)) {
-            log('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
+            self.log('No tasks to run found.', '--mandatory');
             return Promise.reject('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
         }
 
@@ -485,7 +485,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             }
             else {
                 self.log(chalk.yellow('! Could not run the task "' + item + '".  ' +
-                'Task not properly configured.'), '--mandatory');
+                'Task not defined.'), '--mandatory');
                 retVal = false;
             }
             return retVal;

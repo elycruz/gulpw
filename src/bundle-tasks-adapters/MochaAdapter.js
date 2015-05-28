@@ -22,20 +22,14 @@ module.exports = TaskAdapter.extend('MochaAdapter', {
             skipTests = wrangler.skipTesting() || wrangler.skipMochaTesting();
 
         gulp.task(taskName, function () {
-            return (new Promise(function (fulfill/*, reject*/) {
-                if (skipTests) {
-                    console.log(chalk.grey('Skipping mocha tests.\n'));
-                    fulfill();
-                    return;
-                }
-                console.log(chalk.cyan('Running "' + taskName + '":\n'));
-                gulp.src(taskConfig.files)
-                    .pipe(mocha(mochaOptions))
-                    .pipe(duration(chalk.cyan('mocha \"' + bundle.options.alias + '\' duration')))
-                    .pipe(fncallback(function () {
-                        fulfill();
-                    }));
-            }));
+            if (skipTests) {
+                wrangler.log(chalk.grey('Skipping mocha tests.\n'), '--mandatory');
+                return Promise.resolve();
+            }
+            wrangler.log(chalk.cyan('Running "' + taskName + '":\n'), '--mandatory');
+            return gulp.src(taskConfig.files)
+                .pipe(mocha(mochaOptions))
+                .pipe(duration(chalk.cyan('mocha \"' + bundle.options.alias + '\' duration')));
         });
     },
 

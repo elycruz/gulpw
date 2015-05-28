@@ -87,7 +87,8 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 	
 	registerBundles: function (bundles, gulp, wrangler) {
 		var self = this,
-            targets = [];
+            targets = [],
+			failedRegistrations = 0;
 
 		// Loop through bundles and register the ones that have `compass` key
 		bundles.forEach(function (bundle) {
@@ -96,15 +97,15 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 				targets.push('compass:' + bundle.options.alias);
                 self.registerBundle(bundle, gulp, wrangler);
 			}
+			else {
+				failedRegistrations += 1;
+			}
 		});
 
 		// Register global `compass` task
 		gulp.task('compass', function () {
-			console.log(chalk.cyan(' Running "compass" task(s).  Task(s) messages below -->\n'));
-			if (targets.length > 0) {
-				return wrangler.launchTasks(targets, gulp);
-			}
-			return Promise.resolve();
+			console.log(chalk.cyan('Running "compass" task(s).\n'));
+			return wrangler.launchTasks(targets, gulp);
 		});
 	}
 

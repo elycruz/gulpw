@@ -35,7 +35,7 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
                     console.log(chalk.cyan('Running "' + taskName + '"\n'));
 
                     // Log files to delete
-                    wrangler.log(chalk.grey('Deleting the following files:\n'), chalk.grey(targets), '\n');
+                    wrangler.log(chalk.grey('Deleting the following files:\n'), chalk.grey(targets.join(',\n')), '\n');
 
                     // Delete targets
                     del(targets, function (err) {
@@ -69,18 +69,45 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
          * @returns {void}
          */
         registerBundle: function (bundle, gulp, wrangler) {
-
             var self = this,
                 bundleName = bundle.options.alias,
-                allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
                 separator = ':',
+                targets = self.getCleanableSrcsForBundle(bundle);
+
+            // Register overall clean task
+            if (targets.length > 0) {
+                self.registerGulpTask(separator + bundleName, targets, gulp, wrangler);
+            }
+        },
+
+        registerBundles: function (bundles, gulp, wrangler) {
+            var self = this,
+                targets = [];
+
+            bundles.forEach(function (bundle) {
+                if (self.isBundleValidForTask(bundle)) {
+                    targets = targets.concat(self.getCleanableSrcsForBundle(bundle));
+                }
+            });
+
+            // Register overall clean task
+            if (targets.length > 0) {
+                self.registerGulpTask('', targets, gulp, wrangler);
+            }
+        },
+
+        getCleanableSrcsForBundle: function (bundle) {
+            var self = this,
+                wrangler = this.wrangler,
+                bundleName = bundle.options.alias,
+                allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
                 targets = [],
                 minifyConfig = wrangler.tasks.minify,
                 isMinifyConfigured = !wrangler.tasks.minify.notConfiguredByUser;
 
             // Register separate `clean` tasks for each section in `files` key
             allowedFileTypes.forEach(function (ext) {
-                var section = bundle.has('files.' + ext),
+                var section = bundle.get('files.' + ext),
                     singularTaskTargets = [],
                     artifactPath = path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext);
 
@@ -96,91 +123,28 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
 
                     // Pass off the `filePath` to `targets` for later use
                     targets = targets.concat(singularTaskTargets);
-
-                    // Register task for `key`
-                    self.registerGulpTask(separator + bundleName + separator + ext, singularTaskTargets, gulp);
                 }
             });
 
             // If clean key is set with a valid buildable src
             if (self.isValidTaskSrc(bundle.options.clean)) {
-                self.registerGulpTask(separator + bundleName, bundle.options.clean, gulp, wrangler);
+                targets = targets.concat(bundle.options.clean);
             }
 
             if (bundle.has('requirejs.options')) {
                 // @todo allow using the requirejs outfile as a target here
                 if (!sjl.empty(bundle.options.requirejs.options.out)) {
-                    targets.push(path.join(process.cwd(), bundle.options.requirejs.options.out) + path.sep);
+                    targets.push(path.join(process.cwd(), bundle.options.requirejs.options.out));
                 }
                 else if (!sjl.empty(bundle.options.requirejs.options.dir)) {
                     targets.push(path.join(process.cwd(), bundle.options.requirejs.options.dir) + path.sep);
                 }
-                self.registerGulpTask(separator + bundleName + separator + 'requirejs', targets, gulp, wrangler);
             }
 
-            // Register overall clean task
-            if (targets.length > 0) {
-                self.registerGulpTask(separator + bundleName, targets, gulp, wrangler);
-            }
+            return targets;
         },
 
-        registerBundles: function (bundles, gulp, wrangler) {
-            var self = this,
-                targets = [],
-                allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
-                minifyConfig = wrangler.tasks.minify,
-                isMinifyConfigured = !wrangler.tasks.minify.notConfiguredByUser;
-
-            bundles.forEach(function (bundle) {
-                var bundleName = bundle.options.alias;
-
-                // Compile targets array
-                allowedFileTypes.forEach(function (ext) {
-
-                    var section = bundle.has('files.' + ext) ? bundle.options.files[ext] : [],
-                        copyFiles = bundle.get('copy.files');
-
-                    // Check if `key` in `files` is buildable (concatable/minifiable)
-                    if (bundle.has('files') && self.isValidTaskSrc(section)) {
-
-                        // Get file path for `key` in `files`
-                        if (isMinifyConfigured && minifyConfig[ext + 'BuildPath']
-                            && targets.indexOf(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext)) === -1) {
-                                    targets.push(path.join(minifyConfig[ext + 'BuildPath'], bundleName + '.' + ext));
-                                }
-                    }
-
-                    // If requirejs config is availble
-                    if (bundle.has('requirejs.options.out') && targets.indexOf(bundle.options.requirejs.options.out) === -1) {
-                        targets.push(bundle.options.requirejs.options.out);
-                    }
-                    else if (bundle.has('requirejs.options.dir') && targets.indexOf(bundle.options.requirejs.options.dir) === -1) {
-                        targets.push(path.join(bundle.options.requirejs.options.dir, '/**/*'));
-                        // @todo should we also delete the actual dir ?
-                        targets.push(bundle.options.requirejs.options.dir);
-                    }
-
-                    // If copy tasks is setup
-                    if (bundle.has('copy.files')) {
-                        Object.keys(copyFiles).forEach(function (key) {
-                            if (targets.indexOf(copyFiles[key]) === -1) {
-                                targets.push(copyFiles[key]);
-                            }
-                        });
-                    }
-                });
-
-                // If clean key is set with a valid buildable src
-                if (self.isValidTaskSrc(bundle.options.clean)) {
-                    targets = targets.concat(bundle.options.clean);
-                }
-
-            }); // end of bundles loop
-
-            // Register overall clean task
-            if (targets.length > 0) {
-                self.registerGulpTask('', targets, gulp, wrangler);
-            }
-
+        isBundleValidForTask: function (bundle) {
+            return bundle.has('files') || bundle.has('requirejs') || bundle.has('clean');
         }
 });

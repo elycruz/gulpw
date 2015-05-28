@@ -9,7 +9,7 @@ require('sjljs');
 var chai = require('chai'),
     path = require('path'),
     tutil = require(path.join(__dirname, '../src/test-utils/test-utils')),
-    timeout = 21000,
+    timeout = 34000,
     commandOptions = {
         cwd: path.join(__dirname, '..', 'node_modules', 'gulpw-sample-app'),
         timeout: timeout

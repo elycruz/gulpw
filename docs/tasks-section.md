@@ -301,6 +301,14 @@ tasks:
         deployRootFoldersByFileType:
           md: /home/some-user/docroot/md-files.<%= hostnamePrefix %><%= hostname %>/
 
+        # A map used to replace parts or all of paths found that match the pattern on the left with the value on the right
+        # Used for complex setups where the paths in your development environment don't have a one-to-one counterpart on the
+        # Server;  E.g., One of my setups has ./jsp/some/file.jsp locally but on the server it is ./some-other-folder/some/file.jsp
+        # So this isn't something that can be acheived with a root folder prefix because the local path ./jsp/... is in the root development directory
+        # and when deploying we deploy ./jsp/... => /{some-deploy-root}/jsp/...
+        localPathsToServerPathsRegexMap:
+          '^(?:\.\/)?jsp\/': 'some-necessarily-differently-named-dir-on-the-server/'
+
 ```
 
 ### deploy-config
@@ -556,6 +564,8 @@ tasks:
 ##### In {bundle}.*:
 ```
 watch:
+  # Boolean for also watching files in `deploy.otherFiles` hash
+  watchDeployOtherFilesToo: false
   otherFiles:
     - path/to/some/file.js
     - path/to/some/file.file

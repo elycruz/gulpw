@@ -49,6 +49,18 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
         // Create task for bundle
         gulp.task(taskName, function () {
 
+            // Allow filtering of file types via file-types param
+            if (wrangler.hasArgvFileTypes()) {
+                allowedFileTypes = allowedFileTypes.filter(function (item) {
+                    return wrangler.getArgvFileTypes().indexOf(item) > -1;
+                });
+            }
+
+            // If no allowedFileTypes resolve promise and exit task
+            if (allowedFileTypes.length === 0) {
+                return Promise.resolve();
+            }
+
             // Check for sections on bundle that can be minified
             allowedFileTypes.forEach(function (ext) {
                 var buildPath = minifyConfig[ext + 'BuildPath'],

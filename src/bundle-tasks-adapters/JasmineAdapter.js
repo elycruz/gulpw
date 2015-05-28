@@ -10,7 +10,6 @@ require('sjljs');
 var jasmine = require('gulp-jasmine'),
     duration = require('gulp-duration'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
-    fncallback = require('gulp-fncallback'),
     chalk = require('chalk');
 
 module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
@@ -21,19 +20,14 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
             skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
         gulp.task(taskName, function () {
-            return (new Promise(function (fulfill/*, reject*/) {
-                if (skipTests) {
-                    console.log(chalk.grey('Skipping jasmine tests.\n'));
-                    return fulfill();
-                }
-                console.log(chalk.cyan('Running "' + taskName + '":\n'));
-                gulp.src(taskConfig.files)
-                    .pipe(jasmine(jasmineOptions))
-                    .pipe(duration(chalk.cyan('jasmine \"' + bundle.options.alias + '\' duration')))
-                    .pipe(fncallback(function () {
-                            fulfill();
-                        }));
-            }));
+            if (skipTests) {
+                wrangler.log(chalk.grey('Skipping jasmine tests.\n'), '--mandatory');
+                return Promise.resolve();
+            }
+            wrangler.log(chalk.cyan('Running "' + taskName + '":\n'), '--mandatory');
+            return gulp.src(taskConfig.files)
+                .pipe(jasmine(jasmineOptions))
+                .pipe(duration(chalk.cyan('jasmine \"' + bundle.options.alias + '\' duration')));
         });
     },
 
@@ -51,23 +45,16 @@ module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
         var self = this,
             taskName,
             tasks = [],
-            failedRegistrations = [],
             skipTests = wrangler.skipTesting() || wrangler.skipJasmineTesting();
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
-                failedRegistrations.push('jasmine:' + bundle.options.alias);
                 return;
             }
             taskName = 'jasmine:' + bundle.options.alias;
             self.registerBundle(bundle, gulp, wrangler);
             tasks.push(taskName);
         });
-
-        // If no bundles were registered do not register overall task
-        if (failedRegistrations.length === bundles.length) {
-            return;
-        }
 
         gulp.task('jasmine', function () {
             if (skipTests) {

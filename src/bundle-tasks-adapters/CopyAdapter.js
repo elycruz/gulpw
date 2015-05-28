@@ -68,13 +68,11 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
         });
 
         gulp.task('copy', function () {
-
-
             if (skipCopy) {
                 console.log(chalk.grey('Skipping copy task.\n'));
                 return Promise.resolve();
             }
-            console.log(chalk.cyan('Running "copy" task(s). Sub task messages below:\n'));
+            console.log(chalk.cyan('Running "copy" task(s).\n'));
             return wrangler.launchTasks(tasks, gulp);
         });
     },
