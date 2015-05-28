@@ -1,29 +1,21 @@
 /**
  * Created by edelacruz on 10/8/2014.
  */
-'use strict'; require('sjljs');
 
-// Import base task proxy to extend
-var
-    jshint = require('gulp-jshint'),
+'use strict';
+
+require('sjljs');
+
+var jshint = require('gulp-jshint'),
     duration = require('gulp-duration'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     path = require('path'),
     chalk = require('chalk'),
-    //callback = require('gulp-fncallback'),
-    //gulpif = require('gulp-if'),
     lazypipe = require('lazypipe');
 
 module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
 
-    /**
-     * @param bundle {Bundle}
-     * @param gulp {gulp}
-     * @param wrangler {Wrangler}
-     */
     registerBundle: function (bundle, gulp, wrangler) {
-
-        // Task string separator
         var self = this,
             taskName = 'jshint:' + bundle.options.alias,
             filesToExclude = wrangler.tasks.jshint.ignoredFiles,
@@ -36,16 +28,12 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
         }
 
         gulp.task(taskName, function () {
-
             console.log(chalk.cyan('Running "' + taskName + '"\n'));
-
             return gulp.src(src)
-
-                // Get prebuilt pipe
                 .pipe(self.getPipe(bundle, gulp, wrangler)());
         });
 
-    }, // end of `registerBundle`
+    },
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
@@ -55,7 +43,7 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
                 return;
             }
             self.registerBundle(bundle, gulp, wrangler);
-            targets = self.getTasksForBundle(bundle, ['jshint'], wrangler).concat(targets);
+            targets.push('jshint:' + bundle.options.alias);
         });
         self.registerGulpTasks('jshint', targets, gulp, wrangler);
     },
@@ -71,7 +59,7 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
                 targets.push(path.join(bundle.options.requirejs.options.dir, '**/*.js'));
             }
             else {
-                targets.push(path.join(bundle.options.requirejs.options.out, '**/*.js'));
+                targets.push(bundle.options.requirejs.options.out);
             }
         }
         // @todo If bundle has browserify

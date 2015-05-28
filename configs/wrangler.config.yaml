@@ -157,7 +157,7 @@ tasks:
     constructorLocation: ./src/bundle-tasks-adapters/JsHintAdapter
     priority: 96
     jshintrc: ./.jshintrc
-    ignoreFiles: null
+    ignoredFiles: null
     options:
       predef:
         - $
