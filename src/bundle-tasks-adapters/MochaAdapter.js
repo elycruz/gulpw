@@ -10,7 +10,6 @@ require('sjljs');
 var mocha = require('gulp-mocha'),
     duration = require('gulp-duration'),
     TaskAdapter = require('./BaseBundleTaskAdapter'),
-    fncallback = require('gulp-fncallback'),
     chalk = require('chalk');
 
 module.exports = TaskAdapter.extend('MochaAdapter', {

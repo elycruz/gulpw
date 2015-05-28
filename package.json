@@ -1,6 +1,6 @@
 {
   "name": "gulpw",
-  "version": "0.2.39-beta",
+  "version": "0.2.42-beta",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
   "bin": {
     "gulpw": "index.js"
@@ -37,7 +37,6 @@
     "liftoff": "^2.0.3",
     "lodash": "^3.8.0",
     "mkdirp": "^0.5.0",
-    "mocha": "^2.0.1",
     "open": "0.0.5",
     "requirejs": "^2.1.15",
     "sjljs": "^0.4.26",
@@ -52,7 +51,7 @@
     "mocha": "^2.0.1"
   },
   "scripts": {
-    "test": "mocha tests",
+    "test": "./node_modules/mocha/bin/mocha tests",
     "pretest": "npm install -g bower && npm link && cd node_modules/gulpw-sample-app && npm link ../../ && cd fe-dev && bower install && cd ../../../"
   },
   "repository": {

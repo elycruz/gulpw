@@ -1,3 +1,3 @@
 ### Install
-Install the `gulpw` module globally `npm install gulpw -g` and
-locally  from project root `npm install gulpw`.
+1.  Install gulpw globally `npm install gulpw -g` then
+2.  Install gulpw locally `npm install gulpw`.

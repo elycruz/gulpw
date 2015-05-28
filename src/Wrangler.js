@@ -14,7 +14,6 @@ var fs = require('fs'),
     mkdirp = require('mkdirp'),
     glob = require('glob'),
     Bundle = require('./Bundle'),
-    log,
     os = require('os');
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
@@ -32,8 +31,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         staticTaskKeys: Object.keys(defaultOptions.staticTasks),
         configPath: env.configPath
     }, defaultOptions);
-
-    log = self.log;
 
     // Merge local options
     self.mergeLocalOptions(config);
