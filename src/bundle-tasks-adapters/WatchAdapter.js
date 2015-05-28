@@ -186,8 +186,12 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         if (bundle.has('watch.watchDeployOtherFilesToo') && bundle.has('deploy.otherFiles')) {
             Object.keys(bundle.options.deploy.otherFiles).forEach(function (key) {
                 var keyVal = bundle.options.deploy.otherFiles[key];
-                targets = Array.isArray(keyVal) ? targets.concat(keyVal) :
-                    (!sjl.empty(keyVal) ? targets.push(keyVal) : targets);
+                if (Array.isArray(keyVal)) {
+                    targets = targets.concat(keyVal);
+                }
+                else if (!sjl.empty(keyVal)) {
+                    targets.push(keyVal);
+                }
             });
         }
 

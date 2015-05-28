@@ -22,15 +22,19 @@ module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter (/*option
         var self = this,
             //helpSectionPaths = self.getHelpSectionPaths(wrangler),
             helpSectionPathKeys = self.getHelpSectionPathKeys(wrangler),
-            helpSection = process.argv.length === 4 ? process.argv[3] : null;
+            helpSection = wrangler.argv.section || null;
 
         gulp.task('help', function () {
             if (!sjl.isset(helpSection)) {
                 wrangler.log(chalk.cyan('Help via this console is available for the ' +
                                 'following sections:\n'), '--mandatory');
                 wrangler.log(helpSectionPathKeys.map(function (key) { return '- ' + key; }).join('\n'), '--mandatory');
-                return process.exit(0);
+                return Promise.reject();
             }
+            else if (helpSectionPathKeys.indexOf(helpSection) > -1) {
+                wrangler.log(fs.readFileSync(path.join(wrangler.pwd, 'docs', helpSection + '.md'), {encoding: 'utf8'}), '--mandatory');
+            }
+            return Promise.resolve();
         });
 
     }, // end of register task
@@ -42,9 +46,9 @@ module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter (/*option
         return this.helpSectionPaths;
     },
 
-    getHelpSectionPathKeys: function (/*wrangler*/) {
+    getHelpSectionPathKeys: function (wrangler) {
         if (!sjl.isset(this.helpSectionPathKeys)) {
-            this.helpSectionPathKeys = this.getHelpSectionPaths().map(function (key) {
+            this.helpSectionPathKeys = this.getHelpSectionPaths(wrangler).map(function (key) {
                 return path.basename(key, '.md');
             });
         }

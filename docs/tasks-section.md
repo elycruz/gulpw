@@ -352,8 +352,10 @@ None.
 - **skip-jslint{int}**
 
 ### help
-
-Coming soon
+##### Help task usage:
+- `gulpw help`
+- `gulpw help --section {section-name-here}`
+- E.g., `gulpw help --section build`
 
 ### jasmine
 Jasmine tests task runs the jasmine module on your test 'files' array or string using `options` if any.

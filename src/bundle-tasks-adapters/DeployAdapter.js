@@ -287,7 +287,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
             itemTransformRegexMapKeys = null;
 
             if (itemTransformRegexMap) {
-                itemTransformRegexMapKeys = new Set(Object.keys(itemTransformRegexMap))
+                itemTransformRegexMapKeys = new Set(Object.keys(itemTransformRegexMap));
             }
 
         fileArray = Array.isArray(fileArray) ? fileArray : [];

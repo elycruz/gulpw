@@ -27,8 +27,8 @@ The bundle files will then hold the user's configurations in the *.yaml, *.json,
 - [Todos](https://github.com/elycruz/gulpw/blob/master/TODOS.md)
 
 ### Install
-Install the `gulpw` module globally `npm install gulpw -g` and
-locally  from project root `npm install gulpw`.
+1.  Install gulpw globally `npm install gulpw -g` then
+2.  Install gulpw locally `npm install gulpw`.
 
 ### Setup
 1. Create your project's bundle configs folder;  E.g., './bundle-configs' etc.
@@ -440,8 +440,10 @@ None.
 - **skip-jslint{int}**
 
 ### help
-
-Coming soon
+##### Help task usage:
+- `gulpw help`
+- `gulpw help --section {section-name-here}`
+- E.g., `gulpw help --section build`
 
 ### jasmine
 Jasmine tests task runs the jasmine module on your test 'files' array or string using `options` if any.
@@ -685,6 +687,7 @@ All flag default values are `null`/`false`.
 - **async:** Runs all tasks asynchronously.  **Note** This may cause race condition errors between certain tasks;  E.g.,
     ``` gulpw build deploy ``` // If you have many bundles deploy may fire before all build sub-tasks are done cause a failure (deploy task will timeout while waiting for files to become available for deploy if they are being used). 
     - **Aliases:** `-a`
+- **section:** Used by static help task to show help for a given readme.md section.
 - **skip-artifacts:** Causes artifacts to be skipped on deploy task.
 - **skip-css-linting:** Causes any css linting/hinting to be skipped from the `minify` task.
 - **skip-jasmine-testing:** Causes Jasmine tests to be skipped.
