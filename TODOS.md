@@ -108,7 +108,8 @@ gulpw (gulp wrangler)
   successfully or not.~~  Instead we just check `gulp.tasks` to see if task is registered before trying to run it.
   - [X] - ~~Track which bundles register successfully and which ones do not on and pull out their tasks
         before sending tasks to gulp.~~ Same as above (makes for less processing and less code).
-- [ ] - Make bundle names case insensitive.
+- [X] - ~~Make bundle names case insensitive.~~ Letting the user decide the casing of the bundles alias name and file name
+(though both should be the same).
 
 ### Todos for Version 0.3.0
 - [ ] - Page bundles should be allowed to 'include' other bundles via an `includes` hash key with an array of bundle names as it's value (**note included files will not be rebuilt by the `watch` task (to avoid cyclic redundencies in bundles watching different files).
@@ -124,6 +125,8 @@ gulpw (gulp wrangler)
     - [ ] - browserify
     - [ ] - jsdoc ~~document (jsdoc, groco, etc)~~
 - [ ] - Examine any fields named `allowedFileTypes` for candidates to rename to `ingoredFileTypes`.
+- [ ] - Separate minify-html, minify-css, and minify-js into separate tasks.
+- [ ] - Minify should get all options and pipes from it's sub tasks (minify-html, minify-css, minify-js, jsdoc)
 
 ### Todos for Version 0.4.0
 - [ ] - Move all utility styled functions from `Wrangler` into a utils class/namespace etc.. (?)

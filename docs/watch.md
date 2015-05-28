@@ -27,6 +27,8 @@ tasks:
 ##### In {bundle}.*:
 ```
 watch:
+  # Boolean for also watching files in `deploy.otherFiles` hash
+  watchDeployOtherFilesToo: false
   otherFiles:
     - path/to/some/file.js
     - path/to/some/file.file

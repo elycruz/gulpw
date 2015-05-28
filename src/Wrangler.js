@@ -265,7 +265,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             _bundles = bundles;
         }
         _bundles.forEach(function (bundle) {
-            self.log('Preparing to register bundle "' + bundle.options.alias + '"');
+            self.log('\n', chalk.grey('Preparing to register bundle "' + bundle.options.alias + '".'), '\n');
             self.registerTasksForBundle(gulp, bundle, taskKeys);
         });
     },

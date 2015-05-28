@@ -126,7 +126,9 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
     getSrcForBundle: function (bundle) {
         var self = this,
             ignoredTasks = self.wrangler.tasks.watch.ignoredFiles,
-            targets = [];
+            targets = [],
+            bundleOps,
+            rjsOps;
 
         ignoredTasks = Array.isArray(ignoredTasks) && ignoredTasks.length > 0 ? ignoredTasks : null;
 
@@ -134,6 +136,8 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         if (!this.isBundleValidForTask(bundle)) {
             return targets;
         }
+
+        bundleOps = bundle.options;
 
         // Merge other files to watch to targets
         if (bundle.has('watch') && Array.isArray(bundle.options.otherFiles)) {
@@ -155,22 +159,37 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         }
 
         if (bundle.has('requirejs')) {
-            if (!sjl.empty(bundle.options.requirejs.options.appDir)) {
-                targets.push(path.join(bundle.options.requirejs.options.appDir,
-                    bundle.options.requirejs.options.baseUrl) + path.sep + '**/*');
+            rjsOps = bundleOps.requirejs.options;
+            if (!sjl.empty(rjsOps.appDir)) {
+                targets.push(path.join(rjsOps.appDir,
+                    rjsOps.baseUrl) + path.sep + '**/*');
+
             }
-            else if (!sjl.empty(bundle.options.requirejs.options.baseUrl)) {
-                targets.push(bundle.options.requirejs.options.baseUrl + path.sep + '**' + path.sep + '*');
+            else if (!sjl.empty(rjsOps.baseUrl)) {
+                targets.push(rjsOps.baseUrl + path.sep + '**' + path.sep + '*');
+            }
+
+            // Don't watch 'out' or 'dir' files
+            if (rjsOps.hasOwnProperty('out') && !sjl.empty(rjsOps.out)) {
+                targets = targets.filter(function (item) {
+                    return item !== rjsOps.out;
+                });
+            }
+            else if (rjsOps.hasOwnProperty('dir') && !sjl.empty(rjsOps.dir)) {
+                targets = targets.filter(function (item) {
+                    return item.indexOf(rjsOps.dir) === -1;
+                });
             }
         }
 
-        //if (bundle.has('deploy.otherFiles')) {
-        //    Object.keys(bundle.options.deploy.otherFiles).forEach(function (key) {
-        //        var keyVal = bundle.options.deploy.otherFiles[key];
-        //        targets = Array.isArray(keyVal) ? targets.concat(keyVal) :
-        //            (!sjl.empty(keyVal) ? targets.push(keyVal) : targets);
-        //    });
-        //}
+        // Watch 'deploy.otherFiles' also if necessary
+        if (bundle.has('watch.watchDeployOtherFilesToo') && bundle.has('deploy.otherFiles')) {
+            Object.keys(bundle.options.deploy.otherFiles).forEach(function (key) {
+                var keyVal = bundle.options.deploy.otherFiles[key];
+                targets = Array.isArray(keyVal) ? targets.concat(keyVal) :
+                    (!sjl.empty(keyVal) ? targets.push(keyVal) : targets);
+            });
+        }
 
         // If ignored tasks then filter targets against them
         if (ignoredTasks) {
