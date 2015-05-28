@@ -37,6 +37,7 @@
     "liftoff": "^2.0.3",
     "lodash": "^3.8.0",
     "mkdirp": "^0.5.0",
+    "mocha": "^2.0.1",
     "open": "0.0.5",
     "requirejs": "^2.1.15",
     "sjljs": "^0.4.26",
@@ -52,7 +53,7 @@
   },
   "scripts": {
     "test": "mocha tests",
-    "pretest": "npm install -g gulpw bower && cd node_modules/gulpw-sample-app && npm install gulpw && cd fe-dev && bower install && cd /home/travis/build/elycruz/gulpw"
+    "pretest": "npm install -g gulpw mocha bower && cd node_modules/gulpw-sample-app && npm install gulpw && cd fe-dev && bower install && cd /home/travis/build/elycruz/gulpw"
   },
   "repository": {
     "type": "git",
