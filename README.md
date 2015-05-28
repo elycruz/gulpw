@@ -27,14 +27,14 @@ The bundle files will then hold the user's configurations in the *.yaml, *.json,
 - [Todos](https://github.com/elycruz/gulpw/blob/master/TODOS.md)
 
 ### Install
-Install the `gulpw` module globally `npm install gulpw -g` and
-locally  from project root `npm install gulpw`.
+1.  Install gulpw globally `npm install gulpw -g` then
+2.  Install gulpw locally `npm install gulpw`.
 
 ### Setup
-1. Create your project's bundle configs folder;  E.g., './bundle-configs' etc.
-2. Call `gulpw` from your projects root (a `gulpw-config.*` file will be generated there).
-    Then run `gulpw config` to help populate the file (file can be customzied manually instead).
-3. Tell your `gulpw-config.*` file where your bundle configs folder is: Set `bundlesPath` to your bundles config path.
+1. Create your project's bundle configs folder;  E.g., './gulpw-bundle-configs' etc.
+2. Create empty `gulpw-config.*` config file at your projects root and populate it either manually or by running
+ `gulpw config` (interactive setup for the gulpw-config.* file).
+3. Tell your `gulpw-config.*` file where your bundle configs folder is (set `bundlesPath` to your bundles config path inside config file).
 5. Configure your global tasks within your `gulpw-config.*` file.
 6. (Optional) Execute `gulpw deploy-config` to configure servers to deploy your work to.
 7. Reap the benefits of using gulpw.
@@ -74,12 +74,15 @@ Also when running `gulpw config` you will be asked about the tasks you want to i
 then be included in your bundle file consequently depending on your answers.
 
 ### Running tasks
-- `gulpw {task-name}:{bundle-name}` to run task for one bundle.
-- `gulpw {task-name}` to run tasks for all bundles.
+- `gulpw {task-name}:{bundle-name} [flags]` to run task for one bundle.
+- `gulpw {task-name} [flags]` to run tasks for all bundles.
 
 where `{task-alias}` is the task you want to run ('build', 'minify' etc.)
 and `{bundle-alias}` is the bundle you want to run the task for (for './bundle-configs/hello-world.yaml'
  the bundle alias would be `hello-world`.
+
+`[flags]` are any flags you would like to pass in with the task that you're calling;  E.g.,
+`gulpw deploy:global --file-types js`
 
 Also, e.g., `gulpw build:global build:some-other-bundle deploy:global deploy:some-other-bundle --dev`
 The above example builds (see [build](#build) task for more info) some bundles (in development mode
@@ -440,8 +443,10 @@ None.
 - **skip-jslint{int}**
 
 ### help
-
-Coming soon
+##### Help task usage:
+- `gulpw help`
+- `gulpw help --section {section-name-here}`
+- E.g., `gulpw help --section build`
 
 ### jasmine
 Jasmine tests task runs the jasmine module on your test 'files' array or string using `options` if any.
@@ -685,6 +690,7 @@ All flag default values are `null`/`false`.
 - **async:** Runs all tasks asynchronously.  **Note** This may cause race condition errors between certain tasks;  E.g.,
     ``` gulpw build deploy ``` // If you have many bundles deploy may fire before all build sub-tasks are done cause a failure (deploy task will timeout while waiting for files to become available for deploy if they are being used). 
     - **Aliases:** `-a`
+- **section:** Used by static help task to show help for a given readme.md section.
 - **skip-artifacts:** Causes artifacts to be skipped on deploy task.
 - **skip-css-linting:** Causes any css linting/hinting to be skipped from the `minify` task.
 - **skip-jasmine-testing:** Causes Jasmine tests to be skipped.
