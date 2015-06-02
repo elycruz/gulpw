@@ -86,7 +86,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
                 }
 
                 // Loop through template files in bundle
-                bundle.options.files[key].forEach(function (file) {
+                wrangler.explodeGlobs(bundle.options.files[key]).forEach(function (file) {
 
                     // Ensure file exists before attempting to load it
                     if (!fs.existsSync(file)) {
