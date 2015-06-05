@@ -28,9 +28,11 @@ staticTasks:
     notAllowedInnerKeys:
       - priority
       - constructorLocation
+    fileName: 'gulpw-config'
 
   "deploy-config":
     constructorLocation: ./src/static-tasks-adapters/DeployConfigTaskAdapter
+    fileName: 'deploy.yaml'
 
   "bundle":
     constructorLocation: ./src/static-tasks-adapters/BundleConfigTaskAdapter
@@ -104,7 +106,6 @@ tasks:
     
   # Deploy Task
   deploy:
-    # @todo add a flag for ignoring the deployment of artifacts
     constructorLocation: ./src/bundle-tasks-adapters/DeployAdapter
     priority: -100
 

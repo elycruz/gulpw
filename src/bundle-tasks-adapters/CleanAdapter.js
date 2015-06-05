@@ -132,7 +132,6 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
             }
 
             if (bundle.has('requirejs.options')) {
-                // @todo allow using the requirejs outfile as a target here
                 if (!sjl.empty(bundle.options.requirejs.options.out)) {
                     targets.push(path.join(process.cwd(), bundle.options.requirejs.options.out));
                 }

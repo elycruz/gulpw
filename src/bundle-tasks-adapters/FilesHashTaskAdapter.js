@@ -18,7 +18,6 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
         BaseBundleTaskAdapter.apply(this, sjl.argsToArray(arguments));
     },
     {
-        // @todo use this method for minify tasks as well (methods will be almost identical
         registerBundles: function (bundles, gulp, wrangler) {
 
             var self = this,

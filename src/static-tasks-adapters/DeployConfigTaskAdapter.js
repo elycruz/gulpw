@@ -1,5 +1,6 @@
 /**
  * Created by Ely on 1/15/2015.
+ * @todo Allow user to choose file fprmat for outputted file.
  */
 
 'use strict';

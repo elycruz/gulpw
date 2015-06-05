@@ -126,8 +126,7 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
 
                     // Get new config path
                     tmpPathName = path.dirname(wrangler.configPath);
-                    // @todo No hard coding allowed (This is here temporarily because of a bug).
-                    tmpFileName = 'gulpw-config'; //path.basename(wrangler.configPath, answers.configFormat);
+                    tmpFileName = wrangler.staticTasks.config.fileName; //path.basename(wrangler.configPath, answers.configFormat);
                     newConfigPath = path.join(tmpPathName, tmpFileName + answers.configFormat);
 
                     // Write new config file

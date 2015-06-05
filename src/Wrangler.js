@@ -1,6 +1,5 @@
 /**
  * Created by Ely on 10/4/2014.
- * @todo filter out tasks that have no bundle registered with them before running `launchTasks`.
  */
 
 'use strict';

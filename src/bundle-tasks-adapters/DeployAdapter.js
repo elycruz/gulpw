@@ -124,7 +124,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
 
                         countTimeout = setInterval(function () {
                             // @todo make this if check readble (reverse the logic)
-                            if (totalFileCount <= uploadedFileCount) {
+                            if (uploadedFileCount >= totalFileCount) {
 
                                 wrangler.log(chalk.cyan('\n File deployment complete.\n'),
                                     chalk.grey('\n Closing connection...'));
@@ -215,8 +215,6 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
                 hasFilesFileType = bundle.has('files.' + fileType),
                 deployPath, localPath;
 
-            // could've used array_diff between allowedFileTypes and argvFileTypes for this but
-            // may be more performant/cpu-intensive on cpu @todo take a look at this
             // Ignore file type if necessary
             if (hasArgvFileTypes && argvFileTypes.indexOf(fileType) === -1) {
                 wrangler.log('Ignoring *.' + fileType + ' files.', '--debug');
@@ -394,8 +392,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
     },
 
     _mergeLocalConfigs: function () {
-        // @todo don't forget to change this (hardcoded value)
-        var localConfigPath = path.join(this.wrangler.localConfigPath, 'deploy.yaml'),
+        var localConfigPath = path.join(this.wrangler.localConfigPath, this.wrangler.staticTasks['deploy-config'].fileName),
             localConfig;
 
         // Get local deploy config if exists

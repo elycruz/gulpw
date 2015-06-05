@@ -53,7 +53,6 @@ module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
         if (bundle.has('files.js')) {
             targets = targets.concat(bundle.options.files.js);
         }
-        // @todo Allow both use of appdir and dir for requirejs resources jshint
         if (bundle.has('requirejs')) {
             if (bundle.options.requirejs.options.dir) {
                 targets.push(path.join(bundle.options.requirejs.options.dir, '**/*.js'));

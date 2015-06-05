@@ -145,7 +145,6 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         }
 
         // Merge all arrays in files key to `targets`
-        // @todo ommit files in `pre-artifact` folder if it is being used.
         if (bundle.has('files')) {
             Object.keys(bundle.options.files).forEach(function (key) {
                 var keyVal = bundle.options.files[key];

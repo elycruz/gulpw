@@ -121,8 +121,8 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
             otherOptions = {},
             promise;
 
-        // @todo add flag in yaml to allow optimize type (for advanced usages)
-        if (!wrangler.argv.dev) {
+        // If not dev mode then ensure optimize field
+        if (!wrangler.argv.dev && sjl.isEmptyObjKey(otherOptions, 'optimize', 'String')) {
             otherOptions.optimize = 'uglify';
         }
 

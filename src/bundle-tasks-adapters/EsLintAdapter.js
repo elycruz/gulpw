@@ -63,13 +63,12 @@ module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
         if (bundle.has('files.js')) {
             targets = targets.concat(bundle.options.files.js);
         }
-        // @todo Allow both use of appdir and dir for requirejs resources eslint
         if (bundle.has('requirejs')) {
             if (bundle.options.requirejs.options.dir) {
                 targets.push(path.join(bundle.options.requirejs.options.dir, '**/*.js'));
             }
             else {
-                targets.push(path.join(bundle.options.requirejs.options.out, '**/*.js'));
+                targets.push(path.join(bundle.options.requirejs.options.out));
             }
         }
         // @todo If bundle has browserify
