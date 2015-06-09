@@ -60,10 +60,6 @@ module.exports = sjl.Extendable.extend(function BaseBundleTaskAdapter(options, g
             });
         },
 
-        getPrelimTasksForBundle: function (/*bundle, gulp, wrangler*/) {
-            // Overwrite from extending class
-        },
-
         getTaskNameForBundle: function (bundle) {
             return this.alias + ':' + bundle.options.alias;
         }

@@ -71,12 +71,10 @@ tasks:
     constructorLocation: ./src/bundle-tasks-adapters/BuildAdapter
     priority: -98
 
-    prelimTasks:
-      - mocha
-      - jasmine
-
     ignoredTasks:
       - clean
+      - mocha
+      - jasmine
       - deploy
       - jshint
       - csslint

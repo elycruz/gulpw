@@ -16,27 +16,34 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
         var self = this,
             bundleName = bundle.options.alias,
             taskName = 'build:' + bundleName,
-            targets, deps;
+            targets;
 
         targets = self.getTasksForBundle(bundle, wrangler);
 
-        deps = self.getPrelimTasksForBundle(bundle, wrangler, targets.targets);
+        // Register related bundles
+        if (bundle.has('relatedBundles.processBefore')) {
+            wrangler.getBundles(bundle.options.relatedBundles.processBefore).forEach(function (item) {
+                if (!self.isBundleValidForTask(item)) {
+                    return;
+                }
+
+                var _targets = self.getTasksForBundle(item, wrangler);
+                targets.targets = _targets.targets.concat(targets.targets);
+                targets.taskAliases = _targets.taskAliases.concat(targets.taskAliases);
+                self.registerBundle(item, gulp, wrangler);
+            });
+        }
 
         wrangler.registerTasksForBundle(gulp, bundle, targets.taskAliases);
 
-        targets = targets.targets.filter(function (task) {
-            return deps.indexOf(task) === -1;
-        });
-
-        self.registerGulpTasks(taskName, targets, gulp, wrangler, deps);
+        self.registerGulpTasks(taskName, targets.targets, gulp, wrangler);
 
     }, // end of `registerBundle`
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
             targets = [],
-            data,
-            deps;
+            data;
 
         bundles.forEach(function (bundle) {
             if (!self.isBundleValidForTask(bundle)) {
@@ -44,17 +51,11 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
             }
             data = self.getTasksForBundle(bundle, wrangler);
 
-            deps = self.getPrelimTasksForBundle(bundle, wrangler, data.targets);
-
             wrangler.registerTasksForBundle(gulp, bundle, data.taskAliases);
             targets = targets.concat(data.targets);
         });
 
-        targets = targets.filter(function (task) {
-            return deps.indexOf(task) === -1;
-        });
-
-        self.registerGulpTasks('build', targets, gulp, wrangler, deps);
+        self.registerGulpTasks('build', targets, gulp, wrangler);
     },
 
     isBundleValidForTask: function (bundle) {
@@ -65,21 +66,6 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
         return bundle && (bundle.has('files.js') || bundle.has('files.css')
             || bundle.has('files.html') || bundle.has('files.html'))
             &&  sjl.empty(this.wrangler.tasks.minify.notConfiguredByUser);
-    },
-
-    getPrelimTasksForBundle: function (bundle, wrangler, tasks) {
-        var deps = [],
-            prelimTasks = wrangler.tasks.build.prelimTasks;
-
-        if (!sjl.empty(prelimTasks)) {
-            deps = tasks.filter(function (task) {
-                return prelimTasks.filter(function (prelimTask) {
-                        return task.indexOf(prelimTask) > -1;
-                    }).length > 0;
-            });
-        }
-
-        return deps;
     },
 
     getTasksForBundle: function (bundle) {

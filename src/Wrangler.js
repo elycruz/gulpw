@@ -12,7 +12,8 @@ var fs = require('fs'),
     path = require('path'),
     chalk = require('chalk'),
     Bundle = require('./Bundle'),
-    gwUtils = require('./Utils');
+    gwUtils = require('./Utils'),
+    nodeUtils = require('util');
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var self = this,
@@ -197,13 +198,21 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Create bundles if necessary
         if (!sjl.isset(bundles)) {
             bundles = fs.readdirSync(self.bundlesPath).map(function (fileName) {
-                return self.createBundle(path.join(self.bundlesPath, fileName));
+                var bundle = self.createBundle(path.join(self.bundlesPath, fileName));
+                if (!sjl.isEmptyObjKey(bundle.options, 'relatedBundles.processBefore', 'Array')) {
+                    self.createBundles(gulp, self.getBundlePaths(bundle.get('relatedBundles.processBefore')), registerBundles);
+                }
+                return bundle;
             });
         }
         // Else expect an array of file paths
         else {
             bundles = bundles.map(function (bundle) {
-                return self.createBundle(bundle);
+                bundle = self.createBundle(bundle);
+                if (bundle.has('relatedBundles.processBefore')) {
+                    self.createBundles(gulp, self.getBundlePaths(bundle.get('relatedBundles.processBefore')), registerBundles);
+                }
+                return bundle;
             });
         }
 
@@ -443,7 +452,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     launchTasks: function (tasks, gulp) {
         var self = this;
 
-        self.log ('gulp tasks: \n', gulp.tasks, '--debug');
+        self.log ('gulp tasks: \n', nodeUtils.inspect(gulp.tasks, {depth: 10}), '--debug');
 
         if (sjl.empty(tasks)) {
             self.log('No tasks to run found.', '--mandatory');
@@ -670,6 +679,42 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         });
     },
 
+    getBundlePath: function (bundle, ext) {
+        var self = this,
+            retVal,
+            bundlePath;
+
+        ext = ext || '.yaml';
+        bundle = self.getBundleAlias(bundle);
+
+        if (sjl.isEmptyObjKey(self, 'bundleConfigFormats')) {
+            bundlePath = path.join(self.bundlesPath, bundle + ext);
+            retVal = fs.existsSync(bundlePath) ? bundlePath : null;
+        }
+        else {
+            for (var i = 0; i < self.bundleConfigFormats.length; i += 1) {
+                ext = self.bundleConfigFormats[i];
+                bundlePath = path.join(self.bundlesPath, bundle + ext);
+                if (fs.existsSync(bundlePath)) {
+                    break;
+                }
+                else {
+                    bundlePath = null;
+                }
+            }
+            retVal = bundlePath;
+        }
+
+        return retVal;
+    },
+
+    getBundlePaths: function (bundles, ext) {
+        var self = this;
+        return bundles.map(function (bundle) {
+            return self.getBundlePath(bundle, ext);
+        });
+    },
+
     getBundle: function (bundle) {
         var self = this,
             originalBundleValue = bundle,
@@ -681,8 +726,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             // Try to create bundle
             for (i = 0; i < self.bundleConfigFormats.length; i += 1) {
                 bundle = self.createBundle(
-                    self.loadConfigFile(
-                        path.join(self.bundlesPath, originalBundleValue + self.bundleConfigFormats)));
+                            self.loadConfigFile(
+                                path.join(self.bundlesPath, originalBundleValue + self.bundleConfigFormats[i])));
                 break;
             }
             if (sjl.empty(bundle)) {
@@ -693,7 +738,21 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return bundle;
     },
 
-    getBundleAlias: function (bundle) {
+    getBundles: function (list) {
+        var self = this;
+        return list.map(function (bundle) {
+            if (!sjl.isEmptyObjKey(self.bundles, bundle, 'Object')) {
+                return self.bundles[bundle];
+            }
+            else {
+                return self.createBundle(self.getBundlePath(bundle));
+            }
+        });
+
+    },
+
+
+        getBundleAlias: function (bundle) {
         var retVal = bundle;
         if (bundle instanceof Bundle) {
             retVal = bundle.options.alias;
