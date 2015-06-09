@@ -228,7 +228,8 @@ tasks:
     priority: -99
 
     # Tasks to ignore on the bundle level (watch creates it's own
-    # collection of deploy tasks from the bundle(s) registered with it)
+    # collection of deploy tasks from the bundle(s) registered with it so deploy is ignored per bundle
+    # and a new deploy task is created which contains all files to be deployed from all currently watched bundles)
     ignoredTasks:
       - clean
       - deploy

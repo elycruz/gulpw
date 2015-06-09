@@ -70,7 +70,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
         getTemplatesString: function (bundle, gulp, wrangler) {
             var output = '',
                 fileContent,
-                templateOptions = wrangler.clone(wrangler.getTaskAdapter('minify').template),
+                templateOptions = sjl.jsonClone(wrangler.getTaskAdapter('minify').template),
                 compressWhitespace = templateOptions.compressWhitespace,
                 template = templateOptions.templatePartial,
                 templateKey,

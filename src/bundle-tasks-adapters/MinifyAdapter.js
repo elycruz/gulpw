@@ -32,8 +32,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
     registerBundle: function (bundle, gulp, wrangler) {
         var self = this,
             minifyConfig = bundle.has('minify') ?
-                sjl.extend(true, wrangler.clone(wrangler.tasks.minify), bundle.get('minify'))
-                    : wrangler.tasks.minify,
+                sjl.extend(true, sjl.jsonClone(wrangler.tasks.minify), bundle.get('minify')) : wrangler.tasks.minify,
             taskConfigMap = {
                 html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
                 css: {instance: minifycss, options: minifyConfig.cssTaskOptions},
