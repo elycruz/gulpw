@@ -77,26 +77,23 @@ function init(env) {
         console.log('CLI PACKAGE.JSON',              require('./package'));
     }
 
-    // If the config path is empty
-    if (sjl.empty(env.configPath)) {
-
-        // Write message to user
-        console.log(chalk.yellow('No \'gulpw-config.*\' file found.'), '\n',
-                chalk.cyan('Create an empty one and then run `gulpw config` to populate it.')
-            );
-
-        // Exit
-        return process.exit(0);
-    }
-
     // Set process' working directory
     env.pwd = __dirname;
 
-    // Change to config's path
-    process.chdir(env.configBase);
+    // If the config path is empty
+    if (sjl.empty(env.configPath) && argv._.length === 0) {
 
-    // Load config file
-    userConfig = Wrangler.prototype.loadConfigFile(env.configPath);
+        // Write message to user
+        console.log(chalk.yellow('\nNo \'gulpw-config.*\' file found.'));
+    }
+    else if (!sjl.empty(env.configPath)) {
+
+        // Change to config's path
+        process.chdir(env.configBase);
+
+        // Load config file
+        userConfig = Wrangler.prototype.loadConfigFile(env.configPath);
+    }
 
     // Instantiate wrangler
     try { wrangler = new Wrangler(gulp, argv, env, userConfig) } catch (e) {

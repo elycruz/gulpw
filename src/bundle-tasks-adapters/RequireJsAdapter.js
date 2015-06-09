@@ -111,7 +111,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
         if (sjl.empty(rjsOptions)) {
             throw new Error ('`RequireJsAdapter.getRequireJs` expects resolved `requirejs.options` to be a non empty object.');
         }
-        rjsOptions = wrangler.extendWranglerOptions('tasks.requirejs.options', rjsOptions);
+        rjsOptions = wrangler.cloneOptionsFromWrangler('tasks.requirejs.options', rjsOptions);
         return rjsOptions;
     },
 

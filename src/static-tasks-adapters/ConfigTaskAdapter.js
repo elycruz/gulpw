@@ -54,12 +54,12 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
             return (new Promise(function (fulfill/*, reject*/) {
 
                 console.log(chalk.cyan('Running "config" task.\n\n') +
-                chalk.dim('** Note ** - Any existing config will be backed up to "' + wrangler.localConfigBackupPath + '" before generating a new one.'));
+                chalk.dim('** Note ** - Any existing config will be backed up to "' + wrangler.localConfigBackupPath + '" before generating a new one. \n'));
 
                 inquirer.prompt(questions, function (answers) {
                     var newConfig = wrangler.loadConfigFile(path.join(wrangler.pwd, '/configs/wrangler.config.yaml')),
                         newConfigPath,
-                        oldConfig = wrangler.loadConfigFile(wrangler.configPath),
+                        oldConfig = fs.existsSync(wrangler.configPath) ? wrangler.loadConfigFile(wrangler.configPath) : null,
                         oldFileName = path.basename(wrangler.configPath),
                         oldFileExt = path.extname(oldFileName),
                         backupPath = path.join(process.cwd(), wrangler.localConfigBackupPath),
@@ -133,7 +133,7 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
                     fs.writeFileSync(newConfigPath, newConfig);
 
                     // 'New config written successfully' message
-                    console.log(chalk.dim('New config file written to "' + newConfigPath + '".'));
+                    console.log(chalk.dim('\nNew config file written to "' + newConfigPath + '".'));
 
                     // Fullfill promise
                     fulfill();

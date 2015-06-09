@@ -1,5 +1,7 @@
 /**
  * Created by Ely on 10/4/2014.
+ * @todo remove usages of argv alias methos;  E.g. `wrangler.skipLinting()`
+ *  instead use `wrangler.argv.skipLinting`.
  */
 
 'use strict';
@@ -8,12 +10,9 @@ require('sjljs');
 
 var fs = require('fs'),
     path = require('path'),
-    yaml = require('js-yaml'),
     chalk = require('chalk'),
-    mkdirp = require('mkdirp'),
-    glob = require('glob'),
     Bundle = require('./Bundle'),
-    os = require('os');
+    gwUtils = require('./Utils');
 
 module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config) {
     var self = this,
@@ -31,11 +30,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         configPath: env.configPath
     }, defaultOptions);
 
-    // Merge local options
-    self.mergeLocalOptions(config);
+    // Merge config only if it is populated
+    if (!sjl.empty(config)) {
 
-    // Resolve bundles path
-    self.bundlesPath = path.join(self.cwd, self.bundlesPath);
+        // Merge local options
+        self.mergeLocalOptions(config);
+
+        // Resolve bundles path
+        self.bundlesPath = path.join(self.cwd, self.bundlesPath);
+    }
 
     // Preparing to give all gulpw components direct access to gulp and wrangler internally.
     self.gulp = gulp;
@@ -177,7 +180,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         TaskAdapterClass = new TaskAdapterClass(sjl.extend({
             alias: task,
             help: self.staticTasks[task].help || ''
-        }, self.clone(self.staticTasks[task])));
+        }, sjl.jsonClone(self.staticTasks[task])));
 
         TaskAdapterClass.registerStaticTask(gulp, self);
 
@@ -405,9 +408,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return this;
     },
 
-    ensurePathExists: function (dirPath) {
-        return mkdirp.sync(dirPath);
-    },
+    ensurePathExists: gwUtils.ensurePathExists,
 
     /**
      * Loads a wrangler configuration file (which is simply a *.json, *.js, or *.yaml file).
@@ -415,17 +416,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
      * @returns {Object|*} - Returns the loaded returned value of loading `file` or file path
      *  if it does not match one of the allowed file types [json,js,yaml].
      */
-    loadConfigFile: function (file) {
-        if (file.lastIndexOf('.js') === file.length - 3
-            || file.lastIndexOf('.json') === file.length - 5) {
-            file = require(file);
-        }
-        else if (file.lastIndexOf('.yaml') === file.length - 5
-            || file.lastIndexOf('.yml') === file.length - 4) {
-            file = yaml.safeLoad(fs.readFileSync(file));
-        }
-        return file;
-    },
+    loadConfigFile: gwUtils.loadConfigFile,
 
     /**
      * Writes a configuration file depending on file extension in the `filePath` parameter.
@@ -433,21 +424,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
      * @param filePath {String} - File path to write `obj` to.
      * @returns {exports}
      */
-    writeConfigFile: function (obj, filePath) {
-        if (filePath.lastIndexOf('.json') === filePath.length - 5) {
-            obj = JSON.stringify(obj, '    ');
-        }
-        else if (filePath.lastIndexOf('.yaml') === filePath.length - 5
-            || filePath.lastIndexOf('.yml') === filePath.length - 4) {
-            obj = yaml.safeDump(obj);
-        }
-        else if (filePath.lastIndexOf('.js') === filePath.length - 3) {
-            obj = '\'use strict\'; module.exports = ' + JSON.stringify(obj, '    ') + ';';
-        }
-        //this.backupConfigFile(filePath);
-        fs.writeFileSync(filePath, obj);
-        return this;
-    },
+    writeConfigFile: gwUtils.writeConfigFile,
 
     /**
      * Backs up a config file to `wrangler.localConfigBackupPath` if the file exists.
@@ -609,10 +586,6 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return this.argv.skipJsLinting;
     },
 
-    clone: function (obj) {
-        return JSON.parse(JSON.stringify(obj));
-    },
-
     mergeLocalOptions: function (options) {
         var self = this,
             tasks,
@@ -765,15 +738,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         return !sjl.empty(this.getArgvFileTypes());
     },
 
-    pathToForwardSlashes: function (filePath, checkForWindows) {
-        if (!sjl.empty(checkForWindows)) {
-            filePath = os.type().toLowerCase().indexOf('windows') > -1 ? filePath.replace(/\\/g, '/') : filePath;
-        }
-        else {
-            filePath = filePath.replace(/\\/g, '/');
-        }
-        return filePath;
-    },
+    pathToForwardSlashes: gwUtils.pathToForwardSlashes,
 
     sortTaskKeysByPriority: function (tasksSortDataObjs, direction) {
         var self = this,
@@ -835,33 +800,14 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
      * @param string {String} - Glob string to parse.
      * @returns {Array|String} - See description above.
      */
-    explodeGlob: function (string) {
-        var out = string;
-        if (glob.hasMagic(string)) {
-            out = glob.sync(string);
-        }
-        return out;
-    },
+    explodeGlob: gwUtils.explodeGlob,
 
     /**
      * Explodes any globs in an array of file paths and replaces the glob entries with actual file paths.
      * @param fileList {Array} - Array of file paths.
      * @returns {Array} - Array of file paths with globs replaced by actual file entries.
      */
-    explodeGlobs: function (fileList) {
-        var self = this,
-            out = [];
-        fileList.forEach(function (file) {
-            var value = self.explodeGlob(file);
-            if (Array.isArray(value)) {
-                out = out.concat(value);
-            }
-            else {
-                out.push(value);
-            }
-        });
-        return out;
-    },
+    explodeGlobs: gwUtils.explodeGlobs,
 
     /**
      * Clones some options from wrangler based on key and extends those options with your passed in object.
@@ -869,7 +815,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
      * @param extendWithObj {Object|*} - Optional.  Only gets merged with the key in wrangler if this variable is an `Object`.
      * @returns {*}
      */
-    extendWranglerOptions: function (key, extendWithObj) {
+    cloneOptionsFromWrangler: function (key, extendWithObj) {
         var options = sjl.namespace(key, this),
             classOfOptions = sjl.classOf(options),
             classOfObj = sjl.classOf(extendWithObj),
@@ -882,7 +828,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
         else if (!sjl.empty(options) && !sjl.empty(extendWithObj) &&
             classOfOptions === 'Object' && classOfObj === 'Object') {
-            retVal = sjl.extend(true, this.clone(options), extendWithObj);
+            retVal = sjl.extend(true, sjl.jsonClone(options), extendWithObj);
         }
         return retVal;
     }
