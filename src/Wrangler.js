@@ -209,7 +209,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         else {
             bundles = bundles.map(function (bundle) {
                 bundle = self.createBundle(bundle);
-                if (bundle.has('relatedBundles.processBefore')) {
+                if (bundle && bundle.has('relatedBundles.processBefore')) {
                     self.createBundles(gulp, self.getBundlePaths(bundle.get('relatedBundles.processBefore')), registerBundles);
                 }
                 return bundle;
@@ -250,6 +250,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Set original bundle file location to bundle.config
         config.filePath = '.' + path.sep + filePath;
 
+        if (!sjl.isEmptyObjKey(this.bundles, config.alias)) {
+            return;
+        }
+
         // Create bundle
         bundle = new Bundle(config);
 
@@ -273,6 +277,9 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             _bundles = bundles;
         }
         _bundles.forEach(function (bundle) {
+            if (!bundle) {
+                return;
+            }
             self.log('\n', chalk.grey('Preparing to register bundle "' + bundle.options.alias + '".'), '\n');
             self.registerTasksForBundle(gulp, bundle, taskKeys);
         });

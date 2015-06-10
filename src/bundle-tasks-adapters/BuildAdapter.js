@@ -16,7 +16,8 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
         var self = this,
             bundleName = bundle.options.alias,
             taskName = 'build:' + bundleName,
-            targets;
+            targets,
+            deps = [];
 
         targets = self.getTasksForBundle(bundle, wrangler);
 
@@ -26,17 +27,14 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
                 if (!self.isBundleValidForTask(item)) {
                     return;
                 }
-
-                var _targets = self.getTasksForBundle(item, wrangler);
-                targets.targets = _targets.targets.concat(targets.targets);
-                targets.taskAliases = _targets.taskAliases.concat(targets.taskAliases);
+                deps.push('build:' + item.options.alias);
                 self.registerBundle(item, gulp, wrangler);
             });
         }
 
         wrangler.registerTasksForBundle(gulp, bundle, targets.taskAliases);
 
-        self.registerGulpTasks(taskName, targets.targets, gulp, wrangler);
+        self.registerGulpTasks(taskName, targets.targets, gulp, wrangler, deps);
 
     }, // end of `registerBundle`
 

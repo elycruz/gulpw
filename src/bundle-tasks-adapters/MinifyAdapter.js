@@ -45,6 +45,10 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             createFileHash = minifyConfig.createFileHashes || true,
             fileHashType = minifyConfig.fileHashType || 'sha256';
 
+        if (!self.isBundleValidForTask(bundle)) {
+            return;
+        }
+
         // Create task for bundle
         gulp.task(taskName, function () {
 

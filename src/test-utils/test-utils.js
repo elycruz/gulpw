@@ -17,6 +17,7 @@ module.exports = (function () {
 
             // Execute command
             exec(tasksCommand, options, function (error, stdout, stderr) {
+                log('command executed');
                 if (!sjl.empty(stderr)) {
                     log('stderr: ' + stderr);
                 }
