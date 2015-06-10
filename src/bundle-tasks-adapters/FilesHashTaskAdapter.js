@@ -10,7 +10,7 @@ require('sjljs');
 var path = require('path'),
     jsStringEscape = require('js-string-escape'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter.js'),
-    lodash = require('lodash'),
+    ejs = require('ejs'),
     chalk = require('chalk'),
     fs = require('fs');
 
@@ -104,7 +104,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
                     templateKey = self.getTemplateKey(file, key, templateOptions);
 
                     // Write file contents to key value pair on templates object
-                    output += lodash.template(template)(sjl.extend({templateKey: templateKey,
+                    output += ejs.compile(template)(sjl.extend({templateKey: templateKey,
                         templateContent: fileContent}, templateOptions));
 
                 }); // end of template files loop

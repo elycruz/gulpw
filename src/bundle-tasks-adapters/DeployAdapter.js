@@ -15,7 +15,7 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     ssh = require('ssh2'),
     chalk = require('chalk'),
     yaml = require('js-yaml'),
-    lodash = require('lodash'),
+    ejs = require('ejs'),
     glob = require('glob');
 
 module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/) {
@@ -423,13 +423,13 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
 
         if (selectedServerEntry.deployRootFolder) {
             selectedServerEntry.deployRootFolder =
-                    lodash.template(selectedServerEntry.deployRootFolder)(deployOptions);
+                    ejs.compile(selectedServerEntry.deployRootFolder)(deployOptions);
         }
 
         if (!sjl.empty(selectedServerEntry.deployRootFoldersByFileType)) {
                 Object.keys(selectedServerEntry.deployRootFoldersByFileType).forEach(function (key) {
                         selectedServerEntry.deployRootFoldersByFileType[key] =
-                            lodash.template(selectedServerEntry.deployRootFoldersByFileType[key])(deployOptions);
+                            ejs.compile(selectedServerEntry.deployRootFoldersByFileType[key])(deployOptions);
                     });
         }
         return this;

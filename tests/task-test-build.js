@@ -11,7 +11,7 @@ var chai = require('chai'),
     log = console.log,
     tutil = require('./../src/test-utils/test-utils'),
     genericTest = function (error, stdout, stderr) {
-        log('Generic test recieved params:', error, stderr);
+        log('Generic test recieved params:', 'Error: ', error, 'Stdout: ', stdout, 'Stderr: ', stderr);
         expect(sjl.empty(stderr)).to.equal(true);
         expect(sjl.empty(error)).to.equal(true);
     },
