@@ -746,14 +746,16 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     },
 
     getBundles: function (list) {
-        var self = this;
+        var self = this,
+            retVal;
         return list.map(function (bundle) {
             if (!sjl.isEmptyObjKey(self.bundles, bundle, 'Object')) {
-                return self.bundles[bundle];
+                retVal = self.bundles[bundle];
             }
             else {
-                return self.createBundle(self.getBundlePath(bundle));
+                retVal = self.createBundle(self.getBundlePath(bundle));
             }
+            return retVal;
         });
 
     },
