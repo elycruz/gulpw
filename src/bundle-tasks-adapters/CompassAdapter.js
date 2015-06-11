@@ -7,7 +7,8 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
+var Bundle = require('./../Bundle'),
+    BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
 	path = require('path'),
 	childProcess = require('child_process'),
 	exec = childProcess.exec,
@@ -102,11 +103,39 @@ module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
 			}
 		});
 
-		// Register global `compass` task
+		if ((failedRegistrations === bundles.length && wrangler.tasks.compass.canRunStatically)
+            || wrangler.argv.topLevelConfig) {
+			this.registerStaticTask(gulp, wrangler);
+		}
+		else {
+			// Register global `compass` task
+			gulp.task('compass', function () {
+				console.log(chalk.cyan('Running "compass" task(s).\n'));
+				return wrangler.launchTasks(targets, gulp);
+			});
+		}
+	},
+
+	registerStaticTask: function (gulp, wrangler) {
+
+		// Bail if not possible to run statically
+		if (sjl.isEmptyObjKeyOrNotOfType(wrangler.tasks.compass, 'configrb', 'String')) {
+			return this;
+		}
+
+		var bundle = new Bundle({alias: 'all'});
+
+		bundle.set('compass.configrb', wrangler.tasks.compass.configrb);
+
+		this.registerBundle(bundle, gulp, wrangler);
+
+		// Register task
 		gulp.task('compass', function () {
-			console.log(chalk.cyan('Running "compass" task(s).\n'));
-			return wrangler.launchTasks(targets, gulp);
+			console.log(chalk.cyan('Running "compass" task.\n'));
+			return wrangler.launchTasks(['compass:' + bundle.options.alias], gulp);
 		});
+
+		return this;
 	}
 
 }); // end of export

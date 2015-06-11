@@ -760,8 +760,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
     },
 
-
-        getBundleAlias: function (bundle) {
+    getBundleAlias: function (bundle) {
         var retVal = bundle;
         if (bundle instanceof Bundle) {
             retVal = bundle.options.alias;

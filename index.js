@@ -16,6 +16,7 @@ var Liftoff =   require('liftoff'),
         .alias('a',     'async')
         .alias('d',     'dev')
         .alias('f',     'force')
+        .alias('g',     'topLevelConfig')
         .alias('v',     'verbose')
         .alias('skip-css-hint',     'skip-css-linting')
         .alias('skip-css-lint',     'skip-css-linting')

@@ -95,6 +95,7 @@ tasks:
     constructorLocation: ./src/bundle-tasks-adapters/CompassAdapter
     priority: 98
     configrb: null # config.rb home
+    canRunStatically: true
     
   copy:
     constructorLocation: ./src/bundle-tasks-adapters/CopyAdapter
