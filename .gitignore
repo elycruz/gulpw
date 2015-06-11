@@ -1,11 +1,5 @@
 .idea
 .project
-bundle-wrangler-config*
-bundles
-gulp-bundles
-gulp-bundle-wrangler-config*
 nbproject
 node_modules
 npm-debug.log
-
-

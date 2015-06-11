@@ -127,6 +127,7 @@ gulpw (gulp wrangler)
 - [ ] - Examine any fields named `allowedFileTypes` for candidates to rename to `ingoredFileTypes`.
 - [ ] - Separate minify-html, minify-css, and minify-js into separate tasks.
 - [ ] - Minify should get all options and pipes from it's sub tasks (minify-html, minify-css, minify-js, jsdoc)
+- [ ] - Implement DotfilesTaskAdapter (adapter that ask you about '.' files that you may want (E.g., .gitignore, .eslintrc .etc).
 
 ### Todos for Version 0.4.0
 - [ ] - Move all utility styled functions from `Wrangler` into a utils class/namespace etc.. (?)
