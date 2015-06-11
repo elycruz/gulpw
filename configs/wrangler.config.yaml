@@ -1,5 +1,5 @@
 # Path to bundle configurations
-bundlesPath: ./path/to/bundles
+bundlesPath: ./gulpw-bundles
 
 # Allowed bundle configuration formats
 bundleConfigFormats:
@@ -25,6 +25,9 @@ staticTasks:
 
   "config":
     constructorLocation: ./src/static-tasks-adapters/ConfigTaskAdapter
+    unconfigurableTasks:
+      - copy
+      - browserify
     notAllowedInnerKeys:
       - priority
       - constructorLocation

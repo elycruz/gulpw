@@ -24,8 +24,10 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
 
     registerStaticTask: function (gulp, wrangler) {
         var self = this,
-            taskKeys = Object.keys(wrangler.tasks),
-            staticTaskKeys = Object.keys(wrangler.staticTasks),
+            unconfigurableTasks = wrangler.staticTasks.config.unconfigurableTasks,
+            taskKeys = Object.keys(wrangler.tasks).filter(function (key) {
+                return unconfigurableTasks.indexOf(key) === -1 ? true : false;
+            }),
             questions = [
                 {
                     name: 'configFormat',
@@ -41,12 +43,6 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
                     type: 'checkbox',
                     message: 'Please select the tasks you would like to configure from your newly generated wrangler config file:',
                     choices: taskKeys
-                },
-                {
-                    name: 'staticTasks',
-                    type: 'checkbox',
-                    message: 'Please select any static tasks you would like to configure from your newly generated wrangler config file:',
-                    choices: staticTaskKeys
                 }
             ];
 
@@ -103,18 +99,26 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
                     }
 
                     // Remove sections that were not specified to be kept by the user
-                    self.cleanUpNewTasksList(taskKeys, answers.tasks, newConfig.tasks, self)
-
-                        // Remove unwanted keys from static tasks
-                        .cleanUpNewTasksList(staticTaskKeys, answers.staticTasks, newConfig.staticTasks, self);
+                    self.cleanUpNewTasksList(taskKeys, answers.tasks, newConfig.tasks, self);
 
                     // If empty tasks object then remove it
-                    ['tasks', 'staticTasks'].forEach(function(key) {
-                        if (sjl.empty(newConfig[key])) {
-                            newConfig[key] = null;
-                            delete newConfig[key];
-                        }
+                    if (sjl.empty(newConfig.tasks)) {
+                        newConfig.tasks = null;
+                        delete newConfig.tasks;
+                    }
+
+                    // Delete static tasks key
+                    delete newConfig.staticTasks;
+
+                    // Delete unconfigurable keys
+                    unconfigurableTasks.forEach(function (key) {
+                        delete newConfig.tasks[key];
                     });
+
+                    // Delete other properties from config
+                    newConfig.localHelpPath = newConfig.helpPath = null;
+                    delete newConfig.localHelpPath;
+                    delete newConfig.helpPath;
 
                     // Remove emptyBundle //@todo remove this one off deletion for a better alternative
                     //newConfig.staticTasks.bundle.emptyBundleFile = null;
