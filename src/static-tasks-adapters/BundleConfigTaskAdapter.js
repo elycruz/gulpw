@@ -98,6 +98,9 @@ module.exports = BaseStaticTaskAdapter.extend(function BundleConfigTaskAdapter (
                         jsonSpace = '     ',
                         bundlePath = path.join(wrangler.bundlesPath, answers.alias + answers.configFormat);
 
+                    // Set description
+                    newConfig.description = answers.description;
+
                     // Ensure bundles path exists
                     wrangler.ensurePathExists(wrangler.bundlesPath);
 

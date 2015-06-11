@@ -28,7 +28,6 @@ module.exports = (function () {
 
                 if (sjl.classOfIs(test, 'Function')) {
                     test(error, stdout, stderr);
-                    doneCallback();
                 }
 
                 log('\nTest for "' + tasksCommand + '" completed.');
