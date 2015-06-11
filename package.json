@@ -1,6 +1,6 @@
 {
   "name": "gulpw",
-  "version": "0.2.74-beta",
+  "version": "0.2.80-beta",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
   "bin": {
     "gulpw": "index.js"
