@@ -156,6 +156,12 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // 'Creating task ...' message
         this.log(' - Creating task adapter \"' + task + '\'.');
 
+        if (!sjl.issetObjKey(this.tasks, task)) {
+            this.log('\n');
+            console.warn(chalk.yellow(' ! Could not find a task configuration defined for config section "' + task + '".'));
+            process.exit(0);
+        }
+
         var self = this,
             localConstructor = self.tasks[task].hasOwnProperty('localConstructor') ?  self.tasks[task].localConstructor : null,
             src = localConstructor ? path.join(self.cwd, localConstructor) :
@@ -473,7 +479,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
                 retVal = true;
             }
             else {
-                self.log(chalk.yellow('! Could not run the task "' + item + '".  ' +
+                self.log(chalk.yellow(' ! Could not run the task "' + item + '".  ' +
                 'Task not defined.'), '--mandatory');
                 retVal = false;
             }
