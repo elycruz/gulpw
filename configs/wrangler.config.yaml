@@ -51,7 +51,7 @@ staticTasks:
       - mocha
       - requirejs
       - watch
-    
+
 tasks:
 
   # task:

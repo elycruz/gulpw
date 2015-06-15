@@ -103,7 +103,7 @@ gulpw (gulp wrangler)
   - [X] - Bundle aliases/name's are now optional inside of a {bundle}.* config file.
   - [X] - Renamed all occurrences of 'Proxy' to 'Adapter' (since what Wrangler uses are actually adapters).
   - [ ] - Refresh docs
-  - [ ] - Ensure all tasks are optional
+  - [X] - Ensure all tasks are optional
   - [X] - ~~Ensure that `registerBundle` and `registerBundles` returns a boolean so we can track which bundles registered
   successfully or not.~~  Instead we just check `gulp.tasks` to see if task is registered before trying to run it.
   - [X] - ~~Track which bundles register successfully and which ones do not on and pull out their tasks
@@ -134,5 +134,3 @@ gulpw (gulp wrangler)
 - [ ] - The watch task should be reset whenever the {bundle}.* file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a {bundle}.* is
 	  changed.
-
-
