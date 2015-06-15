@@ -6,7 +6,6 @@
 
 require('sjljs');
 
-
 // Import base task proxy to extend
 var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     os = require('os'),
@@ -164,11 +163,21 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
     },
 
     registerBundle: function (bundle, gulp, wrangler) {
-        if (this.wrangler.tasks.deploy.notConfiguredByUser) {
+        var self = this;
+        if (self.wrangler.tasks.deploy.notConfiguredByUser) {
             return false;
         }
 
-        var targets = this.getSrcForBundle(bundle, wrangler);
+        var targets = self.getSrcForBundle(bundle, wrangler);
+
+        // Register related bundles
+        if (bundle.has('relatedBundles.processBefore')) {
+            // Inject related bundle srcs into `targets`
+            self.getSrcsForBundles(
+                wrangler.getBundles(bundle.options.relatedBundles.processBefore),
+                targets,
+                wrangler);
+        }
 
         this.registerGulpTask(':' + bundle.options.alias, targets, gulp, wrangler);
 
@@ -176,25 +185,31 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
     }, // end of `registerBundle`
 
     registerBundles: function (bundles, gulp, wrangler) {
-        var self = this,
-            targets = {};
+        this.registerGulpTask('', this.getSrcsForBundles(bundles, {}, wrangler), gulp, wrangler);
+    },
 
-        bundles.forEach(function (bundle) {
-            if (!self.isBundleValidForTask(bundle)) {
+    getSrcsForBundles: function (relatedBundles, targets, wrangler) {
+        var self = this;
+        targets = targets || {};
+        relatedBundles.forEach(function (item) {
+            if (!self.isBundleValidForTask(item)) {
                 return;
             }
-            var bundleTargets = self.getSrcForBundle(bundle, wrangler);
-            Object.keys(bundleTargets).forEach(function (key) {
-                if (bundleTargets.hasOwnProperty(key)) {
-                    if (sjl.empty(targets[key])) {
-                        targets[key] = [];
-                    }
-                    targets[key] = targets[key].concat(bundleTargets[key]);
+            var subSrcs = self.getSrcForBundle(item, wrangler),
+                targetsConcatable = false,
+                srcsConcatable;
+            Object.keys(subSrcs).forEach(function (key) {
+                targetsConcatable = sjl.issetObjKeyAndOfType(targets, key, 'Array');
+                srcsConcatable = sjl.issetObjKeyAndOfType(subSrcs, key, 'Array');
+                if (targetsConcatable && srcsConcatable) {
+                    targets[key] = targets[key].concat(subSrcs[key]);
+                }
+                else if (!targetsConcatable) {
+                    targets[key] = subSrcs[key];
                 }
             });
         });
-
-        this.registerGulpTask('', targets, gulp, wrangler);
+        return targets;
     },
 
     getSrcForBundle: function (bundle, wrangler) {
