@@ -23,6 +23,9 @@ All flag default values are `null`/`false`.
 - **async:** Runs all tasks asynchronously.  **Note** This may cause race condition errors between certain tasks;  E.g.,
     ``` gulpw build deploy ``` // If you have many bundles deploy may fire before all build sub-tasks are done cause a failure (deploy task will timeout while waiting for files to become available for deploy if they are being used). 
     - **Aliases:** `-a`
+- **out:**  Used for sending a path to a task to use to output file(s).  Used by 'csslint' task to output all reporting (optionally).
+    - **Alias:**
+        - `-o`
 - **section:** Used by static help task to show help for a given readme.md section.
 - **skip-artifacts:** Causes artifacts to be skipped on deploy task.
 - **skip-css-linting:** Causes any css linting/hinting to be skipped from the `minify` task.

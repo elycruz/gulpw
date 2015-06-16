@@ -695,7 +695,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
     getBundlePath: function (bundle, ext) {
         var self = this,
             retVal,
-            bundlePath;
+            bundlePath,
+            i;
 
         ext = ext || '.yaml';
         bundle = self.getBundleAlias(bundle);
@@ -705,7 +706,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             retVal = fs.existsSync(bundlePath) ? bundlePath : null;
         }
         else {
-            for (var i = 0; i < self.bundleConfigFormats.length; i += 1) {
+            for (i = 0; i < self.bundleConfigFormats.length; i += 1) {
                 ext = self.bundleConfigFormats[i];
                 bundlePath = path.join(self.bundlesPath, bundle + ext);
                 if (fs.existsSync(bundlePath)) {

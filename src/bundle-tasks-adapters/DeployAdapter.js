@@ -163,12 +163,13 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
     },
 
     registerBundle: function (bundle, gulp, wrangler) {
-        var self = this;
+        var self = this,
+            targets;
         if (self.wrangler.tasks.deploy.notConfiguredByUser) {
             return false;
         }
 
-        var targets = self.getSrcForBundle(bundle, wrangler);
+        targets = self.getSrcForBundle(bundle, wrangler);
 
         // Register related bundles
         if (bundle.has('relatedBundles.processBefore')) {
