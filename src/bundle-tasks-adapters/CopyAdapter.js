@@ -30,7 +30,7 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
                         newFileBasePath = path.dirname(newFile);
 
                     // Pass the file source through gulp
-                    gulp.src(file)
+                    gulp.src(wrangler.explodeGlob(file))
 
                         // Output the file src
                         .pipe(gulp.dest(newFileBasePath));
