@@ -10,6 +10,9 @@ var fs = require('fs'),
     csslint = require('gulp-csslint'),
     chalk = require('chalk'),
     duration = require('gulp-duration'),
+    gulpif = require('gulp-if'),
+    path = require('path'),
+    callback = require('gulp-fncallback'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     lazypipe = require('lazypipe');
 
@@ -63,7 +66,9 @@ module.exports = BaseBundleTaskAdapter.extend('CssLintAdapter', {
 
     getPipe: function (bundle, gulp, wrangler) {
         var self = this,
-            cssLintConfig = wrangler.tasks.csslint.csslintrc || wrangler.tasks.csslint.options;
+            cssLintConfig = wrangler.tasks.csslint.csslintrc || wrangler.tasks.csslint.options,
+            outputDir = wrangler.argv.out,
+            runOutput = '';
 
         // Ensure an absolute path if `cssLintConfig` is a 'String'
         if (sjl.classOfIs(cssLintConfig, 'String')) {
@@ -78,10 +83,43 @@ module.exports = BaseBundleTaskAdapter.extend('CssLintAdapter', {
         }
 
         if (sjl.empty(self.pipe)) {
+
+            var getLineMessage = function (result) {
+                    var humanType = sjl.camelCase(result.error.type, true);
+                    return '[' + result.error.line + ':' + result.error.col + '] - ' +
+                        humanType + ': ' + result.error.message + ' (' + result.error.rule.id + ')';
+                },
+                getColoredLineMessage = function (result) {
+                    var humanType = sjl.camelCase(result.error.type, true);
+                    humanType = result.error.type === 'error' ? chalk.red(humanType) : chalk.yellow(humanType);
+                    return chalk.red('[') + chalk.yellow(result.error.line) + chalk.red(':') + chalk.yellow(result.error.col) + chalk.red(']') + ' - ' +
+                            humanType + ': ' + result.error.message + chalk.dim(result.error.rule.desc) + ' ' + ' (' + result.error.rule.id + ') ';
+                },
+                saveOutputReporter = function(file) {
+                    runOutput += 'Csslint found ' + file.csslint.errorCount + ' errors in ' + file.path;
+                    console.log('\n' + chalk.cyan('Csslint') + ' found ' + file.csslint.errorCount + ' errors in ' + chalk.magenta(file.path));
+                    file.csslint.results.forEach(function(result) {
+                        runOutput += '\n' + getLineMessage(result);
+                        console.log(getColoredLineMessage(result));
+                    });
+                };
+
             self.pipe = lazypipe()
                 .pipe(duration, chalk.cyan('csslint "' + bundle.options.alias + '" duration'))
                 .pipe(csslint, cssLintConfig)
-                .pipe(csslint.reporter);
+                .pipe(csslint.reporter, saveOutputReporter);
+
+            if (outputDir !== null) {
+                self.pipe = self.pipe.pipe(callback, function (file, enc, cb) {
+                    if (!file.csslint.success) {
+                        var outputFilePath = path.join(outputDir, path.basename(file.path) + '.txt');
+                        wrangler.ensurePathExists(outputDir);
+                        fs.writeFileSync(outputFilePath, runOutput);
+                        runOutput = '';
+                    }
+                    return cb();
+                });
+            }
 
         }
         return self.pipe;

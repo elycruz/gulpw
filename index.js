@@ -12,6 +12,8 @@ var Liftoff =   require('liftoff'),
         .default('bundle',          null)
         .default('async',           false)
         .default('force',           false)
+        .default('out',           null)
+        .alias('o',     'out')
         .alias('b',     'browser')
         .alias('a',     'async')
         .alias('d',     'dev')
