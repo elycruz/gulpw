@@ -13,7 +13,7 @@ var jshint = require('gulp-jshint'),
     chalk = require('chalk'),
     lazypipe = require('lazypipe');
 
-module.exports = BaseBundleTaskAdapter.extend('JsHintAdapter', {
+module.exports = BaseBundleTaskAdapter.extend(function JsHintAdapter () {}, {
 
     registerBundle: function (bundle, gulp, wrangler) {
         var self = this,

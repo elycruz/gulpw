@@ -12,7 +12,7 @@ var jasmine = require('gulp-jasmine'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     chalk = require('chalk');
 
-module.exports = BaseBundleTaskAdapter.extend('JasmineAdapter', {
+module.exports = BaseBundleTaskAdapter.extend(function JasmineAdapter () {}, {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true, JSON.parse(JSON.stringify(wrangler.tasks.jasmine)), bundle.options.jasmine),

@@ -9,7 +9,7 @@
 // Import base task proxy to extend
 var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter');
 
-module.exports = BaseBundleTaskAdapter.extend('BrowserifyAdapter', {
+module.exports = BaseBundleTaskAdapter.extend(function BrowserifyAdapter () {}, {
 
     /**
      * Regsiters bundle with `browserify` gulp task.

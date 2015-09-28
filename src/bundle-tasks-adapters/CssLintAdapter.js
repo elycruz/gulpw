@@ -15,7 +15,7 @@ var fs = require('fs'),
     BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     lazypipe = require('lazypipe');
 
-module.exports = BaseBundleTaskAdapter.extend('CssLintAdapter', {
+module.exports = BaseBundleTaskAdapter.extend(function CssLintAdapter () {}, {
 
     /**
      *

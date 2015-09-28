@@ -14,7 +14,7 @@ var Bundle = require('./../Bundle'),
 	exec = childProcess.exec,
 	chalk = require('chalk');
 
-module.exports = BaseBundleTaskAdapter.extend('CompassAdapter', {
+module.exports = BaseBundleTaskAdapter.extend(function CompassAdapter () {}, {
 
     /**
      * Regsiters bundle with `compass` or `sass` gulp task.

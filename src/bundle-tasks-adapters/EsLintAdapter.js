@@ -15,7 +15,7 @@ var
     chalk = require('chalk'),
     lazypipe = require('lazypipe');
 
-module.exports = BaseBundleTaskAdapter.extend('EsLintAdapter', {
+module.exports = BaseBundleTaskAdapter.extend(function EsLintAdapter () {}, {
 
     registerBundle: function (bundle, gulp, wrangler) {
         var self = this,

@@ -12,7 +12,7 @@ var mocha = require('gulp-mocha'),
     TaskAdapter = require('./BaseBundleTaskAdapter'),
     chalk = require('chalk');
 
-module.exports = TaskAdapter.extend('MochaAdapter', {
+module.exports = TaskAdapter.extend(function MochaAdapter () {}, {
 
     registerGulpTask: function (taskName, gulp, bundle, wrangler) {
         var taskConfig = sjl.extend(true,
