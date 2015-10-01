@@ -13,7 +13,7 @@ var chai = require('chai'),
         expect(sjl.empty(stderr)).to.equal(true);
         expect(sjl.empty(error)).to.equal(true);
     },
-    timeout = 34000,
+    timeout = 60000,
     commandOptions = {
         cwd: path.join(__dirname, '..', 'node_modules', 'gulpw-sample-app'),
         timeout: timeout
