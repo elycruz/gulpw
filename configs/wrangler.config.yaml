@@ -240,3 +240,15 @@ tasks:
     tasks:
       - build
       - deploy
+
+  vulcanize:
+    # Files to vulcanize
+    # files: // Populated from bundle.{json,js,yaml} file
+
+    # Destination directory for resulting files
+    # destDir: // Populated from bundle ""
+
+    # Vulcanize options (options for `gulp-vulcanize`)
+    options:
+    # vulcanize default options go here
+    # @see https://github.com/Polymer/vulcanize#using-vulcanize-programmatically

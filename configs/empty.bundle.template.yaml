@@ -8,7 +8,7 @@
 
 alias: "example-bundle-with-possible-options" # Dash separated bundle alias
 description: "Example bundle."                # description goes here
-version: "0.0.0"                              # Semver version string
+#version: "0.0.0"                              # Semver version string
 
 browserify: {}
 
