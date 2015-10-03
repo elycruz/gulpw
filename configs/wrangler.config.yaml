@@ -1,3 +1,5 @@
+# @todo add friendly task/static-task key lookup (will allow alternate key names to be used in bundle configs in a more friendly/extensible manner
+
 # Path to bundle configurations
 bundlesPath: ./gulpw-bundles
 
@@ -241,14 +243,68 @@ tasks:
       - build
       - deploy
 
+  minifyjs:
+    constructorLocation: ./src/bundle-tasks-adapters/MinifyJsAdapter
+    priority: 99
+    #files:
+
+    # Options go here or within bundle config
+    #options:
+    # @see https://www.npmjs.com/package/gulp-uglify
+    # @see https://www.npmjs.com/package/uglify-js
+
+  minifyhtml:
+    constructorLocation: ./src/bundle-tasks-adapters/MinifyHtmlAdapter
+    priority: 99
+    #files:
+
+    # Options go here or within bundle config
+    options:
+      spare: true
+      comments: true
+
+  minifycss:
+    constructorLocation: ./src/bundle-tasks-adapters/MinifyCssAdapter
+    priority: 99
+    #files:
+
+    # Options go here or within bundle config
+    #options:
+
+  minifyimage:
+    constructorLocation: ./src/bundle-tasks-adapters/ImageminAdapter
+    priority: 99
+    #files
+
+    # Options go here or within bundle config
+    #options:
+
+  crisper:
+    constructorLocation: ./src/bundle-tasks-adapters/CrisperAdapter
+    priority: 98
+    #files
+
+    # Options go here or within bundle config
+    #options:
+
+  babel:
+    constructorLocation: ./src/bundle-tasks-adapters/BabelAdapter
+    priority: 97
+    #files:
+
+    # Options go here or within bundle config
+    #options:
+
   vulcanize:
+    constructorLocation: ./src/bundle-tasks-adapters/VulcanizeAdapter
+    priority: 99
     # Files to vulcanize
-    # files: // Populated from bundle.{json,js,yaml} file
+    #files:
 
     # Destination directory for resulting files
-    # destDir: // Populated from bundle ""
+    #destDir: // Populated from bundle ""
 
     # Vulcanize options (options for `gulp-vulcanize`)
-    options:
-    # vulcanize default options go here
     # @see https://github.com/Polymer/vulcanize#using-vulcanize-programmatically
+    # vulcanize default options go here
+    #options:

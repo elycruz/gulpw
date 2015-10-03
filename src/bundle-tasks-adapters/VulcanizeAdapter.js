@@ -1,13 +1,6 @@
 /**
  * Created by elycruz on 9/29/15.
  */
-/**
- * Created by ElyDeLaCruz on 10/5/2014.
- */
-
-/**
- * Created by ElyDeLaCruz on 10/5/2014.
- */
 
 'use strict';
 
@@ -19,7 +12,9 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     chalk = require('chalk');
 
 module.exports = BaseBundleTaskAdapter.extend(function VulcanizeAdapter (/*options*/) {
+
     BaseBundleTaskAdapter.apply(this, arguments);
+
 }, {
 
     registerGulpTask: function (taskName, vulcanizeOptions, gulp, wrangler, bundle) {
