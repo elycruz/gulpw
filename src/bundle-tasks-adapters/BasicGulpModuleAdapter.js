@@ -16,5 +16,6 @@ var fs = require('fs'),
     lazypipe = require('lazypipe');
 
 module.exports = BaseBundleTaskAdapter.extend(function BasicGulpModuleAdapter () {}, {
-    getOptions: function () {}
+    getPipeOptions: function () {},
+    getPipe: function () {}
 });
