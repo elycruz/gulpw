@@ -14,7 +14,12 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     crypto = require('crypto'),
     gulpDuration = require('gulp-duration'),
     gulpSize = require('gulp-size'),
-    chalk = require('chalk');
+    gulpIf = require('gulp-if'),
+    gulpFilter = require('gulp-filter'),
+    minifyInline = require('gulp-minify-inline'),
+    path = require('path'),
+    chalk = require('chalk'),
+    File = require('vinyl');
 
 module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*options*/) {
     BaseBundleTaskAdapter.apply(this, arguments);
@@ -26,7 +31,8 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*opti
         // Create task for bundle
         gulp.task(taskName, function () {
 
-            var hasher = crypto.createHash('sha256');
+            var hasher = crypto.createHash('md5'),
+                htmlFilter = gulpFilter('**/*.html');
 
             // Message 'Running task'
             console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
@@ -40,9 +46,14 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*opti
 
                 // Add file hash to file name
                 .pipe(fncallback(function (file, enc, cb) {
+                    var basename = path.basename(file.path),
+                        extname = path.extname(basename),
+                        dirname = path.dirname(file.path);
+                    basename = path.basename(basename, extname);
                     hasher.update(file.contents.toString(enc));
-                    file.basename = file.basename + '-' + hasher.digest('hex');
-                    cb();
+                    file.basename = basename + '-' + hasher.digest('hex') + extname;
+                    file.path = dirname + path.sep + file.basename;
+                    cb(null, file);
                 }))
 
                 .pipe(crisper())

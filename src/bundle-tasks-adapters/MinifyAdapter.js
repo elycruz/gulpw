@@ -10,6 +10,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     uglify = require('gulp-uglify'),
     minifycss = require('gulp-minify-css'),
     minifyhtml = require('gulp-minify-html'),
+    minifyInline = require('gulp-minify-inline'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
     callback = require('gulp-fncallback'),
@@ -66,7 +67,11 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
             // Check for sections on bundle that can be minified
             allowedFileTypes.forEach(function (ext) {
-                var buildPath = minifyConfig[ext + 'BuildPath'],
+
+                var buildPath =
+                    bundle.has('files.' + ext + 'BuildPath') ?
+                        bundle.get('files.' + ext + 'BuildPath') :
+                        minifyConfig[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext],
                     eslintPipe = wrangler.getTaskAdapter('eslint').getPipe(bundle, gulp, wrangler),
                     cssLintPipe = wrangler.getTaskAdapter('csslint').getPipe(bundle, gulp, wrangler),
@@ -114,6 +119,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     // Add file header
                     .pipe(gulpif(ext !== 'html', header(minifyConfig.header,
                         {bundle: bundle, fileExt: ext, fileHashType: fileHashType} )))
+
+                    .pipe(gulpif(ext === 'html', minifyInline()))
 
                     // Dump to the directory specified in the `minify` call above
                     .pipe(gulp.dest('./'));
