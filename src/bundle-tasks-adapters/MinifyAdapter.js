@@ -18,6 +18,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     duration = require('gulp-duration'),
     chalk = require('chalk'),
     path = require('path'),
+    fileUtils = require('./../utils/file-utils'),
     crypto = require('crypto');
 
 module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
@@ -44,7 +45,9 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             taskName = self.alias + ':' + bundleName,
             allowedFileTypes = minifyConfig.allowedFileTypes,
             createFileHash = minifyConfig.createFileHashes || true,
-            fileHashType = minifyConfig.fileHashType || 'sha256';
+            fileHashType = minifyConfig.fileHashType || 'sha256',
+            prependFileHashToFileName = minifyConfig.prependFileHashToFileName,
+            appendFileHashToFileName = minifyConfig.appendFileHashToFileName;
 
         if (!self.isBundleValidForTask(bundle)) {
             return;
@@ -113,7 +116,19 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                             hasher.update(file.contents.toString(enc));
                             bundle[ext + 'Hash'] = hasher.digest('hex');
                         }
-                        cb();
+                        if (appendFileHashToFileName) {
+                            fileUtils.addFileHashToFilename(file, hasher, false);
+                        }
+                        else if (prependFileHashToFileName) {
+                            fileUtils.addFileHashToFilename(file, hasher, true);
+                        }
+
+                        if (appendFileHashToFileName || prependFileHashToFileName) {
+                            cb(null, file);
+                        }
+                        else {
+                            cb();
+                        }
                     }))
 
                     // Add file header

@@ -19,7 +19,8 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     minifyInline = require('gulp-minify-inline'),
     path = require('path'),
     chalk = require('chalk'),
-    File = require('vinyl');
+    File = require('vinyl'),
+    fileUtils = require('./../utils/file-utils');
 
 module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*options*/) {
     BaseBundleTaskAdapter.apply(this, arguments);

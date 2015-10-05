@@ -187,6 +187,8 @@ tasks:
     jsBuildPath: some/path/to/build/path
     fileHashType: sha256
     createFileHashes: true
+    prependFileHashToFileName: false
+    appendFileHashToFileName: false
     allowedFileTypes:
       - js
       - html
