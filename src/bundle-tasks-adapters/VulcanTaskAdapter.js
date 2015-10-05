@@ -1,11 +1,4 @@
 /**
- * Created by elycruz on 9/29/15.
- */
-/**
- * Created by ElyDeLaCruz on 10/5/2014.
- */
-
-/**
  * Created by ElyDeLaCruz on 10/5/2014.
  */
 
@@ -16,31 +9,51 @@ require('sjljs');
 // Import base task proxy to extend
 var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     vulcanize = require('gulp-vulcanize'),
+    crisper = require('gulp-crisper'),
+    fncallback = require('gulp-fncallback'),
+    crypto = require('crypto'),
+    gulpDuration = require('gulp-duration'),
+    gulpSize = require('gulp-size'),
     chalk = require('chalk');
 
-module.exports = BaseBundleTaskAdapter.extend(function VulcanizeAdapter (/*options*/) {
+module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*options*/) {
     BaseBundleTaskAdapter.apply(this, arguments);
 }, {
 
-    registerGulpTask: function (taskName, vulcanizeOptions, gulp, wrangler, bundle) {
+    registerGulpTask: function (taskName, gulp, wrangler, bundle) {
         var self = this;
 
         // Create task for bundle
         gulp.task(taskName, function () {
 
+            var hasher = crypto.createHash('sha256');
+
             // Message 'Running task'
             console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
-            gulp.src(bundle.vulcanize.files)
+            return gulp.src(bundle.get('vulcan.files'))
 
-                .pipe(vulcanize(self.getVulcanizeOptions(bundle)))
+                .pipe(vulcanize({
+                    inlineScripts: true,
+                    inlineCss: true
+                }))
 
-                .pipe(gulp.dest(bundle.vulcanize.destDir));
+                // Add file hash to file name
+                .pipe(fncallback(function (file, enc, cb) {
+                    hasher.update(file.contents.toString(enc));
+                    file.basename = file.basename + '-' + hasher.digest('hex');
+                    cb();
+                }))
 
-            // Notify of task completion and task duration
-            //console.log('[' + chalk.green('gulp') + ']' +
-            //    chalk.cyan(' "' + taskName + '" completed.  Duration: ') +
-            //    chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
+                .pipe(crisper())
+
+                .pipe(gulp.dest(bundle.get('vulcan.destDir')))
+
+                // Notify of task completion and task duration
+                .pipe(gulpDuration('[' + chalk.green('gulp') + ']' +
+                    chalk.cyan(' "' + taskName + '" completed.  Duration: ')))
+
+                .pipe(gulpSize());
 
         }); // end of vulcanize task
     },
@@ -52,18 +65,8 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanizeAdapter (/*optio
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
-        // Bundle name for task
-        var bundleName = bundle.options.alias,
-
-        // Task name
-            taskName = this.alias + ':' + bundleName,
-
-        // Rjs command (adding prefix for windows version)
-            vulcanizeOptions = this.getVulcanizeOptions(bundle, wrangler);
-
-        this.registerGulpTask(taskName, vulcanizeOptions, gulp, wrangler, bundle);
-
-    }, // end of `registerBundle`
+        this.registerGulpTask(this.getTaskNameForBundle(bundle), gulp, wrangler, bundle);
+    },
 
     registerBundles: function (bundles, gulp, wrangler) {
         var self = this,
@@ -95,47 +98,46 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanizeAdapter (/*optio
             self.registerBundle(bundle, gulp, wrangler);
 
             // Register singular task
-            self.registerGulpTask(taskName, self.getVulcanizeOptions(bundle, wrangler), gulp, wrangler, bundle);
+            self.registerGulpTask(taskName, gulp, wrangler, bundle);
         });
 
         // If we have targets register them
         if (targets.length > 0) {
             self.registerGulpTasks('vulcanize', targets, gulp, wrangler);
         }
-
     },
 
-    getVulcanizeOptions: function (bundle, wrangler) {
+    getVulcanOptions: function (bundle) {
         // Get 'vulcanize' section
-        var vulcanizeOptions = bundle.get('vulcanize');
+        var vulcanOptions = bundle.get('vulcan');
 
         // Get 'options' part of 'vulcanize' section
-        if (bundle.has('vulcanize.options')) {
-            vulcanizeOptions = vulcanizeOptions.options;
+        if (bundle.has('vulcan.vulcanizeOptions')) {
+            vulcanOptions = vulcanOptions.options;
         }
 
         // If options are empty throw an error
-        if (sjl.empty(vulcanizeOptions)) {
-            console.warn('`VulcanizeAdapter.getVulcanizeOptions` expects `vulcanize.options` to be a non empty object.');
+        if (sjl.empty(vulcanOptions)) {
+            //console.warn('`VulcanAdapter.getVulcanOptions` expects `vulcan.vulcanizeOptions` to be a non empty object.');
         }
 
         // Extend global 'vulcanize' options if any
-        vulcanizeOptions = wrangler.cloneOptionsFromWrangler('tasks.vulcanize.options', vulcanizeOptions);
+        vulcanOptions = this.wrangler.cloneOptionsFromWrangler('tasks.vulcan', vulcanOptions);
 
         // return options
-        return vulcanizeOptions;
+        return vulcanOptions;
     },
 
     isBundleValidForTask: function (bundle) {
-        var vulcanizeSection = bundle.get('vulcanize'),
-            classOfSection = sjl.classOf(vulcanizeSection);
+        var vulcanSection = bundle.get('vulcan'),
+            classOfSection = sjl.classOf(vulcanSection);
         // If argv.fileTypes was passed in but no 'html' file type was passed as one of it's values
         // Do not run the vulcanize task (as it builds 'html' files).
         return (sjl.empty(this.wrangler.argv.fileTypes)
             || this.wrangler.argv.fileTypes.split(',').indexOf('html') > -1)
-            && !sjl.empty(vulcanizeSection)
+            && !sjl.empty(vulcanSection)
             && classOfSection === 'Object'
-            && !sjl.isEmptyObjKeyOrNotOfType(vulcanizeSection, 'files', 'Array');
+            && !sjl.isEmptyObjKeyOrNotOfType(vulcanSection, 'files', 'Array');
     }
 
 }); // end of export

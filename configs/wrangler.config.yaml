@@ -50,6 +50,7 @@ staticTasks:
       - jshint
       - mocha
       - requirejs
+      - vulcan
       - watch
 
 tasks:
@@ -241,7 +242,12 @@ tasks:
       - build
       - deploy
 
-  vulcanize:
+  # Runs vulcanize and crisper on a file and alternately the file hash as a prefix or suffix
+  # to the file's basename.
+  vulcan:
+    constructorLocation: ./src/bundle-tasks-adapters/VulcanTaskAdapter
+    priority: 92
+
     # Files to vulcanize
     # files: // Populated from bundle.{json,js,yaml} file
 
@@ -249,6 +255,6 @@ tasks:
     # destDir: // Populated from bundle ""
 
     # Vulcanize options (options for `gulp-vulcanize`)
-    options:
+    #vulcanizeOptions:
     # vulcanize default options go here
     # @see https://github.com/Polymer/vulcanize#using-vulcanize-programmatically
