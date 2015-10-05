@@ -26,4 +26,10 @@ module.exports = sjl.Optionable.extend(function Bundle(options) {
             self.init();
         }
 
-    }); // end of Bundle
+    }, {
+
+    getFilesFromConfigForTask: function (taskName) {
+
+    }
+
+}); // end of Bundle
