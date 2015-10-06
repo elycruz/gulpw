@@ -56,6 +56,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
         // Create task for bundle
         gulp.task(taskName, function () {
 
+
+
             // Allow filtering of file types via file-types param
             if (wrangler.hasArgvFileTypes()) {
                 allowedFileTypes = allowedFileTypes.filter(function (item) {
@@ -112,15 +114,30 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
                     .pipe(callback(function (file, enc, cb) {
                         if (createFileHash) {
-                            var hasher = crypto.createHash(fileHashType);
+                            // Create file hasher
+                            var hasher = crypto.createHash('md5');
                             hasher.update(file.contents.toString(enc));
                             bundle[ext + 'Hash'] = hasher.digest('hex');
                         }
+                        cb();
+                    }))
+
+                    // Add file header
+                    .pipe(gulpif(ext !== 'html', header(minifyConfig.header,
+                        {bundle: bundle, fileExt: ext, fileHashType: fileHashType} )))
+
+                    // Add file hash to file name
+                    .pipe(callback(function (file, enc, cb) {
+                        if (ext !== 'html') {
+                            return cb();
+                        }
+                        // Create file hasher
+                        var hasher = crypto.createHash('md5');
                         if (appendFileHashToFileName) {
-                            fileUtils.addFileHashToFilename(file, hasher, false);
+                            fileUtils.addFileHashToFilename(file, enc, hasher, false);
                         }
                         else if (prependFileHashToFileName) {
-                            fileUtils.addFileHashToFilename(file, hasher, true);
+                            fileUtils.addFileHashToFilename(file, enc, hasher, true);
                         }
 
                         if (appendFileHashToFileName || prependFileHashToFileName) {
@@ -130,10 +147,6 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                             cb();
                         }
                     }))
-
-                    // Add file header
-                    .pipe(gulpif(ext !== 'html', header(minifyConfig.header,
-                        {bundle: bundle, fileExt: ext, fileHashType: fileHashType} )))
 
                     .pipe(gulpif(ext === 'html', minifyInline()))
 

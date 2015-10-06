@@ -14,6 +14,7 @@
     "gulp-bump": "~0.3.0",
     "gulp-clip-empty-files": "~0.1.1",
     "gulp-concat": "^2.6.0",
+    "gulp-copy": "0.0.2",
     "gulp-crisper": "0.0.5",
     "gulp-csslint": "^0.1.5",
     "gulp-duration": "0.0.0",

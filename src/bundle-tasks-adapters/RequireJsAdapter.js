@@ -109,7 +109,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
             rjsOptions = wrangler.loadConfigFile(rjsOptions);
         }
         if (sjl.empty(rjsOptions)) {
-            throw new Error ('`RequireJsAdapter.getRequireJs` expects resolved `requirejs.options` to be a non empty object.');
+            console.warn ('`RequireJsAdapter.getRequireJs` expects resolved `requirejs.options` to be a non empty object.');
         }
         rjsOptions = wrangler.cloneOptionsFromWrangler('tasks.requirejs.options', rjsOptions);
         return rjsOptions;

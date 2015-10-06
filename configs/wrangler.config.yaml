@@ -256,7 +256,13 @@ tasks:
     # Destination directory for resulting files
     # destDir: // Populated from bundle ""
 
+    # Minify Html Options
+    # @see for available options:
+#    minifyHtmlOptions:
+#      comments: false
+
     # Vulcanize options (options for `gulp-vulcanize`)
-    #vulcanizeOptions:
-    # vulcanize default options go here
-    # @see https://github.com/Polymer/vulcanize#using-vulcanize-programmatically
+    # @see for available options: https://github.com/Polymer/vulcanize#using-vulcanize-programmatically
+    vulcanizeOptions:
+      inlineScripts: true
+      inlineCss: true

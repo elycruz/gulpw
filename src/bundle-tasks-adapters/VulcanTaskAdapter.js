@@ -14,15 +14,17 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     crypto = require('crypto'),
     gulpDuration = require('gulp-duration'),
     gulpSize = require('gulp-size'),
-    gulpIf = require('gulp-if'),
+    gulpif = require('gulp-if'),
     gulpFilter = require('gulp-filter'),
     minifyInline = require('gulp-minify-inline'),
+    minifyhtml = require('gulp-minify-html'),
+    uglify = require('gulp-uglify'),
     path = require('path'),
     chalk = require('chalk'),
     File = require('vinyl'),
     fileUtils = require('./../utils/file-utils');
 
-module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*options*/) {
+module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter(/*options*/) {
     BaseBundleTaskAdapter.apply(this, arguments);
 }, {
 
@@ -33,29 +35,30 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*opti
         gulp.task(taskName, function () {
 
             var hasher = crypto.createHash('md5'),
-                htmlFilter = gulpFilter('**/*.html');
+                htmlFilter = gulpFilter('**/*.html'),
+                config = self.getTaskConfig(bundle),
+
+                vulcanizeOptions = !sjl.issetObjKeyAndOfType(config, 'vulcanizeOptions', 'Object') ? {
+                        inlineScripts: true,
+                        inlineCss: true
+                    } : config.vulcanizeOptions,
+
+                minifyHtmlOptions = !sjl.issetObjKeyAndOfType(config, 'minifyHtmlOptions', 'Object') ?
+                    {comments: false} : config.minifyHtmlOptions,
+
+                uglifyOptions = !sjl.issetObjKeyAndOfType(config, 'uglifyOptions', 'Object') ?
+                    {} : config.uglifyOptions,
+
+                jsFilesFilter = gulpFilter('**/*.js'),
+
+                htmlFilesFilter = gulpFilter('**/*.html');
 
             // Message 'Running task'
             console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
             return gulp.src(bundle.get('vulcan.files'))
 
-                .pipe(vulcanize({
-                    inlineScripts: true,
-                    inlineCss: true
-                }))
-
-                // Add file hash to file name
-                .pipe(fncallback(function (file, enc, cb) {
-                    var basename = path.basename(file.path),
-                        extname = path.extname(basename),
-                        dirname = path.dirname(file.path);
-                    basename = path.basename(basename, extname);
-                    hasher.update(file.contents.toString(enc));
-                    file.basename = basename + '-' + hasher.digest('hex') + extname;
-                    file.path = dirname + path.sep + file.basename;
-                    cb(null, file);
-                }))
+                .pipe(vulcanize(vulcanizeOptions))
 
                 .pipe(crisper())
 
@@ -119,25 +122,8 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter (/*opti
         }
     },
 
-    getVulcanOptions: function (bundle) {
-        // Get 'vulcanize' section
-        var vulcanOptions = bundle.get('vulcan');
-
-        // Get 'options' part of 'vulcanize' section
-        if (bundle.has('vulcan.vulcanizeOptions')) {
-            vulcanOptions = vulcanOptions.options;
-        }
-
-        // If options are empty throw an error
-        if (sjl.empty(vulcanOptions)) {
-            //console.warn('`VulcanAdapter.getVulcanOptions` expects `vulcan.vulcanizeOptions` to be a non empty object.');
-        }
-
-        // Extend global 'vulcanize' options if any
-        vulcanOptions = this.wrangler.cloneOptionsFromWrangler('tasks.vulcan', vulcanOptions);
-
-        // return options
-        return vulcanOptions;
+    getTaskConfig: function (bundle) {
+        return this.wrangler.cloneOptionsFromWrangler('tasks.vulcan', bundle.get('vulcan'));
     },
 
     isBundleValidForTask: function (bundle) {

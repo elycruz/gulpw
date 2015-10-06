@@ -1,5 +1,6 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
+ * @todo make all task adapters that operate on files to have a files options (expect for amd, umd and imd loaders).
  */
 
 'use strict';

@@ -902,7 +902,15 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
         else if (!sjl.empty(options) && !sjl.empty(extendWithObj) &&
             classOfOptions === 'Object' && classOfObj === 'Object') {
-            retVal = sjl.extend(true, sjl.jsonClone(options), extendWithObj);
+            var newObj = {},
+                notAllowedKeys = ['instance', 'priority', 'constructorLocation'];
+            Object.keys(options).forEach(function (key) {
+                if (notAllowedKeys.indexOf(key) > -1) {
+                    return;
+                }
+                newObj[key] = options[key];
+            });
+            retVal = sjl.extend(true, sjl.jsonClone(newObj), extendWithObj);
         }
         return retVal;
     }

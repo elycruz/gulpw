@@ -103,7 +103,8 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
                 targets = [],
                 minifyConfig = wrangler.tasks.minify,
-                isMinifyConfigured = !wrangler.tasks.minify.notConfiguredByUser;
+                isMinifyConfigured = !wrangler.tasks.minify.notConfiguredByUser,
+                isVulcanConfigured = !wrangler.tasks.vulcan.notConfiguredByUser;
 
             // Register separate `clean` tasks for each section in `files` key
             allowedFileTypes.forEach(function (ext) {
@@ -123,6 +124,13 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
 
                     // Pass off the `filePath` to `targets` for later use
                     targets = targets.concat(singularTaskTargets);
+                }
+
+                if (isVulcanConfigured) {
+                    let vulcanFiles = bundle.options.vulcan.files;
+                    if (self.isValidTaskSrc(vulcanFiles)) {
+                        targets = targets.concat(vulcanFiles);
+                    }
                 }
             });
 
