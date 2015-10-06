@@ -1,6 +1,6 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
- * @todo make all task adapters that operate on files to have a files options (expect for amd, umd and imd loaders).
+ * @todo
  */
 
 'use strict';
@@ -179,6 +179,16 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
                 targets = targets.filter(function (item) {
                     return item.indexOf(rjsOps.dir) === -1;
                 });
+            }
+        }
+
+        if (bundle.has('vulcan')) {
+            var vulcanFiles = bundle.options.vulcan.files;
+            if (sjl.classOfIs(vulcanFiles, 'String')) {
+                targets.push(vulcanFiles);
+            }
+            else if (Array.isArray(vulcanFiles)) {
+                targets = targets.concat(vulcanFiles);
             }
         }
 

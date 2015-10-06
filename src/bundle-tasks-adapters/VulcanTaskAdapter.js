@@ -62,11 +62,13 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter(/*optio
 
                 .pipe(crisper())
 
+                //.pipe(gulpif(self.wrangler.argv.dev !== true, minifyhtml(minifyHtmlOptions)))
+                //.pipe(gulpif(self.wrangler.argv.dev !== true, uglify(uglifyOptions)))
+
                 .pipe(gulp.dest(bundle.get('vulcan.destDir')))
 
                 // Notify of task completion and task duration
-                .pipe(gulpDuration('[' + chalk.green('gulp') + ']' +
-                    chalk.cyan(' "' + taskName + '" completed.  Duration: ')))
+                .pipe(gulpDuration(chalk.cyan(' "' + taskName + '" completed.  Duration: ')))
 
                 .pipe(gulpSize());
 

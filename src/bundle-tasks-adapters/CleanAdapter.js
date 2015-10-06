@@ -127,7 +127,7 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
                 }
 
                 if (isVulcanConfigured) {
-                    let vulcanFiles = bundle.options.vulcan.files;
+                    var vulcanFiles = bundle.options.vulcan.files;
                     if (self.isValidTaskSrc(vulcanFiles)) {
                         targets = targets.concat(vulcanFiles);
                     }
