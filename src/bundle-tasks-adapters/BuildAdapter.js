@@ -57,7 +57,10 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && (bundle.has('files') || bundle.has('requirejs') || bundle.has('browserify'));
+        return bundle && (bundle.has('files')
+            || bundle.has('requirejs')
+            || bundle.has('browserify')
+            || bundle.has('vulcan'));
     },
 
     isBundleValidForMinifyAndConcat: function (bundle) {

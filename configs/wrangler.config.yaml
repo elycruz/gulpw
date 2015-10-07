@@ -188,7 +188,7 @@ tasks:
     fileHashType: sha256
     createFileHashes: true
     prependFileHashToFileName: false
-    appendFileHashToFileName: false
+    appendFileHashToFileName: true
     allowedFileTypes:
       - js
       - html
@@ -256,10 +256,12 @@ tasks:
     # Destination directory for resulting files
     # destDir: // Populated from bundle ""
 
-    # Minify Html Options
-    # @see for available options:
-#    minifyHtmlOptions:
-#      comments: false
+    # Crisper options
+    # @see for available options see: https://www.npmjs.com/package/crisper
+    #crisperOptions:
+      #jsFileName: # populated from bundle.  Optional.  Default `bundle.alias`
+      #scriptInHead: false.  Puts script in head with 'defer' attribute.
+      #onlySplit: false.  If false, omits script include of outputted javascript file
 
     # Vulcanize options (options for `gulp-vulcanize`)
     # @see for available options: https://github.com/Polymer/vulcanize#using-vulcanize-programmatically

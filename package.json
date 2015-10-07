@@ -1,6 +1,6 @@
 {
   "name": "gulpw",
-  "version": "0.2.87-beta",
+  "version": "0.2.87",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
   "bin": {
     "gulpw": "index.js"
@@ -46,6 +46,7 @@
     "requirejs": "^2.1.15",
     "sjljs": "^0.4.26",
     "ssh2": "^0.4.8",
+    "uglify-js": "^2.4.24",
     "vinyl": "^1.0.0",
     "yargs": "^3.9.0"
   },

@@ -32,15 +32,23 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
+        if (!this.isBundleValidForTask(bundle)) {
+            return;
+        }
+
+        var minifyConfig = wrangler.cloneOptionsFromWrangler('tasks.minify');
+        if (bundle.has('minify')) {
+            sjl.extend(true, minifyConfig, bundle.get('minify'))
+        }
+        sjl.extend(true, minifyConfig, bundle.get('files'));
+
         var self = this,
-            minifyConfig = bundle.has('minify') ?
-                sjl.extend(true, sjl.jsonClone(wrangler.tasks.minify), bundle.get('minify')) : wrangler.tasks.minify,
             taskConfigMap = {
                 html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
                 css: {instance: minifycss, options: minifyConfig.cssTaskOptions},
                 js: {instance: uglify, options: minifyConfig.jsTaskOptions}
             },
-            //useMinPreSuffix = minifyConfig.useMinPreSuffix,
+        //useMinPreSuffix = minifyConfig.useMinPreSuffix,
             bundleName = bundle.options.alias,
             taskName = self.alias + ':' + bundleName,
             allowedFileTypes = minifyConfig.allowedFileTypes,
@@ -49,14 +57,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             prependFileHashToFileName = minifyConfig.prependFileHashToFileName,
             appendFileHashToFileName = minifyConfig.appendFileHashToFileName;
 
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
-
         // Create task for bundle
         gulp.task(taskName, function () {
-
-
 
             // Allow filtering of file types via file-types param
             if (wrangler.hasArgvFileTypes()) {
@@ -82,6 +84,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     cssLintPipe = wrangler.getTaskAdapter('csslint').getPipe(bundle, gulp, wrangler),
                     skipCssLinting = wrangler.skipLinting() || wrangler.skipCssLinting(),
                     skipJsLinting = wrangler.skipLinting() || wrangler.skipJsLinting(),
+                    skipHashing = wrangler.argv.skipHashing,
                     filePath,
                     tmplsString;
 
@@ -133,10 +136,10 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                         }
                         // Create file hasher
                         var hasher = crypto.createHash('md5');
-                        if (appendFileHashToFileName) {
+                        if (appendFileHashToFileName && !skipHashing) {
                             fileUtils.addFileHashToFilename(file, enc, hasher, false);
                         }
-                        else if (prependFileHashToFileName) {
+                        else if (prependFileHashToFileName && !skipHashing) {
                             fileUtils.addFileHashToFilename(file, enc, hasher, true);
                         }
 

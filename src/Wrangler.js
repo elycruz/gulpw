@@ -890,27 +890,36 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
      * @returns {*}
      */
     cloneOptionsFromWrangler: function (key, extendWithObj) {
+        function cloneConfig(config) {
+            var newObj = {},
+                notAllowedKeys = ['instance', 'priority', 'constructorLocation'];
+            Object.keys(config).forEach(function (key) {
+                if (notAllowedKeys.indexOf(key) > -1) {
+                    return;
+                }
+                newObj[key] = config[key];
+            });
+            return newObj;
+        }
+
         var options = sjl.namespace(key, this),
             classOfOptions = sjl.classOf(options),
             classOfObj = sjl.classOf(extendWithObj),
             retVal = null;
+
         if (sjl.empty(options) && !sjl.empty(extendWithObj)) {
             retVal = extendWithObj;
         }
         else if (!sjl.empty(options) && sjl.empty(extendWithObj)) {
-            retVal = options;
+            retVal = cloneConfig(options);
         }
         else if (!sjl.empty(options) && !sjl.empty(extendWithObj) &&
             classOfOptions === 'Object' && classOfObj === 'Object') {
-            var newObj = {},
-                notAllowedKeys = ['instance', 'priority', 'constructorLocation'];
-            Object.keys(options).forEach(function (key) {
-                if (notAllowedKeys.indexOf(key) > -1) {
-                    return;
-                }
-                newObj[key] = options[key];
-            });
+            var newObj = cloneConfig(options);
             retVal = sjl.extend(true, sjl.jsonClone(newObj), extendWithObj);
+        }
+        else {
+            retVal = cloneConfig(options);
         }
         return retVal;
     }

@@ -12,7 +12,8 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     fs = require('fs'),
     path = require('path'),
-    yaml = require('js-yaml');
+    yaml = require('js-yaml'),
+    bump = require('gulp-bump');
 
 gulp.task('tasks-section', function () {
     var gulpwConfig = yaml.safeLoad(fs.readFileSync('configs/wrangler.config.yaml')),
@@ -76,6 +77,12 @@ gulp.task('eslint', function () {
         .pipe(eslint({useEslintrc: true}))
         .pipe(eslint.format('stylish'))
         .pipe(eslint.failAfterError());
+});
+
+gulp.task('bump', function(){
+    gulp.src('./package.json')
+        .pipe(bump())
+        .pipe(gulp.dest('./'));
 });
 
 gulp.task('watch', function () {

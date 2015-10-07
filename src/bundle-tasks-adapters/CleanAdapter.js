@@ -127,10 +127,7 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
                 }
 
                 if (isVulcanConfigured) {
-                    var vulcanFiles = bundle.options.vulcan.files;
-                    if (self.isValidTaskSrc(vulcanFiles)) {
-                        targets = targets.concat(vulcanFiles);
-                    }
+                    targets.push(bundle.options.vulcan.destDir);
                 }
             });
 

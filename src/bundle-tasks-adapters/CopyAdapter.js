@@ -10,7 +10,9 @@
 var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     //fs = require('fs'),
     chalk = require('chalk'),
-    path = require('path');
+    path = require('path'),
+    glob = require('glob'),
+    mkdirp = require('mkdirp');
 
 module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
     FilesHashTaskAdapter.apply(this, options);
@@ -28,6 +30,10 @@ module.exports = FilesHashTaskAdapter.extend(function CopyAdapter (options) {
                 Object.keys(copyTargets).forEach(function (file) {
                     var newFile = copyTargets[file],
                         newFileBasePath = path.dirname(newFile);
+                    //
+                    //if (glob.hasMagic(file)) {
+                    //    mkdirp.sync(path.dirname(file));
+                    //}
 
                     // Pass the file source through gulp
                     gulp.src(wrangler.explodeGlob(file))

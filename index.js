@@ -34,6 +34,8 @@ var Liftoff =   require('liftoff'),
         .alias('skip-mocha',            'skip-mocha-tests')
         .alias('skip-mocha-testing',    'skip-mocha-tests')
         .alias('skip-testing',  'skip-tests')
+        .alias('skip-hashing',  'skip-hashes')
+        .alias('show-')
         .alias('no-tests',      'skip-tests')
         .alias('filetypes',     'file-types')
         .alias('filetype',     'file-types')
