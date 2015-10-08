@@ -28,6 +28,8 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
             var config = self.wrangler.cloneOptionsFromWrangler('tasks.findandreplace', bundle.get('findandreplace')),
                 options = sjl.issetObjKeyAndOfType(config, 'options') ? config.options : {skipBinary: true},
                 pipe,
+                files = bundle.options.files,
+                classOfFiles = sjl.classOf(files),
                 searchHash = gwUtils.objectHashToMap(config.findandreplace, function (key) {
                     var regex,
                         retVal;
@@ -49,6 +51,20 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
             // Message 'Running task'
             console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
+            //if (classOfFiles === 'Array') {
+            //    files.map(function (file) {
+            //        return pipe
+            //            .pipe(gulp.dest('./replaced'))
+            //            .pipe(gulpDuration(chalk.cyan('"' + taskName + '" duration: ')));
+            //    })
+            //}
+            //else if (classOfFiles === 'Object') {
+            //
+            //}
+            //else {
+            //
+            //}
+
             pipe = gulp.src(bundle.get('findandreplace.files'))
                 .pipe(gulpReplace(options));
 
@@ -59,7 +75,10 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
 
             return pipe
                 .pipe(gulp.dest('./replaced'))
-                .pipe(gulpDuration(chalk.cyan('"' + taskName + '" duration: ')));
+                .pipe(gulpDuration(chalk.cyan('"' + taskName + '" duration: ')))
+                .on('end', function () {
+                    console.log('findandreplace stream end event.');
+                });
 
         }); // end of findandreplace task
     },
