@@ -268,3 +268,9 @@ tasks:
     vulcanizeOptions:
       inlineScripts: true
       inlineCss: true
+
+    # Remove generated 'html>head+body' elements and just keep the body's contents
+    # @see for more options: https://www.npmjs.com/package/gulp-dom
+    #noDomWrapper: false # Best used from bundle config level
+
+

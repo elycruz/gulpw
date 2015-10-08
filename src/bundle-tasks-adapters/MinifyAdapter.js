@@ -19,7 +19,8 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     chalk = require('chalk'),
     path = require('path'),
     fileUtils = require('./../utils/file-utils'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    gulpDom = require('gulp-dom');
 
 module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
     FilesHashTaskAdapter.apply(this, sjl.argsToArray(arguments));
@@ -55,7 +56,9 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             createFileHash = minifyConfig.createFileHashes || true,
             fileHashType = minifyConfig.fileHashType || 'sha256',
             prependFileHashToFileName = minifyConfig.prependFileHashToFileName,
-            appendFileHashToFileName = minifyConfig.appendFileHashToFileName;
+            appendFileHashToFileName = minifyConfig.appendFileHashToFileName,
+            noDomWrapper = sjl.issetObjKey(minifyConfig, 'noDomWrapper') ?
+                minifyConfig.noDomWrapper : false;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -153,7 +156,11 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
                     .pipe(gulpif(ext === 'html', minifyInline()))
 
-                    // Dump to the directory specified in the `minify` call above
+                    // Returns the innardds for the html body if noDomWrapper is true
+                    .pipe(gulpif(ext === 'html' && noDomWrapper, gulpDom(function () {
+                        return this.querySelector('body').innerHTML;
+                    }, false)))
+                                        // Dump to the directory specified in the `minify` call above
                     .pipe(gulp.dest('./'));
 
             }); // end of loop
