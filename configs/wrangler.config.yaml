@@ -273,4 +273,17 @@ tasks:
     # @see for more options: https://www.npmjs.com/package/gulp-dom
     #noDomWrapper: false # Best used from bundle config level
 
+  findandreplace:
+    constructorLocation: ./src/bundle-tasks-adapters/FindAndReplaceAdapter.js
+    priority: -98
+    # 'gulp-replace' module options
+    # @see for available options: https://www.npmjs.com/package/gulp-replace
+    #options:
+
+    # Files to find and replace on.  Array.
+    #files:
+
+    # Key value hash of things to search for (regex|string) and values (string) to replace them with.
+    #findandreplace:
+
 

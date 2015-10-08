@@ -118,6 +118,14 @@ module.exports = {
         }
         fs.writeFileSync(filePath, obj);
         return this;
+    },
+
+    objectHashToMap: function (obj, transformKeyCallback) {
+        var out = new Map();
+        Object.keys(obj).forEach(function (key) {
+            out.set(transformKeyCallback(key), obj[key]);
+        });
+        return out;
     }
 
 };
