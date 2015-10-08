@@ -893,11 +893,11 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         function cloneConfig(config) {
             var newObj = {},
                 notAllowedKeys = ['instance', 'priority', 'constructorLocation'];
-            Object.keys(config).forEach(function (key) {
-                if (notAllowedKeys.indexOf(key) > -1) {
+            Object.keys(config).forEach(function (key_) {
+                if (notAllowedKeys.indexOf(key_) > -1) {
                     return;
                 }
-                newObj[key] = config[key];
+                newObj[key_] = config[key_];
             });
             return newObj;
         }

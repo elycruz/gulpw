@@ -13,7 +13,6 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     gulpDuration = require('gulp-duration'),
     gulpSize = require('gulp-size'),
     gulpIf = require('gulp-if'),
-    path = require('path'),
     chalk = require('chalk');
 
 module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter(/*options*/) {

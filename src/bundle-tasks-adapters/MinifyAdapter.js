@@ -40,7 +40,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
         var minifyConfig = wrangler.cloneOptionsFromWrangler('tasks.minify');
         if (bundle.has('minify')) {
-            sjl.extend(true, minifyConfig, bundle.get('minify'))
+            sjl.extend(true, minifyConfig, bundle.get('minify'));
         }
         sjl.extend(true, minifyConfig, bundle.get('files'));
 
