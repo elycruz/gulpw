@@ -22,7 +22,7 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
         targets = self.getTasksForBundle(bundle, wrangler);
 
         // Register related bundles
-        if (bundle.has('relatedBundles.processBefore')) {
+        if (!wrangler.argv.skipRelatedBundles && bundle.has('relatedBundles.processBefore')) {
             wrangler.getBundles(bundle.options.relatedBundles.processBefore).forEach(function (item) {
                 if (!self.isBundleValidForTask(item)) {
                     return;

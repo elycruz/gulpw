@@ -43,6 +43,10 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter(/*optio
                 destDir = !sjl.issetObjKeyAndOfType(config, 'destDir', 'Object') ?
                     config.destDir : config.destDir;
 
+            if (!sjl.issetObjKey(crisperOptions, 'jsFileName')) {
+                crisperOptions.jsFileName = bundle.options.alias;
+            }
+
             if (!sjl.empty(self.wrangler.argv.showFileSizes)) {
                 sizeOptions = {
                     title: 'vulcan "' + bundle.options.alias + '"',

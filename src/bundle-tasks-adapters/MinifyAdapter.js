@@ -1,5 +1,6 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
+ * @todo add file size option to every task that manipulates files.
  */
 'use strict'; require('sjljs');
 
@@ -43,6 +44,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
         }
         sjl.extend(true, minifyConfig, bundle.get('files'));
 
+        console.log(minifyConfig);
+
         var self = this,
             taskConfigMap = {
                 html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
@@ -58,7 +61,9 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             prependFileHashToFileName = minifyConfig.prependFileHashToFileName,
             appendFileHashToFileName = minifyConfig.appendFileHashToFileName,
             noDomWrapper = sjl.issetObjKey(minifyConfig, 'noDomWrapper') ?
-                minifyConfig.noDomWrapper : false;
+                minifyConfig.noDomWrapper : false,
+            noDomWrapperAndAppendedScript = sjl.issetObjKey(minifyConfig, 'noDomWrapperAndAppendedScript') ?
+                minifyConfig.noDomWrapperAndAppendedScript : false;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -157,10 +162,24 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     .pipe(gulpif(ext === 'html', minifyInline()))
 
                     // Returns the innardds for the html body if noDomWrapper is true
-                    .pipe(gulpif(ext === 'html' && noDomWrapper, gulpDom(function () {
-                        return this.querySelector('body').innerHTML;
+                    .pipe(gulpif(ext === 'html' && (noDomWrapper || noDomWrapperAndAppendedScript), gulpDom(function () {
+
+                        var body = this.querySelector('body'),
+                            lastElement;
+
+                        // Remove last script tag
+                        if (noDomWrapperAndAppendedScript) {
+                            lastElement = body.lastElementChild;
+                            if (lastElement && lastElement.nodeName === 'SCRIPT') {
+                                body.removeChild(lastElement);
+                            }
+                        }
+
+                        return body.innerHTML;
+
                     }, false)))
-                                        // Dump to the directory specified in the `minify` call above
+
+                    // Dump to the directory specified in the `minify` call above
                     .pipe(gulp.dest('./'));
 
             }); // end of loop

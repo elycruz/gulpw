@@ -38,3 +38,5 @@ All flag default values are `null`/`false`.
     - **Aliases:** 
         - `--no-tests`
         - `--skip-testing`
+- **skip-related-bundles:** Used within build task (skips building of related bundles).
+- **show-file-sizes:** Shows file sizes for 'vulcan' task.
