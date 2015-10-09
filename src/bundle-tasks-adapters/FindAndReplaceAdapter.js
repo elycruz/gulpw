@@ -13,6 +13,7 @@ var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     path = require('path'),
     gulpReplace = require('gulp-replace'),
     gulpDuration = require('gulp-duration'),
+    lazypipe = require('lazypipe'),
     gwUtils = require('./../Utils'),
     chalk = require('chalk');
 
@@ -27,10 +28,9 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
         gulp.task(taskName, function () {
 
             var config = self.wrangler.cloneOptionsFromWrangler('tasks.findandreplace', bundle.get('findandreplace')),
-                options = sjl.issetObjKeyAndOfType(config, 'options') ? config.options : {skipBinary: true},
+                options = sjl.issetObjKeyAndOfType(config, 'options') ? config.options : {},
                 files = bundle.get('findandreplace.files'),
                 classOfFiles = sjl.classOf(files),
-                destDir = config.destDir,
                 searchHash = gwUtils.objectHashToMap(config.findandreplace, function (key) {
                     var regex,
                         retVal;
@@ -121,7 +121,8 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
     },
 
     _processFilesArrayOrString: function (files, searchHash, gulpTaskOptions, taskName) {
-        var self = this;
+        var self = this,
+            start = new Date();
         if (Array.isArray(files)) {
             files = gwUtils.explodeGlobs(files);
         }
@@ -130,37 +131,38 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
         }
 
         return (new Promise(function (resolve, reject) {
-
             var completedLen = 0,
                 expectedCompletedLen = files.length,
-                interval;
+                interval,
+                pipe;
 
-                files.forEach(function (file, index) {
-                    var pipe = self.gulp.src(file),
-                        destDir = path.dirname(file);
+                files.forEach(function (file) {
+                    pipe = lazypipe();
 
-                    // Search and r                                                                                                                               eplace all keys in search hash
+                    // Search and replace                                                                                                                              eplace all keys in search hash
                     searchHash.forEach(function (replaceWith, searchStr) {
-                        console.log(arguments[0], arguments[1]);
-                        pipe = pipe.pipe(gulpReplace(searchStr, replaceWith, gulpTaskOptions));
+                        pipe = pipe.pipe(gulpReplace, searchStr, replaceWith, gulpTaskOptions);
                     }); // end of hash map loop
 
-                    pipe.pipe(gulp.dest('./hello'));
-                        //.on('end', function () {
-                        //    completedLen += 1;
-                        //    console.log('findandreplace stream end event fired.');
-                        //})
-                        //.on('error', function (err) {
-                        //    console.log('error', err);
-                        //    expectedCompletedLen -= 1;
-                        //});
+                    pipe = pipe.pipe(self.gulp.dest, path.dirname(file));
+
+                    self.gulp.src(file)
+                        .pipe(pipe())
+                        //.pipe(gulpDuration(chalk.cyan('"' + taskName + '" duration: ')))
+                        .on('error', function (err) {
+                            console.log('error', err);
+                            expectedCompletedLen -= 1;
+                        })
+                        .on('end', function () {
+                            completedLen += 1;
+                        });
 
                 }); // end of files loop
-
 
             // Set completed interval
             interval = setInterval(function () {
                 if (completedLen === expectedCompletedLen) {
+                    console.log('[' + chalk.green('gulp') + ']' + chalk.cyan(' "' + taskName + '" duration: ' + (new Date() - start) + 'ms'));
                     resolve();
                     clearInterval(interval);
                 }
