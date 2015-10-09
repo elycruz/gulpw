@@ -30,6 +30,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
                 options = sjl.issetObjKeyAndOfType(config, 'options') ? config.options : {skipBinary: true},
                 files = bundle.get('findandreplace.files'),
                 classOfFiles = sjl.classOf(files),
+                destDir = config.destDir,
                 searchHash = gwUtils.objectHashToMap(config.findandreplace, function (key) {
                     var regex,
                         retVal;
@@ -120,35 +121,42 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
     },
 
     _processFilesArrayOrString: function (files, searchHash, gulpTaskOptions, taskName) {
+        var self = this;
         if (Array.isArray(files)) {
-            files = gwUtils.explodeGlobs(item);
+            files = gwUtils.explodeGlobs(files);
         }
         else if (sjl.classOfIs(files, 'String')) {
             files = gwUtils.explodeGlob(files);
         }
 
         return (new Promise(function (resolve, reject) {
+
             var completedLen = 0,
                 expectedCompletedLen = files.length,
                 interval;
 
-            // Search and replace all keys in search hash
-            searchHash.forEach(function (replaceWith, searchStr) {
-                files.forEach(function (file) {
-                    let destDir = path.pathname(file);
-                    return gulp.src(file)
-                        .pipe(gulpReplace(searchStr, replaceWith, gulpTaskOptions))
-                        .pipe(gulp.dest(destDir))
-                        .on('end', function () {
-                            completedLen += 1;
-                            console.log('findandreplace stream end event fired.');
-                        })
-                        .on('error', function (err) {
-                            console.error(err);
-                            expectedCompletedLen -= 1;
-                        });
+                files.forEach(function (file, index) {
+                    var pipe = self.gulp.src(file),
+                        destDir = path.dirname(file);
+
+                    // Search and r                                                                                                                               eplace all keys in search hash
+                    searchHash.forEach(function (replaceWith, searchStr) {
+                        console.log(arguments[0], arguments[1]);
+                        pipe = pipe.pipe(gulpReplace(searchStr, replaceWith, gulpTaskOptions));
+                    }); // end of hash map loop
+
+                    pipe.pipe(gulp.dest('./hello'));
+                        //.on('end', function () {
+                        //    completedLen += 1;
+                        //    console.log('findandreplace stream end event fired.');
+                        //})
+                        //.on('error', function (err) {
+                        //    console.log('error', err);
+                        //    expectedCompletedLen -= 1;
+                        //});
+
                 }); // end of files loop
-            }); // end of hash map loop
+
 
             // Set completed interval
             interval = setInterval(function () {
