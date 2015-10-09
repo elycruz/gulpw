@@ -10,6 +10,7 @@ require('sjljs');
 
 // Import base task proxy to extend
 var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
+    path = require('path'),
     gulpReplace = require('gulp-replace'),
     gulpDuration = require('gulp-duration'),
     gwUtils = require('./../Utils'),
@@ -27,10 +28,8 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
 
             var config = self.wrangler.cloneOptionsFromWrangler('tasks.findandreplace', bundle.get('findandreplace')),
                 options = sjl.issetObjKeyAndOfType(config, 'options') ? config.options : {skipBinary: true},
-                pipe,
-                files = bundle.options.files,
+                files = bundle.get('findandreplace.files'),
                 classOfFiles = sjl.classOf(files),
-                destDir = config.destDir,
                 searchHash = gwUtils.objectHashToMap(config.findandreplace, function (key) {
                     var regex,
                         retVal;
@@ -40,46 +39,34 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
                     else {
                         try {
                             regex = new RegExp(key);
-                            retVal =  regex.toString().indexOf(key) > -1  ? regex : key;
+                            retVal = regex.toString().indexOf(key) > -1 ? regex : key;
                         }
                         catch (e) {
                             retVal = key;
                         }
                     }
                     return retVal;
-                });
+                }),
+                retVal;
 
             // Message 'Running task'
             console.log(chalk.cyan('Running "' + taskName + '" task.\n'));
 
-            //if (classOfFiles === 'Array') {
-            //    files.map(function (file) {
-            //        return pipe
-            //            .pipe(gulp.dest('./replaced'))
-            //            .pipe(gulpDuration(chalk.cyan('"' + taskName + '" duration: ')));
-            //    })
-            //}
-            //else if (classOfFiles === 'Object') {
-            //
-            //}
-            //else {
-            //
-            //}
+            if (classOfFiles === 'String' || classOfFiles === 'Array') {
+                retVal = self._processFilesArrayOrString(files, searchHash, options, taskName);
+            }
+            else if (classOfFiles === 'Object') {
+                throw new Error ('no support for files hash object yet.');
+            }
 
-            pipe = gulp.src(bundle.get('findandreplace.files'))
-                .pipe(gulpReplace(options));
+            return retVal;
 
-            // Search and replace all keys in search hash
-            searchHash.forEach(function (value, key) {
-                pipe = pipe.pipe(gulpReplace(key, value, options));
-            });
-
-            return pipe
-                .pipe(gulp.dest(destDir))
-                .pipe(gulpDuration(chalk.cyan('"' + taskName + '" duration: ')))
-                .on('end', function () {
-                    console.log('findandreplace stream end event.');
-                });
+            // pipe
+            //    .pipe(gulp.dest(destDir))
+            //    .pipe(gulpDuration(chalk.cyan('"' + taskName + '" duration: ')))
+            //    .on('end', function () {
+            //        console.log('findandreplace stream end event.');
+            //    });
 
         }); // end of findandreplace task
     },
@@ -130,6 +117,53 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
     isBundleValidForTask: function (bundle) {
         return bundle.has('findandreplace.files')
             && bundle.has('findandreplace.findandreplace');
-    }
+    },
 
-}); // end of export
+    _processFilesArrayOrString: function (files, searchHash, gulpTaskOptions, taskName) {
+        if (Array.isArray(files)) {
+            files = gwUtils.explodeGlobs(item);
+        }
+        else if (sjl.classOfIs(files, 'String')) {
+            files = gwUtils.explodeGlob(files);
+        }
+
+        return (new Promise(function (resolve, reject) {
+            var completedLen = 0,
+                expectedCompletedLen = files.length,
+                interval;
+
+            // Search and replace all keys in search hash
+            searchHash.forEach(function (replaceWith, searchStr) {
+                files.forEach(function (file) {
+                    let destDir = path.pathname(file);
+                    return gulp.src(file)
+                        .pipe(gulpReplace(searchStr, replaceWith, gulpTaskOptions))
+                        .pipe(gulp.dest(destDir))
+                        .on('end', function () {
+                            completedLen += 1;
+                            console.log('findandreplace stream end event fired.');
+                        })
+                        .on('error', function (err) {
+                            console.error(err);
+                            expectedCompletedLen -= 1;
+                        });
+                }); // end of files loop
+            }); // end of hash map loop
+
+            // Set completed interval
+            interval = setInterval(function () {
+                if (completedLen === expectedCompletedLen) {
+                    resolve();
+                    clearInterval(interval);
+                }
+                else if (completedLen > expectedCompletedLen) {
+                    reject('An unkown error occurred.');
+                    clearInterval(interval);
+                }
+            }, 100);
+
+        })); // end of promise
+
+    } // end of process files
+
+}) ; // end of export

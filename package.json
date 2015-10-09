@@ -51,7 +51,7 @@
     "ssh2": "^0.4.8",
     "uglify-js": "^2.4.24",
     "vinyl": "^1.0.0",
-    "yargs": "^3.9.0"
+    "yargs": "^3.27.0"
   },
   "devDependencies": {
     "chai": "^1.9.2",
