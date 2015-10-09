@@ -1,6 +1,6 @@
 {
   "name": "gulpw",
-  "version": "0.2.93",
+  "version": "0.2.94",
   "description": "Allows the management of a project via bundle configuration files (architected towards speed).",
   "bin": {
     "gulpw": "index.js"
@@ -11,6 +11,7 @@
     "ejs": "^2.3.1",
     "glob": "^5.0.3",
     "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
     "gulp-bump": "~1.0.0",
     "gulp-clip-empty-files": "~0.1.1",
     "gulp-concat": "^2.6.0",

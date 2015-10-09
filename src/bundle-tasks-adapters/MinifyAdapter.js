@@ -20,6 +20,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     chalk = require('chalk'),
     path = require('path'),
     fileUtils = require('./../utils/file-utils'),
+    gulpBabel = require('gulp-babel'),
     crypto = require('crypto'),
     gulpDom = require('gulp-dom');
 
@@ -44,8 +45,6 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
         }
         sjl.extend(true, minifyConfig, bundle.get('files'));
 
-        console.log(minifyConfig);
-
         var self = this,
             taskConfigMap = {
                 html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
@@ -63,7 +62,11 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             noDomWrapper = sjl.issetObjKey(minifyConfig, 'noDomWrapper') ?
                 minifyConfig.noDomWrapper : false,
             noDomWrapperAndAppendedScript = sjl.issetObjKey(minifyConfig, 'noDomWrapperAndAppendedScript') ?
-                minifyConfig.noDomWrapperAndAppendedScript : false;
+                minifyConfig.noDomWrapperAndAppendedScript : false,
+            useBabel = sjl.issetObjKey(minifyConfig, 'useBabel') ?
+                minifyConfig.useBabel : false,
+            babelOptions = sjl.issetObjKey(minifyConfig, 'babelOptions') ?
+                minifyConfig.babelOptions : null;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -92,7 +95,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     cssLintPipe = wrangler.getTaskAdapter('csslint').getPipe(bundle, gulp, wrangler),
                     skipCssLinting = wrangler.skipLinting() || wrangler.skipCssLinting(),
                     skipJsLinting = wrangler.skipLinting() || wrangler.skipJsLinting(),
-                    skipHashing = wrangler.argv.skipHashing,
+                    skipHashing = wrangler.argv['skip-hashes'],
                     filePath,
                     tmplsString;
 
@@ -114,6 +117,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     .pipe(gulpif(ext === 'css' && !skipCssLinting, cssLintPipe()))
 
                     .pipe(concat(filePath))
+
+                    .pipe(gulpif(ext === 'js' && useBabel, gulpBabel(babelOptions)))
 
                     // Add templates output string to end of file
                     .pipe(gulpif( !sjl.empty(tmplsString), footer(tmplsString)))
@@ -139,15 +144,15 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
                     // Add file hash to file name
                     .pipe(callback(function (file, enc, cb) {
-                        if (ext !== 'html') {
-                            return cb();
+                        if (ext !== 'html' || skipHashing) {
+                            cb(); return;
                         }
                         // Create file hasher
                         var hasher = crypto.createHash('md5');
-                        if (appendFileHashToFileName && !skipHashing) {
+                        if (appendFileHashToFileName) {
                             fileUtils.addFileHashToFilename(file, enc, hasher, false);
                         }
-                        else if (prependFileHashToFileName && !skipHashing) {
+                        else if (prependFileHashToFileName) {
                             fileUtils.addFileHashToFilename(file, enc, hasher, true);
                         }
 

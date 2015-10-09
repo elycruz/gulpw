@@ -189,6 +189,8 @@ tasks:
     createFileHashes: true
     prependFileHashToFileName: false
     appendFileHashToFileName: true
+    noDomWrapperAndAppendedScript: false
+    noDomWrapper: false
     allowedFileTypes:
       - js
       - html
@@ -197,6 +199,13 @@ tasks:
       spare: true
       comments: true
     jsTaskOptions: {}
+
+    # Enables use of babel
+    useBabel: false
+    # @see for more gulp-babel options and usage examples: https://www.npmjs.com/package/gulp-babel
+    # @see for babel options (try 'usage' or 'advanced' links for more about options).
+    babelOptions: null
+
     useMinPreSuffix: false
     useVersionNumInFileName: false
     template:
