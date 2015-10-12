@@ -39,13 +39,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             return;
         }
 
-        var minifyConfig = wrangler.cloneOptionsFromWrangler('tasks.minify');
-        if (bundle.has('minify')) {
-            sjl.extend(true, minifyConfig, bundle.get('minify'));
-        }
-        sjl.extend(true, minifyConfig, bundle.get('files'));
-
         var self = this,
+            minifyConfig = self._getMinifyConfig(),
             taskConfigMap = {
                 html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
                 css: {instance: minifycss, options: minifyConfig.cssTaskOptions},
@@ -191,6 +186,14 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
         }); // end of minify task
 
-    } // end of `registerBundle`
+    }, // end of `registerBundle`
+
+    _getMinifyConfig: function (bundle) {
+        var minifyConfig = this.wrangler.cloneOptionsFromWrangler('tasks.minify');
+        if (bundle.has('minify')) {
+            sjl.extend(true, minifyConfig, bundle.get('minify'));
+        }
+        return sjl.extend(true, minifyConfig, bundle.get('files'));
+    }
 
 }); // end of export

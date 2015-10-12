@@ -96,10 +96,12 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [compass](#compass)
 - [config](#config)
 - [copy](#copy)
+- [copytoclipboard](#copytoclipboard)
 - [csslint](#csslint)
 - [deploy](#deploy)
 - [deploy-config](#deploy-config)
 - [eslint](#eslint)
+- [findandreplace](#findandreplace)
 - [help](#help)
 - [jasmine](#jasmine)
 - [jshint](#jshint)
@@ -292,6 +294,31 @@ copy:
 None.
 
 
+### copytoclipboard
+Copies files to clipboard.
+
+##### In gulpw-config.*:
+```
+tasks:
+  copytoclipboard:
+    alternateAlias: clipboard
+    constructorLocation: ./src/bundle-tasks-adapters/CopyToClipboardTaskAdapter.js
+    priority: -100
+
+```
+
+##### In {bundle}.*:
+```
+copytoclipboard:
+    # The following two attributes are optional but at least one must declared inorder to use this task:
+    #file: {String} - Optional.
+    #files: {String|Array} - Optional.
+```
+
+##### Flags:
+None.
+
+
 ### csslint
 The 'csslint' task runs csslint on a bundle or all bundles using the listed '.csslintrc' file or runs with
  default options if no '.csslintrc' file is listed (default options are listed in `gulpw-config.*` file
@@ -442,6 +469,31 @@ None.
 - **skip-jshint{ing}**
 - **skip-jslint{int}**
 
+### findandreplace
+Finds and replaces strings in files.
+
+##### In gulpw-config.*:
+```
+tasks:
+  findandreplace:
+    constructorLocation: ./src/bundle-tasks-adapters/FindAndReplaceAdapter.js
+    priority: -98
+    # 'gulp-replace' module options
+    # @see for available options: https://www.npmjs.com/package/gulp-replace
+    #options:
+
+```
+
+##### In {bundle}.*:
+```
+findandreplace:
+    # Files to find and replace on.
+    #files: {Array}
+    
+    # Key value hash of things to search for (regex|string) and values (string) to replace them with.
+    # ** Note ** This feature is not supported yet.
+    #findandreplace: {Object}
+```
 ### help
 ##### Help task usage:
 - `gulpw help`

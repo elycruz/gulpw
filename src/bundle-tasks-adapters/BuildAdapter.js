@@ -107,10 +107,13 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
             targets.push('minify:' + bundleName);
         }
 
-        if (bundle.has('requirejs')) {
-            taskAliases.push('requirejs');
-            targets.push('requirejs:' + bundleName);
-        }
+        //if (bundle.has('requirejs')) {
+        //    taskAliases.push('requirejs');
+        //    targets.push('requirejs:' + bundleName);
+        //}
+        //
+        //if (bundle.has)
+        console.log(targets);
 
         return {targets: targets, taskAliases: taskAliases};
     }

@@ -200,6 +200,9 @@ tasks:
       comments: true
     jsTaskOptions: {}
 
+    # Copy paste key results:
+    #copyPasteKeyResults: {keyName} [html,js,css, .etc]
+
     # Enables use of babel
     useBabel: false
     # @see for more gulp-babel options and usage examples: https://www.npmjs.com/package/gulp-babel
@@ -294,5 +297,13 @@ tasks:
 
     # Key value hash of things to search for (regex|string) and values (string) to replace them with.
     #findandreplace:
+
+  copytoclipboard:
+    alternateAlias: clipboard
+    constructorLocation: ./src/bundle-tasks-adapters/CopyToClipboardTaskAdapter.js
+    priority: -100
+    # The following two attributes are optional but at least one must declared inorder to use this task:
+    #file: {String} - Optional.
+    #files: {String|Array} - Optional.
 
 

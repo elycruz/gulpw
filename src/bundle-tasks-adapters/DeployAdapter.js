@@ -50,7 +50,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
             // Remove possible memory leak messages from within ssh plugin
             conn.setMaxListeners(21);
 
-            return (new Promise(function (fulfill, reject) {
+            return new Promise(function (fulfill, reject) {
                 // Get file count
                 Object.keys(targets).forEach(function (key, index, list) {
                     if (index < list.length - 1) {
@@ -136,7 +136,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
 
                                 // Log task completion
                                 console.log(chalk.cyan(taskName) + chalk.green(' complete') + chalk.cyan('. Duration: ') +
-                                    chalk.magenta((((new Date()) - startTime) / 1000) + 's\n'));
+                                    chalk.magenta((new Date() - startTime) / 1000) + 's\n');
 
                                 fulfill();
 
@@ -157,7 +157,7 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
                         }
                     })
                     .connect(sshOptions);
-            }));
+            });
 
         });
     },

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
+ * @todo allow all gulpw-config.yaml and bundle config options to be passed and merged via the command line
  */
 
 require('sjljs');

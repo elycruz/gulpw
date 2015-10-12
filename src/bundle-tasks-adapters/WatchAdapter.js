@@ -25,7 +25,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
 
         gulp.task(taskName, function () {
 
-            return (new Promise(function (fulfill, reject) {
+            return new Promise(function (fulfill, reject) {
 
                 var waitingMessage = 'Watching for changes...';
 
@@ -77,7 +77,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
 
                 }); // end of watch call
 
-            })); // end of promise
+            }); // end of promise
 
         }); // end of overall task
 
@@ -127,6 +127,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
     getSrcForBundle: function (bundle) {
         var self = this,
             ignoredTasks = self.wrangler.tasks.watch.ignoredFiles,
+            vulcanFiles,
             targets = [],
             bundleOps,
             rjsOps;
@@ -183,7 +184,7 @@ module.exports = TaskAdapter.extend(function WatchAdapter () {
         }
 
         if (bundle.has('vulcan')) {
-            var vulcanFiles = bundle.options.vulcan.files;
+            vulcanFiles = bundle.options.vulcan.files;
             if (sjl.classOfIs(vulcanFiles, 'String')) {
                 targets.push(vulcanFiles);
             }

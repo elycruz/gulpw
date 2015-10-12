@@ -1,12 +1,14 @@
 /**
  * Created by elycruz on 10/5/15.
  */
+
+'use strict';
+
 var path = require('path'),
     crypto = require('crypto');
 
-
 module.exports = (function () {
-    'use strict';
+
     return {
         addFileHashToFilename: function (file, enc, hasher, frontOrBack) {
             hasher = hasher || crypto.createHash('md5');

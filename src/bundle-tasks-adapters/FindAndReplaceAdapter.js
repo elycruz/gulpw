@@ -12,7 +12,6 @@ require('sjljs');
 var BaseBundleTaskAdapter = require('./BaseBundleTaskAdapter'),
     path = require('path'),
     gulpReplace = require('gulp-replace'),
-    gulpDuration = require('gulp-duration'),
     lazypipe = require('lazypipe'),
     gwUtils = require('./../Utils'),
     chalk = require('chalk');
@@ -130,7 +129,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
             files = gwUtils.explodeGlob(files);
         }
 
-        return (new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var completedLen = 0,
                 expectedCompletedLen = files.length,
                 interval,
@@ -172,8 +171,8 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
                 }
             }, 100);
 
-        })); // end of promise
+        }); // end of promise
 
     } // end of process files
 
-}) ; // end of export
+}); // end of export

@@ -49,10 +49,11 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
                     }
                     wrangler.log(completionMessage);
                     console.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
-                    + chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
+                        + chalk.magenta((new Date() - start) / 1000 + 'ms\n')
+                    );
                 })
                     .catch(function (failure) {
-                        console.log(err, '\n');
+                        console.log(failure, '\n');
                     });
 
             }); // End of 'clean' task

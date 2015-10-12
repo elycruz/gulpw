@@ -417,7 +417,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             args.pop();
         }
 
-        if ((verbose && !debug) || mandatory) {
+        if (verbose && !debug || mandatory) {
             console.log.apply(console, args);
         }
         else if (debugFlag && debug) {
@@ -486,7 +486,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
             return retVal;
         });
 
-        return (new Promise(function (fulfill, reject) {
+        return new Promise(function (fulfill, reject) {
             var intervalSpeed = 100,
                 completedTasks,
                 completionInterval = null;
@@ -518,7 +518,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             }, intervalSpeed);
 
-        })); // end of promise
+        }); // end of promise
     },
 
     launchTasksSync: function (tasks, gulp) {
@@ -562,6 +562,10 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
             if (!item2) {
                 return;
+            }
+
+            if (!gulp.tasks[item1[0]]) {
+                return item1;
             }
 
             var deps1 = self.onlyDefinedTaskAliases(gulp.tasks[item1[0]].dep || []),
@@ -905,7 +909,8 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var options = sjl.namespace(key, this),
             classOfOptions = sjl.classOf(options),
             classOfObj = sjl.classOf(extendWithObj),
-            retVal = null;
+            retVal = null,
+            newObj;
 
         if (sjl.empty(options) && !sjl.empty(extendWithObj)) {
             retVal = extendWithObj;
@@ -915,7 +920,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         }
         else if (!sjl.empty(options) && !sjl.empty(extendWithObj) &&
             classOfOptions === 'Object' && classOfObj === 'Object') {
-            var newObj = cloneConfig(options);
+            newObj = cloneConfig(options);
             retVal = sjl.extend(true, sjl.jsonClone(newObj), extendWithObj);
         }
         else {

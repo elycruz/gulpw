@@ -47,7 +47,7 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
             ];
 
         gulp.task('config', function () {
-            return (new Promise(function (fulfill/*, reject*/) {
+            return new Promise(function (fulfill/*, reject*/) {
 
                 console.log(chalk.cyan('Running "config" task.\n\n') +
                 chalk.dim('** Note ** - Any existing config will be backed up to "' + wrangler.localConfigBackupPath + '" before generating a new one. \n'));
@@ -144,7 +144,7 @@ module.exports = BaseStaticTaskAdapter.extend(function ConfigTaskAdapter (/*opti
 
                 }); // end of inquiry
 
-            })); // end of promise
+            }); // end of promise
 
         }); // end of task
 

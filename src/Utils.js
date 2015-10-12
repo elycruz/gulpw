@@ -127,7 +127,7 @@ module.exports = {
      * @returns {Map} - The new created map.
      */
     objectHashToMap: function (obj, transformKeyCallback) {
-        transformKeyCallback = transformKeyCallback || function (key) {return key + '';}
+        transformKeyCallback = transformKeyCallback || function (key) {return key + '';};
         var out = new Map();
         Object.keys(obj).forEach(function (key) {
             out.set(transformKeyCallback(key), obj[key]);

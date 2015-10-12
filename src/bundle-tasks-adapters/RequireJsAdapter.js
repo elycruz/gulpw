@@ -141,7 +141,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
                     // Notify of task completion and task duration
                     console.log('[' + chalk.green('gulp') +  ']' +
                         chalk.cyan(' "' + taskName + '" completed.  Duration: ') +
-                        chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
+                        chalk.magenta((new Date() - start) / 1000) + 'ms\n');
 
                     fulfill();
 
