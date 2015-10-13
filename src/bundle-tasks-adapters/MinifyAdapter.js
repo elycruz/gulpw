@@ -40,7 +40,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
         }
 
         var self = this,
-            minifyConfig = self._getMinifyConfig(),
+            minifyConfig = self._getMinifyConfig(bundle),
             taskConfigMap = {
                 html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
                 css: {instance: minifycss, options: minifyConfig.cssTaskOptions},

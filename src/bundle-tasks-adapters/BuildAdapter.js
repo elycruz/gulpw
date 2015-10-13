@@ -113,7 +113,6 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
         //}
         //
         //if (bundle.has)
-        console.log(targets);
 
         return {targets: targets, taskAliases: taskAliases};
     }
