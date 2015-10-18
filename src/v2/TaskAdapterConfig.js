@@ -8,7 +8,12 @@ module.exports = Config.extend(function TaskAdapterConfig(/**options**/) {
             alias: null,
             priority: null,
             alternateTaskName: null,
-            constructorLocation: null
+            constructorLocation: null,
+            // list node modules and gulp plugin modules used internally and
+            // that are configurable from  your config(s) here.
+            // @note TaskAdapter.prototype.getOptionsForBundle will clone any defaults in gulpw-config and
+            // merge the `bundle`'s config in with the options
+            configurableModules: null
         }].concat( sjl.argsToArray(arguments) )
     );
 });

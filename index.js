@@ -64,6 +64,7 @@ function init(env) {
 
     // Dump pertinent environment variables
     if (argv.dumpEnv) {
+        console.log('process.argv:',                process.argv);
         console.log('LIFTOFF SETTINGS:',             this);
         console.log('CLI OPTIONS:',                  argv);
         console.log('CWD:',                          env.cwd);
@@ -84,7 +85,11 @@ function init(env) {
     env.pwd = __dirname;
 
     // If the config path is empty
-    if (sjl.empty(env.configPath) && argv._.length === 0) {
+    if ((
+            sjl.empty(env.configPath) &&
+                (process.argv[1].indexOf('gulpw') === -1 && process.argv[1].indexOf('gulp') === -1)
+        )
+        || argv._.length === 0) {
 
         // Write message to user
         console.log(chalk.yellow('\nNo \'gulpw-config.*\' file found.'));

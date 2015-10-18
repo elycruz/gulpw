@@ -134,9 +134,9 @@ gulpw (gulp wrangler)
 - [ ] - The watch task should be reset whenever the {bundle}.* file that it is using to watch files
 	 is changed and also when running the global watch the watch task should reset whenever a {bundle}.* is
 	  changed.
-- [ ] - Force `tasks` key configurations to have a `node_modules` key and a 'gulp-plugins' key.  Inspiration:  This can
-allow us to automate the fetching of gulp plugin options or node_module options from a given bundle-config/gulpw-config file.
-This can also allows to do further introspection if necessary before running a task (maybe in '--verbose' mode?)
+- [ ] - Force `tasks` key configurations to have a `configurableModules` key allow us to automate the fetching of
+gulp plugin options or node_module options from a given bundle-config/gulpw-config file.
+This also allows to do further introspection if necessary (before running a task) (maybe in '--verbose' mode?)
 E.g.:
 ```
 var options = someTaskAdapter.config();
@@ -144,13 +144,20 @@ gulp.src([...])
 
     // `someGulpOptions` below are automatically resolved to an empty object or null
     // based on whether the options exists or not (in global gulpw-config or locally in bundle-config)
-    // @todo add note about cloning config section from gulpw-config using sjljs, here.
+    // @todo add note about cloning config section from gulpw-config using sjljs.
     .pipe(someGulpPlugin(options.someGulpPluginOptions);
 
 ```
 - [ ] - Freeze configs before passing them into their task adapters.
 - [ ] - Use localized versions of task adapter configs instead of getting them directly from
 the wrangler.
-- [ ] - Optimze the taskAdapter.getPipe method to be used outside of the gulpw namespaces
+- [ ] - Allow fetching of configs from task manager (clone them when needing to configure them via
+    the `clone from wrangler` methods).
+- [ ] - Optimze the `taskAdapter.getPipe` method to be used outside of the gulpw namespaces
 (when gulpw is used as a module in a script).
-- [ ] - Clarify the meaining/difference(s) of the terms 'options' and 'config'.  Also clarify their relationships to each other.
+- [ ] - Clarify the meaining/difference(s) of the terms 'options' and 'config'.
+Also clarify their relationships to each other for the public.
+- [ ] - Make gulpw includable as a module in a script:  Currently gulpw will not continue running unless it recognizes
+the task being run as configured with itself.  We want to allow it to run as a module if it is included in a gulp file.
+I.e., gulpw returns gulp when included as a module allowing gulp to use the tasks that gulpw defined as deps to user defined
+tasks in gulpfile/imported-in-to-gulpfile.
