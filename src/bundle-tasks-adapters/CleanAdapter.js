@@ -1,5 +1,8 @@
 /**
  * Created by edelacruz on 10/8/2014.
+ * @todo make clean adapter take `del` module options
+ * @todo make clean sources completely settable from the outside.
+ * @todo remove checking of other task configs for files to clean.
  */
 
 'use strict';
@@ -26,36 +29,32 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
             // Define 'clean' task
             gulp.task(taskName, function () {
 
-                return (new Promise(function (fulfill, reject) {
+                // Explode
+                targets = wrangler.explodeGlobs(targets);
 
-                    // Explode
-                    targets = wrangler.explodeGlobs(targets);
+                // Log start of task
+                console.log(chalk.cyan('Running "' + taskName + '"\n'));
 
-                    // Log start of task
-                    console.log(chalk.cyan('Running "' + taskName + '"\n'));
+                // Log files to delete
+                wrangler.log(chalk.grey('Deleting the following files:\n'), chalk.grey('- ' + targets.join(', \n - ' )), '\n');
 
-                    // Log files to delete
-                    wrangler.log(chalk.grey('Deleting the following files:\n'), chalk.grey(targets.join(',\n')), '\n');
-
-                    // Delete targets
-                    del(targets, function (err) {
-
-                        // If error log it
-                        if (err) {
-                            console.log(err, '\n');
-                            reject(err);
-                            return;
-                        }
-
-                        // Log completion of task
-                        console.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
-                        + chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
-
-                        fulfill();
-
-                    }); // end of deletion of targets
-
-                })); // end of promise
+                // Delete targets
+                return del(targets.sort()).then(function (paths) {
+                    var completionMessage;
+                    if (paths.length > 0) {
+                        wrangler.log(chalk.grey('The following paths have been deleted: \n - ' + paths.join('\n - ') + '\n'), '--debug');
+                    }
+                    else {
+                        wrangler.log(chalk.grey(' - No paths to clean.') + '\n', '--mandatory');
+                    }
+                    wrangler.log(completionMessage);
+                    console.log('[' + chalk.green('gulp') +'] ' + chalk.cyan(taskName + ' duration: ')
+                        + chalk.magenta((new Date() - start) / 1000 + 'ms\n')
+                    );
+                })
+                    .catch(function (failure) {
+                        console.log(failure, '\n');
+                    });
 
             }); // End of 'clean' task
 
@@ -103,7 +102,8 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
                 allowedFileTypes = wrangler.tasks.clean.allowedFileTypes || ['js', 'html',  'css'],
                 targets = [],
                 minifyConfig = wrangler.tasks.minify,
-                isMinifyConfigured = !wrangler.tasks.minify.notConfiguredByUser;
+                isMinifyConfigured = !wrangler.tasks.minify.notConfiguredByUser,
+                isVulcanConfigured = !wrangler.tasks.vulcan.notConfiguredByUser;
 
             // Register separate `clean` tasks for each section in `files` key
             allowedFileTypes.forEach(function (ext) {
@@ -123,6 +123,10 @@ module.exports = BaseBundleTaskAdapter.extend(function CleanAdapter () {
 
                     // Pass off the `filePath` to `targets` for later use
                     targets = targets.concat(singularTaskTargets);
+                }
+
+                if (isVulcanConfigured) {
+                    targets.push(bundle.options.vulcan.destDir);
                 }
             });
 

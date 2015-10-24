@@ -36,7 +36,7 @@ module.exports = BaseBundleTaskAdapter.extend(function CompassAdapter () {}, {
 		// Register compass task
 		gulp.task(taskName, function () {
 
-			return (new Promise(function (fulfill, reject) {
+			return new Promise(function (fulfill, reject) {
 
 				var startDate = new Date(),
                     compassTask;
@@ -76,11 +76,11 @@ module.exports = BaseBundleTaskAdapter.extend(function CompassAdapter () {}, {
 					}
 
 					console.log(chalk.cyan('"' + taskName + '" task ' + actionWord + '.  ' +
-					'Duration: ' + chalk.magenta((((new Date()) - startDate) / 1000) +
+					'Duration: ' + chalk.magenta((new Date() - startDate) / 1000 +
 					'ms\n')));
 				});
 
-			})); // end of promise
+			}); // end of promise
 
 		}); // end of gulp task
 		
@@ -103,7 +103,7 @@ module.exports = BaseBundleTaskAdapter.extend(function CompassAdapter () {}, {
 			}
 		});
 
-		if ((failedRegistrations === bundles.length && wrangler.tasks.compass.canRunStatically)
+		if (failedRegistrations === bundles.length && wrangler.tasks.compass.canRunStatically
             || wrangler.argv.topLevelConfig) {
 			this.registerStaticTask(gulp, wrangler);
 		}

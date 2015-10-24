@@ -59,7 +59,9 @@ module.exports = BaseBundleTaskAdapter.extend(function EsLintAdapter () {}, {
     },
 
     getTargetsForBundle: function (bundle/*, wrangler*/) {
-        var targets = [];
+        var targets = [],
+            files,
+            classOfFiles;
         if (bundle.has('files.js')) {
             targets = targets.concat(bundle.options.files.js);
         }
@@ -69,6 +71,16 @@ module.exports = BaseBundleTaskAdapter.extend(function EsLintAdapter () {}, {
             }
             else {
                 targets.push(path.join(bundle.options.requirejs.options.out));
+            }
+        }
+        if (bundle.has('vulcan')) {
+            files = bundle.get('vulcan.files');
+            classOfFiles = sjl.classOf(files);
+            if (classOfFiles === 'Array') {
+                targets = targets.concat(files);
+            }
+            else if (classOfFiles === 'String') {
+                targets.push(files);
             }
         }
         // @todo If bundle has browserify
