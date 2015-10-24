@@ -109,7 +109,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
             rjsOptions = wrangler.loadConfigFile(rjsOptions);
         }
         if (sjl.empty(rjsOptions)) {
-            throw new Error ('`RequireJsAdapter.getRequireJs` expects resolved `requirejs.options` to be a non empty object.');
+            console.warn ('`RequireJsAdapter.getRequireJs` expects resolved `requirejs.options` to be a non empty object.');
         }
         rjsOptions = wrangler.cloneOptionsFromWrangler('tasks.requirejs.options', rjsOptions);
         return rjsOptions;
@@ -141,7 +141,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
                     // Notify of task completion and task duration
                     console.log('[' + chalk.green('gulp') +  ']' +
                         chalk.cyan(' "' + taskName + '" completed.  Duration: ') +
-                        chalk.magenta((((new Date()) - start) / 1000) + 'ms\n'));
+                        chalk.magenta((new Date() - start) / 1000) + 'ms\n');
 
                     fulfill();
 

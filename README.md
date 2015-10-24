@@ -96,16 +96,19 @@ The above example builds (see [build](#build) task for more info) some bundles (
 - [compass](#compass)
 - [config](#config)
 - [copy](#copy)
+- [copytoclipboard](#copytoclipboard)
 - [csslint](#csslint)
 - [deploy](#deploy)
 - [deploy-config](#deploy-config)
 - [eslint](#eslint)
+- [findandreplace](#findandreplace)
 - [help](#help)
 - [jasmine](#jasmine)
 - [jshint](#jshint)
 - [minify](#minify)
 - [mocha](#mocha)
 - [requirejs](#requirejs)
+- [vulcan](#vulcan)
 - [watch](#watch)
 
 ### browserify
@@ -291,6 +294,31 @@ copy:
 None.
 
 
+### copytoclipboard
+Copies files to clipboard.
+
+##### In gulpw-config.*:
+```
+tasks:
+  copytoclipboard:
+    alternateAlias: clipboard
+    constructorLocation: ./src/bundle-tasks-adapters/CopyToClipboardTaskAdapter.js
+    priority: -100
+
+```
+
+##### In {bundle}.*:
+```
+copytoclipboard:
+    # The following two attributes are optional but at least one must declared inorder to use this task:
+    #file: {String} - Optional.
+    #files: {String|Array} - Optional.
+```
+
+##### Flags:
+None.
+
+
 ### csslint
 The 'csslint' task runs csslint on a bundle or all bundles using the listed '.csslintrc' file or runs with
  default options if no '.csslintrc' file is listed (default options are listed in `gulpw-config.*` file
@@ -441,6 +469,31 @@ None.
 - **skip-jshint{ing}**
 - **skip-jslint{int}**
 
+### findandreplace
+Finds and replaces strings in files.
+
+##### In gulpw-config.*:
+```
+tasks:
+  findandreplace:
+    constructorLocation: ./src/bundle-tasks-adapters/FindAndReplaceAdapter.js
+    priority: -98
+    # 'gulp-replace' module options
+    # @see for available options: https://www.npmjs.com/package/gulp-replace
+    #options:
+
+```
+
+##### In {bundle}.*:
+```
+findandreplace:
+    # Files to find and replace on.
+    #files: {Array}
+    
+    # Key value hash of things to search for (regex|string) and values (string) to replace them with.
+    # ** Note ** This feature is not supported yet.
+    #findandreplace: {Object}
+```
 ### help
 ##### Help task usage:
 - `gulpw help`
@@ -627,6 +680,50 @@ requirejs:
     ...
 ```
 
+### vulcan
+Vulcan + crisper task
+
+#####In 'gulpw-config.yaml':
+```
+tasks:
+  # Runs vulcanize and crisper on a file and alternately the file hash as a prefix or suffix
+  # to the file's basename.
+  vulcan:
+    constructorLocation: ./src/bundle-tasks-adapters/VulcanTaskAdapter
+    priority: 92
+
+    # Files to vulcanize
+    # files: // Populated from bundle.{json,js,yaml} file
+
+    # Destination directory for resulting files
+    # destDir: // Populated from bundle ""
+
+    # Crisper options
+    # @see for available options see: https://www.npmjs.com/package/crisper
+    #crisperOptions:
+      #jsFileName: # populated from bundle.  Optional.  Default `bundle.alias`
+      #scriptInHead: false.  Puts script in head with 'defer' attribute.
+      #onlySplit: false.  If false, omits script include of outputted javascript file
+
+    # Vulcanize options (options for `gulp-vulcanize`)
+    # @see for available options: https://github.com/Polymer/vulcanize#using-vulcanize-programmatically
+    vulcanizeOptions:
+      inlineScripts: true
+      inlineCss: true
+
+    # Remove generated 'html>head+body' elements and just keep the body's contents
+    # @see for more options: https://www.npmjs.com/package/gulp-dom
+    #noDomWrapper: false # Best used from bundle config level
+
+```
+
+##### In {bundle}.*:
+```
+  "Same as in 'gulp-config.yaml' file except `constructorLocation` and `priority` options."
+```
+
+##### Flags:
+--show-file-sizes
 ### watch
 The 'watch' task watches any files listed in the `requirejs`, `files.*`, and `watch.otherFiles`
 keys (this will be dynamic in upcoming version so that you can say what keys should be watched by
@@ -704,6 +801,8 @@ All flag default values are `null`/`false`.
     - **Aliases:** 
         - `--no-tests`
         - `--skip-testing`
+- **skip-related-bundles:** Used within build task (skips building of related bundles).
+- **show-file-sizes:** Shows file sizes for 'vulcan' task.
 
 ### Caveats:
 - ~~Be able to pass in multiple flags from the command line (some with values some without values).  Running

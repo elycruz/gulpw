@@ -83,7 +83,7 @@ module.exports = BaseStaticTaskAdapter.extend(function BundleConfigTaskAdapter (
 
         gulp.task('bundle', function () {
 
-            return (new Promise(function (fulfill/*, reject*/) {
+            return new Promise(function (fulfill/*, reject*/) {
 
                 console.log(chalk.cyan('Running "bundle" task.\n\n'));
 
@@ -138,7 +138,7 @@ module.exports = BaseStaticTaskAdapter.extend(function BundleConfigTaskAdapter (
 
                 }); // end of inquiry
 
-            })); // end of promise
+            }); // end of promise
 
         }); // end of task
 

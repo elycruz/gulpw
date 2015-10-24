@@ -118,6 +118,21 @@ module.exports = {
         }
         fs.writeFileSync(filePath, obj);
         return this;
+    },
+
+    /**
+     * Returns a `Map` object from a plain javascript object (`Objet`).
+     * @param obj {Object} - Object to parse.  Required.
+     * @param transformKeyCallback {Function} - Function that takes the key of `obj` and allows you to transform it.  Optional.
+     * @returns {Map} - The new created map.
+     */
+    objectHashToMap: function (obj, transformKeyCallback) {
+        transformKeyCallback = transformKeyCallback || function (key) {return key + '';};
+        var out = new Map();
+        Object.keys(obj).forEach(function (key) {
+            out.set(transformKeyCallback(key), obj[key]);
+        });
+        return out;
     }
 
 };

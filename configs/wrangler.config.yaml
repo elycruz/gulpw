@@ -52,6 +52,7 @@ staticTasks:
       - jshint
       - mocha
       - requirejs
+      - vulcan
       - watch
 
 tasks:
@@ -188,6 +189,10 @@ tasks:
     jsBuildPath: some/path/to/build/path
     fileHashType: sha256
     createFileHashes: true
+    prependFileHashToFileName: false
+    appendFileHashToFileName: true
+    noDomWrapperAndAppendedScript: false
+    noDomWrapper: false
     allowedFileTypes:
       - js
       - html
@@ -196,6 +201,16 @@ tasks:
       spare: true
       comments: true
     jsTaskOptions: {}
+
+    # Copy paste key results:
+    #copyPasteKeyResults: {keyName} [html,js,css, .etc]
+
+    # Enables use of babel
+    useBabel: false
+    # @see for more gulp-babel options and usage examples: https://www.npmjs.com/package/gulp-babel
+    # @see for babel options (try 'usage' or 'advanced' links for more about options).
+    babelOptions: null
+
     useMinPreSuffix: false
     useVersionNumInFileName: false
     template:
@@ -298,18 +313,53 @@ tasks:
 #
 #    # Options go here or within bundle config
 #    #options:
-#
-#  vulcanize:
-#    constructorLocation: ./src/bundle-tasks-adapters/VulcanizeAdapter
-#    priority: 99
-#    alternateName: vulcan
-#    # Files to vulcanize
-#    #files:
-#
-#    # Destination directory for resulting files
-#    #destDir: // Populated from bundle ""
-#
-#    # Vulcanize options (options for `gulp-vulcanize`)
-#    # @see https://github.com/Polymer/vulcanize#using-vulcanize-programmatically
-#    # vulcanize default options go here
-#    #options:
+
+  # Runs vulcanize and crisper on a file and alternately the file hash as a prefix or suffix
+  # to the file's basename.
+  vulcan:
+    constructorLocation: ./src/bundle-tasks-adapters/VulcanTaskAdapter
+    priority: 92
+
+    # Files to vulcanize
+    # files: // Populated from bundle.{json,js,yaml} file
+
+    # Destination directory for resulting files
+    # destDir: // Populated from bundle ""
+
+    # Crisper options
+    # @see for available options see: https://www.npmjs.com/package/crisper
+    #crisperOptions:
+      #jsFileName: # populated from bundle.  Optional.  Default `bundle.alias`
+      #scriptInHead: false.  Puts script in head with 'defer' attribute.
+      #onlySplit: false.  If false, omits script include of outputted javascript file
+
+    # Vulcanize options (options for `gulp-vulcanize`)
+    # @see for available options: https://github.com/Polymer/vulcanize#using-vulcanize-programmatically
+    vulcanizeOptions:
+      inlineScripts: true
+      inlineCss: true
+
+    # Remove generated 'html>head+body' elements and just keep the body's contents
+    # @see for more options: https://www.npmjs.com/package/gulp-dom
+    #noDomWrapper: false # Best used from bundle config level
+
+  findandreplace:
+    constructorLocation: ./src/bundle-tasks-adapters/FindAndReplaceAdapter.js
+    priority: -98
+    # 'gulp-replace' module options
+    # @see for available options: https://www.npmjs.com/package/gulp-replace
+    #options:
+
+    # Files to find and replace on.  Array.
+    #files:
+
+    # Key value hash of things to search for (regex|string) and values (string) to replace them with.
+    #findandreplace:
+
+  copytoclipboard:
+    alternateAlias: clipboard
+    constructorLocation: ./src/bundle-tasks-adapters/CopyToClipboardTaskAdapter.js
+    priority: -100
+    # The following two attributes are optional but at least one must declared inorder to use this task:
+    #file: {String} - Optional.
+    #files: {String|Array} - Optional.

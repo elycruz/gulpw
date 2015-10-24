@@ -22,7 +22,7 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
         targets = self.getTasksForBundle(bundle, wrangler);
 
         // Register related bundles
-        if (bundle.has('relatedBundles.processBefore')) {
+        if (!wrangler.argv.skipRelatedBundles && bundle.has('relatedBundles.processBefore')) {
             wrangler.getBundles(bundle.options.relatedBundles.processBefore).forEach(function (item) {
                 if (!self.isBundleValidForTask(item)) {
                     return;
@@ -57,7 +57,10 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
     },
 
     isBundleValidForTask: function (bundle) {
-        return bundle && (bundle.has('files') || bundle.has('requirejs') || bundle.has('browserify'));
+        return bundle && (bundle.has('files')
+            || bundle.has('requirejs')
+            || bundle.has('browserify')
+            || bundle.has('vulcan'));
     },
 
     isBundleValidForMinifyAndConcat: function (bundle) {
@@ -104,10 +107,12 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
             targets.push('minify:' + bundleName);
         }
 
-        if (bundle.has('requirejs')) {
-            taskAliases.push('requirejs');
-            targets.push('requirejs:' + bundleName);
-        }
+        //if (bundle.has('requirejs')) {
+        //    taskAliases.push('requirejs');
+        //    targets.push('requirejs:' + bundleName);
+        //}
+        //
+        //if (bundle.has)
 
         return {targets: targets, taskAliases: taskAliases};
     }

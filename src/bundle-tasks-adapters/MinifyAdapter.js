@@ -1,5 +1,6 @@
 /**
  * Created by ElyDeLaCruz on 10/5/2014.
+ * @todo add file size option to every task that manipulates files.
  */
 'use strict'; require('sjljs');
 
@@ -10,6 +11,7 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     uglify = require('gulp-uglify'),
     minifycss = require('gulp-minify-css'),
     minifyhtml = require('gulp-minify-html'),
+    minifyInline = require('gulp-minify-inline'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
     callback = require('gulp-fncallback'),
@@ -17,7 +19,10 @@ var FilesHashTaskAdapter = require('./FilesHashTaskAdapter'),
     duration = require('gulp-duration'),
     chalk = require('chalk'),
     path = require('path'),
-    crypto = require('crypto');
+    fileUtils = require('./../utils/file-utils'),
+    gulpBabel = require('gulp-babel'),
+    crypto = require('crypto'),
+    gulpDom = require('gulp-dom');
 
 module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
     FilesHashTaskAdapter.apply(this, sjl.argsToArray(arguments));
@@ -30,24 +35,33 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
+        if (!this.isBundleValidForTask(bundle)) {
+            return;
+        }
+
         var self = this,
-            minifyConfig = bundle.has('minify') ?
-                sjl.extend(true, sjl.jsonClone(wrangler.tasks.minify), bundle.get('minify')) : wrangler.tasks.minify,
+            minifyConfig = self._getMinifyConfig(bundle),
             taskConfigMap = {
                 html: {instance: minifyhtml, options: minifyConfig.htmlTaskOptions},
                 css: {instance: minifycss, options: minifyConfig.cssTaskOptions},
                 js: {instance: uglify, options: minifyConfig.jsTaskOptions}
             },
-            //useMinPreSuffix = minifyConfig.useMinPreSuffix,
+        //useMinPreSuffix = minifyConfig.useMinPreSuffix,
             bundleName = bundle.options.alias,
             taskName = self.alias + ':' + bundleName,
             allowedFileTypes = minifyConfig.allowedFileTypes,
             createFileHash = minifyConfig.createFileHashes || true,
-            fileHashType = minifyConfig.fileHashType || 'sha256';
-
-        if (!self.isBundleValidForTask(bundle)) {
-            return;
-        }
+            fileHashType = minifyConfig.fileHashType || 'sha256',
+            prependFileHashToFileName = minifyConfig.prependFileHashToFileName,
+            appendFileHashToFileName = minifyConfig.appendFileHashToFileName,
+            noDomWrapper = sjl.issetObjKey(minifyConfig, 'noDomWrapper') ?
+                minifyConfig.noDomWrapper : false,
+            noDomWrapperAndAppendedScript = sjl.issetObjKey(minifyConfig, 'noDomWrapperAndAppendedScript') ?
+                minifyConfig.noDomWrapperAndAppendedScript : false,
+            useBabel = sjl.issetObjKey(minifyConfig, 'useBabel') ?
+                minifyConfig.useBabel : false,
+            babelOptions = sjl.issetObjKey(minifyConfig, 'babelOptions') ?
+                minifyConfig.babelOptions : null;
 
         // Create task for bundle
         gulp.task(taskName, function () {
@@ -66,12 +80,17 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
             // Check for sections on bundle that can be minified
             allowedFileTypes.forEach(function (ext) {
-                var buildPath = minifyConfig[ext + 'BuildPath'],
+
+                var buildPath =
+                    bundle.has('files.' + ext + 'BuildPath') ?
+                        bundle.get('files.' + ext + 'BuildPath') :
+                        minifyConfig[ext + 'BuildPath'],
                     taskInstanceConfig = taskConfigMap[ext],
                     eslintPipe = wrangler.getTaskAdapter('eslint').getPipe(bundle, gulp, wrangler),
                     cssLintPipe = wrangler.getTaskAdapter('csslint').getPipe(bundle, gulp, wrangler),
                     skipCssLinting = wrangler.skipLinting() || wrangler.skipCssLinting(),
                     skipJsLinting = wrangler.skipLinting() || wrangler.skipJsLinting(),
+                    skipHashing = wrangler.argv['skip-hashes'],
                     filePath,
                     tmplsString;
 
@@ -94,6 +113,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
                     .pipe(concat(filePath))
 
+                    .pipe(gulpif(ext === 'js' && useBabel, gulpBabel(babelOptions)))
+
                     // Add templates output string to end of file
                     .pipe(gulpif( !sjl.empty(tmplsString), footer(tmplsString)))
 
@@ -104,7 +125,8 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
                     .pipe(callback(function (file, enc, cb) {
                         if (createFileHash) {
-                            var hasher = crypto.createHash(fileHashType);
+                            // Create file hasher
+                            var hasher = crypto.createHash('md5');
                             hasher.update(file.contents.toString(enc));
                             bundle[ext + 'Hash'] = hasher.digest('hex');
                         }
@@ -115,6 +137,48 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
                     .pipe(gulpif(ext !== 'html', header(minifyConfig.header,
                         {bundle: bundle, fileExt: ext, fileHashType: fileHashType} )))
 
+                    // Add file hash to file name
+                    .pipe(callback(function (file, enc, cb) {
+                        if (ext !== 'html' || skipHashing) {
+                            cb(); return;
+                        }
+                        // Create file hasher
+                        var hasher = crypto.createHash('md5');
+                        if (appendFileHashToFileName) {
+                            fileUtils.addFileHashToFilename(file, enc, hasher, false);
+                        }
+                        else if (prependFileHashToFileName) {
+                            fileUtils.addFileHashToFilename(file, enc, hasher, true);
+                        }
+
+                        if (appendFileHashToFileName || prependFileHashToFileName) {
+                            cb(null, file);
+                        }
+                        else {
+                            cb();
+                        }
+                    }))
+
+                    .pipe(gulpif(ext === 'html', minifyInline()))
+
+                    // Returns the innardds for the html body if noDomWrapper is true
+                    .pipe(gulpif(ext === 'html' && (noDomWrapper || noDomWrapperAndAppendedScript), gulpDom(function () {
+
+                        var body = this.querySelector('body'),
+                            lastElement;
+
+                        // Remove last script tag
+                        if (noDomWrapperAndAppendedScript) {
+                            lastElement = body.lastElementChild;
+                            if (lastElement && lastElement.nodeName === 'SCRIPT') {
+                                body.removeChild(lastElement);
+                            }
+                        }
+
+                        return body.innerHTML;
+
+                    }, false)))
+
                     // Dump to the directory specified in the `minify` call above
                     .pipe(gulp.dest('./'));
 
@@ -122,6 +186,14 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
 
         }); // end of minify task
 
-    } // end of `registerBundle`
+    }, // end of `registerBundle`
+
+    _getMinifyConfig: function (bundle) {
+        var minifyConfig = this.wrangler.cloneOptionsFromWrangler('tasks.minify');
+        if (bundle.has('minify')) {
+            sjl.extend(true, minifyConfig, bundle.get('minify'));
+        }
+        return sjl.extend(true, minifyConfig, bundle.get('files'));
+    }
 
 }); // end of export
