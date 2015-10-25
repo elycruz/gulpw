@@ -57,7 +57,7 @@ module.exports = {
             args;
         if (command.indexOf(':')) {
             args = command.split(':');
-            out = {taskAlias: args.shift(), params: args};
+            out = {command: command, taskAlias: args.shift(), params: args};
         }
         return out;
     },

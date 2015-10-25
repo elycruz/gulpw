@@ -16,9 +16,10 @@ var fs = require('fs'),
     path = require('path'),
     callback = require('gulp-fncallback'),
     BasicGulpModuleAdapter = require('./BasicGulpModuleAdapter'),
+    minifyhtml = require('gulp-minify-html'),
     lazypipe = require('lazypipe');
 
-module.exports = BasicGulpModuleAdapter.extend(function MinifyHtmlAdapter(/*options*/) {
+module.exports = BasicGulpModuleTasAdapter.extend(function MinifyHtmlAdapter(/*options*/) {
     BasicGulpModuleAdapter.apply(this, arguments);
 }, {
 
@@ -67,7 +68,7 @@ module.exports = BasicGulpModuleAdapter.extend(function MinifyHtmlAdapter(/*opti
             minifyHtmlOptions;
         if (sjl.empty(self.pipe)) {
             self.pipe = lazypipe()
-                .pipe(minifyHtml, self.getOptions(bundle));
+                .pipe(minifyhtml, self.getPipeOptions('minifyhtml'));
         }
 
         return self.pipe;

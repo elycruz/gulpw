@@ -2,12 +2,13 @@
 /**
  * Created by ElyDeLaCruz on 11/18/2014.
  * @todo allow all gulpw-config.yaml and bundle config options to be passed and merged via the command line
+ * @todo check if we can pass namespaced parameters through yargs;  E.g., `--someOption.value somevalue`
  */
 
 require('sjljs');
 
-var Liftoff =   require('liftoff'),
-    argv =      require('yargs')
+var Liftoff = require('liftoff'),
+    argv = require('yargs')
         .default('skip-artifacts',  false)
         .default('browser',         false)
         .default('bundle',          null)
@@ -94,7 +95,8 @@ function init(env) {
             sjl.empty(env.configPath) &&
                 (process.argv[1].indexOf('gulpw') === -1 && process.argv[1].indexOf('gulp') === -1)
         )
-        || argv._.length === 0) {
+        || argv._.length === 0
+    ) {
 
         // Write message to user
         console.log(chalk.yellow('\nNo \'gulpw-config.*\' file found.'));

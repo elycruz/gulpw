@@ -30,10 +30,6 @@ class TaskManager {
         this.taskNames = Object.keys()
     }
 
-    init () {
-
-    }
-
     getTaskAdapter (taskName) { }
 
     registerBundleConfigs (bundleConfigs) { }

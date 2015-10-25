@@ -67,9 +67,6 @@ module.exports = BaseBundleTaskAdapter.extend(function BasicGulpModuleAdapter(/*
 
     getTaskConfigFromBundle: function (bundle) {
         var retVal = null;
-
-        []
-
         if (!Array.isArray(bundle.options[this.alias])) {
 
         }
@@ -77,8 +74,8 @@ module.exports = BaseBundleTaskAdapter.extend(function BasicGulpModuleAdapter(/*
 
     },
 
-    getPipeOptions: function (bundle, wrangler) {
-        // Override from outside
+    getPipeOptions: function (key, wrangler) {
+
     },
 
     getPipe: function (bundle, gulp, wrangler) {
