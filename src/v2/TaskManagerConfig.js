@@ -10,7 +10,7 @@ module.exports = Config.extend(function TaskManagerConfig(/** options **/) {
             bundleConfigFormats: null,
             localConfigPath: null,
             localConfigBackupPath: null,
-            localHelpPath: null,
+             localHelpPath: null,
             helpPath: null,
             staticTasks: null,
             tasks: null
