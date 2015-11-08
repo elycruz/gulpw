@@ -4,16 +4,18 @@
 
 var Config = require('./Config');
 
-module.exports = Config.extend(function TaskManagerConfig(/** options **/) {
-    Config.apply(this, [{
-            bundlesPath: null,
-            bundleConfigFormats: null,
-            localConfigPath: null,
-            localConfigBackupPath: null,
-            localHelpPath: null,
-            helpPath: null,
-            staticTasks: null,
-            tasks: null
-        }].concat(sjl.argsToArray(arguments))
-    );
-});
+module.exports = class TaskManagerConfig extends Config {
+    constructor () {
+        super(...[{
+                bundlesPath: null,
+                bundleConfigFormats: null,
+                localConfigPath: null,
+                localConfigBackupPath: null,
+                localHelpPath: null,
+                helpPath: null,
+                staticTasks: null,
+                tasks: null
+            }].concat(sjl.argsToArray(arguments))
+        );
+    }
+};
