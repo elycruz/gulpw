@@ -51,14 +51,12 @@
     "requirejs": "^2.1.15",
     "sjljs": "^0.4.99",
     "ssh2": "^0.4.8",
-    "uglify-js": "^2.4.24",
+    "uglify-js": "^2.6.1",
     "vinyl": "^1.0.0",
     "yargs": "^3.27.0"
   },
   "devDependencies": {
     "chai": "^1.9.2",
-    "gulp": "^3.8.11",
-    "gulp-eslint": "^0.8.0",
     "gulpw-sample-app": "elycruz/gulpw-sample-app",
     "mocha": "^2.0.1"
   },
