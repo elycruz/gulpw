@@ -2,6 +2,6 @@
 
 A place to store default configurations for gulp wrangler.
 
-- **wrangler.config.yaml:** Default public options.
-- **empty.bundle.template.yaml:** Empty bundle template used for fetching {bundle}.yaml defaults
+- **gulpw-config.yaml:** Default public options.
+- **empty-bundle-config-template.yaml:** Empty bundle template used for fetching {bundle}.yaml defaults
 for when generating a {bundle}.yaml file.

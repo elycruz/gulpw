@@ -1,4 +1,7 @@
 /**
+ * Created by elydelacruz on 10/4/15.
+ */
+/**
  * Created by edelacruz on 6/9/2015.
  * @todo replace all usages of Wrangler.prototype.clone with sjl.jsonClone
  */
@@ -48,20 +51,37 @@ module.exports = {
         return out;
     },
 
+    /**
+     * Forces creation of a path (deeply) if it doesn't exist.
+     * @param dirPath {String} - Path to ensure existence on.
+     * @returns {*}
+     */
     ensurePathExists: function (dirPath) {
         return mkdirp.sync(dirPath);
     },
 
-    splitCommand: function (command) {
+    /**
+     * Splits a gulp task command/name string into separate parts.  (Splits on ':').
+     * @param command {String}
+     * @returns {{command: *, taskAlias: *, params: null}}
+     */
+    splitTaskRunnerCommand: function (command, splitOnChar) {
+        splitOnChar = splitOnChar || ':';
         var out = {command: command, taskAlias: command, params: null},
             args;
-        if (command.indexOf(':')) {
-            args = command.split(':');
-            out = {command: command, taskAlias: args.shift(), params: args};
+        if (command.indexOf(splitOnChar)) {
+            args = command.split(splitOnChar);
+            out = {taskAlias: args.shift(), params: args};
         }
         return out;
     },
 
+    /**
+     * Replaces backslashes in path to forward slashes.
+     * @param filePath {String}
+     * @param checkForWindows {Boolean} - Whether to check for windows first before enforcing foward slashes.  Default `false`.
+     * @returns {*}
+     */
     pathToForwardSlashes: function (filePath, checkForWindows) {
         if (!sjl.empty(checkForWindows)) {
             filePath = os.type().toLowerCase().indexOf('windows') > -1 ? filePath.replace(/\\/g, '/') : filePath;
@@ -72,6 +92,11 @@ module.exports = {
         return filePath;
     },
 
+    /**
+     * Gets the task aliases specified in an array of gulp task names.
+     * @param list {Array}
+     * @returns {Array}
+     */
     getTaskAliasesFromArray: function (list) {
         var out  = [];
         list = list || this.argv._;
@@ -118,21 +143,6 @@ module.exports = {
         }
         fs.writeFileSync(filePath, obj);
         return this;
-    },
-
-    /**
-     * Returns a `Map` object from a plain javascript object (`Objet`).
-     * @param obj {Object} - Object to parse.  Required.
-     * @param transformKeyCallback {Function} - Function that takes the key of `obj` and allows you to transform it.  Optional.
-     * @returns {Map} - The new created map.
-     */
-    objectHashToMap: function (obj, transformKeyCallback) {
-        transformKeyCallback = transformKeyCallback || function (key) {return key + '';};
-        var out = new Map();
-        Object.keys(obj).forEach(function (key) {
-            out.set(transformKeyCallback(key), obj[key]);
-        });
-        return out;
     }
 
 };

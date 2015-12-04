@@ -41,7 +41,7 @@ staticTasks:
 
   "bundle":
     constructorLocation: ./src/static-tasks-adapters/BundleConfigTaskAdapter
-    emptyBundleFile: ./configs/empty.bundle.template.yaml
+    emptyBundleFile: ./configs/empty-bundle-config-template.yaml
     allowedTasks:
       - browserify
       - compass
