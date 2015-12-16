@@ -2,18 +2,25 @@
  * Created by elydelacruz on 10/4/15.
  */
 
-var Config = require('./Config');
+(function () {
+    'use strict';
 
-module.exports = Config.extend(function TaskManagerConfig(/** options **/) {
-    Config.apply(this, [{
-            bundlesPath: null,
-            bundleConfigFormats: null,
-            localConfigPath: null,
-            localConfigBackupPath: null,
-             localHelpPath: null,
-            helpPath: null,
-            staticTasks: null,
-            tasks: null
-        }].concat(sjl.argsToArray(arguments))
-    );
-});
+    let Config = require('./Config');
+
+    class TaskManagerConfig extends Config {
+        constructor(...options) {
+            super({
+                bundleConfigsPath: '',
+                bundleConfigFormats: [],
+                localConfigPath: '',
+                localConfigBackupPath: '',
+                localHelpPath: '',
+                helpPath: '',
+                staticTasks: {},
+                tasks: {}
+            }, ...options)
+        }
+    }
+
+    module.exports = TaskManagerConfig;
+}());

@@ -161,3 +161,8 @@ Also clarify their relationships to each other for the public.
 the task being run as configured with itself.  We want to allow it to run as a module if it is included in a gulp file.
 I.e., gulpw returns gulp when included as a module allowing gulp to use the tasks that gulpw defined as deps to user defined
 tasks in gulpfile/imported-in-to-gulpfile.
+
+
+### 'Refactor' Todos:
+- [ ] - Maybe collect all errors and warnings and display them after all tasks are run
+also describe ways that errors and warnings can be fixed.
