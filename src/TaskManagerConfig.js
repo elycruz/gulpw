@@ -1,8 +1,8 @@
 /**
  * Created by elydelacruz on 10/4/15.
  */
-
 (function () {
+
     'use strict';
 
     let Config = require('./Config');
@@ -23,4 +23,5 @@
     }
 
     module.exports = TaskManagerConfig;
+
 }());

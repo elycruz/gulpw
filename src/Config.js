@@ -1,6 +1,7 @@
 /**
  * Created by elydelacruz on 10/4/15.
  */
+
 (function () {
 
     'use strict';
@@ -8,41 +9,51 @@
     let sjl = require('sjljs');
 
     class Config {
+
         constructor(...options) {
+            let _options = {};
+            Object.defineProperty(this, '_options', {
+                get: function () {
+                    return _options;
+                },
+                configurable: true
+            });
             this.options(...options);
         }
 
         options(...objects) {
             var self = this,
-                retVal,
-                out;
+                retVal;
             if (objects.length > 0) {
-                sjl.extend.apply(sjl, objects);
+                sjl.extend(true, this._options, ...objects);
                 retVal = self;
             }
             else {
-                out = {};
-                retVal = Object.keys(self).forEach(function (key) {
-                    out[key] = self[key];
-                });
+                retVal = this._options;
             }
             return retVal;
         }
 
+        /**
+         * Overloaded getter and setter for options keys set on `Config`.
+         * @param key {String}
+         * @param value {*}
+         * @returns {Config}
+         */
         option(key, value) {
             var isGetterCall = !( !sjl.isEmptyOrNotOfType(key, String) && sjl.isset(value) ),
                 retVal = this;
             if (isGetterCall) {
-                retVal = sjl.searchObj(this, key);
+                retVal = sjl.searchObj(key, this._options);
             }
             else {
-                retVal = sjl.namespace(this, key, value);
+                sjl.namespace(key, this._options, value);
             }
             return retVal;
         }
 
         has(keyOrNsString) {
-            return sjl.isset(sjl.searchObj(this, keyOrNsString)) ? true : false;
+            return sjl.isset(sjl.searchObj(keyOrNsString, this._options)) ? true : false;
         }
     }
 
