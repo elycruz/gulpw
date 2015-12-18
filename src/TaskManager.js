@@ -5,7 +5,7 @@
 
 'use strict';
 
-let TaskManagerConfig = require('TaskManagerConfig');
+let TaskManagerConfig = require('./TaskManagerConfig');
 
 class TaskManager extends TaskManagerConfig {
 
@@ -22,10 +22,38 @@ class TaskManager extends TaskManagerConfig {
             _pwd;
 
         Object.defineProperties(this, {
-            taskAdapters: null,
-            taskNames: null,
-            staticTaskAdapters: null,
-            staticTaskNames: null,
+            taskAdapters: {
+                get: () => {
+                    return _taskAdapters;
+                },
+                set: (value) => {
+                    _taskAdapters = value;
+                }
+            },
+            taskNames: {
+                get: () => {
+                    return _taskNames;
+                },
+                set: (value) => {
+                    _taskNames = value;
+                }
+            },
+            staticTaskAdapters: {
+                get: () => {
+                    return _staticTaskAdapters;
+                },
+                set: (value) => {
+                    _staticTaskAdapters = value;
+                }
+            },
+            staticTaskNames: {
+                get: () => {
+                    return _staticTaskNames;
+                },
+                set: (value) => {
+                    _staticTaskNames = value;
+                }
+            },
             taskRunner: {
                 value: taskRunner
             },

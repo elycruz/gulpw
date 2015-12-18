@@ -6,7 +6,7 @@
     "gulpw": "index.js"
   },
   "dependencies": {
-    "chalk": "^1.0.0",
+    "chalk": "^1.1.1",
     "del": "^2.2.0",
     "ejs": "^2.3.1",
     "glob": "^5.0.15",
@@ -60,6 +60,7 @@
     "mocha": "^2.0.1"
   },
   "scripts": {
+    "start": "node --harmony index.js",
     "test": "mocha tests"
   },
   "repository": {

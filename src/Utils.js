@@ -8,9 +8,8 @@
 
 'use strict';
 
-require('sjljs');
-
-var fs = require('fs'),
+var sjl = require('sjljs'),
+    fs = require('fs'),
     os = require('os'),
     glob = require('glob'),
     mkdirp = require('mkdirp'),

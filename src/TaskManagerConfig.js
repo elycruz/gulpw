@@ -1,8 +1,6 @@
 /**
  * Created by elydelacruz on 10/4/15.
  */
-(function () {
-
     'use strict';
 
     let sjl = require('sjljs'),
@@ -139,5 +137,3 @@
     }
 
     module.exports = TaskManagerConfig;
-
-}());
