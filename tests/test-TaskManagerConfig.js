@@ -32,11 +32,12 @@ let fs = require('fs'),
         'configPath': ''
     };
 
-describe ('TaskManagerConfig', function () {
-    it ('Should have default properties "' + propNames.join('", "') + '".', function () {
-        var taskManagerConfig = new TaskManagerConfig(config);
+describe('TaskManagerConfig', function () {
+    var taskManagerConfig = new TaskManagerConfig(config),
+        joinedPropNames = propNames.join('", "');
+    it('Should have a default value for "' + joinedPropNames + '".', () => {
         propNames.forEach((prop) => {
-            expect(taskManagerConfig[prop]).to.equal(true);
+            expect(taskManagerConfig.has(prop)).to.equal(true);
         });
     });
 });

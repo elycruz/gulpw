@@ -6,6 +6,9 @@
     'use strict';
 
     let sjl = require('sjljs'),
+        stdlib = sjl.ns.stdlib,
+        SjlMap = stdlib.SjlMap,
+        SjlSet = stdlib.SjlSet,
         Config = require('./Config');
 
     class TaskManagerConfig extends Config {
@@ -14,15 +17,15 @@
 
             super();
 
-            var _bundleConfigsPath,
-                _bundleConfigFormats,
-                _localConfigPath,
-                _localConfigBackupPath,
-                _localHelpDocsPath,
-                _helpDocsPath,
-                _taskConfigs,
-                _staticTaskConfigs,
-                _configPath;
+            var _bundleConfigsPath = '',
+                _bundleConfigFormats = new SjlSet(),
+                _localConfigPath = '',
+                _localConfigBackupPath = '',
+                _localHelpDocsPath = '',
+                _helpDocsPath = '',
+                _taskConfigs = new SjlMap(),
+                _staticTaskConfigs = new SjlMap(),
+                _configPath = '';
 
             Object.defineProperties(this, {
                 bundleConfigsPath: {
@@ -97,10 +100,7 @@
                     set: (value) => {
                         var classOfValue = sjl.classOf(value);
                         if (classOfValue === 'Object') {
-                            _taskConfigs = new sjl.package.stdlib.SjlMap(value);
-                        }
-                        else if (classOfValue === 'SjlMap') {
-                            _taskConfigs = value;
+                            _taskConfigs = new SjlMap(value);
                         }
                         else {
                             throw new Error(TaskManagerConfig)
@@ -114,10 +114,7 @@
                     set: (value) => {
                         var classOfValue = sjl.classOf(value);
                         if (classOfValue === 'Object') {
-                            _staticTaskConfigs = new sjl.package.stdlib.SjlMap(value);
-                        }
-                        else if (classOfValue === 'SjlMap') {
-                            _staticTaskConfigs = value;
+                            _staticTaskConfigs = new SjlMap(value);
                         }
                         else {
                             throw new Error(TaskManagerConfig)

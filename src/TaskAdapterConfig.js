@@ -8,6 +8,7 @@
 
     class TaskAdapterConfig extends Config {
         constructor(...options) {
+            super();
             this.options({
                 alias: '',
                 priority: 0,

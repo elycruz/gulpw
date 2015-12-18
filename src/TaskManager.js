@@ -10,6 +10,7 @@ let TaskManagerConfig = require('TaskManagerConfig');
 class TaskManager extends TaskManagerConfig {
 
     constructor(taskRunner, argv, config) {
+        super();
         var _taskAdapters,
             _taskNames,
             _staticTaskAdapters,
@@ -42,11 +43,11 @@ class TaskManager extends TaskManagerConfig {
             }
         });
 
-        super(config);
-
         _cwd = env.configBase;
         _pwd = env.pwd;
         this._configPath = env.configPath;
+
+        this.options(config);
     }
 
     getTaskAdapter(taskName) {
