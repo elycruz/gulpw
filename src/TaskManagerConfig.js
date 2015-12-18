@@ -5,10 +5,15 @@
 
     'use strict';
 
-    let Config = require('./Config');
+    let sjl = require('sjljs'),
+        Config = require('./Config');
 
     class TaskManagerConfig extends Config {
-        constructor(...options) {
+
+        constructor (...options) {
+
+            super();
+
             var _bundleConfigsPath,
                 _bundleConfigFormats,
                 _localConfigPath,
@@ -20,7 +25,7 @@
                 _configPath;
 
             Object.defineProperties(this, {
-                _bundleConfigsPath: {
+                bundleConfigsPath: {
                     get: () => {
                         return _bundleConfigsPath;
                     },
@@ -31,7 +36,7 @@
                         _bundleConfigsPath = value;
                     }
                 },
-                _bundleConfigFormats: {
+                bundleConfigFormats: {
                     set: (value) => {
                         var classOfValue = sjl.classOf(value);
                         if (Array.isArray(value)) {
@@ -41,7 +46,7 @@
                         return _bundleConfigFormats;
                     }
                 },
-                _localConfigPath: {
+                localConfigPath: {
                     get: () => {
                         return _localConfigPath;
                     },
@@ -52,7 +57,7 @@
                         _bundleConfigsPath = value;
                     }
                 },
-                _localConfigBackupPath: {
+                localConfigBackupPath: {
                     get: () => {
                         return _localConfigBackupPath;
                     },
@@ -63,7 +68,7 @@
                         _localConfigBackupPath = value;
                     }
                 },
-                _localHelpDocsPath: {
+                localHelpDocsPath: {
                     get: () => {
                         return _localHelpDocsPath;
                     },
@@ -74,7 +79,7 @@
                         _localHelpDocsPath = value;
                     }
                 },
-                _helpDocsPath: {
+                helpDocsPath: {
                     get: () => {
                         return _helpDocsPath;
                     },
@@ -85,15 +90,14 @@
                         _helpDocsPath = value;
                     }
                 },
-                _taskConfigs: {
+                taskConfigs: {
                     get: () => {
                         return _taskConfigs;
                     },
                     set: (value) => {
                         var classOfValue = sjl.classOf(value);
                         if (classOfValue === 'Object') {
-                            _taskConfigs = new sjl.package.stdlib.SjlMap();
-                            // @todo finish this
+                            _taskConfigs = new sjl.package.stdlib.SjlMap(value);
                         }
                         else if (classOfValue === 'SjlMap') {
                             _taskConfigs = value;
@@ -103,35 +107,37 @@
                         }
                     }
                 },
-                _staticTaskConfigs: null,
-                _configPath: {
+                staticTaskConfigs: {
+                    get: () => {
+                        return _taskConfigs;
+                    },
+                    set: (value) => {
+                        var classOfValue = sjl.classOf(value);
+                        if (classOfValue === 'Object') {
+                            _staticTaskConfigs = new sjl.package.stdlib.SjlMap(value);
+                        }
+                        else if (classOfValue === 'SjlMap') {
+                            _staticTaskConfigs = value;
+                        }
+                        else {
+                            throw new Error(TaskManagerConfig)
+                        }
+                    }
+                },
+                configPath: {
                     get: () => {
                         return _configPath;
                     },
                     set: (value) => {
                         sjl.throwTypeErrorIfNotOfType(
                             TaskManager.name, '_configPath', value, String,
-                            'Only strings allowed for this property');
+                            'Only strings are allowed for this property');
                         _configPath = value;
                     }
-                } //env.configPath
+                }
             });
 
-            sjl.extend(true, this, {
-                _cwd: env.configBase,
-                _pwd: env.pwd,
-                _configPath: env.configPath
-            });
-            super({
-                bundleConfigsPath: '',
-                bundleConfigFormats: [],
-                localConfigPath: '',
-                localConfigBackupPath: '',
-                localHelpPath: '',
-                helpPath: '',
-                staticTasks: {},
-                tasks: {}
-            }, ...options)
+            this.options(...options);
         }
     }
 

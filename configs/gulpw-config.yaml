@@ -1,7 +1,7 @@
 # @todo add friendly task/static-task key lookup (will allow alternate key names to be used in bundle configs in a more friendly/extensible manner
 
 # Path to bundle configurations
-bundlesPath: ./gulpw-bundles
+bundlesPath: ./gulpw-bundles-configs/
 
 # Allowed bundle configuration formats
 bundleConfigFormats:
@@ -10,16 +10,16 @@ bundleConfigFormats:
   - .json
 
 # Local user level config path
-localConfigPath: ./.gulpw
+localConfigPath: ./.gulpw/
 
 # Local backup path for local config files
-localConfigBackupPath: ./.gulpw/backups
+localConfigBackupPath: ./.gulpw/backups/
 
 # Path where user would store help files for their custom tasks (if necessary @see `tasks` section)
-localHelpPath: null
+localHelpPath: ./help-docs/
 
 # Wrangler help docs
-helpPath: ./docs
+helpPath: ./help-docs/
 
 staticTasks:
   "help":
@@ -29,7 +29,6 @@ staticTasks:
     constructorLocation: ./src/static-tasks-adapters/ConfigTaskAdapter
     unconfigurableTasks:
       - copy
-      - browserify
     notAllowedInnerKeys:
       - priority
       - constructorLocation
@@ -67,9 +66,9 @@ tasks:
   #
 
   # Browserify Defaults
-  browserify:
-    constructorLocation: ./src/bundle-tasks-adapters/BrowserifyAdapter
-    priority: 92
+#  browserify:
+#    constructorLocation: ./src/bundle-tasks-adapters/BrowserifyAdapter
+#    priority: 92
 
   # Build Task (Looks through {bundle-alias}.yaml file and runs
   # all tasks that are not in the `ignoredTasks` array in this config.

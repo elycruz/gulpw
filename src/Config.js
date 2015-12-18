@@ -11,13 +11,6 @@
     class Config {
 
         constructor(...options) {
-            let _options = {};
-            Object.defineProperty(this, '_options', {
-                get: function () {
-                    return _options;
-                },
-                configurable: true
-            });
             this.options(...options);
         }
 
@@ -25,35 +18,33 @@
             var self = this,
                 retVal;
             if (objects.length > 0) {
-                sjl.extend(true, this._options, ...objects);
+                sjl.extend(true, this, ...objects);
                 retVal = self;
             }
             else {
-                retVal = this._options;
+                retVal = this;
             }
             return retVal;
         }
 
-        /**
-         * Overloaded getter and setter for options keys set on `Config`.
-         * @param key {String}
-         * @param value {*}
-         * @returns {Config}
-         */
         option(key, value) {
             var isGetterCall = !( !sjl.isEmptyOrNotOfType(key, String) && sjl.isset(value) ),
                 retVal = this;
             if (isGetterCall) {
-                retVal = sjl.searchObj(key, this._options);
+                retVal = sjl.searchObj(key, this);
             }
             else {
-                sjl.namespace(key, this._options, value);
+                sjl.namespace(key, this, value);
             }
             return retVal;
         }
 
         has(keyOrNsString) {
-            return sjl.isset(sjl.searchObj(keyOrNsString, this._options)) ? true : false;
+            return sjl.isset(sjl.searchObj(keyOrNsString, this)) ? true : false;
+        }
+
+        cloneFromKey (keyOrNsString) {
+            return sjl.jsonClone(this.option(keyOrNsString));
         }
     }
 

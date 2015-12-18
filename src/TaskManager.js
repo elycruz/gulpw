@@ -9,57 +9,44 @@ let TaskManagerConfig = require('TaskManagerConfig');
 
 class TaskManager extends TaskManagerConfig {
 
-    constructor(taskRunner, argv, env, config) {
+    constructor(taskRunner, argv, config) {
         var _taskAdapters,
             _taskNames,
             _staticTaskAdapters,
             _staticTaskNames,
             _taskRunner,
-            _env,
+            _contextRootPath,
             _argv,
             _cwd,
             _pwd;
 
         Object.defineProperties(this, {
-            _taskAdapters: null,
-            _taskNames: null,
-            _staticTaskAdapters: null,
-            _staticTaskNames: null,
-            _taskRunner: null,
-            _env: env,
-            _argv: argv,
-            _cwd: {
-                get: () => {
-                    return _cwd;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(
-                        TaskManager.name, '_cwd', value, String,
-                        'Only strings allowed for this property');
-                    _cwd = value;
-                }
-            }, //env.configBase,
-            _pwd: {
-                get: () => {
-                    return _pwd;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(
-                        TaskManager.name, '_pwd', value, String,
-                        'Only strings allowed for this property');
-                    _pwd = value;
-                }
-            } //env.pwd,
+            taskAdapters: null,
+            taskNames: null,
+            staticTaskAdapters: null,
+            staticTaskNames: null,
+            taskRunner: {
+                value: taskRunner
+            },
+            argv: {
+                value: argv
+            },
+            cwd: {
+                value: env.configBase
+            },
+            pwd: {
+                value: env.pwd
+            },
+            configPath: {
+                value: env.configPath
+            }
         });
 
         super(config);
 
-        sjl.extend(true, this, {
-            _cwd: env.configBase,
-            _pwd: env.pwd,
-            _configPath: env.configPath
-        });
-
+        _cwd = env.configBase;
+        _pwd = env.pwd;
+        this._configPath = env.configPath;
     }
 
     getTaskAdapter(taskName) {
