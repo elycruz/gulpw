@@ -23,9 +23,9 @@ class Config {
         var classOfKey = sjl.classOf(keyOrNsKey),
             self = this;
         if (classOfKey === Object.name) {
-            sjl.extend(true, self, ...sjl.argsToArray(arguments));
+            sjl.extend(true, self, ...sjl.argsToArray(arguments), true);
         }
-        else {
+        else if (sjl.isset(keyOrNsKey)) {
             sjl.throwTypeErrorIfNotOfType(contextName, 'set(keyOrNsKey, value)', keyOrNsKey, String);
             sjl.setValueOnObj(keyOrNsKey, value, self);
         }

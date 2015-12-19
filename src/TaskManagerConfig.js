@@ -101,9 +101,17 @@ class TaskManagerConfig extends Config {
                     return _taskConfigs;
                 },
                 set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(
-                        contextName, '_taskConfigs', value, Object);
-                    _taskConfigs = new SjlMap(value);
+                    var classOfValue = sjl.classOf(value);
+                    if (classOfValue === 'Object') {
+                        _taskConfigs = new SjlMap(value);
+                    }
+                    else if (classOfValue === 'SjlMap') {
+                        _taskConfigs = value;
+                    }
+                    else {
+                        throw new TypeError('`' + contextName  + '._taskConfigs` only takes types of `SjlMap` and/or ' +
+                            'types of `Object`.  Type received: `' + classOfValue + '`.');
+                    }
                 }
             },
             _staticTaskConfigs: {
@@ -111,14 +119,22 @@ class TaskManagerConfig extends Config {
                     return _staticTaskConfigs;
                 },
                 set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(
-                        contextName, '_staticTaskConfigs', value, Object);
-                    _staticTaskConfigs = new SjlMap(value);
+                    var classOfValue = sjl.classOf(value);
+                    if (classOfValue === 'Object') {
+                        _staticTaskConfigs = new SjlMap(value);
+                    }
+                    else if (classOfValue === 'SjlMap') {
+                        _staticTaskConfigs = value;
+                    }
+                    else {
+                        throw new TypeError('`' + contextName  + '._staticTaskConfigs` only takes types of `SjlMap` and/or ' +
+                            'types of `Object`.  Type received: `' + classOfValue + '`.');
+                    }
                 }
             }
         });
 
-        sjl.extend(true, this, ...options);
+        this.set(...options);
     }
 
     bundleConfigsPath(bundleConfigsPath) {
