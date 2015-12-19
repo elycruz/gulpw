@@ -51,7 +51,7 @@
     "no-dupe-args":             2,  // - disallow duplicate arguments in functions
     "no-dupe-keys":             2,  // - disallow duplicate keys when creating object literals
     "no-duplicate-case":        2,  // - disallow a duplicate case label.
-    "no-empty":                 2,  // - disallow empty statements
+    "no-empty":                 1,  // - disallow empty statements
     "no-empty-class":           0,  // - disallow the use of empty character classes in regular expressions
     "no-ex-assign":             2,  // - disallow assigning to the exception in a catch block
     "no-extra-boolean-cast":    2,  // - disallow double-negation boolean casts in a boolean context
@@ -148,7 +148,7 @@
     "no-undef":               2,  // - disallow use of undeclared variables unless mentioned in a /*global */ block
     "no-undef-init":          2,  // - disallow use of undefined when initializing variables
     "no-undefined":           2,  // - disallow use of undefined variable (off by default)
-    "no-unused-vars":         2,  // - disallow declaration of variables that are not used in the code
+    "no-unused-vars":         1,  // - disallow declaration of variables that are not used in the code
     "no-use-before-define":   2,  // - disallow use of variables before they are defined
 
     /** -------------------------------------------------------------------------------------------------------------------
@@ -199,7 +199,7 @@
     "padded-blocks":              0,  // - enforce padding within blocks (off by default)
     "quote-props":                0,  // - require quotes around object literal property names (off by default)
     "quotes":                     [2, "single", "avoid-escape"],  // - specify whether double or single quotes should be used
-    "semi":                       2,  // - require or disallow use of semicolons instead of ASI
+    "semi":                       1,  // - require or disallow use of semicolons instead of ASI
     "semi-spacing":               2,  // - enforce spacing before and after semicolons
     "sort-vars":                  0,  // - sort variables within the same declaration block (off by default)
     "space-after-function-name":        0,  // - (deprecated) require a space after function names (off by default)

@@ -4,11 +4,10 @@
 
 'use strict';
 
-let fs = require('fs'),
-    chai = require('chai'),
+let chai = require('chai'),
     expect = chai.expect,
-    sjl = require('sjljs'),
-    TaskManagerConfig = require('../src/TaskManagerConfig'),
+    //sjl = require('sjljs'),
+    TaskManagerConfig = require('./TaskManagerConfig'),
     propNames = [
         'bundleConfigsPath',
         'bundleConfigFormats',

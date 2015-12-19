@@ -120,6 +120,8 @@ module.exports = {
             || file.lastIndexOf('.yml') === file.length - 4) {
             file = yaml.safeLoad(fs.readFileSync(file));
         }
+        else {
+        }
         return file;
     },
 

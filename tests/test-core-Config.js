@@ -11,7 +11,7 @@ let chai = require('chai'),
         'options',
         'has'
     ],
-    Config = require('../src/Config'),
+    Config = require('./Config'),
     nullValuedObject = {
         someNullValue: null,
         someOtherNullValue: null,
@@ -88,7 +88,7 @@ describe ('Config', function () {
                 opRetVal = config.options(mixedValueObject),
                 keysToSet = Object.keys(mixedValueObject);
 
-            keysToSet.forEach((key, index) => {
+            keysToSet.forEach((key) => {
                 expect(config.options()[key]).to.equal(mixedValueObject[key]);
             });
 
@@ -111,5 +111,4 @@ describe ('Config', function () {
 
     });
 
-    describe
 });

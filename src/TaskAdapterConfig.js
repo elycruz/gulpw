@@ -18,7 +18,7 @@ class TaskAdapterConfig extends Config {
             // @note TaskAdapter.prototype.getOptionsForBundle will clone any defaults in gulpw-config and
             // merge the `bundle`'s config in with the options
             configurableModules: []
-        }, ...options)
+        }, ...options);
     }
 }
 

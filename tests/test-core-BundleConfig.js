@@ -6,7 +6,7 @@
 let chai = require('chai'),
     expect = chai.expect,
     sjl = require('sjljs'),
-    BundleConfig = require('../src/BundleConfig'),
+    BundleConfig = require('./BundleConfig'),
     propNames = [
         'alias',
         'description',
