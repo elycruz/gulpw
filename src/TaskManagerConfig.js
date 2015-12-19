@@ -118,7 +118,7 @@ class TaskManagerConfig extends Config {
             }
         });
 
-        self.options(...options);
+        sjl.extend(true, this, ...options);
     }
 
     bundleConfigsPath(bundleConfigsPath) {

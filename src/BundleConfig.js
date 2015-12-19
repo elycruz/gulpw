@@ -41,7 +41,7 @@ class BundleConfig extends Config {
                 }
             }
         });
-        this.options(...options);
+        sjl.extend(true, this, ...options);
     }
 }
 

@@ -4,45 +4,47 @@
 
 'use strict';
 
-let sjl = require('sjljs');
+let sjl = require('sjljs'),
+    SjlMap = sjl.ns.stdlib.SjlMap,
+    contextName = 'Config';
 
 class Config {
 
     constructor(...options) {
-        this.options(...options);
+        this.set(...options);
     }
 
-    options(...objects) {
-        var self = this,
-            retVal;
-        if (objects.length > 0) {
-            sjl.extend(true, this, ...objects);
-            retVal = self;
+    get (keyOrNsKey) {
+        sjl.throwTypeErrorIfNotOfType(contextName, 'get(keyOrNsKey)', keyOrNsKey, String);
+        return sjl.getValueFromObj(keyOrNsKey, this, undefined, false);
+    }
+
+    set (keyOrNsKey, value) {
+        var classOfKey = sjl.classOf(keyOrNsKey),
+            self = this;
+        if (classOfKey === Object.name) {
+            sjl.extend(true, self, ...sjl.argsToArray(arguments));
         }
         else {
-            retVal = this;
+            sjl.throwTypeErrorIfNotOfType(contextName, 'set(keyOrNsKey, value)', keyOrNsKey, String);
+            sjl.setValueOnObj(keyOrNsKey, value, self);
         }
-        return retVal;
+        return self;
     }
 
-    option(key, value) {
-        var isGetterCall = !( !sjl.isEmptyOrNotOfType(key, String) && sjl.isset(value) ),
-            retVal = this;
-        if (isGetterCall) {
-            retVal = sjl.searchObj(key, this);
-        }
-        else {
-            sjl.namespace(key, this, value);
-        }
-        return retVal;
-    }
-
-    has(keyOrNsString) {
+    has(keyOrNsString, type) {
         return sjl.isset(sjl.searchObj(keyOrNsString, this)) ? true : false;
     }
 
-    cloneFromKey(keyOrNsString) {
-        return sjl.jsonClone(this.option(keyOrNsString));
+    /**
+     * toJSON of its own properties or properties found at key/key-namespace-string.
+     * @param keyOrNsString {String} - Optional.
+     * @returns {*|Config}
+     */
+    toJSON (keyOrNsString) {
+        return sjl.isEmptyOrNotOfType(keyOrNsString, String) ?
+            sjl.jsonClone(this) : sjl.clone(
+                sjl.getValueFromObj(keyOrNsString, this));
     }
 }
 

@@ -7,7 +7,7 @@
 let chai = require('chai'),
     expect = chai.expect,
     //sjl = require('sjljs'),
-    TaskManagerConfig = require('./TaskManagerConfig'),
+    TaskManagerConfig = require('./../src/TaskManagerConfig'),
     propNames = [
         'bundleConfigsPath',
         'bundleConfigFormats',

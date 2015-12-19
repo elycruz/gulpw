@@ -7,11 +7,9 @@ let chai = require('chai'),
     expect = chai.expect,
     sjl = require('sjljs'),
     configMethodNames = [
-        'option',
-        'options',
         'has'
     ],
-    Config = require('./Config'),
+    Config = require('./../src/Config'),
     nullValuedObject = {
         someNullValue: null,
         someOtherNullValue: null,
@@ -24,11 +22,13 @@ let chai = require('chai'),
         arrayValue: [],
         objectValue: {},
         nullValue: null,
-        functionValue: function () {}
+        functionValue: () => {
+        },
+        someNestedObject: {all: {your: {base: {are: {belong: {to: {us: true}}}}}}}
     },
-    mixedValueObject = Object.assign(nullValuedObject, nonNullValuedObject);
+    mixedValueObject = Object.assign({}, nullValuedObject, nonNullValuedObject);
 
-function objectKeyAndValueTypes (obj) {
+function objectKeyAndValueTypes(obj) {
     var keys = Object.keys(obj),
         out = {};
     keys.forEach((key) => {
@@ -37,8 +37,8 @@ function objectKeyAndValueTypes (obj) {
     return out;
 }
 
-describe ('Config', function () {
-    it ('Should have methods "' + configMethodNames.join('", "') + '".', function () {
+describe('Config', () => {
+    it('Should have methods "' + configMethodNames.join('", "') + '".', () => {
         var config = new Config();
         configMethodNames.forEach((methodName) => {
             expect(methodName in config).to.equal(true);
@@ -46,7 +46,7 @@ describe ('Config', function () {
         });
     });
 
-    it ('Should merge all objects passed into it at instantiation time.', function () {
+    it('Should merge all objects passed into it at instantiation time.', () => {
         var someOptionsObj = {
                 alias: '',
                 version: '',
@@ -57,58 +57,35 @@ describe ('Config', function () {
             expectedKeysAndTypes = objectKeyAndValueTypes(expectedOptionsObj);
 
         Object.keys(expectedOptionsObj).forEach((prop) => {
-            expect(sjl.classOf(config.option(prop))).to.equal(expectedKeysAndTypes[prop]);
+            expect(sjl.classOf(config[prop])).to.equal(expectedKeysAndTypes[prop]);
         });
     });
 
-    describe ('#`option`', function () {
-        it ('Should be able to set a value and return itself after doing so.', function () {
-            var value = '99 bottles of beer...',
-                valueKey = 'beverages',
-                config = new Config(),
-                opRetVal = config.option(valueKey, value);
-            expect(config.option(valueKey)).to.equal(value);
-            expect(opRetVal).to.equal(config);
-        });
-
-        it ('Should be able to get a value.', function () {
-            var value = '99 bottles of beer...',
-                valueKey = 'beverages',
-                config = new Config(),
-                opRetVal = config
-                    .option(valueKey, value)
-                    .option(valueKey);
-            expect(opRetVal).to.equal(value);
-        });
-    });
-
-    describe ('#`options`', function () {
-        it ('Should be able to set multiple options at once.', function () {
-            var config = new Config(),
-                opRetVal = config.options(mixedValueObject),
-                keysToSet = Object.keys(mixedValueObject);
-
-            keysToSet.forEach((key) => {
-                expect(config.options()[key]).to.equal(mixedValueObject[key]);
-            });
-
-            // Should of returned self
-            expect(opRetVal).to.equal(config);
-        });
-
-    });
-
-    describe ('#`has`', function () {
-        it ('Should return whether a Config instance has an option or not.', function () {
+    describe('#`has`', () => {
+        it('Should return whether a Config instance has an option or not.', () => {
             var config = new Config(),
                 keysToSearch = Object.keys(mixedValueObject);
-            config.options(mixedValueObject);
+            sjl.extend(true, config, mixedValueObject);
             keysToSearch.forEach((key) => {
                 var expectedBln = sjl.isset(mixedValueObject[key]);
                 expect(config.has(key)).to.equal(expectedBln);
             });
         });
+    });
 
+    describe('#`JSON.stringify', () => {
+        // Not sure how JSON handles classes so putting a test for it here
+        it('Ensure that JSON.stringify works as expected on an instance.', () => {
+            var config = new Config(mixedValueObject),
+                clonedMixedValues = sjl.jsonClone(mixedValueObject),
+                clonedConfig = sjl.jsonClone(config), //.toJSON(),
+                keysToSearch = Object.keys(clonedConfig);
+            debugger;
+            keysToSearch.forEach((key) => {
+                expect(sjl.classOf(clonedConfig[key]))
+                    .to.equal(sjl.classOf(clonedMixedValues[key]));
+            });
+        });
     });
 
 });
