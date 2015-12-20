@@ -3,7 +3,7 @@
  */
 'use strict';
 
-let Config = require('./Config');
+let Config = require('./../config/Config');
 
 class TaskAdapterConfig extends Config {
     constructor(...options) {

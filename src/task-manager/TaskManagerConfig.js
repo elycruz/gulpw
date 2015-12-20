@@ -8,7 +8,7 @@ let sjl = require('sjljs'),
     stdlib = sjl.ns.stdlib,
     SjlMap = stdlib.SjlMap,
     SjlSet = stdlib.SjlSet,
-    Config = require('./Config'),
+    Config = require('./../config/Config'),
     contextName = 'TaskManagerConfig';
 
 class TaskManagerConfig extends Config {
@@ -20,14 +20,14 @@ class TaskManagerConfig extends Config {
         var self = this,
 
         // Private props
-            _bundleConfigsPath = '',
-            _bundleConfigFormats = new SjlSet(),
-            _localConfigPath = '',
-            _localConfigBackupPath = '',
-            _localHelpDocsPath = '',
-            _helpDocsPath = '',
-            _taskConfigs = new SjlMap(),
-            _staticTaskConfigs = new SjlMap();
+        _bundleConfigsPath = '',
+        _bundleConfigFormats = new SjlSet(),
+        _localConfigPath = '',
+        _localConfigBackupPath = '',
+        _localHelpDocsPath = '',
+        _helpDocsPath = '',
+        _taskConfigs = new SjlMap(),
+        _staticTaskConfigs = new SjlMap();
 
         // Define props
         Object.defineProperties(self, {
