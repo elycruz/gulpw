@@ -7,18 +7,8 @@
 let chai = require('chai'),
     expect = chai.expect,
     //sjl = require('sjljs'),
+    Config = require('./../src/Config'),
     TaskManagerConfig = require('./../src/TaskManagerConfig'),
-    propNames = [
-        'bundleConfigsPath',
-        'bundleConfigFormats',
-        'localConfigPath',
-        'localConfigBackupPath',
-        'localHelpDocsPath',
-        'helpDocsPath',
-        'taskConfigs',
-        'staticTaskConfigs',
-        'configPath'
-    ],
     config = {
         'bundleConfigsPath': '',
         'bundleConfigFormats': ['.js', '.json', '.yaml'],
@@ -29,12 +19,18 @@ let chai = require('chai'),
         'taskConfigs': {someTask: 'hello'},
         'staticTaskConfigs': '',
         'configPath': ''
-    };
+    },
+    propNames = Object.keys(config);
 
-describe('TaskManagerConfig', function () {
-    var taskManagerConfig = new TaskManagerConfig(config),
-        joinedPropNames = propNames.join('", "');
+describe('TaskManagerConfig', () => {
+
+    it ('Should be an instanceof `Config` class.', () => {
+        expect(new TaskManagerConfig() instanceof Config).to.equal(true);
+    });
+
     it('Should have a default value for "' + joinedPropNames + '".', () => {
+        var taskManagerConfig = new TaskManagerConfig(config),
+            joinedPropNames = propNames.join('", "');
         propNames.forEach((prop) => {
             expect(taskManagerConfig.has(prop)).to.equal(true);
         });

@@ -7,6 +7,7 @@ let chai = require('chai'),
     expect = chai.expect,
     sjl = require('sjljs'),
     BundleConfig = require('./../src/BundleConfig'),
+    Config = require('./../src/Config'),
     propNames = [
         'alias',
         'description',
@@ -14,6 +15,9 @@ let chai = require('chai'),
     ];
 
 describe ('BundleConfig', function () {
+    it ('Should be an instanceof `Config` class.', () => {
+        expect(new BundleConfig() instanceof Config).to.equal(true);
+    });
     it ('Should have default properties "' + propNames.join('", "') + '".', function () {
         //{alias: 'hello', description: 'hello2', version: '0.0.0'}
         var bundle = new BundleConfig();

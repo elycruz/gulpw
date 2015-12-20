@@ -24,21 +24,17 @@ class TaskRunnerAdapter {
         this.taskRunner = taskRunner;
     }
 
-    hasTask (key) {
-        key;
-    }
-
-    hasCompletedTask (key) {
-        key;
-    }
-
-    runTask (key) {
-        key;
-    }
-
-    registerTask (taskKey) {
-        taskKey;
-    }
+    //hasTask (key) {
+    //}
+    //
+    //hasCompletedTask (key) {
+    //}
+    //
+    //runTask (key) {
+    //}
+    //
+    //registerTask (taskKey) {
+    //}
 
 }
 
