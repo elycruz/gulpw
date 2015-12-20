@@ -22,11 +22,10 @@ let chai = require('chai'),
         arrayValue: [],
         objectValue: {},
         nullValue: null,
-        functionValue: () => {
-        },
+        functionValue: () => {},
         someNestedObject: {all: {your: {base: {are: {belong: {to: {us: true}}}}}}}
     },
-    mixedValueObject = Object.assign({}, nullValuedObject, nonNullValuedObject);
+    mixedValueObject = sjl.extend(true, {}, nullValuedObject, nonNullValuedObject);
 
 function objectKeyAndValueTypes(obj) {
     var keys = Object.keys(obj),
@@ -76,12 +75,12 @@ describe('Config', () => {
     describe('#`JSON.stringify', () => {
         // Not sure how JSON handles classes so putting a test for it here
         it('Ensure that JSON.stringify works as expected on an instance.', () => {
-            var config = new Config(mixedValueObject),
-                clonedMixedValues = sjl.jsonClone(mixedValueObject),
-                clonedConfig = sjl.jsonClone(config), //.toJSON(),
+            var clonedMixedValues = sjl.clone(mixedValueObject),
+                config = new Config(clonedMixedValues),
+                clonedConfig = config.toJSON(), //.toJSON(),
                 keysToSearch = Object.keys(clonedConfig);
-            debugger;
             keysToSearch.forEach((key) => {
+                debugger;
                 expect(sjl.classOf(clonedConfig[key]))
                     .to.equal(sjl.classOf(clonedMixedValues[key]));
             });

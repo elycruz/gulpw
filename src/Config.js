@@ -15,8 +15,11 @@ class Config {
     }
 
     get (keyOrNsKey) {
+        if (keyOrNsKey === undefined) {
+            return this;
+        }
         sjl.throwTypeErrorIfNotOfType(contextName, 'get(keyOrNsKey)', keyOrNsKey, String);
-        return sjl.getValueFromObj(keyOrNsKey, this, undefined, false);
+        return sjl.getValueFromObj(keyOrNsKey, this);
     }
 
     set (keyOrNsKey, value) {
@@ -43,8 +46,7 @@ class Config {
      */
     toJSON (keyOrNsString) {
         return sjl.isEmptyOrNotOfType(keyOrNsString, String) ?
-            sjl.jsonClone(this) : sjl.clone(
-                sjl.getValueFromObj(keyOrNsString, this));
+            this : sjl.clone(sjl.getValueFromObj(keyOrNsString, this));
     }
 }
 
