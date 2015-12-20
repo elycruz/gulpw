@@ -25,19 +25,19 @@ class TaskRunnerAdapter {
     }
 
     hasTask (key) {
-
+        key;
     }
 
     hasCompletedTask (key) {
-
+        key;
     }
 
     runTask (key) {
-
+        key;
     }
 
     registerTask (taskKey) {
-
+        taskKey;
     }
 
 }

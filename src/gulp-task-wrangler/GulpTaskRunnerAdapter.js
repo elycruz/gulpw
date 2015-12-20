@@ -2,8 +2,11 @@
  * Created by Ely on 12/18/2015.
  */
 
+'use strict';
+
 let sjl = require('sjljs'),
     TaskRunnerAdapter = require('././TaskRunnerAdapter');
+
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     constructor (taskRunner) {
         super(taskRunner);
@@ -23,3 +26,5 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     }
 
 }
+
+module.exports = GulpTaskRunnerAdapter;

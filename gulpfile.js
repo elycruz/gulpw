@@ -74,8 +74,8 @@ var sjl = require('sjljs'),
 gulp.task('eslint', function () {
     gulp.src(srcs)
         .pipe(eslint({useEslintrc: true}))
-        .pipe(eslint.format('stylish'))
-        .pipe(eslint.failAfterError());
+        .pipe(eslint.format('stylish'));
+        //.pipe(eslint.failAfterError());
 });
 
 gulp.task('bump', function(){

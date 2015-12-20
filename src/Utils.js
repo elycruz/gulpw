@@ -121,6 +121,7 @@ module.exports = {
             file = yaml.safeLoad(fs.readFileSync(file));
         }
         else {
+            throw new TypeError('`Utils` Only *.js, *.json, or *.yaml and *.yml config files supported.');
         }
         return file;
     },

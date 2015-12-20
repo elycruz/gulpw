@@ -60,8 +60,12 @@ class TaskManager extends TaskManagerConfig {
 
     taskRunnerAdapter (taskRunnerAdapter) {
         var retVal = this;
-        if (taskRunnerAdapter) {
+        if (taskRunnerAdapter && taskRunnerAdapter instanceof TaskRunnerAdapter) {
             this._taskRunnerAdapter = taskRunnerAdapter;
+        }
+        else if (taskRunnerAdapter && taskRunnerAdapter instanceof TaskRunnerAdapter === false) {
+            throw new TypeError (contextName + '.taskRunnerAdapter only accepts types of `TaskRunnerAdapter` or ' +
+                'subclasses of `TaskRunnerAdapter`.  Type recieved: \'' + sjl.classOf(taskRunnerAdapter) + '\'.');
         }
         else {
             retVal = this._taskRunnerAdapter;
@@ -270,48 +274,47 @@ class TaskManager extends TaskManagerConfig {
             .initRunSequence(self);
     }
 
-    initRunSequence (self) {
-
-    }
-
-    getTaskAdapter(taskName) {
-    }
-
-    registerBundleConfigs(bundleConfigs) {
-    }
-
-    registerBundleConfigWithTask(bundleConfig, taskName) {
-    }
-
-    registerBundleConfigWithTasks(bundleConfig, taskNames) {
-    }
-
-    registerBundleConfigsWithTasks(bundleConfigs, taskNames) {
-    }
-
-    isTaskRegisteredWithTaskRunner(taskName) {
-    }
-
-    _createTaskAdapter(taskName) {
-    }
-
-    _createTaskAdapters(taskNames) {
-    }
-
-    _createStaticTaskAdapter(staticTaskName) {
-    }
-
-    _createStaticTaskAdapters(staticTaskNames) {
-    }
-
-    _createBundleConfig(bundleConfigObj) {
-    }
-
-    _createBundleConfigs(bundleConfigObjs, registerWithTaskAdapters) {
-    }
-
-    _setTaskAdapter(taskName, taskAdapter) {
-    }
+    //initRunSequence (self) {
+    //}
+    //
+    //getTaskAdapter(taskName) {
+    //}
+    //
+    //registerBundleConfigs(bundleConfigs) {
+    //}
+    //
+    //registerBundleConfigWithTask(bundleConfig, taskName) {
+    //}
+    //
+    //registerBundleConfigWithTasks(bundleConfig, taskNames) {
+    //}
+    //
+    //registerBundleConfigsWithTasks(bundleConfigs, taskNames) {
+    //}
+    //
+    //isTaskRegisteredWithTaskRunner(taskName) {
+    //}
+    //
+    //_createTaskAdapter(taskName) {
+    //}
+    //
+    //_createTaskAdapters(taskNames) {
+    //}
+    //
+    //_createStaticTaskAdapter(staticTaskName) {
+    //}
+    //
+    //_createStaticTaskAdapters(staticTaskNames) {
+    //}
+    //
+    //_createBundleConfig(bundleConfigObj) {
+    //}
+    //
+    //_createBundleConfigs(bundleConfigObjs, registerWithTaskAdapters) {
+    //}
+    //
+    //_setTaskAdapter(taskName, taskAdapter) {
+    //}
 
 }
 

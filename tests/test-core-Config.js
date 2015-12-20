@@ -37,6 +37,7 @@ function objectKeyAndValueTypes(obj) {
 }
 
 describe('Config', () => {
+
     it('Should have methods "' + configMethodNames.join('", "') + '".', () => {
         var config = new Config();
         configMethodNames.forEach((methodName) => {
@@ -62,22 +63,49 @@ describe('Config', () => {
 
     describe('#`get`', () => {
         it ('should be able to get a value by key.', () => {
-
+            var testData = sjl.clone(nonNullValuedObject),
+                config = new Config(testData);
+            expect(config.get('stringValue')).to.equal(config.stringValue);
+            expect(config.get('stringValue')).to.equal(testData.stringValue);
         });
         it ('should be able to get nested values by namespace key.', () => {
-
+            var testData = sjl.clone(nonNullValuedObject.someNestedObject),
+                config = new Config(testData);
+            expect(config.get('all.your.base.are.belong').to.us).to.equal(config.all.your.base.are.belong.to.us);
+            expect(config.get('all.your.base.are.belong').to.us).to.equal(testData.all.your.base.are.belong.to.us);
+        });
+        it ('should return it\'s owner if no key value is passed in.', () => {
+            var testData = sjl.clone(nonNullValuedObject),
+                config = new Config(testData);
+            expect(config.get()).to.equal(config);
         });
     });
 
     describe('#`set`', () => {
-        it ('should be able to set a value by key.', () => {
-
+        it ('should be able to set a value by key and return itself after doing so.', () => {
+            var testData = sjl.clone(nonNullValuedObject),
+                config = new Config(testData),
+                resultOfGetCall = config.set('nullValue', 999);
+            expect(config.nullValue).to.equal(999);
+            expect(resultOfGetCall).to.equal(config);
         });
         it ('should be able to set a value by namespace key.', () => {
-
+            var testData = sjl.clone(nonNullValuedObject.someNestedObject),
+                config = new Config(testData),
+                resultOfSetCall = config.set('all.your.base.are.belong.to.us', 'helloworld');
+            expect(config.all.your.base.are.belong.to.us).to.equal('helloworld');
+            expect(resultOfSetCall).to.equal(config);
         });
         it ('should be able to set multiple values by object hash.', () => {
-
+            var testData = sjl.clone(mixedValueObject),
+                testDataKeys = Object.keys(testData),
+                config = new Config(),
+                resultOfSetCall = config.set(testData);
+            expect(config.has('someNestedObject.all.your.base.are.belong.to.us')).to.equal(true);
+            expect(resultOfSetCall).to.equal(config);
+            testDataKeys.forEach((key) => {
+                expect(sjl.classOf(config[key])).to.equal(sjl.classOf(testData[key]));
+            });
         });
     });
 
@@ -85,7 +113,7 @@ describe('Config', () => {
         it('Should return whether a Config instance has an option or not.', () => {
             var config = new Config(),
                 keysToSearch = Object.keys(mixedValueObject);
-            sjl.extend(true, config, mixedValueObject);
+            sjl.extend(true, config, sjl.clone(mixedValueObject));
             keysToSearch.forEach((key) => {
                 var expectedBln = sjl.isset(mixedValueObject[key]);
                 expect(config.has(key)).to.equal(expectedBln);
@@ -101,7 +129,6 @@ describe('Config', () => {
                 clonedConfig = config.toJSON(), //.toJSON(),
                 keysToSearch = Object.keys(clonedConfig);
             keysToSearch.forEach((key) => {
-                debugger;
                 expect(sjl.classOf(clonedConfig[key]))
                     .to.equal(sjl.classOf(clonedMixedValues[key]));
             });

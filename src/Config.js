@@ -5,7 +5,6 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    SjlMap = sjl.ns.stdlib.SjlMap,
     contextName = 'Config';
 
 class Config {
@@ -15,7 +14,7 @@ class Config {
     }
 
     get (keyOrNsKey) {
-        if (keyOrNsKey === undefined) {
+        if (!sjl.isset(keyOrNsKey)) {
             return this;
         }
         sjl.throwTypeErrorIfNotOfType(contextName, 'get(keyOrNsKey)', keyOrNsKey, String);
@@ -32,10 +31,13 @@ class Config {
             sjl.throwTypeErrorIfNotOfType(contextName, 'set(keyOrNsKey, value)', keyOrNsKey, String);
             sjl.setValueOnObj(keyOrNsKey, value, self);
         }
+        else {
+            console.warn(contextName + '.set was called with an a null or undefined value.');
+        }
         return self;
     }
 
-    has(keyOrNsString, type) {
+    has(keyOrNsString/*, type*/) {
         return sjl.isset(sjl.searchObj(keyOrNsString, this)) ? true : false;
     }
 
