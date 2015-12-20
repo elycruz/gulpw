@@ -60,6 +60,27 @@ describe('Config', () => {
         });
     });
 
+    describe('#`get`', () => {
+        it ('should be able to get a value by key.', () => {
+
+        });
+        it ('should be able to get nested values by namespace key.', () => {
+
+        });
+    });
+
+    describe('#`set`', () => {
+        it ('should be able to set a value by key.', () => {
+
+        });
+        it ('should be able to set a value by namespace key.', () => {
+
+        });
+        it ('should be able to set multiple values by object hash.', () => {
+
+        });
+    });
+
     describe('#`has`', () => {
         it('Should return whether a Config instance has an option or not.', () => {
             var config = new Config(),
