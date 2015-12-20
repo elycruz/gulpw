@@ -5,8 +5,8 @@
 
 'use strict';
 
-let TaskManagerConfig = require('./../TaskManagerConfig'),
-    TaskRunnerAdapter = require('./../TaskRunnerAdapter'),
+let TaskManagerConfig = require('./TaskManagerConfig'),
+    TaskRunnerAdapter = require('./../task-runner/TaskRunnerAdapter'),
     sjl = require('sjljs'),
     SjlSet = sjl.ns.stdlib.SjlSet,
     SjlMap = sjl.ns.stdlib.SjlMap,
@@ -275,7 +275,7 @@ class TaskManager extends TaskManagerConfig {
     }
 
     initRunSequence (self) {
-        console.log('Beginning run sequence');
+        console.log('Beginning run sequence', self);
     }
 
     //getTaskAdapter(taskName) {

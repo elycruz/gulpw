@@ -5,15 +5,19 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    TaskRunnerAdapter = require('././TaskRunnerAdapter');
+    TaskRunnerAdapter = require('./../task-runner/TaskRunnerAdapter');
 
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     constructor (taskRunner) {
         super(taskRunner);
     }
 
+    getTask (key) {
+        return this.taskRunner.tasks[key];
+    }
+
     hasTask (key) {
-        return sjl.issetAndOfType(this.taskRunner.tasks[key], Object);
+        return sjl.issetAndOfType(this.getTask(key), Object);
     }
 
     hasCompletedTask (key) {

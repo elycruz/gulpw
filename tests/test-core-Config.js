@@ -9,7 +9,7 @@ let chai = require('chai'),
     configMethodNames = [
         'has'
     ],
-    Config = require('./../src/Config'),
+    Config = require('./../src/config/Config'),
     nullValuedObject = {
         someNullValue: null,
         someOtherNullValue: null,

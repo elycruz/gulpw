@@ -4,7 +4,7 @@
 
 'use strict';
 
-let TaskManager = require('././TaskManager');
+let TaskManager = require('./../task-manager/TaskManager');
 
 class GulpTaskManager extends TaskManager {
     constructor (taskRunner, argv, env, config) {

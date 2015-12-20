@@ -35,6 +35,12 @@ class TaskRunnerAdapter {
     //
     //registerTask (taskKey) {
     //}
+    //
+    //getTask (key) {
+    //}
+    //
+    //setTask (key) {
+    //}
 
 }
 
