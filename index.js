@@ -5,13 +5,13 @@
  * @todo allow all gulpw-config.yaml and bundle config options to be passed and merged via the command line
  */
 
-    'use strict';
+'use strict';
 
 // Utils library
 var sjl = require('sjljs'),
 
     // GulpWrangler Utils
-    gwUtils = require('./src/utils/Utils'),
+    gwUtils = require('./build/utils/Utils'),
 
     // Launcher
     Liftoff = require('liftoff'),
@@ -68,7 +68,7 @@ var sjl = require('sjljs'),
             '.yaml': 'js-yaml'
         }
     }),
-    TaskManager = require('./src/task-manager/TaskManager'),
+    TaskManager = require('./build/task-manager/TaskManager'),
     userConfig, taskManager;
 
 function logPertinent (env) {

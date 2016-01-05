@@ -56,8 +56,12 @@
   },
   "devDependencies": {
     "chai": "^1.9.2",
+    "gulp-babel": "^5.3.0",
     "gulpw-sample-app": "elycruz/gulpw-sample-app",
     "mocha": "^2.0.1"
+  },
+  "engines": {
+    "node": ">=0.5.3"
   },
   "scripts": {
     "start": "node --harmony index.js",

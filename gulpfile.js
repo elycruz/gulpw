@@ -12,7 +12,8 @@ var sjl = require('sjljs'),
     fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
-    bump = require('gulp-bump');
+    bump = require('gulp-bump'),
+    gulpBabel = require('gulp-babel');
 
 //gulp.task('tasks-section', function () {
 //    var gulpwConfig = yaml.safeLoad(fs.readFileSync('configs/wrangler.config.yaml')),
@@ -71,6 +72,7 @@ var sjl = require('sjljs'),
 //        .pipe(gulp.dest('./'));
 //});
 
+// Eslint
 gulp.task('eslint', function () {
     gulp.src(srcs)
         .pipe(eslint({useEslintrc: true}))
@@ -78,14 +80,23 @@ gulp.task('eslint', function () {
         //.pipe(eslint.failAfterError());
 });
 
+// Bump
 gulp.task('bump', function(){
     gulp.src('./package.json')
         .pipe(bump())
         .pipe(gulp.dest('./'));
 });
 
+// Build
+gulp.task('build', function () {
+    gulp.src(['./src/**/*.js'])
+        .pipe(gulpBabel())
+        .pipe(gulp.dest('build'));
+});
+
+// Watch
 gulp.task('watch', function () {
-    gulp.watch(srcs, ['eslint']);
+    gulp.watch(srcs, ['eslint', 'build']);
     //gulp.watch('./docs/*.md', ['readme']);
 });
 
