@@ -34,4 +34,10 @@ describe('TaskManagerConfig', () => {
             expect(taskManagerConfig.has(prop)).to.equal(true);
         });
     });
+    it('Should be able to use property overloaded methods to get and set property values "' + joinedPropNames + '".', () => {
+        var taskManagerConfig = new TaskManagerConfig(config);
+        propNames.forEach((prop) => {
+            expect(taskManagerConfig.has(prop)).to.equal(true);
+        });
+    });
 });
