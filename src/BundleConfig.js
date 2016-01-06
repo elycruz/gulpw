@@ -3,7 +3,7 @@
  */
 'use strict';
 
-let Config = require('./../config/Config'),
+let Config = require('./Config'),
     sjl = require('sjljs');
 
 class BundleConfig extends Config {

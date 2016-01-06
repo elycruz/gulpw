@@ -68,7 +68,7 @@ var sjl = require('sjljs'),
             '.yaml': 'js-yaml'
         }
     }),
-    TaskManager = require('./build/task-manager/TaskManager'),
+    TaskManager = require('./build/TaskManager'),
     userConfig, taskManager;
 
 function logPertinent (env) {
@@ -100,7 +100,13 @@ function calledWithAllowedTaskNames () {
 function initializeTaskManager (userConfig) {
     // Instantiate TaskManager
     try {
-        TaskManager = new TaskManager(gulp, argv, env, userConfig)
+        TaskManager = new TaskManager(sjl.extend(true, {
+            taskRunner: gulp,
+            argv: argv,
+            env: env,
+            configPath: env.configPath,
+            configBase: env.configBase
+        }, userConfig))
     }
     catch (e) {
         console.log('Uncaught Error: \n',
@@ -110,7 +116,7 @@ function initializeTaskManager (userConfig) {
     }
 }
 
-function init(env) {
+function cliInit(env) {
     // Log pertinent info if necessary
     logPertinent(env);
 
@@ -129,6 +135,7 @@ function init(env) {
 
         // Load config file
         userConfig = gwUtils.loadConfigFile(env.configPath);
+        initializeTaskManager(userConfig);
     }
 }
 
@@ -139,6 +146,6 @@ cli.launch({
     require: argv.require,
     completion: argv.completion,
     verbose: argv.verbose
-}, init);
+}, cliInit);
 
 module.exports = gulp;

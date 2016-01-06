@@ -32,7 +32,7 @@ class Config {
             sjl.setValueOnObj(keyOrNsKey, value, self);
         }
         else {
-            console.warn(contextName + '.set was called with an a null or undefined value.');
+            //console.warn(contextName + '.set was called with an a null or undefined value.');
         }
         return self;
     }

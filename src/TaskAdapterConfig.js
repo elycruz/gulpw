@@ -3,12 +3,12 @@
  */
 'use strict';
 
-let Config = require('./../config/Config');
+let Config = require('./Config');
 
 class TaskAdapterConfig extends Config {
     constructor(...options) {
         super();
-        this.options({
+        this.set({
             alias: '',
             priority: 0,
             alternateTaskName: '',
@@ -23,4 +23,3 @@ class TaskAdapterConfig extends Config {
 }
 
 module.exports = TaskAdapterConfig;
-

@@ -8,13 +8,11 @@ let sjl = require('sjljs'),
     stdlib = sjl.ns.stdlib,
     SjlMap = stdlib.SjlMap,
     SjlSet = stdlib.SjlSet,
-    Config = require('./../config/Config'),
+    Config = require('./Config'),
     contextName = 'TaskManagerConfig';
 
 class TaskManagerConfig extends Config {
-
     constructor(...options) {
-
         super();
 
         var self = this,
@@ -31,7 +29,7 @@ class TaskManagerConfig extends Config {
 
         // Define props
         Object.defineProperties(self, {
-            _bundleConfigsPath: {
+            bundleConfigsPath: {
                 get: () => {
                     return _bundleConfigsPath;
                 },
@@ -42,7 +40,7 @@ class TaskManagerConfig extends Config {
                     _bundleConfigsPath = value;
                 }
             },
-            _bundleConfigFormats: {
+            bundleConfigFormats: {
                 set: (value) => {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_bundleConfigFormats', value, Array);
@@ -52,7 +50,7 @@ class TaskManagerConfig extends Config {
                     return _bundleConfigFormats;
                 }
             },
-            _localConfigPath: {
+            localConfigPath: {
                 get: () => {
                     return _localConfigPath;
                 },
@@ -63,7 +61,7 @@ class TaskManagerConfig extends Config {
                     _localConfigPath = value;
                 }
             },
-            _localConfigBackupPath: {
+            localConfigBackupPath: {
                 get: () => {
                     return _localConfigBackupPath;
                 },
@@ -74,7 +72,7 @@ class TaskManagerConfig extends Config {
                     _localConfigBackupPath = value;
                 }
             },
-            _localHelpDocsPath: {
+            localHelpDocsPath: {
                 get: () => {
                     return _localHelpDocsPath;
                 },
@@ -85,7 +83,7 @@ class TaskManagerConfig extends Config {
                     _localHelpDocsPath = value;
                 }
             },
-            _helpDocsPath: {
+            helpDocsPath: {
                 get: () => {
                     return _helpDocsPath;
                 },
@@ -96,7 +94,7 @@ class TaskManagerConfig extends Config {
                     _helpDocsPath = value;
                 }
             },
-            _taskConfigs: {
+            taskConfigs: {
                 get: () => {
                     return _taskConfigs;
                 },
@@ -114,7 +112,7 @@ class TaskManagerConfig extends Config {
                     }
                 }
             },
-            _staticTaskConfigs: {
+            staticTaskConfigs: {
                 get: () => {
                     return _staticTaskConfigs;
                 },
@@ -136,95 +134,6 @@ class TaskManagerConfig extends Config {
 
         this.set(...options);
     }
-
-    bundleConfigsPath(bundleConfigsPath) {
-        var retVal = this;
-        if (typeof bundleConfigsPath === 'undefined') {
-            retVal = this._bundleConfigsPath;
-        }
-        else {
-            this._bundleConfigsPath = bundleConfigsPath;
-        }
-        return retVal;
-    }
-
-    bundleConfigFormats(bundleConfigFormats) {
-        var retVal = this;
-        if (bundleConfigFormats) {
-            this._bundleConfigFormats = bundleConfigFormats;
-        }
-        else {
-            retVal = this._bundleConfigFormats;
-        }
-        return retVal;
-    }
-
-    localConfigPath(localConfigPath) {
-        var retVal = this;
-        if (localConfigPath) {
-            this._localConfigPath = localConfigPath;
-        }
-        else {
-            retVal = this._localConfigPath;
-        }
-        return retVal;
-    }
-
-    localConfigBackupPath(localConfigBackupPath) {
-        var retVal = this;
-        if (localConfigBackupPath) {
-            this._localConfigBackupPath = localConfigBackupPath;
-        }
-        else {
-            retVal = this._localConfigBackupPath;
-        }
-        return retVal;
-    }
-
-    localHelpDocsPath(localHelpDocsPath) {
-        var retVal = this;
-        if (localHelpDocsPath) {
-            this._localHelpDocsPath = localHelpDocsPath;
-        }
-        else {
-            retVal = this._localHelpDocsPath;
-        }
-        return retVal;
-    }
-
-    helpDocsPath(helpDocsPath) {
-        var retVal = this;
-        if (helpDocsPath) {
-            this._helpDocsPath = helpDocsPath;
-        }
-        else {
-            retVal = this._helpDocsPath;
-        }
-        return retVal;
-    }
-
-    taskConfigs(taskConfigs) {
-        var retVal = this;
-        if (taskConfigs) {
-            this._taskConfigs = taskConfigs;
-        }
-        else {
-            retVal = this._taskConfigs;
-        }
-        return retVal;
-    }
-
-    staticTaskConfigs(staticTaskConfigs) {
-        var retVal = this;
-        if (staticTaskConfigs) {
-            this._staticTaskConfigs = staticTaskConfigs;
-        }
-        else {
-            retVal = this._staticTaskConfigs;
-        }
-        return retVal;
-    }
-
 }
 
 module.exports = TaskManagerConfig;
