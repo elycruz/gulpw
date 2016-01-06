@@ -10,7 +10,7 @@ let TaskManagerConfig = require('./TaskManagerConfig'),
     sjl = require('sjljs'),
     SjlSet = sjl.ns.stdlib.SjlSet,
     SjlMap = sjl.ns.stdlib.SjlMap,
-    gwUtils = require('Utils'),
+    gwUtils = require('./Utils'),
     contextName = 'TaskManager';
 
 class TaskManager extends TaskManagerConfig {
@@ -171,38 +171,74 @@ class TaskManager extends TaskManagerConfig {
 
         // Set some more params and initiate run sequence
         self.set(config)
-            .init();
+            .initEntityNames();
+    }
+
+    /**
+     * @todo add unknown bundle-name, task-name, and static-task-name warnings
+     */
+    initEntityNames () {
+        var splitCommandOn = ':';
+
+        // @todo temporary escape here
+        if (sjl.empty(this.argv)) {
+            return this;
+        }
+
+        // Get split commands
+        this.splitCommands = this.argv._.map((value) => {
+            let retVal = this.taskRunnerAdapter.splitCommand(value, splitCommandOn),
+                bundle = retVal.bundle,
+                command = retVal.command,
+                taskName = retVal.taskAlias;
+
+            // Bundle Names
+            if (!sjl.isEmptyOrNotOfType(bundle, String) && this.availableBundleNames.has(bundle)) {
+                this.bundleNames.add(bundle);
+            }
+            else {
+                throw new Error('An error occurred before registering bundle name "' + bundle + '".' +
+                    '  Either the bundle name is empty, not of the correct type, or the bundle was not found in ' +
+                    '`available bundles`.');
+            }
+
+            // Task Names
+            if (!sjl.isEmptyOrNotOfType(taskAlias, String) && this.availableTaskNames.has(taskAlias)) {
+                this.taskNames.add(taskAlias);
+            }
+            else {
+                throw new Error('An error occurred before registering taskName name "' + taskName + '".' +
+                    '  Either the taskName name is empty, not of the correct type, or the taskName was not found in ' +
+                    '`available taskNames`.');
+            }
+
+            // Static Task Names
+            if (sjl.classOfIs(command, String) && command.indexOf(splitCommandOn) === -1
+                && !this.availableTaskNames.has(command)
+                && this.availableStaticTaskNames.has(command)) {
+                this.staticTaskNames.add(command);
+            }
+            else {
+                throw new Error('An error occurred before registering staticTaskName name "' + staticTaskName + '".' +
+                    '  Either the staticTaskName name is empty, not of the correct type, or the staticTaskName was not found in ' +
+                    '`available staticTaskNames`.');
+            }
+
+            return retVal;
+        }, this);
+    }
+
+    initEntities () {
+        return this._initStaticTaskAdapters()
+            ._initTaskAdapters()
+            ._initBundleConfigs();
     }
 
     init () {
-        var bundleNames,
-            taskNames,
-            staticTaskNames;
-        let splitCommands = this.argv._.map((value) => {
-            let retVal = this.taskRunnerAdapter.splitCommand(value, ':');
-            if (!sjl.isEmptyOrNotOfType(retVal.bundle, String) && this.availableBundleNames.has(retVal.bundle)) {
-                this.bundleNames.add(retVal.bundle);
-            }
-            if (!sjl.isEmptyOrNotOfType(retVal.taskAlias, String) && this.availableTaskNames.has(retVal.taskAlias)) {
-                this.taskNames.add(retVal.taskAlias);
-            }
-            if (!sjl.isEmptyOrNotOfType(retVal.taskAlias, String) && this.availableStaticTaskNames.has(retVal.taskAlias)) {
-                this.staticTaskNames.add(retVal.taskAlias);
-            }
-            return retVal;
-        }, this);
-
-        this.initRunSequence();
-    }
-
-    initRunSequence () {
-        this._initStaticTaskNames()
-            ._initStaticTaskAdapters()
-            ._initTaskNames()
-            ._initTaskAdapters()
-            ._initBundleNames()
-            ._initBundleConfigs();
+        this._initEntityNames()
+            ._initEntities();
         console.log('Beginning `TaskManager` run sequence.');
+        return this.taskRunnerAdapter.taskRunner;
     }
 
     getTaskAdapter(taskName) {
@@ -250,6 +286,12 @@ class TaskManager extends TaskManagerConfig {
     }
 
     _initStaticTaskAdapters(staticTaskNames) {
+        if (!staticTaskNames) {
+            return this;
+        }
+        this.staticTaskNames.forEach((name) => {
+
+        });
         return this;
     }
 

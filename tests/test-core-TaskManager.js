@@ -7,6 +7,8 @@
 let chai = require('chai'),
     expect = chai.expect,
     //sjl = require('sjljs'),
+    gwUtils = require('./../src/Utils'),
+    defaultConfig = gwUtils.loadConfigFile('./configs/gulpw-config.yaml'),
     TaskManagerConfig = require('./../src/TaskManagerConfig'),
     TaskManager = require('./../src/TaskManager'),
     config = {
@@ -24,7 +26,7 @@ let chai = require('chai'),
 
 describe('TaskManager', () => {
     it ('Should be an instanceof `TaskManagerConfig` class.', () => {
-        expect(new TaskManager({},{}, {}, {}) instanceof TaskManagerConfig).to.equal(true);
+        expect((new TaskManager(defaultConfig, {})) instanceof TaskManagerConfig).to.equal(true);
     });
 
     var joinedPropNames = propNames.join('", "');
