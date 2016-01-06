@@ -60,22 +60,6 @@ module.exports = {
     },
 
     /**
-     * Splits a gulp task command/name string into separate parts.  (Splits on ':').
-     * @param command {String}
-     * @returns {{command: *, taskAlias: *, params: null}}
-     */
-    splitTaskRunnerCommand: function (command, splitOnChar) {
-        splitOnChar = splitOnChar || ':';
-        var out = {command: command, taskAlias: command, params: null},
-            args;
-        if (command.indexOf(splitOnChar)) {
-            args = command.split(splitOnChar);
-            out = {taskAlias: args.shift(), params: args};
-        }
-        return out;
-    },
-
-    /**
      * Replaces backslashes in path to forward slashes.
      * @param filePath {String}
      * @param checkForWindows {Boolean} - Whether to check for windows first before enforcing foward slashes.  Default `false`.

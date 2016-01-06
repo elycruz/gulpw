@@ -24,6 +24,26 @@ class TaskRunnerAdapter {
         this.taskRunner = taskRunner;
     }
 
+    /**
+     * Splits a task runner command/name string into separate parts.  (Splits on ':').
+     * @param command {String}
+     * @param splitOnChar {String} - Default ':'.
+     * @returns {{command: *, taskAlias: *, params: null}}
+     */
+    splitCommand (command, splitOnChar) {
+        splitOnChar = sjl.isEmptyOrNotOfType(splitOnChar, String) ? ':' : splitOnChar;
+        var out = {command: command, taskAlias: command, bundle: null, params: null},
+            bundle, taskAlias, params, args;
+        if (command.indexOf(splitOnChar)) {
+            args = command.split(splitOnChar);
+            taskAlias = args.shift();
+            bundle = args.length > 1 ? args.shift() : null;
+            params = args.length > 0 ? args : null;
+            out = {taskAlias: taskAlias, bundle: bundle, params: params};
+        }
+        return out;
+    }
+
     //hasTask (key) {
     //}
     //

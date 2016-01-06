@@ -10,6 +10,7 @@ let TaskManagerConfig = require('./TaskManagerConfig'),
     sjl = require('sjljs'),
     SjlSet = sjl.ns.stdlib.SjlSet,
     SjlMap = sjl.ns.stdlib.SjlMap,
+    gwUtils = require('Utils'),
     contextName = 'TaskManager';
 
 class TaskManager extends TaskManagerConfig {
@@ -25,6 +26,7 @@ class TaskManager extends TaskManagerConfig {
             _taskNames = new SjlSet(),
             _staticTaskAdapters = new SjlMap(),
             _staticTaskNames = new SjlSet(),
+            _bundleNames = new SjlSet(),
             _taskRunnerAdapter = {},
             _taskRunner = {},
             _configPath = '',
@@ -35,6 +37,18 @@ class TaskManager extends TaskManagerConfig {
 
         // Define properties
         Object.defineProperties(self, {
+            config: {
+                value: config
+            },
+            availableTaskNames: {
+                value: new SjlSet(Object.keys(config.tasks))
+            },
+            availableStaticTaskNames: {
+                value: new SjlSet(Object.keys(config.staticTasks))
+            },
+            availableBundleNames: {
+                value: new SjlSet()
+            },
             taskAdapters: {
                 get: () => {
                     return _taskAdapters;
@@ -69,6 +83,15 @@ class TaskManager extends TaskManagerConfig {
                 set: (value) => {
                     sjl.throwTypeErrorIfNotOfType(contextName, '_staticTaskNames', value, Array);
                     _staticTaskNames = new SjlSet(value);
+                }
+            },
+            bundleNames: {
+                get: () => {
+                    return _bundleNames;
+                },
+                set: (value) => {
+                    sjl.throwTypeErrorIfNotOfType(contextName, '_bundleNames', value, Array);
+                    _bundleNames = new SjlSet(value);
                 }
             },
             taskRunner: {
@@ -148,10 +171,37 @@ class TaskManager extends TaskManagerConfig {
 
         // Set some more params and initiate run sequence
         self.set(config)
-            .initRunSequence(self);
+            .init();
     }
 
-    initRunSequence (self) {
+    init () {
+        var bundleNames,
+            taskNames,
+            staticTaskNames;
+        let splitCommands = this.argv._.map((value) => {
+            let retVal = this.taskRunnerAdapter.splitCommand(value, ':');
+            if (!sjl.isEmptyOrNotOfType(retVal.bundle, String) && this.availableBundleNames.has(retVal.bundle)) {
+                this.bundleNames.add(retVal.bundle);
+            }
+            if (!sjl.isEmptyOrNotOfType(retVal.taskAlias, String) && this.availableTaskNames.has(retVal.taskAlias)) {
+                this.taskNames.add(retVal.taskAlias);
+            }
+            if (!sjl.isEmptyOrNotOfType(retVal.taskAlias, String) && this.availableStaticTaskNames.has(retVal.taskAlias)) {
+                this.staticTaskNames.add(retVal.taskAlias);
+            }
+            return retVal;
+        }, this);
+
+        this.initRunSequence();
+    }
+
+    initRunSequence () {
+        this._initStaticTaskNames()
+            ._initStaticTaskAdapters()
+            ._initTaskNames()
+            ._initTaskAdapters()
+            ._initBundleNames()
+            ._initBundleConfigs();
         console.log('Beginning `TaskManager` run sequence.');
     }
 
@@ -173,22 +223,41 @@ class TaskManager extends TaskManagerConfig {
     isTaskRegisteredWithTaskRunner(taskName) {
     }
 
-    _instantiateTaskAdapter(taskName) {
+    _initTaskNames (taskNames) {
+        let argv = this.argv;
+        return this;
     }
 
-    _instantiateTaskAdapters(taskNames) {
+    _initStaticTaskNames (staticTaskNames) {
+        if (!Array.isArray(staticTaskNames) || staticTaskNames.length === 0) {
+
+        }
+        return this;
     }
 
-    _instantiateStaticTaskAdapter(staticTaskName) {
+    _initBundleNames (bundleNames) {
+        return this;
     }
 
-    _instantiateStaticTaskAdapters(staticTaskNames) {
+    _initTaskAdapter(taskName) {
     }
 
-    _instantiateBundleConfig(bundleConfigObj) {
+    _initTaskAdapters(taskNames) {
+        return this;
     }
 
-    _instantiateBundleConfigs(bundleConfigObjs, registerWithTaskAdapters) {
+    _initStaticTaskAdapter(staticTaskName) {
+    }
+
+    _initStaticTaskAdapters(staticTaskNames) {
+        return this;
+    }
+
+    _initBundleConfig(bundleConfigObj) {
+    }
+
+    _initBundleConfigs(bundleConfigObjs, registerWithTaskAdapters) {
+        return this;
     }
 
     _setTaskAdapter(taskName, taskAdapter) {
