@@ -18,6 +18,16 @@ var sjl = require('sjljs'),
 module.exports = {
 
     /**
+     * @type {Array}
+     */
+    supportedExts: [
+        '.js',
+        '.json',
+        '.yaml',
+        '.yml'
+    ],
+
+    /**
      * Returns the files located at glob string or the string passed in if it doesn't contain glob magic.
      * @param string {String} - Glob string to parse.
      * @returns {Array|String} - See description above.
@@ -131,8 +141,13 @@ module.exports = {
         return this;
     },
 
+    /**
+     * @param filePath {String}
+     * @param exts {Array|undefined}
+     * @returns {*|null} - Null if no file found else file contents.
+     */
     loadConfigFileFromSupportedExts: (filePath, exts) => {
-        exts = exts || ['.js', '.json', '.yaml', '.yml'];
+        exts = exts || this.supportedExts;
         var file = null;
         exts.some((ext) => {
             try {
@@ -143,8 +158,13 @@ module.exports = {
         return file;
     },
 
-    getBundleName: (fileName, exts) => {
-        exts = exts || ['.js', '.json', '.yaml', '.yml'];
+    /**
+     * @param fileName {String}
+     * @param exts {Array|undefined}
+     * @returns {*}
+     */
+    bundleNameFromFileName: (fileName, exts) => {
+        exts = exts || this.supportedExts;
         var bundleName = null;
         exts.some((ext) => {
             let lastIndexOfExt = fileName.lastIndexOf(ext),

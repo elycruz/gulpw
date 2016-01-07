@@ -7,6 +7,7 @@
 
 let TaskManagerConfig = require('./TaskManagerConfig'),
     TaskRunnerAdapter = require('./TaskRunnerAdapter'),
+    BundleConfig = require('./BundleConfig'),
     sjl = require('sjljs'),
     SjlSet = sjl.ns.stdlib.SjlSet,
     SjlMap = sjl.ns.stdlib.SjlMap,
@@ -42,7 +43,7 @@ class TaskManager extends TaskManagerConfig {
                     _argv = value;
                 }
             },
-            bundleConfigs: {
+            bundles: {
                 value: new SjlMap()
             },
             configBase: {
@@ -76,17 +77,11 @@ class TaskManager extends TaskManagerConfig {
             taskAdapters: {
                 value: new Map()
             },
-            taskConfigs: {
-                value: new SjlMap()
-            },
             splitCommands: {
                 value: new Map()
             },
             staticTaskAdapters: {
                 value: new Map()
-            },
-            staticTaskConfigs: {
-                value: new SjlMap()
             },
             taskRunnerAdapter: {
                 get: () => {
@@ -125,7 +120,7 @@ class TaskManager extends TaskManagerConfig {
 
         // Set some more params and initiate run sequence
         sjl.extend(true, this, config);
-        this.cwd = path.join(this.cwd, this.configBase);
+        this.cwd = this.configBase;
         this.init();
     }
 
@@ -133,15 +128,22 @@ class TaskManager extends TaskManagerConfig {
      * @todo add unknown bundle-name, task-name, and static-task-name warnings
      */
     init () {
-        let splitCommandOn = ':';
-        var availableTaskNames = new SjlSet(Object.keys(this.config.tasks)),
-            availableStaticTaskNames = new SjlSet(Object.keys(this.config.staticTasks)),
-            availableBundleNames = fs.readdirSync(this.bundlesPath);
-
         // @todo temporary escape here
         if (sjl.empty(this.argv)) {
             return this;
         }
+
+        let splitCommandOn = ':',
+            bundleFileNames = fs.readdirSync(this.config.bundlesPath);
+
+        var availableTaskNames = new SjlSet(Object.keys(this.config.tasks)),
+            availableStaticTaskNames = new SjlSet(Object.keys(this.config.staticTasks)),
+            availableBundleNames = bundleFileNames.map((fileName) => {
+                return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
+            }),
+            addedBundleNames = new Set(),
+            addedTaskNames = new Set(),
+            addedStaticTaskNames = new Set();
 
         // Get split commands
         this.argv._.forEach((value) => {
@@ -150,18 +152,9 @@ class TaskManager extends TaskManagerConfig {
                 command = splitCommand.command,
                 taskName = splitCommand.taskAlias;
 
-            // Bundle Names
-            if (!sjl.isEmptyOrNotOfType(bundle, String) && this.bundleConfigs.has(bundle)) {
-                this._initBundle(bundle, gwUtils.loadConfigFileFromSupportedExts(path.join(this.cwd, this.bundlesPath, bundle)));
-            }
-            else {
-                throw new Error('An error occurred before registering bundle name "' + bundle + '".' +
-                    '  Either the bundle name is empty, not of the correct type, or the bundle was not found in ' +
-                    '`available bundles`.');
-            }
-
             // Task Names
-            if (!sjl.isEmptyOrNotOfType(taskName, String) && availableTaskNames.has(taskName)) {
+            if (!sjl.isEmptyOrNotOfType(taskName, String) && availableTaskNames.has(taskName) && !addedTaskNames.has(taskName)) {
+                addedTaskNames.add(taskName);
                 this._initTaskAdapter(taskName, this.config.tasks[taskName]);
             }
             else {
@@ -173,13 +166,29 @@ class TaskManager extends TaskManagerConfig {
             // Static Task Names
             if (sjl.classOfIs(command, String) && command.indexOf(splitCommandOn) === -1
                 && !availableTaskNames.has(command)
-                && availableStaticTaskNames.has(command)) {
+                && availableStaticTaskNames.has(command)
+                && !addedStaticTaskNames.has(command)) {
+                addedStaticTaskNames.add(command);
                 this._initStaticTaskAdapter(taskName, this.config.staticTasks[taskName]);
             }
             else {
                 throw new Error('An error occurred before registering staticTaskName name "' + staticTaskName + '".' +
                     '  Either the staticTaskName name is empty, not of the correct type, or the staticTaskName was not found in ' +
                     '`available staticTaskNames`.');
+            }
+
+            // Bundle Names
+            if (!sjl.isEmptyOrNotOfType(bundle, String)
+                && availableBundleNames.indexOf(bundle) > -1
+                && !addedBundleNames.has(bundle)) {
+                addedBundleNames.add(bundle);
+                this._initBundle(bundle, gwUtils.loadConfigFileFromSupportedExts(
+                    path.join(this.cwd, this.configs.bundlesPath, bundle)));
+            }
+            else {
+                throw new Error('An error occurred before registering bundle name "' + bundle + '".' +
+                    '  Either the bundle name is empty, not of the correct type, or the bundle was not found in ' +
+                    '`available bundles`.');
             }
 
             // Split commands
@@ -199,28 +208,32 @@ class TaskManager extends TaskManagerConfig {
     }
 
     registerBundles(bundleConfigs) {
+        this.bundles.forEach(function (bundle) {
+            this.registerBundle(bundle);
+        }, this);
     }
 
-    registerBundleWithTask(bundleConfig, taskName) {
-    }
-
-    registerBundleWithTasks(bundleConfig, taskNames) {
-    }
-
-    registerBundlesWithTasks(bundleConfigs, taskNames) {
+    registerBundle (bundle) {
+        this.splitCommands.forEach(function (commandMeta) {
+            if (commandMeta.bundle !== bundle.alias) {
+                return;
+            }
+        });
+        return this;
     }
 
     isTaskRegisteredWithTaskRunner(taskName) {
     }
 
     _initTaskAdapter(taskName, taskConfig) {
-        var taskAdapter = null;
+        var FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),
+            taskAdapter = new FetchedTaskAdapterClass(taskConfig, this);
         this.taskAdapters.set(taskName, taskAdapter);
         return this;
     }
 
     _initBundle(bundleName, bundleConfig) {
-        var bundleObj = null;
+        var bundleObj = new BundleConfig(bundleConfig);
         this.bundleConfigs.set(bundleName, bundleObj);
         return this;
     }
