@@ -11,6 +11,8 @@ let TaskManagerConfig = require('./TaskManagerConfig'),
     SjlSet = sjl.ns.stdlib.SjlSet,
     SjlMap = sjl.ns.stdlib.SjlMap,
     gwUtils = require('./Utils'),
+    path = require('path'),
+    fs = require('fs'),
     contextName = 'TaskManager';
 
 class TaskManager extends TaskManagerConfig {
@@ -22,86 +24,69 @@ class TaskManager extends TaskManagerConfig {
 
         // Private variables that we expose to the outside start with `_`
         var self = this,
-            _taskAdapters = new SjlMap(),
-            _taskNames = new SjlSet(),
-            _staticTaskAdapters = new SjlMap(),
-            _staticTaskNames = new SjlSet(),
-            _bundleNames = new SjlSet(),
-            _taskRunnerAdapter = {},
-            _taskRunner = {},
-            _configPath = '',
-            _configBase = '',
-            _argv = {},
-            _cwd = '',
-            _pwd = '';
+            _argv               = {},
+            _configBase         = '',
+            _configPath         = '',
+            _cwd                = '',
+            _pwd                = '',
+            _taskRunnerAdapter  = {};
 
         // Define properties
         Object.defineProperties(self, {
+            argv: {
+                get: () => {
+                    return _argv;
+                },
+                set: (value) => {
+                    sjl.throwTypeErrorIfNotOfType(contextName, '_argv', value, Object);
+                    _argv = value;
+                }
+            },
+            bundleConfigs: {
+                value: new SjlMap()
+            },
+            configBase: {
+                get: () => {
+                    return _configBase;
+                },
+                set: (value) => {
+                    sjl.throwTypeErrorIfNotOfType(
+                        contextName, '_configBase', value, String,
+                        'Only strings are allowed for this property');
+                    _configBase = value;
+                }
+            },
+            commands: {
+                value: new Set()
+            },
+            configPath: {
+                get: () => {
+                    return _configPath;
+                },
+                set: (value) => {
+                    sjl.throwTypeErrorIfNotOfType(
+                        contextName, '_configPath', value, String,
+                        'Only strings are allowed for this property');
+                    _configPath = value;
+                }
+            },
             config: {
                 value: config
             },
-            availableTaskNames: {
-                value: new SjlSet(Object.keys(config.tasks))
-            },
-            availableStaticTaskNames: {
-                value: new SjlSet(Object.keys(config.staticTasks))
-            },
-            availableBundleNames: {
-                value: new SjlSet()
-            },
             taskAdapters: {
-                get: () => {
-                    return _taskAdapters;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_taskAdapters', value, Object);
-                    _taskAdapters = new SjlMap(value);
-                }
+                value: new Map()
             },
-            taskNames: {
-                get: () => {
-                    return _taskNames;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_taskNames', value, String);
-                    _taskNames = new SjlSet(value);
-                }
+            taskConfigs: {
+                value: new SjlMap()
+            },
+            splitCommands: {
+                value: new Map()
             },
             staticTaskAdapters: {
-                get: () => {
-                    return _staticTaskAdapters;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_staticTaskAdapters', value, Object);
-                    _staticTaskAdapters = new SjlMap(value);
-                }
+                value: new Map()
             },
-            staticTaskNames: {
-                get: () => {
-                    return _staticTaskNames;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_staticTaskNames', value, Array);
-                    _staticTaskNames = new SjlSet(value);
-                }
-            },
-            bundleNames: {
-                get: () => {
-                    return _bundleNames;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_bundleNames', value, Array);
-                    _bundleNames = new SjlSet(value);
-                }
-            },
-            taskRunner: {
-                get: () => {
-                    return _taskRunner;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_taskRunner', value, Object);
-                    _taskRunner = value;
-                }
+            staticTaskConfigs: {
+                value: new SjlMap()
             },
             taskRunnerAdapter: {
                 get: () => {
@@ -116,37 +101,6 @@ class TaskManager extends TaskManagerConfig {
                         throw new TypeError (contextName + '.taskRunnerAdapter only accepts types of `TaskRunnerAdapter` or ' +
                             'subclasses of `TaskRunnerAdapter`.  Type recieved: \'' + sjl.classOf(value) + '\'.');
                     }
-                }
-            },
-            configPath: {
-                get: () => {
-                    return _configPath;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(
-                        contextName, '_configPath', value, String,
-                        'Only strings are allowed for this property');
-                    _configPath = value;
-                }
-            },
-            configBase: {
-                get: () => {
-                    return _configBase;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(
-                        contextName, '_configBase', value, String,
-                        'Only strings are allowed for this property');
-                    _configBase = value;
-                }
-            },
-            argv: {
-                get: () => {
-                    return _argv;
-                },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_argv', value, Object);
-                    _argv = value;
                 }
             },
             cwd: {
@@ -170,15 +124,19 @@ class TaskManager extends TaskManagerConfig {
         });
 
         // Set some more params and initiate run sequence
-        self.set(config)
-            .initEntityNames();
+        sjl.extend(true, this, config);
+        this.cwd = path.join(this.cwd, this.configBase);
+        this.init();
     }
 
     /**
      * @todo add unknown bundle-name, task-name, and static-task-name warnings
      */
-    initEntityNames () {
-        var splitCommandOn = ':';
+    init () {
+        let splitCommandOn = ':';
+        var availableTaskNames = new SjlSet(Object.keys(this.config.tasks)),
+            availableStaticTaskNames = new SjlSet(Object.keys(this.config.staticTasks)),
+            availableBundleNames = fs.readdirSync(this.bundlesPath);
 
         // @todo temporary escape here
         if (sjl.empty(this.argv)) {
@@ -186,15 +144,15 @@ class TaskManager extends TaskManagerConfig {
         }
 
         // Get split commands
-        this.splitCommands = this.argv._.map((value) => {
-            let retVal = this.taskRunnerAdapter.splitCommand(value, splitCommandOn),
-                bundle = retVal.bundle,
-                command = retVal.command,
-                taskName = retVal.taskAlias;
+        this.argv._.forEach((value) => {
+            let splitCommand = this.taskRunnerAdapter.splitCommand(value, splitCommandOn),
+                bundle = splitCommand.bundle,
+                command = splitCommand.command,
+                taskName = splitCommand.taskAlias;
 
             // Bundle Names
-            if (!sjl.isEmptyOrNotOfType(bundle, String) && this.availableBundleNames.has(bundle)) {
-                this.bundleNames.add(bundle);
+            if (!sjl.isEmptyOrNotOfType(bundle, String) && this.bundleConfigs.has(bundle)) {
+                this._initBundle(bundle, gwUtils.loadConfigFileFromSupportedExts(path.join(this.cwd, this.bundlesPath, bundle)));
             }
             else {
                 throw new Error('An error occurred before registering bundle name "' + bundle + '".' +
@@ -203,8 +161,8 @@ class TaskManager extends TaskManagerConfig {
             }
 
             // Task Names
-            if (!sjl.isEmptyOrNotOfType(taskAlias, String) && this.availableTaskNames.has(taskAlias)) {
-                this.taskNames.add(taskAlias);
+            if (!sjl.isEmptyOrNotOfType(taskName, String) && availableTaskNames.has(taskName)) {
+                this._initTaskAdapter(taskName, this.config.tasks[taskName]);
             }
             else {
                 throw new Error('An error occurred before registering taskName name "' + taskName + '".' +
@@ -214,9 +172,9 @@ class TaskManager extends TaskManagerConfig {
 
             // Static Task Names
             if (sjl.classOfIs(command, String) && command.indexOf(splitCommandOn) === -1
-                && !this.availableTaskNames.has(command)
-                && this.availableStaticTaskNames.has(command)) {
-                this.staticTaskNames.add(command);
+                && !availableTaskNames.has(command)
+                && availableStaticTaskNames.has(command)) {
+                this._initStaticTaskAdapter(taskName, this.config.staticTasks[taskName]);
             }
             else {
                 throw new Error('An error occurred before registering staticTaskName name "' + staticTaskName + '".' +
@@ -224,85 +182,53 @@ class TaskManager extends TaskManagerConfig {
                     '`available staticTaskNames`.');
             }
 
-            return retVal;
+            // Split commands
+            this.splitCommands.set(command, splitCommand);
+
         }, this);
-    }
 
-    initEntities () {
-        return this._initStaticTaskAdapters()
-            ._initTaskAdapters()
-            ._initBundleConfigs();
-    }
+        // Clear memory
+        availableStaticTaskNames = null;
+        availableTaskNames = null;
 
-    init () {
-        this._initEntityNames()
-            ._initEntities();
-        console.log('Beginning `TaskManager` run sequence.');
+        //console.log('Beginning `TaskManager` run sequence.');
         return this.taskRunnerAdapter.taskRunner;
     }
 
     getTaskAdapter(taskName) {
     }
 
-    registerBundleConfigs(bundleConfigs) {
+    registerBundles(bundleConfigs) {
     }
 
-    registerBundleConfigWithTask(bundleConfig, taskName) {
+    registerBundleWithTask(bundleConfig, taskName) {
     }
 
-    registerBundleConfigWithTasks(bundleConfig, taskNames) {
+    registerBundleWithTasks(bundleConfig, taskNames) {
     }
 
-    registerBundleConfigsWithTasks(bundleConfigs, taskNames) {
+    registerBundlesWithTasks(bundleConfigs, taskNames) {
     }
 
     isTaskRegisteredWithTaskRunner(taskName) {
     }
 
-    _initTaskNames (taskNames) {
-        let argv = this.argv;
+    _initTaskAdapter(taskName, taskConfig) {
+        var taskAdapter = null;
+        this.taskAdapters.set(taskName, taskAdapter);
         return this;
     }
 
-    _initStaticTaskNames (staticTaskNames) {
-        if (!Array.isArray(staticTaskNames) || staticTaskNames.length === 0) {
-
-        }
+    _initBundle(bundleName, bundleConfig) {
+        var bundleObj = null;
+        this.bundleConfigs.set(bundleName, bundleObj);
         return this;
     }
 
-    _initBundleNames (bundleNames) {
+    _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
+        var staticTaskAdapter = null;
+        this.staticTaskAdapters.set(staticTaskName, staticTaskAdapter);
         return this;
-    }
-
-    _initTaskAdapter(taskName) {
-    }
-
-    _initTaskAdapters(taskNames) {
-        return this;
-    }
-
-    _initStaticTaskAdapter(staticTaskName) {
-    }
-
-    _initStaticTaskAdapters(staticTaskNames) {
-        if (!staticTaskNames) {
-            return this;
-        }
-        this.staticTaskNames.forEach((name) => {
-
-        });
-        return this;
-    }
-
-    _initBundleConfig(bundleConfigObj) {
-    }
-
-    _initBundleConfigs(bundleConfigObjs, registerWithTaskAdapters) {
-        return this;
-    }
-
-    _setTaskAdapter(taskName, taskAdapter) {
     }
 
 }

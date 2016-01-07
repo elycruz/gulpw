@@ -129,6 +129,32 @@ module.exports = {
         }
         fs.writeFileSync(filePath, obj);
         return this;
+    },
+
+    loadConfigFileFromSupportedExts: (filePath, exts) => {
+        exts = exts || ['.js', '.json', '.yaml', '.yml'];
+        var file = null;
+        exts.some((ext) => {
+            try {
+                file = this.loadConfigFile(filePath + ext);
+            } catch (e) {}
+            return file !== null;
+        });
+        return file;
+    },
+
+    getBundleName: (fileName, exts) => {
+        exts = exts || ['.js', '.json', '.yaml', '.yml'];
+        var bundleName = null;
+        exts.some((ext) => {
+            let lastIndexOfExt = fileName.lastIndexOf(ext),
+                expectedLastIndexOfPos = fileName.length - ext.length - 2;
+            if (lastIndexOfExt !== expectedLastIndexOfPos) {
+                return false;
+            }
+            bundleName = fileName.split(new RegExp('\\' + ext + '$'))[0];
+        });
+        return bundleName;
     }
 
 };
