@@ -269,6 +269,14 @@ class TaskManager extends TaskManagerConfig {
         return this.taskRunnerAdapter.has(task);
     }
 
+    launchTasks (taskCommands) {
+        return this;
+    }
+
+    launchTasksSync (taskCommands) {
+        return this;
+    }
+
     _initTaskAdapter(taskName, taskConfig) {
         taskConfig.alias = taskName;
         var FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),

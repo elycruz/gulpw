@@ -44,23 +44,25 @@ class TaskRunnerAdapter {
         return out;
     }
 
-    //hasTask (key) {
-    //}
-    //
-    //hasCompletedTask (key) {
-    //}
-    //
-    //runTask (key) {
-    //}
-    //
-    //registerTask (taskKey) {
-    //}
-    //
-    //getTask (key) {
-    //}
-    //
-    //setTask (key) {
-    //}
+    hasTask (key) {
+        return false;
+    }
+
+    hasTaskCompleted (key) {
+        return false;
+    }
+
+    runTask (key) {
+        return this;
+    }
+
+    registerTask (taskKey) {
+        return this;
+    }
+
+    getTask (key) {
+        return {};
+    }
 
 }
 

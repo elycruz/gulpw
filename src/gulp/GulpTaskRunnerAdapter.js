@@ -20,7 +20,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         return sjl.issetAndOfType(this.getTask(key), Object);
     }
 
-    hasCompletedTask (key) {
+    hasTaskCompleted (key) {
         var taskObj = this.taskRunner.tasks[key];
         return sjl.issetAndOfType(taskObj, Object) && taskObj.done === true;
     }
