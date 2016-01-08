@@ -142,16 +142,16 @@ class TaskManager extends TaskManagerConfig {
      * @todo add unknown bundle-name, task-name, and static-task-name warnings
      */
     init () {
+
         // @todo temporary escape here
         if (sjl.empty(this.argv)) {
             return this;
         }
 
-        let splitCommandOn = ':',
+        var splitCommandOn = ':',
             bundleFileNames = this.bundleFileNames
-                .addFromArray(fs.readdirSync(this.config.bundlesPath));
-
-        var availableTaskNames          = this.availableTaskNames.addFromArray(Object.keys(this.config.tasks)),
+                .addFromArray(fs.readdirSync(this.config.bundlesPath)),
+            availableTaskNames          = this.availableTaskNames.addFromArray(Object.keys(this.config.tasks)),
             availableStaticTaskNames    = this.availableStaticTaskNames(Object.keys(this.config.staticTasks)),
             availableBundleNames        = this.availableBundleNames.addFromArray(bundleFileNames.map((fileName) => {
                 return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
@@ -175,9 +175,9 @@ class TaskManager extends TaskManagerConfig {
                 taskAdapter = this._initTaskAdapter(taskName, this.config.tasks[taskName]);
             }
             else {
-                throw new Error('An error occurred before registering taskName name "' + taskName + '".' +
-                    '  Either the taskName name is empty, not of the correct type, or the taskName was not found in ' +
-                    '`available taskNames`.');
+                throw new Error('An error occurred before registering task name "' + taskName + '".' +
+                    '  Either the task name is empty, not of the correct type, or the task name was not found in ' +
+                    '`available task names`.');
             }
 
             // Static Task Names
@@ -190,7 +190,7 @@ class TaskManager extends TaskManagerConfig {
                     this._initStaticTaskAdapter(taskName, this.config.staticTasks[taskName]);
             }
             else {
-                throw new Error('An error occurred before registering staticTaskName name "' + staticTaskName + '".' +
+                throw new Error('An error occurred before registering staticTaskName name "' + taskName + '".' +
                     '  Either the staticTaskName name is empty, not of the correct type, or the staticTaskName was not found in ' +
                     '`available staticTaskNames`.');
             }
@@ -203,7 +203,7 @@ class TaskManager extends TaskManagerConfig {
                 let bundleObj = this._initBundle(bundle, gwUtils.loadConfigFileFromSupportedExts(
                     path.join(this.cwd, this.configs.bundlesPath, bundle)));
 
-                // Register bundle
+                // Register bundle with task adapter or static task adapter
                 if (taskAdapter) {
                     taskAdapter.registerBundle(bundleObj);
                 }
@@ -225,9 +225,15 @@ class TaskManager extends TaskManagerConfig {
         // Clear memory
         availableStaticTaskNames = null;
         availableTaskNames = null;
+        availableBundleNames = null;
+        addedBundleNames = null;
+        addedStaticTaskNames = null;
+        addedTaskNames = null;
+        bundleFileNames = null;
+        splitCommandOn = null;
 
-        //console.log('Beginning `TaskManager` run sequence.');
-        return this.taskRunnerAdapter.taskRunner;
+        // Ensure globally called tasks adapters are invoked globally as well
+        return this._ensureInvokedGlobalTasks();
     }
 
     getTaskAdapter(taskName) {
@@ -250,22 +256,8 @@ class TaskManager extends TaskManagerConfig {
         return taskAdapter;
     }
 
-    registerBundle (bundle) {
-        var bundleObj;
-        this.splitCommands.forEach(function (commandMeta) {
-            if (commandMeta.bundle !== bundle.alias) {
-                return;
-            }
-        });
-        return bundleObj;
-    }
-
-    isTaskRegisteredWithTaskRunner(command) {
-        return this.taskRunnerAdapter.has(command);
-    }
-
-    registerBundleWithTaskAdapters (bundle, tasksAdapters) {
-
+    isTaskRegistered (task) {
+        return this.taskRunnerAdapter.has(task);
     }
 
     _initTaskAdapter(taskName, taskConfig) {
@@ -282,9 +274,22 @@ class TaskManager extends TaskManagerConfig {
     }
 
     _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
-        var staticTaskAdapter = null;
+        var FetchedStaticTaskAdapterClass = require(path.join(this.cwd, staticTaskConfig.constructorLocation)),
+            staticTaskAdapter = new FetchedStaticTaskAdapterClass(staticTaskConfig, this);
         this.staticTaskAdapters.set(staticTaskName, staticTaskAdapter);
         return staticTaskAdapter;
+    }
+
+    _ensureInvokedGlobalTasks () {
+        // Ensure globally called tasks are called
+        this.splitCommands.forEach(function (commandMeta) {
+            if (commandMeta.bundle || !this.sessionTaskNames.has(commandMeta.taskAlias)) {
+                return;
+            }
+            this.getTaskAdapter(commandMeta.taskAlias)
+                .registerBundles(this.bundles, this);
+        }, this);
+        return this;
     }
 
 }

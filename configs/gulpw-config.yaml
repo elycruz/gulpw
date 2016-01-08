@@ -128,17 +128,9 @@ tasks:
     privatekeyLocation: null
 
     # File types that are allowed for deployment
-    allowedFileTypes:
-      - js
-      - css
-      - html
-      - json
-      - yaml
-      - jpg
-      - png
-      - gif
-      - md
-      - mkd
+    # @todo change this to ignored file types
+    #ignoredFileTypes:
+    #  - some-file-extension-here
 
     # Hash of domains to develop for:
     domainsToDevelop: null
