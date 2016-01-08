@@ -9,8 +9,8 @@ let TaskManagerConfig = require('./TaskManagerConfig'),
     TaskRunnerAdapter = require('./TaskRunnerAdapter'),
     BundleConfig = require('./BundleConfig'),
     sjl = require('sjljs'),
-    SjlSet = sjl.ns.stdlib.SjlSet,
-    SjlMap = sjl.ns.stdlib.SjlMap,
+    SjlSet = sjl.SjlSet,
+    SjlMap = sjl.SjlMap,
     gwUtils = require('./Utils'),
     path = require('path'),
     fs = require('fs'),
@@ -150,12 +150,14 @@ class TaskManager extends TaskManagerConfig {
             let splitCommand = this.taskRunnerAdapter.splitCommand(value, splitCommandOn),
                 bundle = splitCommand.bundle,
                 command = splitCommand.command,
-                taskName = splitCommand.taskAlias;
+                taskName = splitCommand.taskAlias,
+                taskAdapter,
+                staticTaskAdapter;
 
             // Task Names
             if (!sjl.isEmptyOrNotOfType(taskName, String) && availableTaskNames.has(taskName) && !addedTaskNames.has(taskName)) {
                 addedTaskNames.add(taskName);
-                this._initTaskAdapter(taskName, this.config.tasks[taskName]);
+                taskAdapter = this._initTaskAdapter(taskName, this.config.tasks[taskName]);
             }
             else {
                 throw new Error('An error occurred before registering taskName name "' + taskName + '".' +
@@ -169,7 +171,8 @@ class TaskManager extends TaskManagerConfig {
                 && availableStaticTaskNames.has(command)
                 && !addedStaticTaskNames.has(command)) {
                 addedStaticTaskNames.add(command);
-                this._initStaticTaskAdapter(taskName, this.config.staticTasks[taskName]);
+                staticTaskAdapter =
+                    this._initStaticTaskAdapter(taskName, this.config.staticTasks[taskName]);
             }
             else {
                 throw new Error('An error occurred before registering staticTaskName name "' + staticTaskName + '".' +
@@ -182,8 +185,16 @@ class TaskManager extends TaskManagerConfig {
                 && availableBundleNames.indexOf(bundle) > -1
                 && !addedBundleNames.has(bundle)) {
                 addedBundleNames.add(bundle);
-                this._initBundle(bundle, gwUtils.loadConfigFileFromSupportedExts(
+                let bundleObj = this._initBundle(bundle, gwUtils.loadConfigFileFromSupportedExts(
                     path.join(this.cwd, this.configs.bundlesPath, bundle)));
+
+                // Register bundle
+                if (taskAdapter) {
+                    taskAdapter.registerBundle(bundleObj);
+                }
+                else if (staticTaskAdapter) {
+                    staticTaskAdapter.registerBundle(bundleObj);
+                }
             }
             else {
                 throw new Error('An error occurred before registering bundle name "' + bundle + '".' +
