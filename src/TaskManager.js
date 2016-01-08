@@ -5,7 +5,8 @@
 
 'use strict';
 
-let TaskManagerConfig = require('./TaskManagerConfig'),
+let TaskAdapter = require('./TaskAdapter'),
+    TaskManagerConfig = require('./TaskManagerConfig'),
     TaskRunnerAdapter = require('./TaskRunnerAdapter'),
     BundleConfig = require('./BundleConfig'),
     sjl = require('sjljs'),
@@ -43,8 +44,17 @@ class TaskManager extends TaskManagerConfig {
                     _argv = value;
                 }
             },
+            availableBundleNames: {},
+            availableTaskNames: {},
+            availableStaticTaskNames: {},
             bundles: {
                 value: new SjlMap()
+            },
+            bundleFileNames: {
+                value: new SjlSet()
+            },
+            sessionBundleNames: {
+                value: new SjlSet()
             },
             configBase: {
                 get: () => {
@@ -58,7 +68,7 @@ class TaskManager extends TaskManagerConfig {
                 }
             },
             commands: {
-                value: new Set()
+                value: new SjlSet()
             },
             configPath: {
                 get: () => {
@@ -77,11 +87,17 @@ class TaskManager extends TaskManagerConfig {
             taskAdapters: {
                 value: new Map()
             },
+            sessionTaskNames: {
+                value: new SjlSet()
+            },
             splitCommands: {
                 value: new Map()
             },
             staticTaskAdapters: {
                 value: new Map()
+            },
+            sessionStaticTaskNames: {
+                value: new SjlSet()
             },
             taskRunnerAdapter: {
                 get: () => {
@@ -118,9 +134,7 @@ class TaskManager extends TaskManagerConfig {
             }
         });
 
-        // Set some more params and initiate run sequence
-        sjl.extend(true, this, config);
-        this.cwd = this.configBase;
+        this.set(config);
         this.init();
     }
 
@@ -134,16 +148,17 @@ class TaskManager extends TaskManagerConfig {
         }
 
         let splitCommandOn = ':',
-            bundleFileNames = fs.readdirSync(this.config.bundlesPath);
+            bundleFileNames = this.bundleFileNames
+                .addFromArray(fs.readdirSync(this.config.bundlesPath));
 
-        var availableTaskNames = new SjlSet(Object.keys(this.config.tasks)),
-            availableStaticTaskNames = new SjlSet(Object.keys(this.config.staticTasks)),
-            availableBundleNames = bundleFileNames.map((fileName) => {
+        var availableTaskNames          = this.availableTaskNames.addFromArray(Object.keys(this.config.tasks)),
+            availableStaticTaskNames    = this.availableStaticTaskNames(Object.keys(this.config.staticTasks)),
+            availableBundleNames        = this.availableBundleNames.addFromArray(bundleFileNames.map((fileName) => {
                 return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
-            }),
-            addedBundleNames = new Set(),
-            addedTaskNames = new Set(),
-            addedStaticTaskNames = new Set();
+            })),
+            addedBundleNames            = this.sessionBundleNames,
+            addedTaskNames              = this.sessionTaskNames,
+            addedStaticTaskNames        = this.sessionStaticTaskNames;
 
         // Get split commands
         this.argv._.forEach((value) => {
@@ -205,43 +220,60 @@ class TaskManager extends TaskManagerConfig {
     }
 
     getTaskAdapter(taskName) {
-    }
-
-    registerBundles(bundleConfigs) {
-        this.bundles.forEach(function (bundle) {
-            this.registerBundle(bundle);
-        }, this);
+        var taskAdapter,
+            hasTaskName = this.availableTaskNames.has(taskName),
+            taskNameNotRegistered = this.sessionTaskNames.has(taskName);
+        if (hasTaskName) {
+            if (taskNameNotRegistered) {
+                taskAdapter = this._initTaskAdapter(taskName, this.config.tasks[taskName]);
+            }
+            else {
+                taskAdapter = this.taskAdapters.get(taskName);
+            }
+        }
+        else {
+            throw new Error ('`' + contextName + 'getTaskAdapter` doesn\'t have a task ' +
+                'available for task name "' + taskName + '".  Available task names: \n - ' +
+                sjl.implode(this.availableTaskNames, '\n - ') + '.');
+        }
+        return taskAdapter;
     }
 
     registerBundle (bundle) {
+        var bundleObj;
         this.splitCommands.forEach(function (commandMeta) {
             if (commandMeta.bundle !== bundle.alias) {
                 return;
             }
         });
-        return this;
+        return bundleObj;
     }
 
-    isTaskRegisteredWithTaskRunner(taskName) {
+    isTaskRegisteredWithTaskRunner(command) {
+        return this.taskRunnerAdapter.has(command);
+    }
+
+    registerBundleWithTaskAdapters (bundle, tasksAdapters) {
+
     }
 
     _initTaskAdapter(taskName, taskConfig) {
         var FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),
             taskAdapter = new FetchedTaskAdapterClass(taskConfig, this);
         this.taskAdapters.set(taskName, taskAdapter);
-        return this;
+        return taskAdapter;
     }
 
     _initBundle(bundleName, bundleConfig) {
         var bundleObj = new BundleConfig(bundleConfig);
-        this.bundleConfigs.set(bundleName, bundleObj);
-        return this;
+        this.bundles.set(bundleName, bundleObj);
+        return bundleObj;
     }
 
     _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
         var staticTaskAdapter = null;
         this.staticTaskAdapters.set(staticTaskName, staticTaskAdapter);
-        return this;
+        return staticTaskAdapter;
     }
 
 }
