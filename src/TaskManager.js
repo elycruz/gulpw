@@ -84,6 +84,15 @@ class TaskManager extends TaskManagerConfig {
             config: {
                 value: config
             },
+            errorReports: {
+                value: new SjlMap()
+            },
+            warningReports: {
+                value: new SjlMap()
+            },
+            durationReports: {
+                value: new SjlMap()
+            },
             taskAdapters: {
                 value: new Map()
             },
@@ -261,6 +270,7 @@ class TaskManager extends TaskManagerConfig {
     }
 
     _initTaskAdapter(taskName, taskConfig) {
+        taskConfig.alias = taskName;
         var FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),
             taskAdapter = new FetchedTaskAdapterClass(taskConfig, this);
         this.taskAdapters.set(taskName, taskAdapter);
@@ -268,12 +278,14 @@ class TaskManager extends TaskManagerConfig {
     }
 
     _initBundle(bundleName, bundleConfig) {
+        bundleConfig.alias = bundleName;
         var bundleObj = new BundleConfig(bundleConfig);
         this.bundles.set(bundleName, bundleObj);
         return bundleObj;
     }
 
     _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
+        staticTaskConfig.alias = staticTaskName;
         var FetchedStaticTaskAdapterClass = require(path.join(this.cwd, staticTaskConfig.constructorLocation)),
             staticTaskAdapter = new FetchedStaticTaskAdapterClass(staticTaskConfig, this);
         this.staticTaskAdapters.set(staticTaskName, staticTaskAdapter);
