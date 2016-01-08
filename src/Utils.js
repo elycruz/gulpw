@@ -175,6 +175,27 @@ module.exports = {
             bundleName = fileName.split(new RegExp('\\' + ext + '$'))[0];
         });
         return bundleName;
-    }
+    },
 
+    logger: (argv, context) => {
+        let self = context || this;
+        return () => {
+            var args = sjl.argsToArray(arguments),
+                possibleFlag = args[args.length - 1],
+                lastArg;
+            if (possibleFlag.indexOf('--') === 0) {
+                lastArg = args.pop();
+                if (argv.debug && lastArg === '--debug') {
+                    console.log(...args);
+                }
+                else if (argv.verbose && lastArg === '--verbose') {
+                    console.log(...args);
+                }
+            }
+            else {
+                console.log(...args);
+            }
+            return self;
+        };
+    }
 };

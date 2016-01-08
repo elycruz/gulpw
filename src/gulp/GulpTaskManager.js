@@ -10,6 +10,14 @@ class GulpTaskManager extends TaskManager {
     constructor (config) {
         super(config);
     }
+
+    launchTasks (taskCommands) {
+        return this;
+    }
+
+    launchTasksSync (taskCommands) {
+        return this;
+    }
 }
 
 module.exports = GulpTaskManager;

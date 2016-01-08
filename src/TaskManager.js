@@ -17,6 +17,8 @@ let TaskAdapter = require('./TaskAdapter'),
     fs = require('fs'),
     contextName = 'TaskManager';
 
+var log;
+
 class TaskManager extends TaskManagerConfig {
 
     constructor(config) {
@@ -142,6 +144,9 @@ class TaskManager extends TaskManagerConfig {
                 }
             }
         });
+
+        // Set log function
+        log = gwUtils.logger(this.argv, this);
 
         this.set(config);
         this.init();
@@ -275,6 +280,10 @@ class TaskManager extends TaskManagerConfig {
 
     launchTasksSync (taskCommands) {
         return this;
+    }
+
+    log () {
+        return log (...sjl.argsToArray(arguments));
     }
 
     _initTaskAdapter(taskName, taskConfig) {
