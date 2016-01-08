@@ -6,7 +6,7 @@
 let chai = require('chai'),
     expect = chai.expect,
     sjl = require('sjljs'),
-    BundleConfig = require('./../src/BundleConfig'),
+    Bundle = require('./../src/Bundle'),
     Config = require('./../src/Config'),
     propNames = [
         'alias',
@@ -14,13 +14,13 @@ let chai = require('chai'),
         'version'
     ];
 
-describe ('BundleConfig', function () {
+describe ('Bundle', function () {
     it ('Should be an instanceof `Config` class.', () => {
-        expect(new BundleConfig() instanceof Config).to.equal(true);
+        expect(new Bundle() instanceof Config).to.equal(true);
     });
     it ('Should have default properties "' + propNames.join('", "') + '".', function () {
         //{alias: 'hello', description: 'hello2', version: '0.0.0'}
-        var bundle = new BundleConfig();
+        var bundle = new Bundle();
         propNames.forEach((prop) => {
             expect(sjl.issetAndOfType(bundle[prop], String)).to.equal(true);
         });

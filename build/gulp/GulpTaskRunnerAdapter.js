@@ -13,7 +13,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var sjl = require('sjljs'),
-    TaskRunnerAdapter = require('./../task-runner/TaskRunnerAdapter');
+    gulp = require('gulp'),
+    TaskRunnerAdapter = require('./../TaskRunnerAdapter');
 
 var GulpTaskRunnerAdapter = (function (_TaskRunnerAdapter) {
     _inherits(GulpTaskRunnerAdapter, _TaskRunnerAdapter);
@@ -21,7 +22,7 @@ var GulpTaskRunnerAdapter = (function (_TaskRunnerAdapter) {
     function GulpTaskRunnerAdapter(taskRunner) {
         _classCallCheck(this, GulpTaskRunnerAdapter);
 
-        _get(Object.getPrototypeOf(GulpTaskRunnerAdapter.prototype), 'constructor', this).call(this, taskRunner);
+        _get(Object.getPrototypeOf(GulpTaskRunnerAdapter.prototype), 'constructor', this).call(this, taskRunner || gulp);
     }
 
     _createClass(GulpTaskRunnerAdapter, [{
@@ -37,13 +38,13 @@ var GulpTaskRunnerAdapter = (function (_TaskRunnerAdapter) {
     }, {
         key: 'hasCompletedTask',
         value: function hasCompletedTask(key) {
-            var taskObj = this.taskRunner.tasks[key];
-            return sjl.issetAndOfType(taskObj, Object) && taskObj.done === true;
+            return sjl.issetAndOfType(this.taskRunner.tasks[key], Object) && taskObj.done === true;
         }
     }, {
         key: 'runTask',
         value: function runTask(key) {
-            return this.taskRunner.start(key);
+            this.taskRunner.start(key);
+            return this;
         }
     }]);
 

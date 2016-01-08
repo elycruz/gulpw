@@ -8,11 +8,12 @@
 let TaskAdapter = require('./TaskAdapter'),
     TaskManagerConfig = require('./TaskManagerConfig'),
     TaskRunnerAdapter = require('./TaskRunnerAdapter'),
-    BundleConfig = require('./BundleConfig'),
+    Bundle = require('./Bundle'),
     sjl = require('sjljs'),
     SjlSet = sjl.SjlSet,
     SjlMap = sjl.SjlMap,
     gwUtils = require('./Utils'),
+    chalk = require('chalk'),
     path = require('path'),
     fs = require('fs'),
     contextName = 'TaskManager';
@@ -147,9 +148,7 @@ class TaskManager extends TaskManagerConfig {
 
         // Set log function
         log = gwUtils.logger(this.argv, this);
-
         this.set(config);
-        this.init();
     }
 
     /**
@@ -157,8 +156,9 @@ class TaskManager extends TaskManagerConfig {
      */
     init () {
 
-        // @todo temporary escape here
+        // If no CLI arguments supplied exit,
         if (sjl.empty(this.argv)) {
+            log(chalk.yellow('! No arguments supplied.'));
             return this;
         }
 
@@ -263,7 +263,7 @@ class TaskManager extends TaskManagerConfig {
             }
         }
         else {
-            throw new Error ('`' + contextName + 'getTaskAdapter` doesn\'t have a task ' +
+            throw new Error ('`' + contextName + '.getTaskAdapter` doesn\'t have a task ' +
                 'available for task name "' + taskName + '".  Available task names: \n - ' +
                 sjl.implode(this.availableTaskNames, '\n - ') + '.');
         }
@@ -296,7 +296,7 @@ class TaskManager extends TaskManagerConfig {
 
     _initBundle(bundleName, bundleConfig) {
         bundleConfig.alias = bundleName;
-        var bundleObj = new BundleConfig(bundleConfig);
+        var bundleObj = new Bundle(bundleConfig);
         this.bundles.set(bundleName, bundleObj);
         return bundleObj;
     }

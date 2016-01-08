@@ -9,34 +9,57 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Config = require('./../config/Config');
+var Config = require('./Config'),
+    sjl = require('sjljs');
 
-var TaskAdapterConfig = (function (_Config) {
-    _inherits(TaskAdapterConfig, _Config);
+var Bundle = (function (_Config) {
+    _inherits(Bundle, _Config);
 
-    function TaskAdapterConfig() {
-        _classCallCheck(this, TaskAdapterConfig);
+    function Bundle() {
+        _classCallCheck(this, Bundle);
 
-        _get(Object.getPrototypeOf(TaskAdapterConfig.prototype), 'constructor', this).call(this);
+        _get(Object.getPrototypeOf(Bundle.prototype), 'constructor', this).call(this);
+        var _alias = '',
+            _description = '',
+            _version = '';
+        Object.defineProperties(this, {
+            alias: {
+                get: function get() {
+                    return _alias;
+                },
+                set: function set(value) {
+                    sjl.throwTypeErrorIfNotOfType(Bundle.name, 'alias', value, String);
+                    _alias = value;
+                }
+            },
+            description: {
+                get: function get() {
+                    return _description;
+                },
+                set: function set(value) {
+                    sjl.throwTypeErrorIfNotOfType(Bundle.name, 'description', value, String);
+                    _description = value;
+                }
+            },
+            version: {
+                get: function get() {
+                    return _version;
+                },
+                set: function set(value) {
+                    sjl.throwTypeErrorIfNotOfType(Bundle.name, 'version', value, String);
+                    _version = value;
+                }
+            }
+        });
 
         for (var _len = arguments.length, options = Array(_len), _key = 0; _key < _len; _key++) {
             options[_key] = arguments[_key];
         }
 
-        this.options.apply(this, [{
-            alias: '',
-            priority: 0,
-            alternateTaskName: '',
-            constructorLocation: '',
-            // list node modules and task runner (gulp) plugin modules used internally and
-            // that are configurable from  your config(s) here.
-            // @note TaskAdapter.prototype.getOptionsForBundle will clone any defaults in gulpw-config and
-            // merge the `bundle`'s config in with the options
-            configurableModules: []
-        }].concat(options));
+        sjl.extend.apply(sjl, [true, this].concat(options));
     }
 
-    return TaskAdapterConfig;
+    return Bundle;
 })(Config);
 
-module.exports = TaskAdapterConfig;
+module.exports = Bundle;

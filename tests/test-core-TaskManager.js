@@ -12,7 +12,7 @@ let chai = require('chai'),
     TaskManagerConfig = require('./../src/TaskManagerConfig'),
     TaskManager = require('./../src/TaskManager'),
     config = {
-        bundleConfigsPath: './some-bundles/config-path',
+        bundleConfigsPath: './some-bundles/config-path/',
         bundleConfigFormats: ['.js', '.json', '.yaml'],
         localConfigPath: 'gulpw-configs/',
         localConfigBackupPath: '.gulpw/gulpw-configs',
@@ -20,7 +20,8 @@ let chai = require('chai'),
         helpDocsPath: 'help-docs/',
         taskConfigs: {someTask: 'hello'},
         staticTaskConfigs: {someStaticTaskConfig: {someKeyValuePair: 'some value'}},
-        configPath: './some/config/path'
+        configPath: './configs/gulpw-config.yaml',
+        configBase: './configs',
     },
     propNames = Object.keys(config);
 

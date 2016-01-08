@@ -8,6 +8,10 @@
 
 'use strict';
 
+var _arguments = arguments;
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
 var sjl = require('sjljs'),
     fs = require('fs'),
     os = require('os'),
@@ -16,6 +20,11 @@ var sjl = require('sjljs'),
     yaml = require('js-yaml');
 
 module.exports = {
+
+    /**
+     * @type {Array}
+     */
+    supportedExts: ['.js', '.json', '.yaml', '.yml'],
 
     /**
      * Returns the files located at glob string or the string passed in if it doesn't contain glob magic.
@@ -56,22 +65,6 @@ module.exports = {
      */
     ensurePathExists: function ensurePathExists(dirPath) {
         return mkdirp.sync(dirPath);
-    },
-
-    /**
-     * Splits a gulp task command/name string into separate parts.  (Splits on ':').
-     * @param command {String}
-     * @returns {{command: *, taskAlias: *, params: null}}
-     */
-    splitTaskRunnerCommand: function splitTaskRunnerCommand(command, splitOnChar) {
-        splitOnChar = splitOnChar || ':';
-        var out = { command: command, taskAlias: command, params: null },
-            args;
-        if (command.indexOf(splitOnChar)) {
-            args = command.split(splitOnChar);
-            out = { taskAlias: args.shift(), params: args };
-        }
-        return out;
     },
 
     /**
@@ -136,6 +129,61 @@ module.exports = {
         }
         fs.writeFileSync(filePath, obj);
         return this;
-    }
+    },
 
+    /**
+     * @param filePath {String}
+     * @param exts {Array|undefined}
+     * @returns {*|null} - Null if no file found else file contents.
+     */
+    loadConfigFileFromSupportedExts: function loadConfigFileFromSupportedExts(filePath, exts) {
+        exts = exts || undefined.supportedExts;
+        var file = null;
+        exts.some(function (ext) {
+            try {
+                file = undefined.loadConfigFile(filePath + ext);
+            } catch (e) {}
+            return file !== null;
+        });
+        return file;
+    },
+
+    /**
+     * @param fileName {String}
+     * @param exts {Array|undefined}
+     * @returns {*}
+     */
+    bundleNameFromFileName: function bundleNameFromFileName(fileName, exts) {
+        exts = exts || undefined.supportedExts;
+        var bundleName = null;
+        exts.some(function (ext) {
+            var lastIndexOfExt = fileName.lastIndexOf(ext),
+                expectedLastIndexOfPos = fileName.length - ext.length - 2;
+            if (lastIndexOfExt !== expectedLastIndexOfPos) {
+                return false;
+            }
+            bundleName = fileName.split(new RegExp('\\' + ext + '$'))[0];
+        });
+        return bundleName;
+    },
+
+    logger: function logger(argv, context) {
+        var self = context || undefined;
+        return function () {
+            var args = sjl.argsToArray(_arguments),
+                possibleFlag = args[args.length - 1],
+                lastArg;
+            if (possibleFlag.indexOf('--') === 0) {
+                lastArg = args.pop();
+                if (argv.debug && lastArg === '--debug') {
+                    console.log.apply(console, _toConsumableArray(args));
+                } else if (argv.verbose && lastArg === '--verbose') {
+                    console.log.apply(console, _toConsumableArray(args));
+                }
+            } else {
+                console.log.apply(console, _toConsumableArray(args));
+            }
+            return self;
+        };
+    }
 };

@@ -5,27 +5,27 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    stdlib = sjl.ns.stdlib,
-    SjlMap = stdlib.SjlMap,
-    SjlSet = stdlib.SjlSet,
+    SjlMap = sjl.SjlMap,
+    SjlSet = sjl.SjlSet,
     Config = require('./Config'),
     contextName = 'TaskManagerConfig';
 
 class TaskManagerConfig extends Config {
     constructor(...options) {
+
         super();
 
         var self = this,
 
         // Private props
-        _bundleConfigsPath = '',
-        _bundleConfigFormats = new SjlSet(),
-        _localConfigPath = '',
-        _localConfigBackupPath = '',
-        _localHelpDocsPath = '',
-        _helpDocsPath = '',
-        _taskConfigs = new SjlMap(),
-        _staticTaskConfigs = new SjlMap();
+            _bundleConfigsPath = '',
+            _bundleConfigFormats = new SjlSet(),
+            _localConfigPath = '',
+            _localConfigBackupPath = '',
+            _localHelpDocsPath = '',
+            _helpDocsPath = '',
+            _taskConfigs = new SjlMap(),
+            _staticTaskConfigs = new SjlMap();
 
         // Define props
         Object.defineProperties(self, {

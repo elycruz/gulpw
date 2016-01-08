@@ -11,7 +11,7 @@
 var sjl = require('sjljs'),
 
     // GulpWrangler Utils
-    gwUtils = require('./build/utils/Utils'),
+    gwUtils = require('./build/Utils'),
 
     // Launcher
     Liftoff = require('liftoff'),
@@ -68,7 +68,7 @@ var sjl = require('sjljs'),
             '.yaml': 'js-yaml'
         }
     }),
-    TaskManager = require('./build/TaskManager'),
+    GulpTaskManager = require('./build/gulp/GulpTaskManager'),
     userConfig, taskManager;
 
 function logPertinent (env) {
@@ -100,7 +100,7 @@ function calledWithAllowedTaskNames () {
 function initializeTaskManager (userConfig) {
     // Instantiate TaskManager
     try {
-        TaskManager = new TaskManager(sjl.extend(true, {
+        GulpTaskManager = new GulpTaskManager(sjl.extend(true, {
             taskRunner: gulp,
             argv: argv,
             env: env,

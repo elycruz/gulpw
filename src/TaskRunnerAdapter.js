@@ -48,7 +48,7 @@ class TaskRunnerAdapter {
         return false;
     }
 
-    hasTaskCompleted (key) {
+    hasCompletedTask (key) {
         return false;
     }
 

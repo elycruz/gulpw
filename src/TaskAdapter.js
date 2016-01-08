@@ -4,65 +4,33 @@
 
 'use strict';
 
-let TaskManager = require('TaskManager'),
-    TaskAdapterConfig = require('TaskAdapterConfig'),
+let TaskAdapterConfig = require('./TaskAdapterConfig'),
     contextName = 'TaskAdapter';
 
 class TaskAdapter {
 
-    config (config) {
-        var retVal = this;
-        if (!sjl.isset(config)) {
-            retVal = this._config;
-        }
-        else {
-            this._config = config;
-        }
-        return retVal;
-    }
-    
-    taskManager (taskManager) {
-        var retVal = this;
-        if (!sjl.isset(taskManager)) {
-            retVal = this._taskManager;
-        }
-        else {
-            this._taskManager = taskManager;
-        }
-        return retVal;
-    }
-
     constructor (config, taskManager) {
-        var _config = {},
-            _taskManager = {};
+        var _config = {};
         Object.defineProperties(this, {
-            _taskManager: {
+            taskManager: {value: taskManager},
+            config: {
                 set: (value) => {
-                    if (value instanceof TaskManager === false) {
-                        throw Error('`' + contextName + '._taskManager` only accepts values that' +
-                            ' are instance-of or sub-class of `TaskManager`.');
+                    var classOfValue = sjl.classOf(value);
+                    if (classOfValue === 'Object') {
+                        _config = value instanceof TaskAdapterConfig ? value :
+                            new TaskAdapterConfig(value);
                     }
-                    _taskManager = value;
-                },
-                get: () => {
-                    return _taskManager;
-                }
-            },
-            _config: {
-                set: (value) => {
-                    if (value instanceof TaskAdapterConfig === false) {
-                        throw Error('`' + contextName + '._config` only accepts values that' +
-                            ' are instance-of or sub-class of `TaskAdapterConfig`.');
+                    else {
+                        throw Error('`' + contextName + '.config` only accepts values of type "object" or' +
+                            ' of sub-class `TaskAdapterConfig`.  Type recieved: "' + classOfValue + '".');
                     }
-                    _config = value;
                 },
                 get: () => {
                     return _config;
                 }
             }
         });
-        this._config = config;
-        this._taskManager = taskManager;
+        this.config = config;
     }
 
     registerBundle (bundle, taskManager) {

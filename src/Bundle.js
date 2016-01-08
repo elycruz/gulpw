@@ -6,7 +6,7 @@
 let Config = require('./Config'),
     sjl = require('sjljs');
 
-class BundleConfig extends Config {
+class Bundle extends Config {
     constructor(...options) {
         super();
         var _alias = '',
@@ -18,7 +18,7 @@ class BundleConfig extends Config {
                     return _alias;
                 },
                 set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(BundleConfig.name, 'alias', value, String);
+                    sjl.throwTypeErrorIfNotOfType(Bundle.name, 'alias', value, String);
                     _alias = value;
                 }
             },
@@ -27,7 +27,7 @@ class BundleConfig extends Config {
                     return _description;
                 },
                 set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(BundleConfig.name, 'description', value, String);
+                    sjl.throwTypeErrorIfNotOfType(Bundle.name, 'description', value, String);
                     _description = value;
                 }
             },
@@ -36,7 +36,7 @@ class BundleConfig extends Config {
                     return _version;
                 },
                 set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(BundleConfig.name, 'version', value, String);
+                    sjl.throwTypeErrorIfNotOfType(Bundle.name, 'version', value, String);
                     _version = value;
                 }
             }
@@ -45,4 +45,4 @@ class BundleConfig extends Config {
     }
 }
 
-module.exports = BundleConfig;
+module.exports = Bundle;
