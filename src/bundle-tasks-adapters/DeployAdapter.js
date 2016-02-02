@@ -200,8 +200,8 @@ module.exports = BaseBundleTaskAdapter.extend(function DeployAdapter (/*config*/
                 targetsConcatable = false,
                 srcsConcatable;
             Object.keys(subSrcs).forEach(function (key) {
-                targetsConcatable = sjl.issetObjKeyAndOfType(targets, key, 'Array');
-                srcsConcatable = sjl.issetObjKeyAndOfType(subSrcs, key, 'Array');
+                targetsConcatable = sjl.issetAndOfType(targets[key], 'Array');
+                srcsConcatable = sjl.issetAndOfType(subSrcs[key], 'Array');
                 if (targetsConcatable && srcsConcatable) {
                     targets[key] = targets[key].concat(subSrcs[key]);
                 }

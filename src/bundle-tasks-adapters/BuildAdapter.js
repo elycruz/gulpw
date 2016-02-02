@@ -66,7 +66,7 @@ module.exports = BaseBundleTaskAdapter.extend(function BuildAdapter () {
     isBundleValidForMinifyAndConcat: function (bundle) {
         return bundle && (bundle.has('files.js') || bundle.has('files.css')
             || bundle.has('files.html') || bundle.has('files.html'))
-            &&  sjl.empty(this.wrangler.tasks.minify.notConfiguredByUser);
+            &&  !sjl.isset(this.wrangler.tasks.minify.notConfiguredByUser);
     },
 
     getTasksForBundle: function (bundle) {

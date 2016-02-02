@@ -122,7 +122,7 @@ module.exports = FilesHashTaskAdapter.extend(function RequireJsAdapter(/*options
             promise;
 
         // If not dev mode then ensure optimize field
-        if (!wrangler.argv.dev && sjl.isEmptyObjKey(otherOptions, 'optimize', 'String')) {
+        if (!wrangler.argv.dev && sjl.isEmptyOrNotOfType(otherOptions.optimize, 'String')) {
             otherOptions.optimize = 'uglify';
         }
 

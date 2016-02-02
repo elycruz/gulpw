@@ -119,7 +119,7 @@ module.exports = BaseBundleTaskAdapter.extend(function CompassAdapter () {}, {
 	registerStaticTask: function (gulp, wrangler) {
 
 		// Bail if not possible to run statically
-		if (sjl.isEmptyObjKeyOrNotOfType(wrangler.tasks.compass, 'configrb', 'String')) {
+		if (sjl.isEmptyOrNotOfType(wrangler.tasks.compass.configrb, 'String')) {
 			return this;
 		}
 

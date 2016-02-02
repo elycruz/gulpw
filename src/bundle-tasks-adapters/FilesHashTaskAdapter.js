@@ -62,7 +62,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FilesHashTaskAdapter(/*op
 
         isBundleValidForTask: function (bundle) {
             // If bundle doesn't have any of the required keys, bail
-            return sjl.isEmptyObjKey(this.wrangler.tasks.minify, 'notConfiguredByUser')
+            return !sjl.isset(this.wrangler.tasks.minify.notConfiguredByUser)
                 && sjl.classOfIs(bundle, 'Object') && bundle.has('files')
                 && (bundle.has('files.js') || bundle.has('files.css') || bundle.has('files.html'));
         },

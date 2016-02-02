@@ -6,7 +6,7 @@
 
 'use strict';
 
-require('sjljs');
+const sjl = require('sjljs');
 
 var fs = require('fs'),
     path = require('path'),
@@ -156,7 +156,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // 'Creating task ...' message
         this.log(' - Creating task adapter \"' + task + '\'.');
 
-        if (!sjl.issetObjKey(this.tasks, task)) {
+        if (!sjl.isset(this.tasks[task])) {
             this.log('\n');
             console.warn(chalk.yellow(' ! Could not find a task configuration defined for config section "' + task + '".'));
             process.exit(0);
@@ -205,7 +205,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         if (!sjl.isset(bundles)) {
             bundles = fs.readdirSync(self.bundlesPath).map(function (fileName) {
                 var bundle = self.createBundle(path.join(self.bundlesPath, fileName));
-                if (!sjl.isEmptyObjKey(bundle.options, 'relatedBundles.processBefore', 'Array')) {
+                if (!sjl.isEmptyOrNotOfType(sjl.searchObj('relatedBundles.processBefore', bundle.options), 'Array')) {
                     self.createBundles(gulp, self.getBundlePaths(bundle.get('relatedBundles.processBefore')), registerBundles);
                 }
                 return bundle;
@@ -256,7 +256,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         // Set original bundle file location to bundle.config
         config.filePath = '.' + path.sep + filePath;
 
-        if (!sjl.isEmptyObjKey(this.bundles, config.alias)) {
+        if (!sjl.empty(this.bundles[config.alias])) {
             return;
         }
 
@@ -297,6 +297,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
 
         // Register bundle with task
         taskKeys.forEach(function (task) {
+            console.log(task);
             self.registerBundleWithTask(bundle, task);
         });
     },
@@ -705,7 +706,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         ext = ext || '.yaml';
         bundle = self.getBundleAlias(bundle);
 
-        if (sjl.isEmptyObjKey(self, 'bundleConfigFormats')) {
+        if (sjl.empty(self.bundleConfigFormats)) {
             bundlePath = path.join(self.bundlesPath, bundle + ext);
             retVal = fs.existsSync(bundlePath) ? bundlePath : null;
         }
@@ -760,7 +761,7 @@ module.exports = sjl.Extendable.extend(function Wrangler(gulp, argv, env, config
         var self = this,
             retVal;
         return list.map(function (bundle) {
-            if (!sjl.isEmptyObjKey(self.bundles, bundle, 'Object')) {
+            if (!sjl.isEmptyOrNotOfType(self.bundles[bundle], 'Object')) {
                 retVal = self.bundles[bundle];
             }
             else {

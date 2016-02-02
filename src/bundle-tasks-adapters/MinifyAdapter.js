@@ -35,6 +35,7 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
      * @param wrangler {Wrangler}
      */
     registerBundle: function (bundle, gulp, wrangler) {
+
         if (!this.isBundleValidForTask(bundle)) {
             return;
         }
@@ -54,13 +55,13 @@ module.exports = FilesHashTaskAdapter.extend(function MinifyAdapter() {
             fileHashType = minifyConfig.fileHashType || 'sha256',
             prependFileHashToFileName = minifyConfig.prependFileHashToFileName,
             appendFileHashToFileName = minifyConfig.appendFileHashToFileName,
-            noDomWrapper = sjl.issetObjKey(minifyConfig, 'noDomWrapper') ?
+            noDomWrapper = sjl.isset(minifyConfig.noDomWrapper) ?
                 minifyConfig.noDomWrapper : false,
-            noDomWrapperAndAppendedScript = sjl.issetObjKey(minifyConfig, 'noDomWrapperAndAppendedScript') ?
+            noDomWrapperAndAppendedScript = sjl.isset(minifyConfig.noDomWrapperAndAppendedScript) ?
                 minifyConfig.noDomWrapperAndAppendedScript : false,
-            useBabel = sjl.issetObjKey(minifyConfig, 'useBabel') ?
+            useBabel = sjl.isset(minifyConfig.useBabel) ?
                 minifyConfig.useBabel : false,
-            babelOptions = sjl.issetObjKey(minifyConfig, 'babelOptions') ?
+            babelOptions = sjl.isset(minifyConfig.babelOptions) ?
                 minifyConfig.babelOptions : null;
 
         // Create task for bundle

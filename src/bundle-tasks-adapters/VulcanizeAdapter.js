@@ -130,7 +130,7 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanizeAdapter (/*optio
             || this.wrangler.argv.fileTypes.split(',').indexOf('html') > -1)
             && !sjl.empty(vulcanizeSection)
             && classOfSection === 'Object'
-            && !sjl.isEmptyObjKeyOrNotOfType(vulcanizeSection, 'files', 'Array');
+            && !sjl.isEmptyOrNotOfType(vulcanizeSection.files, 'Array');
     }
 
 }); // end of export

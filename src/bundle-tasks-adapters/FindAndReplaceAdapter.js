@@ -27,7 +27,7 @@ module.exports = BaseBundleTaskAdapter.extend(function FindAndReplaceAdapter(/*o
         gulp.task(taskName, function () {
 
             var config = self.wrangler.cloneOptionsFromWrangler('tasks.findandreplace', bundle.get('findandreplace')),
-                options = sjl.issetObjKeyAndOfType(config, 'options') ? config.options : {},
+                options = sjl.issetAndOfType(config.options) ? config.options : {},
                 files = bundle.get('findandreplace.files'),
                 classOfFiles = sjl.classOf(files),
                 searchHash = gwUtils.objectHashToMap(config.findandreplace, function (key) {

@@ -27,22 +27,22 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter(/*optio
 
             var config = self.wrangler.cloneOptionsFromWrangler('tasks.vulcan', bundle.get('vulcan')),
 
-                vulcanizeOptions = !sjl.issetObjKeyAndOfType(config, 'vulcanizeOptions', 'Object') ? {
+                vulcanizeOptions = !sjl.issetAndOfType(config.vulcanizeOptions, 'Object') ? {
                         inlineScripts: true,
                         inlineCss: true
                     } : config.vulcanizeOptions,
 
-                crisperOptions = !sjl.issetObjKeyAndOfType(config, 'crisperOptions', 'Object') ? {
+                crisperOptions = !sjl.issetAndOfType(config.crisperOptions, 'Object') ? {
                     jsFileName: bundle.options.alias
                 } : config.crisperOptions,
 
-                sizeOptions = !sjl.issetObjKeyAndOfType(config, 'sizeOptions', 'Object') ?
+                sizeOptions = !sjl.issetAndOfType(config.sizeOptions, 'Object') ?
                     null : config.sizeOptions,
 
-                destDir = !sjl.issetObjKeyAndOfType(config, 'destDir', 'Object') ?
+                destDir = !sjl.issetAndOfType(config.destDir, 'Object') ?
                     config.destDir : config.destDir;
 
-            if (!sjl.issetObjKey(crisperOptions, 'jsFileName')) {
+            if (!sjl.isset(crisperOptions.jsFileName)) {
                 crisperOptions.jsFileName = bundle.options.alias;
             }
 
@@ -129,7 +129,7 @@ module.exports = BaseBundleTaskAdapter.extend(function VulcanTaskAdapter(/*optio
             || this.wrangler.argv.fileTypes.split(',').indexOf('html') > -1)
             && !sjl.empty(vulcanSection)
             && classOfSection === 'Object'
-            && !sjl.isEmptyObjKeyOrNotOfType(vulcanSection, 'files', 'Array');
+            && !sjl.isEmptyOrNotOfType(vulcanSection.files, 'Array');
     }
 
 }); // end of export
