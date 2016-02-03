@@ -23,7 +23,6 @@ var TaskRunnerAdapter = (function () {
                 sjl.throwTypeErrorIfNotOfType(contextName, 'taskRunner', value, Object);
                 _taskRunner = value;
             },
-            writable: true,
             enumerable: true
         });
         this.taskRunner = taskRunner;

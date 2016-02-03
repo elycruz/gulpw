@@ -38,7 +38,9 @@ var GulpTaskRunnerAdapter = (function (_TaskRunnerAdapter) {
     }, {
         key: 'hasCompletedTask',
         value: function hasCompletedTask(key) {
-            return sjl.issetAndOfType(this.taskRunner.tasks[key], Object) && taskObj.done === true;
+            var taskRunnerHasTask = sjl.issetAndOfType(this.taskRunner.tasks[key], Object),
+                taskObj = taskRunnerHasTask ? this.taskRunner.tasks[key] : null;
+            return taskObj && taskObj.done === true;
         }
     }, {
         key: 'runTask',

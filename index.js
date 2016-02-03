@@ -97,7 +97,7 @@ function calledWithAllowedTaskNames () {
         || process.argv[1].indexOf('gulp') > -1;
 }
 
-function initializeTaskManager (userConfig) {
+function initializeTaskManager (userConfig, env) {
     // Instantiate TaskManager
     try {
         GulpTaskManager = new GulpTaskManager(sjl.extend(true, {
@@ -126,7 +126,7 @@ function cliInit(env) {
     // If the config path is empty
     if (sjl.empty(env.configPath) || !calledWithAllowedTaskNames()) {
         // Write message to user
-        console.log(chalk.yellow('\nNo \'gulpw-config.*\' file found.'));
+        console.log(chalk.yellow('\nNo \'gulpw-config.*\' file found.\n'));
     }
     else if (!sjl.empty(env.configPath)) {
 
@@ -135,7 +135,7 @@ function cliInit(env) {
 
         // Load config file
         userConfig = gwUtils.loadConfigFile(env.configPath);
-        initializeTaskManager(userConfig);
+        initializeTaskManager(userConfig, env);
     }
 }
 

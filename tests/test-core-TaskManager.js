@@ -21,13 +21,13 @@ let chai = require('chai'),
         taskConfigs: {someTask: 'hello'},
         staticTaskConfigs: {someStaticTaskConfig: {someKeyValuePair: 'some value'}},
         configPath: './configs/gulpw-config.yaml',
-        configBase: './configs',
+        configBase: './configs'
     },
     propNames = Object.keys(config);
 
 describe('TaskManager', () => {
     it ('Should be an instanceof `TaskManagerConfig` class.', () => {
-        expect((new TaskManager(defaultConfig, {})) instanceof TaskManagerConfig).to.equal(true);
+        expect(new TaskManager(defaultConfig, {}) instanceof TaskManagerConfig).to.equal(true);
     });
 
     var joinedPropNames = propNames.join('", "');

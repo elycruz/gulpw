@@ -142,7 +142,9 @@ module.exports = {
         exts.some(function (ext) {
             try {
                 file = undefined.loadConfigFile(filePath + ext);
-            } catch (e) {}
+            } catch (e) {
+                // silent
+            }
             return file !== null;
         });
         return file;
