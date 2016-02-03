@@ -181,7 +181,7 @@ module.exports = {
 
     logger: (argv, context) => {
         let self = context || this;
-        return () => {
+        return function () {
             var args = sjl.argsToArray(arguments),
                 possibleFlag = args[args.length - 1],
                 lastArg;

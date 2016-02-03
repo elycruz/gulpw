@@ -9,8 +9,8 @@ let sjl = require('sjljs'),
 
 class Config {
 
-    constructor(...options) {
-        this.set(...options);
+    constructor() {
+        this.set(...sjl.argsToArray(arguments));
     }
 
     get (keyOrNsKey) {

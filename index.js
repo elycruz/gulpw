@@ -11,7 +11,7 @@
 var sjl = require('sjljs'),
 
     // GulpWrangler Utils
-    gwUtils = require('./build/Utils'),
+    gwUtils = require('./src/Utils'),
 
     // Launcher
     Liftoff = require('liftoff'),
@@ -68,7 +68,7 @@ var sjl = require('sjljs'),
             '.yaml': 'js-yaml'
         }
     }),
-    GulpTaskManager = require('./build/gulp/GulpTaskManager'),
+    GulpTaskManager = require('./src/gulp/GulpTaskManager'),
     userConfig, taskManager;
 
 function logPertinent (env) {

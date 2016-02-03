@@ -7,7 +7,7 @@ let Config = require('./Config'),
     sjl = require('sjljs');
 
 class Bundle extends Config {
-    constructor(...options) {
+    constructor(/**...options {Object} **/) {
         super();
         var _alias = '',
             _description = '',
@@ -41,7 +41,7 @@ class Bundle extends Config {
                 }
             }
         });
-        sjl.extend(true, this, ...options);
+        sjl.extend(true, this, ...arguments);
     }
 }
 

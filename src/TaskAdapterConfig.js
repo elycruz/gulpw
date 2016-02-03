@@ -6,7 +6,7 @@
 let Config = require('./Config');
 
 class TaskAdapterConfig extends Config {
-    constructor(...options) {
+    constructor(/**...options {Object}**/) {
         super();
         this.set({
             alias: '',
@@ -18,7 +18,7 @@ class TaskAdapterConfig extends Config {
             // @note TaskAdapter.prototype.getOptionsForBundle will clone any defaults in gulpw-config and
             // merge the `bundle`'s config in with the options
             configurableModules: []
-        }, ...options);
+        }, ...arguments);
     }
 }
 
