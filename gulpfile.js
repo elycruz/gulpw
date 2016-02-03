@@ -88,15 +88,15 @@ gulp.task('bump', function(){
 });
 
 // Build
-gulp.task('build', function () {
-    gulp.src(['./src/**/*.js'])
-        .pipe(gulpBabel())
-        .pipe(gulp.dest('build'));
-});
+//gulp.task('build', function () {
+//    gulp.src(['./src/**/*.js'])
+//        .pipe(gulpBabel())
+//        .pipe(gulp.dest('build'));
+//});
 
 // Watch
 gulp.task('watch', function () {
-    gulp.watch(srcs, ['eslint', 'build']);
+    gulp.watch(srcs, ['eslint']);
     //gulp.watch('./docs/*.md', ['readme']);
 });
 

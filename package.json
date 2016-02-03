@@ -1,6 +1,6 @@
 {
   "name": "gulpw",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Config based gulp.",
   "bin": {
     "gulpw": "index.js"
