@@ -29,6 +29,7 @@ class TaskManager extends TaskManagerConfig {
 
         // Private variables that we expose to the outside start with `_`
         var self = this,
+            _defaultConfig      = gwUtils.loadConfigFile(path.join(__dirname, '/../configs/gulpw-config.yaml')),
             _argv               = {},
             _configBase         = '',
             _configPath         = '',
@@ -39,83 +40,108 @@ class TaskManager extends TaskManagerConfig {
         // Define properties
         Object.defineProperties(self, {
             argv: {
-                get: () => {
+                get: function ()  {
                     return _argv;
                 },
-                set: (value) => {
-                    sjl.throwTypeErrorIfNotOfType(contextName, '_argv', value, Object);
+                set: function (value)  {
+                    sjl.throwTypeErrorIfNotOfType(contextName, 'argv', value, Object);
                     _argv = value;
-                }
+                },
+                enumerable: true
             },
-            availableBundleNames: {},
-            availableTaskNames: {},
-            availableStaticTaskNames: {},
+            availableBundleNames: {
+                value: new SjlSet(),
+                enumerable: true
+            },
+            availableTaskNames: {
+                value: new SjlSet(),
+                enumerable: true
+            },
+            availableStaticTaskNames: {
+                value: new SjlSet(),
+                enumerable: true
+            },
             bundles: {
-                value: new SjlMap()
+                value: new SjlMap(),
+                enumerable: true
             },
             bundleFileNames: {
-                value: new SjlSet()
+                value: new SjlSet(),
+                enumerable: true
             },
             sessionBundleNames: {
-                value: new SjlSet()
+                value: new SjlSet(),
+                enumerable: true
             },
             configBase: {
-                get: () => {
+                get: function ()  {
                     return _configBase;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_configBase', value, String,
                         'Only strings are allowed for this property');
                     _configBase = value;
-                }
+                },
+                enumerable: true
             },
             commands: {
-                value: new SjlSet()
+                value: new SjlSet(),
+                enumerable: true
             },
             configPath: {
-                get: () => {
+                get: function ()  {
                     return _configPath;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_configPath', value, String,
                         'Only strings are allowed for this property');
                     _configPath = value;
-                }
+                },
+                enumerable: true
             },
             config: {
-                value: config
+                value: config,
+                enumerable: true
             },
             errorReports: {
-                value: new SjlMap()
+                value: new SjlMap(),
+                enumerable: true
             },
             warningReports: {
-                value: new SjlMap()
+                value: new SjlMap(),
+                enumerable: true
             },
             durationReports: {
-                value: new SjlMap()
+                value: new SjlMap(),
+                enumerable: true
             },
             taskAdapters: {
-                value: new Map()
+                value: new SjlMap(),
+                enumerable: true
             },
             sessionTaskNames: {
-                value: new SjlSet()
+                value: new SjlSet(),
+                enumerable: true
             },
             splitCommands: {
-                value: new Map()
+                value: new SjlMap(),
+                enumerable: true
             },
             staticTaskAdapters: {
-                value: new Map()
+                value: new SjlMap(),
+                enumerable: true
             },
             sessionStaticTaskNames: {
-                value: new SjlSet()
+                value: new SjlSet(),
+                enumerable: true
             },
             taskRunnerAdapter: {
-                get: () => {
+                get: function ()  {
                     return _taskRunnerAdapter;
                 },
-                set: (value) => {
+                set: function (value)  {
                     var retVal = this;
                     if (value && value instanceof TaskRunnerAdapter) {
                         _taskRunnerAdapter = value;
@@ -124,31 +150,51 @@ class TaskManager extends TaskManagerConfig {
                         throw new TypeError (contextName + '.taskRunnerAdapter only accepts types of `TaskRunnerAdapter` or ' +
                             'subclasses of `TaskRunnerAdapter`.  Type recieved: \'' + sjl.classOf(value) + '\'.');
                     }
-                }
+                },
+                enumerable: true
             },
             cwd: {
-                get: () => {
+                get: function ()  {
                     return _cwd;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(contextName, '_cwd', value, String);
                     _cwd = value;
-                }
+                },
+                enumerable: true
             },
             pwd: {
-                get: () => {
+                get: function ()  {
                     return _pwd;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(contextName, '_pwd', value, String);
                     _pwd = value;
-                }
+                },
+                enumerable: true
             }
         });
 
-        // Set log function
-        log = gwUtils.logger(this.argv, this);
+        // Inject the passed in configuration
         this.set(config);
+
+        // Set bundles path
+        this.bundlesPath = path.join(this.configBase, this.bundlesPath);
+
+        // Populate some of our names
+        this.bundleFileNames.addFromArray(fs.readdirSync(this.bundlesPath)),
+        this.availableTaskNames.addFromArray(Object.keys(this.config.tasks)),
+        this.availableStaticTaskNames.addFromArray(Object.keys(this.config.staticTasks)),
+        this.availableBundleNames.addFromArray(this.bundleFileNames._values.map((fileName) => {
+                return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
+            })),
+
+        // Set log function
+        log = gwUtils.logger(config.argv, this);
+
+        // Log before setting config(s)
+        log (chalk.cyan('\n"' + TaskManager.name + '" initiated.\nWith `config`:\n'), config,
+            chalk.cyan('\nConsole params:\n'), this.argv, '--debug');
     }
 
     /**
@@ -163,19 +209,16 @@ class TaskManager extends TaskManagerConfig {
         }
 
         var splitCommandOn = ':',
-            bundleFileNames = this.bundleFileNames
-                .addFromArray(fs.readdirSync(this.config.bundlesPath)),
-            availableTaskNames          = this.availableTaskNames.addFromArray(Object.keys(this.config.tasks)),
-            availableStaticTaskNames    = this.availableStaticTaskNames(Object.keys(this.config.staticTasks)),
-            availableBundleNames        = this.availableBundleNames.addFromArray(bundleFileNames.map((fileName) => {
-                return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
-            })),
+            bundleFileNames             = this.bundleFileNames,
+            availableTaskNames          = this.availableTaskNames,
+            availableStaticTaskNames    = this.availableStaticTaskNames,
+            availableBundleNames        = this.availableBundleNames,
             addedBundleNames            = this.sessionBundleNames,
             addedTaskNames              = this.sessionTaskNames,
             addedStaticTaskNames        = this.sessionStaticTaskNames;
 
         // Get split commands
-        this.argv._.forEach((value) => {
+        this.argv._.forEach(function (value)  {
             let splitCommand = this.taskRunnerAdapter.splitCommand(value, splitCommandOn),
                 bundle = splitCommand.bundle,
                 command = splitCommand.command,

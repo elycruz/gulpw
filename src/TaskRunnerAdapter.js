@@ -11,10 +11,10 @@ class TaskRunnerAdapter {
     constructor (taskRunner) {
         var _taskRunner = {};
         Object.defineProperty(this, 'taskRunner', {
-            get: () => {
+            get: function ()  {
                 return _taskRunner;
             },
-            set: (value) => {
+            set: function (value)  {
                 sjl.throwTypeErrorIfNotOfType(contextName, 'taskRunner', value, Object);
                 _taskRunner = value;
             },

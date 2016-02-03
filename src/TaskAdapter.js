@@ -14,7 +14,7 @@ class TaskAdapter {
         Object.defineProperties(this, {
             taskManager: {value: taskManager},
             config: {
-                set: (value) => {
+                set: function (value)  {
                     var classOfValue = sjl.classOf(value);
                     if (classOfValue === 'Object') {
                         _config = value instanceof TaskAdapterConfig ? value :
@@ -25,7 +25,7 @@ class TaskAdapter {
                             ' of sub-class `TaskAdapterConfig`.  Type recieved: "' + classOfValue + '".');
                     }
                 },
-                get: () => {
+                get: function ()  {
                     return _config;
                 }
             }

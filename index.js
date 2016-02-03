@@ -20,6 +20,9 @@ var sjl = require('sjljs'),
     argv = require('yargs')
 
         // Default param values
+
+        .default('verbose',         false)
+        .default('debug',           false)
         .default('skip-artifacts',  false)
         .default('bundle',          null)
         .default('async',           false)
@@ -69,6 +72,7 @@ var sjl = require('sjljs'),
         }
     }),
     GulpTaskManager = require('./src/gulp/GulpTaskManager'),
+    defaultConfig = gwUtils.loadConfigFile(path.join(__dirname, '/configs/gulpw-config.yaml')),
     userConfig, taskManager;
 
 function logPertinent (env) {
@@ -106,7 +110,7 @@ function initializeTaskManager (userConfig, env) {
             env: env,
             configPath: env.configPath,
             configBase: env.configBase
-        }, userConfig))
+        }, defaultConfig, userConfig))
     }
     catch (e) {
         console.log('Uncaught Error: \n',

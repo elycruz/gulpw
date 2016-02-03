@@ -14,28 +14,28 @@ class Bundle extends Config {
             _version = '';
         Object.defineProperties(this, {
             alias: {
-                get: () => {
+                get: function ()  {
                     return _alias;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(Bundle.name, 'alias', value, String);
                     _alias = value;
                 }
             },
             description: {
-                get: () => {
+                get: function ()  {
                     return _description;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(Bundle.name, 'description', value, String);
                     _description = value;
                 }
             },
             version: {
-                get: () => {
+                get: function ()  {
                     return _version;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(Bundle.name, 'version', value, String);
                     _version = value;
                 }

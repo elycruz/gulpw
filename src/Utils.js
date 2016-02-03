@@ -146,7 +146,7 @@ module.exports = {
      * @param exts {Array|undefined}
      * @returns {*|null} - Null if no file found else file contents.
      */
-    loadConfigFileFromSupportedExts: (filePath, exts) => {
+    loadConfigFileFromSupportedExts: function (filePath, exts) {
         exts = exts || this.supportedExts;
         var file = null;
         exts.some((ext) => {
@@ -165,7 +165,7 @@ module.exports = {
      * @param exts {Array|undefined}
      * @returns {*}
      */
-    bundleNameFromFileName: (fileName, exts) => {
+    bundleNameFromFileName: function (fileName, exts) {
         exts = exts || this.supportedExts;
         var bundleName = null;
         exts.some((ext) => {
@@ -179,25 +179,27 @@ module.exports = {
         return bundleName;
     },
 
-    logger: (argv, context) => {
+    logger: function (_argv_, context) {
         let self = context || this;
-        return function () {
-            var args = sjl.argsToArray(arguments),
-                possibleFlag = args[args.length - 1],
-                lastArg;
-            if (possibleFlag.indexOf('--') === 0) {
-                lastArg = args.pop();
-                if (argv.debug && lastArg === '--debug') {
+        return (function (argv) {
+            return function () {
+                var args = sjl.argsToArray(arguments),
+                    possibleFlag = Array.isArray(args) && args.length > 0 ? args[args.length - 1] : '',
+                    lastArg;
+                if (sjl.classOfIs(possibleFlag, 'String') && possibleFlag.indexOf('--') === 0) {
+                    lastArg = args.pop();
+                    if (argv.debug && lastArg === '--debug') {
+                        console.log(...args);
+                    }
+                    else if (argv.verbose && lastArg === '--verbose') {
+                        console.log(...args);
+                    }
+                }
+                else {
                     console.log(...args);
                 }
-                else if (argv.verbose && lastArg === '--verbose') {
-                    console.log(...args);
-                }
-            }
-            else {
-                console.log(...args);
-            }
-            return self;
-        };
+                return self;
+            };
+        }(_argv_));
     }
 };

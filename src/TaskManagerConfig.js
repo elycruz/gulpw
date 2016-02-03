@@ -30,75 +30,81 @@ class TaskManagerConfig extends Config {
         // Define props
         Object.defineProperties(self, {
             bundleConfigsPath: {
-                get: () => {
+                get: function ()  {
                     return _bundleConfigsPath;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_bundlesConfigPath', value, String,
                         'Only strings allowed for self property');
                     _bundleConfigsPath = value;
-                }
+                },
+                enumerable: true
             },
             bundleConfigFormats: {
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_bundleConfigFormats', value, Array);
                     _bundleConfigFormats.addFromArray(value);
                 },
-                get: () => {
+                get: function ()  {
                     return _bundleConfigFormats;
-                }
+                },
+                enumerable: true
             },
             localConfigPath: {
-                get: () => {
+                get: function ()  {
                     return _localConfigPath;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_localConfigPath', value, String,
                         'Only strings allowed for self property');
                     _localConfigPath = value;
-                }
+                },
+                enumerable: true
             },
             localConfigBackupPath: {
-                get: () => {
+                get: function ()  {
                     return _localConfigBackupPath;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_localConfigBackupPath', value, String,
                         'Only strings allowed for self property');
                     _localConfigBackupPath = value;
-                }
+                },
+                enumerable: true
             },
             localHelpDocsPath: {
-                get: () => {
+                get: function ()  {
                     return _localHelpDocsPath;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_localHelpDocsPath', value, String,
                         'Only strings allowed for self property');
                     _localHelpDocsPath = value;
-                }
+                },
+                enumerable: true
             },
             helpDocsPath: {
-                get: () => {
+                get: function ()  {
                     return _helpDocsPath;
                 },
-                set: (value) => {
+                set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_helpDocsPath', value, String,
                         'Only strings allowed for self property');
                     _helpDocsPath = value;
-                }
+                },
+                enumerable: true
             },
             taskConfigs: {
-                get: () => {
+                get: function ()  {
                     return _taskConfigs;
                 },
-                set: (value) => {
+                set: function (value)  {
                     var classOfValue = sjl.classOf(value);
                     if (classOfValue === 'Object') {
                         _taskConfigs = new SjlMap(value);
@@ -110,13 +116,14 @@ class TaskManagerConfig extends Config {
                         throw new TypeError('`' + contextName  + '._taskConfigs` only takes types of `SjlMap` and/or ' +
                             'types of `Object`.  Type received: `' + classOfValue + '`.');
                     }
-                }
+                },
+                enumerable: true
             },
             staticTaskConfigs: {
-                get: () => {
+                get: function ()  {
                     return _staticTaskConfigs;
                 },
-                set: (value) => {
+                set: function (value)  {
                     var classOfValue = sjl.classOf(value);
                     if (classOfValue === 'Object') {
                         _staticTaskConfigs = new SjlMap(value);
@@ -128,7 +135,8 @@ class TaskManagerConfig extends Config {
                         throw new TypeError('`' + contextName  + '._staticTaskConfigs` only takes types of `SjlMap` and/or ' +
                             'types of `Object`.  Type received: `' + classOfValue + '`.');
                     }
-                }
+                },
+                enumerable: true
             }
         });
 

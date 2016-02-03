@@ -1,7 +1,7 @@
 {
   "name": "gulpw",
   "version": "0.4.0",
-  "description": "Reusable feature based gulp tasks and feature .",
+  "description": "Config based gulp.",
   "bin": {
     "gulpw": "index.js"
   },
@@ -50,7 +50,7 @@
     "mkdirp": "^0.5.1",
     "open": "0.0.5",
     "requirejs": "^2.1.15",
-    "sjljs": "^0.5.21",
+    "sjljs": "^0.5.32",
     "vinyl": "^1.0.0",
     "yargs": "^3.31.0"
   },
@@ -65,7 +65,7 @@
   },
   "scripts": {
     "start": "node --harmony index.js",
-    "test": "mocha tests"
+    "test": "mocha tests --harmony"
   },
   "repository": {
     "type": "git",
