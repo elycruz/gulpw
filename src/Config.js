@@ -10,7 +10,7 @@ let sjl = require('sjljs'),
 class Config {
 
     constructor() {
-        this.set(...sjl.argsToArray(arguments));
+        this.set(...arguments);
     }
 
     get (keyOrNsKey) {
@@ -25,7 +25,7 @@ class Config {
         var classOfKey = sjl.classOf(keyOrNsKey),
             self = this;
         if (classOfKey === Object.name) {
-            sjl.extend(true, self, ...sjl.argsToArray(arguments), true);
+            sjl.extend(true, self, ...arguments, true);
         }
         else if (sjl.isset(keyOrNsKey)) {
             sjl.throwTypeErrorIfNotOfType(contextName, 'set(keyOrNsKey, value)', keyOrNsKey, String);

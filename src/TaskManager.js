@@ -283,7 +283,7 @@ class TaskManager extends TaskManagerConfig {
     }
 
     log () {
-        return log (...sjl.argsToArray(arguments));
+        return log (...arguments);
     }
 
     _initTaskAdapter(taskName, taskConfig) {
