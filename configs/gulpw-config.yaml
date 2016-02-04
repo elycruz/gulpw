@@ -23,10 +23,10 @@ helpPath: ./help-docs/
 
 staticTasks:
   "help":
-    constructorLocation: ./src/static-tasks-adapters/HelpTaskAdapter
+    constructorLocation: ./src/static-task-adapters/HelpTaskAdapter
 
   "config":
-    constructorLocation: ./src/static-tasks-adapters/ConfigTaskAdapter
+    constructorLocation: ./src/static-task-adapters/ConfigTaskAdapter
     unconfigurableTasks:
       - copy
     notAllowedInnerKeys:
@@ -35,12 +35,12 @@ staticTasks:
     fileName: 'gulpw-config'
 
   "deploy-config":
-    constructorLocation: ./src/static-tasks-adapters/DeployConfigTaskAdapter
+    constructorLocation: ./src/static-task-adapters/DeployConfigTaskAdapter
     fileName: 'deploy.yaml'
 
   "bundle":
-    constructorLocation: ./src/static-tasks-adapters/BundleConfigTaskAdapter
-    emptyBundleFile: ./configs/empty-bundle-config-template.yaml
+    constructorLocation: ./src/gulp/static-task-adapters/BundleConfigTaskAdapter
+    emptyBundleFilePath: ./configs/empty-bundle-config-template.yaml
     allowedTasks:
       - browserify
       - compass
@@ -67,13 +67,13 @@ tasks:
 
   # Browserify Defaults
 #  browserify:
-#    constructorLocation: ./src/bundle-tasks-adapters/BrowserifyAdapter
+#    constructorLocation: ./src/bundle-task-adapters/BrowserifyAdapter
 #    priority: 92
 
   # Build Task (Looks through {bundle-alias}.yaml file and runs
   # all tasks that are not in the `ignoredTasks` array in this config.
   build:
-    constructorLocation: ./src/bundle-tasks-adapters/BuildAdapter
+    constructorLocation: ./src/bundle-task-adapters/BuildAdapter
     priority: -98
 
     ignoredTasks:
@@ -86,7 +86,7 @@ tasks:
       - watch
 
   clean:
-    constructorLocation: ./src/bundle-tasks-adapters/CleanAdapter
+    constructorLocation: ./src/bundle-task-adapters/CleanAdapter
     priority: 100
     allowedFileTypes:
       - js
@@ -94,23 +94,23 @@ tasks:
       - html
 
   compass:
-    constructorLocation: ./src/bundle-tasks-adapters/CompassAdapter
+    constructorLocation: ./src/bundle-task-adapters/CompassAdapter
     priority: 98
     configrb: null # config.rb home
     canRunStatically: true
     
   copy:
-    constructorLocation: ./src/bundle-tasks-adapters/CopyAdapter
+    constructorLocation: ./src/bundle-task-adapters/CopyAdapter
     priority: 99
     
   csslint:
     priority: 97
-    constructorLocation: ./src/bundle-tasks-adapters/CssLintAdapter
+    constructorLocation: ./src/bundle-task-adapters/CssLintAdapter
     csslintrc: null
     
   # Deploy Task
   deploy:
-    constructorLocation: ./src/bundle-tasks-adapters/DeployAdapter
+    constructorLocation: ./src/bundle-task-adapters/DeployAdapter
     priority: -100
 
     # Whether to deploy files using unix paths (useful if you're on Windows and need to deploy to a *nix type server)
@@ -136,7 +136,7 @@ tasks:
     domainsToDevelop: null
 
   eslint:
-    constructorLocation: ./src/bundle-tasks-adapters/EsLintAdapter
+    constructorLocation: ./src/bundle-task-adapters/EsLintAdapter
     priority: 96
     options:
       useEslintrc: true
@@ -145,13 +145,13 @@ tasks:
     eslintrc: ./.eslintrc
 
   jasmine:
-    constructorLocation: ./src/bundle-tasks-adapters/JasmineAdapter
+    constructorLocation: ./src/bundle-task-adapters/JasmineAdapter
     priority: 95
     files: null # testDir or array of files (test files)
     options: null
     
   jshint:
-    constructorLocation: ./src/bundle-tasks-adapters/JsHintAdapter
+    constructorLocation: ./src/bundle-task-adapters/JsHintAdapter
     priority: 96
     jshintrc: ./.jshintrc
     ignoredFiles: null
@@ -171,7 +171,7 @@ tasks:
         - sjl
     
   minify:
-    constructorLocation: ./src/bundle-tasks-adapters/MinifyAdapter
+    constructorLocation: ./src/bundle-task-adapters/MinifyAdapter
     priority: 91
     header: |
       /*! Company Name * http://www.company-website.com * Filename: <%= bundle.options.alias + '.' + fileExt %> * Version: <%= bundle.options.version %> * Created: (<%= (new Date()).getTime() %>) * Hashsum: <%= fileHashType %>:<%= bundle[fileExt + 'Hash'] %> */
@@ -222,19 +222,19 @@ tasks:
       splitKeyAt: ./
 
   mocha:
-    constructorLocation: ./src/bundle-tasks-adapters/MochaAdapter
+    constructorLocation: ./src/bundle-task-adapters/MochaAdapter
     priority: 94
     files: null # testDir or array of files (test files)
     options: null
     
   # RequireJs Defaults
   requirejs:
-    constructorLocation: ./src/bundle-tasks-adapters/RequireJsAdapter
+    constructorLocation: ./src/bundle-task-adapters/RequireJsAdapter
     priority: 93
     
   # Watch Task Defaults
   watch:
-    constructorLocation: ./src/bundle-tasks-adapters/WatchAdapter
+    constructorLocation: ./src/bundle-task-adapters/WatchAdapter
     priority: -99
 
     # Tasks to ignore on the bundle level (watch creates it's own
@@ -250,7 +250,7 @@ tasks:
       - deploy
 
 #  minifyjs:
-#    constructorLocation: ./src/bundle-tasks-adapters/MinifyJsAdapter
+#    constructorLocation: ./src/bundle-task-adapters/MinifyJsAdapter
 #    priority: 99
 #    alternateName: js
 #    #files:
@@ -261,7 +261,7 @@ tasks:
 #    # @see https://www.npmjs.com/package/uglify-js
 #
 #  minifyhtml:
-#    constructorLocation: ./src/bundle-tasks-adapters/MinifyHtmlAdapter
+#    constructorLocation: ./src/bundle-task-adapters/MinifyHtmlAdapter
 #    priority: 99
 #    alternateName: html
 #    #files:
@@ -272,7 +272,7 @@ tasks:
 #      comments: true
 #
 #  minifycss:
-#    constructorLocation: ./src/bundle-tasks-adapters/MinifyCssAdapter
+#    constructorLocation: ./src/bundle-task-adapters/MinifyCssAdapter
 #    priority: 99
 #    alternateName: css
 #    #files:
@@ -281,7 +281,7 @@ tasks:
 #    #options:
 #
 #  minifyimage:
-#    constructorLocation: ./src/bundle-tasks-adapters/ImageminAdapter
+#    constructorLocation: ./src/bundle-task-adapters/ImageminAdapter
 #    priority: 99
 #    alternateName: images
 #    #files
@@ -290,7 +290,7 @@ tasks:
 #    #options:
 #
 #  crisper:
-#    constructorLocation: ./src/bundle-tasks-adapters/CrisperAdapter
+#    constructorLocation: ./src/bundle-task-adapters/CrisperAdapter
 #    priority: 98
 #    #files
 #
@@ -298,7 +298,7 @@ tasks:
 #    #options:
 #
 #  babel:
-#    constructorLocation: ./src/bundle-tasks-adapters/BabelAdapter
+#    constructorLocation: ./src/bundle-task-adapters/BabelAdapter
 #    priority: 97
 #    #files:
 #
@@ -308,7 +308,7 @@ tasks:
   # Runs vulcanize and crisper on a file and alternately the file hash as a prefix or suffix
   # to the file's basename.
   vulcan:
-    constructorLocation: ./src/bundle-tasks-adapters/VulcanTaskAdapter
+    constructorLocation: ./src/bundle-task-adapters/VulcanTaskAdapter
     priority: 92
 
     # Files to vulcanize
@@ -335,7 +335,7 @@ tasks:
     #noDomWrapper: false # Best used from bundle config level
 
   findandreplace:
-    constructorLocation: ./src/bundle-tasks-adapters/FindAndReplaceAdapter.js
+    constructorLocation: ./src/bundle-task-adapters/FindAndReplaceAdapter.js
     priority: -98
     # 'gulp-replace' module options
     # @see for available options: https://www.npmjs.com/package/gulp-replace
@@ -349,7 +349,7 @@ tasks:
 
   copytoclipboard:
     alternateAlias: clipboard
-    constructorLocation: ./src/bundle-tasks-adapters/CopyToClipboardTaskAdapter.js
+    constructorLocation: ./src/bundle-task-adapters/CopyToClipboardTaskAdapter.js
     priority: -100
     # The following two attributes are optional but at least one must declared inorder to use this task:
     #file: {String} - Optional.

@@ -107,6 +107,7 @@ function initializeTaskManager (userConfig, env) {
         GulpTaskManager = new GulpTaskManager(sjl.extend(true, {
             argv: argv,
             env: env,                   // Currently only added to facilitate tests
+            pwd: __dirname,
             configPath: env.configPath,
             configBase: env.configBase  // users cwd
         }, userConfig))

@@ -35,7 +35,8 @@ class TaskManager extends TaskManagerConfig {
             _configPath         = '',
             _cwd                = '',
             _pwd                = '',
-            _taskRunnerAdapter  = {};
+            _taskRunnerAdapter  = {},
+            _joinedConfig = sjl.extend(true, _defaultConfig, config);
 
         // Define properties
         Object.defineProperties(self, {
@@ -112,7 +113,7 @@ class TaskManager extends TaskManagerConfig {
                 enumerable: true
             },
             config: {
-                value: config,
+                value: _joinedConfig,
                 enumerable: true
             },
             errorReports: {
@@ -186,24 +187,24 @@ class TaskManager extends TaskManagerConfig {
         });
 
         // Inject the passed in configuration
-        this.set(_defaultConfig, config);
+        this.set(_joinedConfig);
 
         // Set bundles path
         this.bundlesPath = path.join(this.configBase, this.bundlesPath);
 
         // Populate some of our names
-        this.bundleFileNames.addFromArray(fs.readdirSync(this.bundlesPath)),
-        this.availableTaskNames.addFromArray(Object.keys(this.config.tasks)),
-        this.availableStaticTaskNames.addFromArray(Object.keys(this.config.staticTasks)),
+        this.bundleFileNames.addFromArray(fs.readdirSync(this.bundlesPath));
+        this.availableTaskNames.addFromArray(Object.keys(this.config.tasks));
+        this.availableStaticTaskNames.addFromArray(Object.keys(this.config.staticTasks));
         this.availableBundleNames.addFromArray(this.bundleFileNames._values.map((fileName) => {
                 return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
-            })),
+            }));
 
         // Set log function
-        log = gwUtils.logger(config.argv, this);
+        log = gwUtils.logger(this.argv, this);
 
         // Log before setting config(s)
-        log (chalk.cyan('\n"' + TaskManager.name + '" initiated.\nWith `config`:\n'), config,
+        log (chalk.cyan('\n"' + TaskManager.name + '" initiated.\nWith `config`:\n'),
             chalk.cyan('\nConsole params:\n'), this.argv, '--debug');
     }
 
@@ -229,32 +230,38 @@ class TaskManager extends TaskManagerConfig {
 
         // Get split commands
         this.argv._.forEach(function (value)  {
+
             let splitCommand = this.taskRunnerAdapter.splitCommand(value, splitCommandOn),
                 bundle = splitCommand.bundle,
                 command = splitCommand.command,
                 taskName = splitCommand.taskAlias,
+
+                isPopulatedTaskName = !sjl.isEmptyOrNotOfType(taskName, String),
+                isStaticTask = availableStaticTaskNames.has(taskName),
+                isTask = availableTaskNames.has(taskName),
+
                 taskAdapter,
                 staticTaskAdapter;
 
             // Task Names
-            if (!sjl.isEmptyOrNotOfType(taskName, String) && availableTaskNames.has(taskName) && !addedTaskNames.has(taskName)) {
+            if (isPopulatedTaskName && isTask && !addedTaskNames.has(taskName)) {
                 addedTaskNames.add(taskName);
                 taskAdapter = this._initTaskAdapter(taskName, this.config.tasks[taskName]);
             }
-            else {
+            else if (!isStaticTask) {
                 throw new Error('An error occurred before registering task name "' + taskName + '".' +
                     '  Either the task name is empty, not of the correct type, or the task name was not found in ' +
                     '`available task names`.');
             }
 
             // Static Task Names
-            if (sjl.classOfIs(command, String) && command.indexOf(splitCommandOn) === -1
-                && !availableTaskNames.has(command)
+            if (isPopulatedTaskName && command.indexOf(splitCommandOn) === -1
+                && isStaticTask
                 && availableStaticTaskNames.has(command)
                 && !addedStaticTaskNames.has(command)) {
                 addedStaticTaskNames.add(command);
                 staticTaskAdapter =
-                    this._initStaticTaskAdapter(taskName, this.config.staticTasks[taskName]);
+                    this._initStaticTaskAdapter(taskName, sjl.jsonClone(this.config.staticTasks[taskName]));
             }
             else {
                 throw new Error('An error occurred before registering staticTaskName name "' + taskName + '".' +
@@ -262,27 +269,10 @@ class TaskManager extends TaskManagerConfig {
                     '`available staticTaskNames`.');
             }
 
-            // Bundle Names
-            if (!sjl.isEmptyOrNotOfType(bundle, String)
-                && availableBundleNames.indexOf(bundle) > -1
-                && !addedBundleNames.has(bundle)) {
-                addedBundleNames.add(bundle);
-                let bundleObj = this._initBundle(bundle, gwUtils.loadConfigFileFromSupportedExts(
-                    path.join(this.cwd, this.configs.bundlesPath, bundle)));
+            if (!sjl.isEmptyOrNotOfType(bundle, String)) {
+                this._initBundle(bundle);
+            }
 
-                // Register bundle with task adapter or static task adapter
-                if (taskAdapter) {
-                    taskAdapter.registerBundle(bundleObj);
-                }
-                else if (staticTaskAdapter) {
-                    staticTaskAdapter.registerBundle(bundleObj);
-                }
-            }
-            else {
-                throw new Error('An error occurred before registering bundle name "' + bundle + '".' +
-                    '  Either the bundle name is empty, not of the correct type, or the bundle was not found in ' +
-                    '`available bundles`.');
-            }
 
             // Split commands
             this.splitCommands.set(command, splitCommand);
@@ -347,16 +337,46 @@ class TaskManager extends TaskManagerConfig {
         return taskAdapter;
     }
 
-    _initBundle(bundleName, bundleConfig) {
+    _createBundle (bundleName, bundleConfig) {
         bundleConfig.alias = bundleName;
-        var bundleObj = new Bundle(bundleConfig);
-        this.bundles.set(bundleName, bundleObj);
-        return bundleObj;
+        return new Bundle(bundleConfig);
+    }
+
+    _initBundle(bundleName) {
+        let isAvailableBundleName = this.availableBundleNames.has(bundleName),
+            isBundleNameInSession = this.bundles.has(bundleName);
+
+        var retVal = null;
+
+        // Check if we should register this `bundleName`
+        if (isAvailableBundleName && !isBundleNameInSession) {
+
+            // Create bundle obj
+            let bundlePath = path.join(this.cwd, this.bundlesPath, bundleName),
+                bundleConfig = gwUtils.loadConfigFileFromSupportedExts(bundlePath),
+
+                // Build bundle
+                bundleObj = retVal = this._createBundle(bundleName, bundleConfig);
+
+            // Store bundle
+            this.bundles.set(bundleName, bundleObj);
+        }
+        else if (isBundleNameInSession) {
+            retVal = this.bundles.get(bundleName);
+        }
+        else if (!isAvailableBundleName) {
+            throw new Error('An error occurred before registering bundle name "' + bundleName + '".' +
+                '  Either the bundle name is empty, not of the correct type, or the bundle was not found in ' +
+                '`available bundles`.');
+        }
+
+        // Return result of operation
+        return retVal;
     }
 
     _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
         staticTaskConfig.alias = staticTaskName;
-        var FetchedStaticTaskAdapterClass = require(path.join(this.cwd, staticTaskConfig.constructorLocation)),
+        var FetchedStaticTaskAdapterClass = require(path.join(this.pwd, staticTaskConfig.constructorLocation)),
             staticTaskAdapter = new FetchedStaticTaskAdapterClass(staticTaskConfig, this);
         this.staticTaskAdapters.set(staticTaskName, staticTaskAdapter);
         return staticTaskAdapter;

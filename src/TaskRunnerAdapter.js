@@ -38,7 +38,7 @@ class TaskRunnerAdapter {
             taskAlias = args.shift();
             bundle = args.length > 1 ? args.shift() : null;
             params = args.length > 0 ? args : null;
-            out = {taskAlias: taskAlias, bundle: bundle, params: params};
+            out = sjl.extend(out, {taskAlias: taskAlias, bundle: bundle, params: params});
         }
         return out;
     }
