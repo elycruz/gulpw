@@ -79,5 +79,6 @@
   "homepage": "https://github.com/saksdirect/gulpw",
   "directories": {
     "test": "tests"
-  }
+  },
+  "testRepoPath": "../gulpw-sample-app"
 }

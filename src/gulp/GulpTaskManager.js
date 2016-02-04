@@ -5,14 +5,14 @@
 'use strict';
 
 let TaskManager = require('./../TaskManager'),
-    GulpTaskRunnerAdapter = require('./../gulp/GulpTaskRunnerAdapter'),
+    GulpTaskRunnerAdapter = require('./GulpTaskRunnerAdapter'),
     gulp = require('gulp');
 
 class GulpTaskManager extends TaskManager {
     constructor (config) {
         super(config);
         this.taskRunnerAdapter = new GulpTaskRunnerAdapter(gulp);
-        this.init();
+        //this.init();
     }
 
     launchTasks (taskCommands) {

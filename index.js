@@ -105,12 +105,11 @@ function initializeTaskManager (userConfig, env) {
     // Instantiate TaskManager
     try {
         GulpTaskManager = new GulpTaskManager(sjl.extend(true, {
-            taskRunner: gulp,
             argv: argv,
-            env: env,
+            env: env,                   // Currently only added to facilitate tests
             configPath: env.configPath,
-            configBase: env.configBase
-        }, defaultConfig, userConfig))
+            configBase: env.configBase  // users cwd
+        }, userConfig))
     }
     catch (e) {
         console.log('Uncaught Error: \n',

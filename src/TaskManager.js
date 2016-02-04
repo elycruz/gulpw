@@ -45,6 +45,10 @@ class TaskManager extends TaskManagerConfig {
                 },
                 set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(contextName, 'argv', value, Object);
+                    if (!sjl.issetAndOfType(value._, 'Array')) {
+                        throw new Error ('`' + contextName + '.argv` requires an object with a `_` prop of type of array' +
+                            'array.  Type of `_` received: "' + sjl.classOf(value._)) + '".';
+                    }
                     _argv = value;
                 },
                 enumerable: true
@@ -79,8 +83,11 @@ class TaskManager extends TaskManagerConfig {
                 },
                 set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
-                        contextName, '_configBase', value, String,
+                        contextName, 'configBase', value, String,
                         'Only strings are allowed for this property');
+                    if (value.length === 0) {
+                        throw new Error ('`' + contextName + '.configBase` reqruires a string of length greater than `0`.');
+                    }
                     _configBase = value;
                 },
                 enumerable: true
@@ -97,6 +104,9 @@ class TaskManager extends TaskManagerConfig {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_configPath', value, String,
                         'Only strings are allowed for this property');
+                    if (value.length === 0) {
+                        throw new Error ('`' + contextName + '.configPath` reqruires a string of length greater than `0`.');
+                    }
                     _configPath = value;
                 },
                 enumerable: true
@@ -176,7 +186,7 @@ class TaskManager extends TaskManagerConfig {
         });
 
         // Inject the passed in configuration
-        this.set(config);
+        this.set(_defaultConfig, config);
 
         // Set bundles path
         this.bundlesPath = path.join(this.configBase, this.bundlesPath);

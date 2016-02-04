@@ -7,8 +7,8 @@
 let chai = require('chai'),
     expect = chai.expect,
     //sjl = require('sjljs'),
-    Config = require('./../src/Config'),
-    TaskManagerConfig = require('./../src/TaskManagerConfig'),
+    Config = require('./../../src/Config'),
+    TaskManagerConfig = require('./../../src/TaskManagerConfig'),
     config = {
         bundleConfigsPath: './some-bundles/config-path',
         bundleConfigFormats: ['.js', '.json', '.yaml'],
