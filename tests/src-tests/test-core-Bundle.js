@@ -7,7 +7,7 @@ let chai = require('chai'),
     expect = chai.expect,
     sjl = require('sjljs'),
     Bundle = require('./../../src/Bundle'),
-    Config = require('./../../src/Config'),
+    Config = sjl.stdlib.Config,
     propNames = [
         'alias',
         'description',

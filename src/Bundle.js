@@ -3,8 +3,8 @@
  */
 'use strict';
 
-let Config = require('./Config'),
-    sjl = require('sjljs');
+let sjl = require('sjljs'),
+    Config = sjl.stdlib.Config;
 
 class Bundle extends Config {
     constructor(/**...options {Object} **/) {

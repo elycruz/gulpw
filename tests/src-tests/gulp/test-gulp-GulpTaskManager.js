@@ -9,13 +9,13 @@ let chai = require('chai'),
     path = require('path'),
     gulp = require('gulp'),
     ns = require('../../../src/namespace'),
-//sjl = require('sjljs'),
+    sjl = require('sjljs'),
 
-// To get test project path
+    // To get test project path
     packageJson = require('./../../../package.json'),
     gwUtils = ns.Utils,
 
-// Get configurations for TaskManager
+    // Get configurations for TaskManager
     testProjectPath = path.join(__dirname, './../../../' + packageJson.testRepoPath),
     testProjectConfigPath = path.join(testProjectPath, '/gulpw-config.yaml'),
     defaultConfig = gwUtils.loadConfigFile('configs/gulpw-config.yaml'),

@@ -9,10 +9,11 @@ var fs = require('fs'),
     sjl = require('sjljs'),
     gulp = require('gulp'),
     eslint = require('gulp-eslint'),
-    srcs = ['./src/**/*.js', './tests/**/*.js'],
+    mocha = require('gulp-mocha'),
     concat = require('gulp-concat'),
     yaml = require('js-yaml'),
-    bump = require('gulp-bump');
+    bump = require('gulp-bump'),
+    srcs = ['./src/**/*.js', './tests/**/*.js'];
 
 //gulp.task('tasks-section', function () {
 //    var gulpwConfig = yaml.safeLoad(fs.readFileSync('configs/wrangler.config.yaml')),
@@ -91,7 +92,8 @@ gulp.task('watch', ['eslint'], function () {
 });
 
 gulp.task('tests', function () {
-
-})
+    return gulp.src('./tests/src-tests/*.js', {read: false})
+        .pipe(mocha({reporter: 'nyan'}));
+});
 
 gulp.task('default', ['watch']);

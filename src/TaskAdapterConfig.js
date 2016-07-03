@@ -3,7 +3,8 @@
  */
 'use strict';
 
-let Config = require('./Config');
+let sjl = require('sjljs'),
+    Config = sjl.stdlib.Config;
 
 class TaskAdapterConfig extends Config {
     constructor(/**...options {Object}**/) {

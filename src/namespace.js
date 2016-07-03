@@ -3,5 +3,5 @@
  */
 
 'use strict';
-
-module.exports = require('sjljs').createTopLevelPackage({}, 'ns', 'package', __dirname).package;
+let sjl = require('sjljs');
+module.exports = new sjl.nodejs.Namespace(__dirname);

@@ -8,7 +8,7 @@ let chai = require('chai'),
     expect = chai.expect,
     path = require('path'),
     gulp = require('gulp'),
-    //sjl = require('sjljs'),
+    sjl = require('sjljs'),
 
     // To get test project path
     packageJson = require('./../../package.json'),

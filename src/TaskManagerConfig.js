@@ -5,9 +5,9 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    SjlMap = sjl.SjlMap,
-    SjlSet = sjl.SjlSet,
-    Config = require('./Config'),
+    SjlMap = sjl.stdlib.SjlMap,
+    SjlSet = sjl.stdlib.SjlSet,
+    Config = sjl.stdlib.Config,
     contextName = 'TaskManagerConfig';
 
 class TaskManagerConfig extends Config {
