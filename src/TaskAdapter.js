@@ -4,7 +4,8 @@
 
 'use strict';
 
-let TaskAdapterConfig = require('./TaskAdapterConfig'),
+let sjl = require('sjljs'),
+    TaskAdapterConfig = require('./TaskAdapterConfig'),
     contextName = 'TaskAdapter';
 
 class TaskAdapter {
@@ -12,7 +13,10 @@ class TaskAdapter {
     constructor (config, taskManager) {
         var _config = {};
         Object.defineProperties(this, {
-            taskManager: {value: taskManager},
+            taskManager: {
+                value: taskManager,
+                enumerable: true
+            },
             config: {
                 set: function (value)  {
                     var classOfValue = sjl.classOf(value);
@@ -27,10 +31,13 @@ class TaskAdapter {
                 },
                 get: function ()  {
                     return _config;
-                }
+                },
+                enumerable: true
             }
         });
-        this.config = config;
+        if (config) {
+            this.config = config;
+        }
     }
 
     registerBundle (bundle, taskManager) {

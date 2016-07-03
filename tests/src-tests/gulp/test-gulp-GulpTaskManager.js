@@ -30,10 +30,9 @@ let chai = require('chai'),
 
 describe('GulpTaskManager', () => {
 
-    it ('Should be an instanceof `TaskManager` class should be pass construction' +
-        ' with qualifying configuration.', () => {
-        let config = sjl.extend(true, {}, defaultConfig, requiredConfig, userConfig);
-        expect((new GulpTaskManager(config)) instanceof TaskManager).to.equal(true);
-    });
+    // it ('Should be an instanceof `TaskManager`.', () => {
+    //     let config = sjl.extend(true, {}, defaultConfig, requiredConfig, userConfig);
+    //     expect((new GulpTaskManager(config)) instanceof TaskManager).to.equal(true);
+    // });
 
 });
