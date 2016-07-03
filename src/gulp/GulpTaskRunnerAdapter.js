@@ -6,6 +6,7 @@
 
 let sjl = require('sjljs'),
     gulp = require('gulp'),
+    chalk = require('chalk'),
     TaskRunnerAdapter = require('./../TaskRunnerAdapter');
 
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {

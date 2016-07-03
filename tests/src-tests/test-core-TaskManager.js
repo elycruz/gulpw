@@ -32,7 +32,7 @@ describe('TaskManager', () => {
     it ('Should be an instanceof `TaskManagerConfig` class should be pass construction' +
         ' with qualifying configuration.', () => {
         let config = sjl.extend(true, {}, defaultConfig, requiredConfig, userConfig);
-        expect(new TaskManager(config) instanceof TaskManagerConfig).to.equal(true);
+        expect((new TaskManager(config)) instanceof TaskManagerConfig).to.equal(true);
     });
 
 });

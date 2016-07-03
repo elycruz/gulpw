@@ -8,11 +8,12 @@ let chai = require('chai'),
     expect = chai.expect,
     path = require('path'),
     gulp = require('gulp'),
+    ns = require('../../../src/namespace'),
 //sjl = require('sjljs'),
 
 // To get test project path
     packageJson = require('./../../../package.json'),
-    gwUtils = require('./../../../src/Utils'),
+    gwUtils = ns.Utils,
 
 // Get configurations for TaskManager
     testProjectPath = path.join(__dirname, './../../../' + packageJson.testRepoPath),
@@ -24,15 +25,15 @@ let chai = require('chai'),
         configPath: testProjectConfigPath,
         configBase: testProjectPath
     },
-    TaskManager = require('./../../../src/TaskManager'),
-    GulpTaskManager = require('./../../../src/gulp/GulpTaskManager');
+    TaskManager = ns.TaskManager,
+    GulpTaskManager = ns.gulp.GulpTaskManager;
 
 describe('GulpTaskManager', () => {
 
     it ('Should be an instanceof `TaskManager` class should be pass construction' +
         ' with qualifying configuration.', () => {
         let config = sjl.extend(true, {}, defaultConfig, requiredConfig, userConfig);
-        expect(new GulpTaskManager(config) instanceof TaskManager).to.equal(true);
+        expect((new GulpTaskManager(config)) instanceof TaskManager).to.equal(true);
     });
 
 });

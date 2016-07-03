@@ -4,16 +4,15 @@
 
 'use strict';
 
-var sjl = require('sjljs'),
+var fs = require('fs'),
+    path = require('path'),
+    sjl = require('sjljs'),
     gulp = require('gulp'),
     eslint = require('gulp-eslint'),
     srcs = ['./src/**/*.js', './tests/**/*.js'],
     concat = require('gulp-concat'),
-    fs = require('fs'),
-    path = require('path'),
     yaml = require('js-yaml'),
-    bump = require('gulp-bump'),
-    gulpBabel = require('gulp-babel');
+    bump = require('gulp-bump');
 
 //gulp.task('tasks-section', function () {
 //    var gulpwConfig = yaml.safeLoad(fs.readFileSync('configs/wrangler.config.yaml')),
@@ -72,32 +71,27 @@ var sjl = require('sjljs'),
 //        .pipe(gulp.dest('./'));
 //});
 
-// Eslint
 gulp.task('eslint', function () {
-    gulp.src(srcs)
+    return gulp.src(srcs)
         .pipe(eslint({useEslintrc: true}))
-        .pipe(eslint.format('stylish'));
-        //.pipe(eslint.failAfterError());
+        .pipe(eslint.format('stylish'))
+        .pipe(eslint.failAfterError());
 });
 
-// Bump
-gulp.task('bump', function(){
+gulp.task('version', function(){
     gulp.src('./package.json')
         .pipe(bump())
         .pipe(gulp.dest('./'));
 });
 
-// Build
-//gulp.task('build', function () {
-//    gulp.src(['./src/**/*.js'])
-//        .pipe(gulpBabel())
-//        .pipe(gulp.dest('build'));
-//});
-
 // Watch
-gulp.task('watch', function () {
+gulp.task('watch', ['eslint'], function () {
     gulp.watch(srcs, ['eslint']);
     //gulp.watch('./docs/*.md', ['readme']);
 });
 
-gulp.task('default', ['eslint', /*'readme',*/ 'watch']);
+gulp.task('tests', function () {
+
+})
+
+gulp.task('default', ['watch']);

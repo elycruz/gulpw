@@ -21,7 +21,7 @@ let chai = require('chai'),
         booleanValue: false,
         arrayValue: [],
         objectValue: {},
-        nullValue: null,
+        // nullValue: null,
         functionValue: () => {},
         someNestedObject: {all: {your: {base: {are: {belong: {to: {us: true}}}}}}}
     },
@@ -63,13 +63,13 @@ describe('Config', () => {
 
     describe('#`get`', () => {
         it ('should be able to get a value by key.', () => {
-            var testData = sjl.clone(nonNullValuedObject),
+            var testData = sjl.jsonClone(nonNullValuedObject),
                 config = new Config(testData);
             expect(config.get('stringValue')).to.equal(config.stringValue);
             expect(config.get('stringValue')).to.equal(testData.stringValue);
         });
         it ('should be able to get nested values by namespace key.', () => {
-            var testData = sjl.clone(nonNullValuedObject.someNestedObject),
+            var testData = sjl.jsonClone(nonNullValuedObject.someNestedObject),
                 config = new Config(testData);
             expect(config.get('all.your.base.are.belong').to.us).to.equal(config.all.your.base.are.belong.to.us);
             expect(config.get('all.your.base.are.belong').to.us).to.equal(testData.all.your.base.are.belong.to.us);

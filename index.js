@@ -72,7 +72,7 @@ var sjl = require('sjljs'),
         }
     }),
     GulpTaskManager = require('./src/gulp/GulpTaskManager'),
-    defaultConfig = gwUtils.loadConfigFile(path.join(__dirname, '/configs/gulpw-config.yaml')),
+    defaultConfig = gwUtils.loadConfigFile('./configs/gulpw-config.yaml'),
     userConfig, taskManager;
 
 function logPertinent (env) {
