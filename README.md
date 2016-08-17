@@ -6,7 +6,9 @@ gulpw (gulp wrangler)
 ====================
 
 ## Deprecated
-This project is deprecated until new version is scripted.
+This project is deprecated (and broken! (you've been warned!)) until new version is scripted.
+Also if anyone is interested in taking this project over
+let me know.  Thanks.
 
 ## Original ReadMe follows:
 Allows the management of a website or web application via bundle configuration files from the
