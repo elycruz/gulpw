@@ -7,20 +7,13 @@
 
 'use strict';
 
-// Utils library
 var sjl = require('sjljs'),
-
-    // GulpWrangler Utils
     gwUtils = require('./src/Utils'),
-
-    // Launcher
     Liftoff = require('liftoff'),
-
-    // Command line arguments config
     argv = require('yargs')
 
+        // @todo move these to ./configs/gulpw-config.yaml
         // Default param values
-
         .default('verbose',         false)
         .default('debug',           false)
         .default('skip-artifacts',  false)
@@ -29,6 +22,7 @@ var sjl = require('sjljs'),
         .default('force',           false)
         .default('out',             null)
 
+        // @todo move these to ./configs/gulpw-config.yaml
         // Command line param alias
         .alias('o',                 'out')
         .alias('a',                 'async')

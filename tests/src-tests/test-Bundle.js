@@ -3,15 +3,15 @@
  */
 'use strict';
 
-let chai = require('chai'),
-    expect = chai.expect,
-    sjl = require('sjljs'),
-    Bundle = require('./../../src/Bundle'),
-    Config = sjl.stdlib.Config;
+let chai =      require('chai'),
+    expect =    chai.expect,
+    sjl =       require('sjljs'),
+    Bundle =    require('./../../src/Bundle'),
+    Config =    sjl.stdlib.Config;
 
 describe ('Bundle', function () {
     describe ('Construction', function () {
-        it ('Should be an instanceof `Config`.', () => {
+        it ('Should be an instanceof `sjl.stdlib.Config`.', function () {
             expect(new Bundle()).to.be.instanceof(Config);
         });
     });
@@ -30,5 +30,6 @@ describe ('Bundle', function () {
                 });
             });
         });
+
     });
 });
