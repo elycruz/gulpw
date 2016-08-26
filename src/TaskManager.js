@@ -23,11 +23,7 @@ var log;
 class TaskManager extends TaskManagerConfig {
 
     constructor(config) {
-
-        // Call super
         super();
-
-        // Private variables that we expose to the outside start with `_`
         var self = this,
             _defaultConfig      = gwUtils.loadConfigFile(path.join(__dirname, '/../configs/gulpw-config.yaml')),
             _argv               = {},
@@ -38,7 +34,6 @@ class TaskManager extends TaskManagerConfig {
             _taskRunnerAdapter  = {},
             _joinedConfig = sjl.extend(true, _defaultConfig, config);
 
-        // Define properties
         Object.defineProperties(self, {
             argv: {
                 get: function ()  {
@@ -273,24 +268,16 @@ class TaskManager extends TaskManagerConfig {
                 this._initBundle(bundle);
             }
 
-
             // Split commands
             this.splitCommands.set(command, splitCommand);
 
         }, this);
 
-        // Clear memory
-        availableStaticTaskNames = null;
-        availableTaskNames = null;
-        availableBundleNames = null;
-        addedBundleNames = null;
-        addedStaticTaskNames = null;
-        addedTaskNames = null;
-        bundleFileNames = null;
-        splitCommandOn = null;
-
         // Ensure globally called tasks adapters are invoked globally as well
-        return this._ensureInvokedGlobalTasks();
+        this._ensureInvokedGlobalTasks();
+        this.launchTasks();
+
+        return this;
     }
 
     getTaskAdapter(taskName) {
@@ -337,11 +324,6 @@ class TaskManager extends TaskManagerConfig {
         return taskAdapter;
     }
 
-    _createBundle (bundleName, bundleConfig) {
-        bundleConfig.alias = bundleName;
-        return new Bundle(bundleConfig);
-    }
-
     _initBundle(bundleName) {
         let isAvailableBundleName = this.availableBundleNames.has(bundleName),
             isBundleNameInSession = this.bundles.has(bundleName);
@@ -375,11 +357,17 @@ class TaskManager extends TaskManagerConfig {
     }
 
     _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
+        this.log('hello-world');
         staticTaskConfig.alias = staticTaskName;
         var FetchedStaticTaskAdapterClass = require(path.join(this.pwd, staticTaskConfig.constructorLocation)),
             staticTaskAdapter = new FetchedStaticTaskAdapterClass(staticTaskConfig, this);
         this.staticTaskAdapters.set(staticTaskName, staticTaskAdapter);
         return staticTaskAdapter;
+    }
+
+    _createBundle (bundleName, bundleConfig) {
+        bundleConfig.alias = bundleName;
+        return new Bundle(bundleConfig);
     }
 
     _ensureInvokedGlobalTasks () {

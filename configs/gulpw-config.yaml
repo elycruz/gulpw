@@ -41,7 +41,7 @@ staticTasks:
   "bundle":
     constructorLocation: ./src/gulp/static-task-adapters/BundleConfigTaskAdapter
     emptyBundleFilePath: ./configs/empty-bundle-config-template.yaml
-    allowedTasks:
+    allowedTaskNames:
       - browserify
       - compass
       - copy

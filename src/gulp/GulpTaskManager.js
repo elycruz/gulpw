@@ -11,15 +11,17 @@ let TaskManager = require('./../TaskManager'),
 class GulpTaskManager extends TaskManager {
     constructor (config) {
         super(config);
-        this.taskRunnerAdapter = new GulpTaskRunnerAdapter(gulp);
+        this.taskRunnerAdapter = new GulpTaskRunnerAdapter(gulp, this);
         this.init();
     }
 
     launchTasks (taskCommands) {
+        this.taskRunnerAdapter.launchTasks();
         return this;
     }
 
     launchTasksSync (taskCommands) {
+        this.taskRunnerAdapter.launchTasksSync();
         return this;
     }
 }

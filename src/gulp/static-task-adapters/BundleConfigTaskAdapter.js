@@ -1,15 +1,8 @@
 /**
  * Created by elydelacruz on 2/3/16.
  */
-/**
- * Created by Ely on 1/15/2015.
- */
-/**
- * Created by Ely on 1/15/2015.
- */
 
 'use strict';
-
 
 // Import base task proxy to extend
 let sjl = require('sjljs'),
@@ -25,13 +18,30 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
     constructor(config) {
         super();
 
-        var _emptyBundleFilePath = '',
+        var contextName = 'gulpw.gulp.static-task-adapters.BundleConfigTaskAdapter',
+            _emptyBundleFilePath = '',
             _allowedTaskNames = [];
 
         // Augment config
         Object.defineProperties(this.config, {
-            emptyBundleFilePath: {},
-            allowedTaskName: {}
+            emptyBundleFilePath: {
+                get: function () {
+                    return _emptyBundleFilePath;
+                },
+                set: function (value) {
+                    sjl.throwTypeErrorIfNotOfType(contextName, 'emptyBundleFilePath', value, String.name);
+                    _emptyBundleFilePath = value;
+                }
+            },
+            allowedTaskNames: {
+                get: function () {
+                    return _allowedTaskNames;
+                },
+                set: function (value) {
+                    sjl.throwTypeErrorIfNotOfType(contextName, 'allowedTaskNames', value, Array.name);
+                    _allowedTaskNames = value;
+                }
+            }
         });
 
         // Set config
@@ -42,7 +52,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
         var self = this,
             taskManager = self.taskManager,
             config = self.config,
-            otherTaskKeys = config.allowedTasks,
+            otherTaskKeys = config.allowedTaskNames,
             defaultBundleName = process.argv.length === 4 ? process.argv[3] : 'bundle',
             questions = [
                 {
@@ -97,6 +107,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                 //    choices: otherTaskKeys
                 //}
             ];
+
         this._registerWithTaskRunner(self, taskManager, questions);
     }
 
@@ -104,11 +115,13 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
 
         self.taskRunner.task('bundle', function () {
 
+            taskManager.log('hereio');
+
             return new Promise(function (fulfill, reject) {
 
                 console.log(chalk.cyan('Running "bundle" task.\n\n'));
 
-                inquirer.prompt(questions, function (answers) {
+                inquirer.prompt(questions).then(function (answers) {
 
                     var newConfig = {
                             alias: answers.alias,

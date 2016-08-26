@@ -4,23 +4,39 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    contextName = 'TaskRunnerAdapter';
+    contextName = 'TaskRunnerAdapter',
+    TaskManager = require('./TaskManager');
 
 class TaskRunnerAdapter {
 
-    constructor (taskRunner) {
-        var _taskRunner = {};
-        Object.defineProperty(this, 'taskRunner', {
-            get: function ()  {
-                return _taskRunner;
+    constructor (taskRunner, taskManager) {
+        var _taskRunner,
+            _taskManager;
+        Object.defineProperties(this, {
+            taskRunner: {
+                get: function () {
+                    return _taskRunner;
+                },
+                set: function (value) {
+                    sjl.throwTypeErrorIfNotOfType(contextName, 'taskRunner', value, Object);
+                    _taskRunner = value;
+                },
+                enumerable: true
             },
-            set: function (value)  {
-                sjl.throwTypeErrorIfNotOfType(contextName, 'taskRunner', value, Object);
-                _taskRunner = value;
-            },
-            enumerable: true
+            taskManager: {
+                get: function () {
+                    return _taskManager;
+                },
+                set: function (value) {
+                    if (value instanceof TaskManager === false) {
+                        throw new TypeError (contextName + '.taskManager only accepts instances of TaskManager.');
+                    }
+                    _taskManager = value;
+                }
+            }
         });
         this.taskRunner = taskRunner;
+        this.taskManager = taskManager;
     }
 
     /**

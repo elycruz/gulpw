@@ -11,8 +11,8 @@ let sjl = require('sjljs'),
 
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
-    constructor (taskRunner) {
-        super(taskRunner || gulp);
+    constructor (taskRunner, taskManager) {
+        super(taskRunner || gulp, taskManager);
     }
 
     getTask(key) {
@@ -58,6 +58,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     }
 
     launchTasks(tasks) {
+
         var self = this,
             taskManager = self.taskManager,
             taskRunner = self.taskRunner;
