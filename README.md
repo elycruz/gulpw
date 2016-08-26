@@ -5,15 +5,15 @@
 gulpw (gulp wrangler)
 ====================
 
-Allows the management of a website or web application via bundle configuration files from the
-command line (uses gulp in the background) and makes feature based development easier.
+A decorator for gulp which allows gulp (via `gulpw`) to run using configuration files.
 
 ## Basic Idea
 So the idea is as follows:
     We have a `bundles` directory (could be named anything via the `gulpw-config.*` file).
-That directory should contain "bundle-configuration" files which are used by "task adapters" to run a
+That directory should contain "bundle-config" files which are used by "task adapters" to run a
 task via the command line;  E.g., `$ gulpw build:global deploy:global deploy:other-bundle`.
-The bundle files will then hold the user's configurations in the *.yaml, *.json, or *.js format.
+The bundle files will then hold the user's configurations (options, file lists etc.) in the *.yaml, *.json, or *.js format.
+gulpw will then run all tasks available in the configuration files (task keys) for the found config files.
 
 ## Quick Nav
 - [Install](#install)
