@@ -92,7 +92,7 @@ gulp.task('watch', ['eslint'], function () {
 });
 
 gulp.task('tests', function () {
-    return gulp.src('./tests/src-tests/*.js', {read: false})
+    return gulp.src('./tests/unit-tests/*.js', {read: false})
         .pipe(mocha({reporter: 'nyan'}));
 });
 

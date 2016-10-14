@@ -28,6 +28,11 @@ describe ('Bundle', function () {
                 it ('should have a default value of type "' + Type.name + '".', function () {
                     expect(sjl.issetAndOfType(bundle[key], Type)).to.equal(true);
                 });
+                it ('should have the appropriate value set for property.', function () {
+                    let valueToSet = 'ABC' + (Math.random() * 1000 + 100) + '';
+                    bundle[key] = valueToSet;
+                    expect(bundle[key]).to.equal(valueToSet);
+                });
             });
         });
 
