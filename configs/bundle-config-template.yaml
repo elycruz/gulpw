@@ -1,14 +1,14 @@
 #**
-# File: empty-bundle-template.yaml
+# File: bundle-config-template.yaml
 # Description: This file is a defaults file for pulling defaults for
-#   generating a {bundle}.yaml file from the `BundleAdapter`.
+#   generating a {bundle}.{yaml|json} file from the `BundleConfigTaskAdapter`.
 # Author: Ely De La Cruz <elycruz@elycruz.com>
 # Created: 04/03/2015
 #*
 
 alias: "example-bundle-with-possible-options" # Dash separated bundle alias
 description: "Example bundle."                # description goes here
-#version: "0.0.0"                              # Semver version string
+version: "0.0.1"                              # Semver version string
 
 browserify: {}
 

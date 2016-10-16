@@ -9,6 +9,8 @@ let sjl = require('sjljs'),
     chalk = require('chalk'),
     TaskRunnerAdapter = require('../TaskRunnerAdapter');
 
+var log;
+
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
     constructor (taskRunner, taskManager) {
@@ -34,11 +36,11 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     }
 
     registerTask (taskName, depsOrCallback, callback) {
-        return this.setTask(taskName, depsOrCallback, callback);
+        return this.task(taskName, depsOrCallback, callback);
     }
 
     task (taskName, depsOrCallback, callback) {
-        return this.setTask(taskName, depsOrCallback, callback);
+        return this.taskRunner.task(taskName, depsOrCallback, callback);
     }
 
     setTask(taskName, depsOrFunc, func) {
@@ -71,7 +73,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
             taskManager = self.taskManager,
             taskRunner = self.taskRunner;
 
-        //self.log('gulp tasks: \n', nodeUtils.inspect(gulp.tasks, {depth: 10}), '--debug');
+        //taskManager.log('gulp tasks: \n', nodeUtils.inspect(gulp.tasks, {depth: 10}), '--debug');
 
         if (sjl.empty(tasks)) {
             taskManager.log('No tasks to run found.');
@@ -121,15 +123,16 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     }
 
     _runTasks (tasks, fulfill, reject, self) {
+        let taskManager = this.taskManager;
         // Start each task
         tasks.forEach(function (item) {
             // Run task
             try {
-                self.log(chalk.grey('- Launching gulp task "' + item + '".'), '--debug');
+                taskManager.log(chalk.grey('- Launching gulp task "' + item + '".'), '--debug');
                 self.runTask(item);
             }
             catch (e) {
-                self.log(chalk.red('`Wrangler.launchTasks` encountered the following error:\n'),
+                taskManager.log(chalk.red('`Wrangler.launchTasks` encountered the following error:\n'),
                     chalk.grey(e.message), chalk.grey(e.lineNumber), chalk.grey(e.stack));
                 reject('`Wrangler.launchTasks` encountered the following error:' + e);
             }

@@ -11,6 +11,7 @@ let sjl = require('sjljs'),
     yaml = require('js-yaml'),
     inquirer = require('inquirer'),
     chalk = require('chalk'),
+    gwUtils = require('../../Utils'),
     StaticTaskAdapter = require('./../../StaticTaskAdapter');
 
 class BundleConfigTaskAdapter extends StaticTaskAdapter {
@@ -45,7 +46,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
         });
 
         // Set config
-        this.config = config;
+        sjl.extend(true, this.config, config);
     }
 
     register (taskManager) {
@@ -73,7 +74,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                         }
                         else if (fs.existsSync(path.join(taskManager.bundlesPath, alias + '.json'))
                             || fs.existsSync(path.join(taskManager.bundlesPath, alias + '.yaml'))) {
-                            return 'A bundle file with that name "' + alias + '" already exists.  Try a different name.';
+                            return 'A bundle file with that name "' + alias + '" already exists.  Try a different file name.';
                         }
                         return true;
                     }
@@ -98,18 +99,20 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                 //        return answers.useMinifyAndConcat;
                 //    }
                 //},
-                //{
-                //    name: 'otherTasks',
-                //    type: 'checkbox',
-                //    message: 'Choose any other tasks you would like to configure from your bundle file:',
-                //    choices: otherTaskKeys
-                //}
+                {
+                   name: 'otherTasks',
+                   type: 'checkbox',
+                   message: 'Choose any other tasks you would like to configure from your bundle file:',
+                   choices: otherTaskKeys
+                }
             ];
 
         this._registerTaskWithTaskRunner(taskManager, questions);
     }
 
     _registerTaskWithTaskRunner(taskManager, questions) {
+
+        var self = this;
 
         taskManager.taskRunnerAdapter.task('bundle', function () {
 
@@ -124,7 +127,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                             version: '0.0.0',
                             description: ''
                         },
-                        //exampleConfig = taskManager.loadConfigFile(path.join(taskManager.pwd, self.config.emptyBundleFilePath)),
+                        exampleConfig = gwUtils.loadConfigFile(path.join(taskManager.pwd, self.config.emptyBundleFilePath)),
                         jsonSpace = '     ',
                         bundlePath = path.join(taskManager.bundlesPath, answers.alias + answers.configFormat);
 
@@ -132,7 +135,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                     newConfig.description = answers.description;
 
                     // Ensure bundles path exists
-                    taskManager.ensurePathExists(taskManager.bundlesPath);
+                    gwUtils.ensurePathExists(taskManager.bundlesPath);
 
                     // Files hash
                     //if (answers.useMinifyAndConcat &&
@@ -143,31 +146,34 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                     //        newConfig.files[key] = [];
                     //    });
                     //}
-                    //
-                    //// Other tasks
-                    //if (answers.otherTasks && answers.otherTasks.length > 0) {
-                    //    answers.otherTasks.forEach(function (key) {
-                    //        newConfig[key] = exampleConfig[key];
-                    //    });
-                    //}
+
+                    // Other tasks
+                    if (answers.otherTasks && answers.otherTasks.length > 0) {
+                       answers.otherTasks.forEach(function (key) {
+                           newConfig[key] = exampleConfig[key];
+                       });
+                    }
 
                     // Get new config's contents
                     newConfig = answers.configFormat === '.json' ?
                         JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
 
-                    console.log('Generated file:', chalk.grey(bundlePath), newConfig, '\n');
-
                     // Write new config file
                     fs.writeFileSync(bundlePath, newConfig);
 
-                    // 'New config written successfully' message
-                    console.log(chalk.dim('New bundle config file written to "' + bundlePath + '".\n'));
+                    // Bundle config creation success messages
+                    taskManager.log('\nSuccess!  Bundle config file written to: ', chalk.dim('"' + bundlePath + '"' ), '\n');
+                    taskManager.log('Generated file output (format:' + answers.configFormat + '):\n', '--verbose');
+                    taskManager.log(chalk.dim(newConfig), '\n', '--verbose');
 
                     // Fullfill promise
                     fulfill();
 
                 }); // end of inquiry
 
+            }).catch(error => {
+                taskManager.log('\nFailure!  Bundle config file could not be written to: ', chalk.dim('"' + bundlePath + '"' ), '\n');
+                throw new Error(error);
             }); // end of promise
 
         }); // end of task
