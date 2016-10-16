@@ -12,7 +12,7 @@ let sjl = require('sjljs'),
 
 class TaskManagerConfig extends Config {
 
-    constructor(/**...options {Object}**/) {
+    constructor(...options) {
 
         super();
 
@@ -141,7 +141,7 @@ class TaskManagerConfig extends Config {
             }
         });
 
-        this.set(...arguments);
+        this.set(...options);
     }
 
 }

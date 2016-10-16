@@ -49,9 +49,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
     }
 
     register (taskManager) {
-        var self = this,
-            taskManager = self.taskManager,
-            config = self.config,
+        var config = this.config,
             otherTaskKeys = config.allowedTaskNames,
             defaultBundleName = process.argv.length === 4 ? process.argv[3] : 'bundle',
             questions = [
@@ -108,14 +106,12 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                 //}
             ];
 
-        this._registerWithTaskRunner(self, taskManager, questions);
+        this._registerTaskWithTaskRunner(taskManager, questions);
     }
 
-    _registerTaskWithTaskRunner(self, taskManager, questions) {
+    _registerTaskWithTaskRunner(taskManager, questions) {
 
-        self.taskRunner.task('bundle', function () {
-
-            taskManager.log('hereio');
+        taskManager.taskRunnerAdapter.task('bundle', function () {
 
             return new Promise(function (fulfill, reject) {
 
@@ -180,7 +176,6 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
     }
 
 }
-
 
 module.exports = BundleConfigTaskAdapter;
 

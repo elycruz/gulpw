@@ -7,12 +7,12 @@
 let sjl = require('sjljs'),
     gulp = require('gulp'),
     chalk = require('chalk'),
-    TaskRunnerAdapter = require('./../TaskRunnerAdapter');
+    TaskRunnerAdapter = require('../TaskRunnerAdapter');
 
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
     constructor (taskRunner, taskManager) {
-        super(taskRunner || gulp, taskManager);
+        super(gulp, taskManager);
     }
 
     getTask(key) {
@@ -33,8 +33,16 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         return this;
     }
 
+    registerTask (taskName, depsOrCallback, callback) {
+        return this.setTask(taskName, depsOrCallback, callback);
+    }
+
+    task (taskName, depsOrCallback, callback) {
+        return this.setTask(taskName, depsOrCallback, callback);
+    }
+
     setTask(taskName, depsOrFunc, func) {
-        this.taskRunner.task(taskName, depsOrFunc, func);
+
         return this;
     }
 
@@ -71,7 +79,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         }
 
         // Ensure only registered tasks get run
-        tasks = self._onlyRegisteredTasks(tasks, self);
+        tasks = self._onlyRegisteredTasks(tasks);
 
         // Return a promise that will fulfill when all tasks are finished
         return new Promise(function (fulfill, reject) {
@@ -98,18 +106,18 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         }); // end of promise
     }
 
-    _onlyRegisteredTasks (tasks, self) {
+    _onlyRegisteredTasks (tasks) {
         return tasks.filter(function (task) {
             var retVal;
-            if (self.isTaskRegistered(task)) {
+            if (this.hasTask(task)) {
                 retVal = true;
             }
             else {
-                self.log(chalk.yellow(' ! Could not run the task "' + task + '".  Task not defined.'));
+                this.taskManager.log(chalk.yellow(' ! Could not run the task "' + task + '".  Task not defined.'));
                 retVal = false;
             }
             return retVal;
-        });
+        }, this);
     }
 
     _runTasks (tasks, fulfill, reject, self) {

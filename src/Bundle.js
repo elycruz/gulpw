@@ -1,13 +1,14 @@
 /**
  * Created by elydelacruz on 10/4/15.
  */
+
 'use strict';
 
 let sjl = require('sjljs'),
     Config = sjl.stdlib.Config;
 
 class Bundle extends Config {
-    constructor(/**...options {Object} **/) {
+    constructor(...options) {
         super();
         var _alias = '',
             _description = '',
@@ -41,7 +42,7 @@ class Bundle extends Config {
                 }
             }
         });
-        sjl.extend(true, this, ...arguments);
+        sjl.extend.call(sjl, true, this, ...options);
     }
 }
 

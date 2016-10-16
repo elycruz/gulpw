@@ -3,5 +3,5 @@
  */
 
 'use strict';
-let sjl = require('sjljs');
-module.exports = new sjl.nodejs.Namespace(__dirname);
+
+module.exports = new require('sjljs').nodejs.Namespace(__dirname);

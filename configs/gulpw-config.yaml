@@ -1,7 +1,7 @@
 # @todo add friendly task/static-task key lookup (will allow alternate key names to be used in bundle configs in a more friendly/extensible manner
 
 # Path to bundle configurations
-bundlesPath: ./gulpw-bundles-configs/
+bundlesPath: ./gulpw-bundles/
 
 # Allowed bundle configuration formats
 bundleConfigFormats:

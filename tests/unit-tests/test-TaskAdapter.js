@@ -10,8 +10,7 @@
 let chai = require('chai'),
     expect = chai.expect,
     sjl = require('sjljs'),
-    srcNamespace = require('./../../src/namespace'),
-    TaskAdapter = srcNamespace.TaskAdapter;
+    TaskAdapter = require('./../../src/TaskAdapter');
 
 describe('TaskAdapter', function () {
 

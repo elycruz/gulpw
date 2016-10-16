@@ -12,6 +12,7 @@ class TaskRunnerAdapter {
     constructor (taskRunner, taskManager) {
         var _taskRunner,
             _taskManager;
+
         Object.defineProperties(this, {
             taskRunner: {
                 get: function () {
@@ -28,9 +29,7 @@ class TaskRunnerAdapter {
                     return _taskManager;
                 },
                 set: function (value) {
-                    if (value instanceof TaskManager === false) {
-                        throw new TypeError (contextName + '.taskManager only accepts instances of TaskManager.');
-                    }
+                    sjl.throwTypeErrorIfNotOfType(contextName, 'taskManager', value, sjl.stdlib.Config);
                     _taskManager = value;
                 }
             }

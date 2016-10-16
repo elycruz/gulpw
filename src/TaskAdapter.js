@@ -40,11 +40,11 @@ class TaskAdapter {
         }
     }
 
-    registerBundle (bundle, taskManager) {
+    registerBundle (bundle, taskManager, config) {
         return this;
     }
 
-    registerBundles (bundles, taskManager) {
+    registerBundles (bundles, taskManager, config) {
         return this;
     }
 

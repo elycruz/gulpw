@@ -4,7 +4,7 @@
 
 'use strict';
 
-let TaskManager = require('./../TaskManager'),
+let TaskManager = require('../TaskManager'),
     GulpTaskRunnerAdapter = require('./GulpTaskRunnerAdapter'),
     gulp = require('gulp');
 
@@ -16,7 +16,8 @@ class GulpTaskManager extends TaskManager {
     }
 
     launchTasks (taskCommands) {
-        this.taskRunnerAdapter.launchTasks();
+        console.log(taskCommands);
+        this.taskRunnerAdapter.launchTasks(taskCommands);
         return this;
     }
 
