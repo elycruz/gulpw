@@ -171,10 +171,16 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
 
                 }); // end of inquiry
 
-            }).catch(error => {
-                taskManager.log('\nFailure!  Bundle config file could not be written to: ', chalk.dim('"' + bundlePath + '"' ), '\n');
-                throw new Error(error);
-            }); // end of promise
+            }) // end of promise
+
+            .catch(error => {
+                taskManager.log(
+                    chalk.red('\nFailure!'), '  ',
+                    'Bundle config file could not be written to: ',
+                    chalk.dim('"' + bundlePath + '"' ), '\n',
+                    error
+                );
+            });
 
         }); // end of task
 
