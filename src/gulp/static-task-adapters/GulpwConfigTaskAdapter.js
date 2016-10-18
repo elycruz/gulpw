@@ -16,7 +16,7 @@ let sjl = require('sjljs'),
     inquirer = require('inquirer'),
     chalk = require('chalk');
 
-class ConfigTaskAdapter extends StaticTaskAdapter {
+class GulpwConfigTaskAdapter extends StaticTaskAdapter {
 
     constructor (...options) {
         super(...options);
@@ -24,7 +24,8 @@ class ConfigTaskAdapter extends StaticTaskAdapter {
 
     register (taskManager) {
         var self = this,
-            unconfigurableTasks = taskManager.staticTasks.config.unconfigurableTasks,
+            config = self.config,
+            unconfigurableTasks = self.config.unconfigurableTasks,
             taskKeys = Object.keys(taskManager.tasks).filter(function (key) {
                 return unconfigurableTasks.indexOf(key) === -1 ? true : false;
             }),
@@ -46,14 +47,14 @@ class ConfigTaskAdapter extends StaticTaskAdapter {
                 }
             ];
 
-        gulp.task('config', function () {
+        taskManager.taskRunnerAdapter.task('config', function () {
             return new Promise(function (fulfill/*, reject*/) {
 
                 console.log(chalk.cyan('Running "config" task.\n\n') +
                 chalk.dim('** Note ** - Any existing config will be backed up to "' + taskManager.localConfigBackupPath + '" before generating a new one. \n'));
 
                 inquirer.prompt(questions, function (answers) {
-                    var newConfig = taskManager.loadConfigFile(path.join(taskManager.pwd, '/configs/taskManager.config.yaml')),
+                    var newConfig = taskManager.loadConfigFile(path.join(taskManager.pwd, config.defaultConfigfilePath)),
                         newConfigPath,
                         oldConfig = fs.existsSync(taskManager.configPath) ? taskManager.loadConfigFile(taskManager.configPath) : null,
                         oldFileName = path.basename(taskManager.configPath),
@@ -176,5 +177,5 @@ class ConfigTaskAdapter extends StaticTaskAdapter {
 
 }
 
-module.exports = ConfigTaskAdapter;
+module.exports = GulpwConfigTaskAdapter;
 

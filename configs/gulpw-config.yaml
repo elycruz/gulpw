@@ -23,16 +23,16 @@ helpPath: ./help-docs/
 
 staticTasks:
   "help":
-    constructorLocation: ./src/static-task-adapters/HelpTaskAdapter
+    constructorLocation: ./src/gulp/static-task-adapters/HelpTaskAdapter
 
   "config":
-    constructorLocation: ./src/static-task-adapters/ConfigTaskAdapter
+    constructorLocation: ./src/gulp/static-task-adapters/GulpwConfigTaskAdapter
     unconfigurableTasks:
       - copy
     notAllowedInnerKeys:
       - priority
       - constructorLocation
-    fileName: 'gulpw-config'
+    defaultConfigfilePath: 'configs/gulpw-config.yaml'
 
   "deploy-config":
     constructorLocation: ./src/static-task-adapters/DeployConfigTaskAdapter
