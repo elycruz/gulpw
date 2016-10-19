@@ -96,9 +96,8 @@ function calledWithAllowedTaskNames () {
 }
 
 function initializeTaskManager (userConfig, env) {
-    // Instantiate TaskManager
     try {
-        GulpTaskManager = new GulpTaskManager(sjl.extend(true, {
+        taskManager = new GulpTaskManager(sjl.extend(true, {
             argv: argv,
             env: env,                   // Currently only added to facilitate tests
             pwd: __dirname,
@@ -137,13 +136,17 @@ function cliInit(env) {
     }
 }
 
-// Laucn cli process
-cli.launch({
-    cwd: argv.cwd,
-    configPath: argv.configFile,
-    require: argv.require,
-    completion: argv.completion,
-    verbose: argv.verbose
-}, cliInit);
+function init () {
+    // Laucn cli process
+    cli.launch({
+        cwd: argv.cwd,
+        configPath: argv.configFile,
+        require: argv.require,
+        completion: argv.completion,
+        verbose: argv.verbose
+    }, cliInit);
+}
+
+init ();
 
 module.exports = gulp;
