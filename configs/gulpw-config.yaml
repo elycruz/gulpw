@@ -3,7 +3,10 @@
 # Path to bundle configurations
 bundlesPath: ./gulpw-bundles/
 
-# Allowed bundle configuration formats
+# Default config format to use for outputting all kind of configurations when format/file-type is not passed in
+defaultConfigFormat: .json
+
+# Allowed configuration formats/file-types for all generated configurations
 bundleConfigFormats:
   - .yaml
   - .js
@@ -25,14 +28,14 @@ staticTasks:
   "help":
     constructorLocation: ./src/gulp/static-task-adapters/HelpTaskAdapter
 
-  "config":
+  "gulpw-config":
     constructorLocation: ./src/gulp/static-task-adapters/GulpwConfigTaskAdapter
     unconfigurableTasks:
       - copy
     notAllowedInnerKeys:
       - priority
       - constructorLocation
-    defaultConfigfilePath: 'configs/gulpw-config.yaml'
+    defaultConfigFilename: 'gulpw-config'
 
   "deploy-config":
     constructorLocation: ./src/static-task-adapters/DeployConfigTaskAdapter

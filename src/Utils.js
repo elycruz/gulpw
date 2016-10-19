@@ -66,7 +66,11 @@ module.exports = {
      * @returns {*}
      */
     ensurePathExists: function (dirPath) {
-        return mkdirp.sync(dirPath);
+        return new Promise((resolve, reject) => {
+            mkdirp(dirPath, (err) => {
+                !sjl.empty(err) ? reject(err) : resolve(dirPath);
+            });
+        });
     },
 
     /**
@@ -115,7 +119,7 @@ module.exports = {
             file = yaml.safeLoad(fs.readFileSync(file));
         }
         else {
-            throw new TypeError('`Utils` Only *.js, *.json, or *.yaml and *.yml config files supported.');
+            throw new TypeError('`Utils` Only *.js, *.json, or *.yaml and *.yml config files supported.  Filepath received: ', file);
         }
         return file;
     },
@@ -182,9 +186,8 @@ module.exports = {
     logger: function (_argv_, context) {
         let self = context || this;
         return (function (argv) {
-            return function () {
-                var args = sjl.argsToArray(arguments),
-                    possibleFlag = Array.isArray(args) && args.length > 0 ? args[args.length - 1] : '',
+            return function (...args) {
+                var possibleFlag = args.length > 0 ? args[args.length - 1] : '',
                     lastArg;
                 if (sjl.classOfIs(possibleFlag, 'String') && possibleFlag.indexOf('--') === 0) {
                     lastArg = args.pop();
@@ -201,5 +204,14 @@ module.exports = {
                 return self;
             };
         }(_argv_));
+    },
+
+    pathExists (filePath) {
+        return new Promise ((resolve, reject) => {
+            fs.access(filePath, fs.constants.R_OK, (err) => {
+                !sjl.empty(err) ? reject(err) : resolve(filePath);
+            });
+        });
     }
+
 };

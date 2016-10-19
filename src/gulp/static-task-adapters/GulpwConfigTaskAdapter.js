@@ -14,13 +14,10 @@ let sjl = require('sjljs'),
     path = require('path'),
     yaml = require('js-yaml'),
     inquirer = require('inquirer'),
+    gwUtils = require('../../Utils'),
     chalk = require('chalk');
 
 class GulpwConfigTaskAdapter extends StaticTaskAdapter {
-
-    constructor (...options) {
-        super(...options);
-    }
 
     register (taskManager) {
         var self = this,
@@ -48,15 +45,15 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
             ];
 
         taskManager.taskRunnerAdapter.task('config', function () {
-            return new Promise(function (fulfill/*, reject*/) {
+            return new Promise(function (fulfill, reject) {
 
                 console.log(chalk.cyan('Running "config" task.\n\n') +
                 chalk.dim('** Note ** - Any existing config will be backed up to "' + taskManager.localConfigBackupPath + '" before generating a new one. \n'));
 
-                inquirer.prompt(questions, function (answers) {
-                    var newConfig = taskManager.loadConfigFile(path.join(taskManager.pwd, config.defaultConfigfilePath)),
+                inquirer.prompt(questions).then(answers => {
+                    var newConfig = gwUtils.loadConfigFile(path.join(taskManager.pwd, 'configs', config.defaultConfigFilename + '.yaml')),
                         newConfigPath,
-                        oldConfig = fs.existsSync(taskManager.configPath) ? taskManager.loadConfigFile(taskManager.configPath) : null,
+                        oldConfig = fs.existsSync(taskManager.configPath) ? gwUtils.loadConfigFile(taskManager.configPath) : null,
                         oldFileName = path.basename(taskManager.configPath),
                         oldFileExt = path.extname(oldFileName),
                         backupPath = path.join(process.cwd(), taskManager.localConfigBackupPath),
@@ -70,8 +67,11 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
                     // If old config is not empty back it up
                     if (!sjl.empty(oldConfig)) {
 
+                        // Message
+                        taskManager.log('Backing up old config...');
+
                         // Ensure backup file path exists
-                        taskManager.ensurePathExists(backupPath);
+                        gwUtils.ensurePathExists(backupPath);
 
                         // If backup file already exists create a timestamped version name
                         if (fs.existsSync(backupFilePath)) {
@@ -131,7 +131,7 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
 
                     // Get new config path
                     tmpPathName = path.dirname(taskManager.configPath);
-                    tmpFileName = taskManager.staticTasks.config.fileName; //path.basename(taskManager.configPath, answers.configFormat);
+                    tmpFileName = taskManager.staticTasks.config.defaultConfigFilename; //path.basename(taskManager.configPath, answers.configFormat);
                     newConfigPath = path.join(tmpPathName, tmpFileName + answers.configFormat);
 
                     // Write new config file
@@ -143,6 +143,11 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
                     // Fullfill promise
                     fulfill();
 
+                })
+                .catch(error => {
+
+                    reject(error);
+
                 }); // end of inquiry
 
             }); // end of promise
@@ -153,7 +158,7 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
 
     removeUnWantedKeysFromTaskOptions (taskOptions, self) {
         Object.keys(taskOptions).forEach(function (taskItemInnerKey) {
-            if (self.options.notAllowedInnerKeys.indexOf(taskItemInnerKey) > -1) {
+            if (self.config.notAllowedInnerKeys.indexOf(taskItemInnerKey) > -1) {
                 taskOptions[taskItemInnerKey] = null;
                 delete taskOptions[taskItemInnerKey];
             }
