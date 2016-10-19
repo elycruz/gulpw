@@ -1,3 +1,4 @@
+### General Use Case
 1.  User launches `gulpw` in the command line.
 2.  Initialization runs and the appropriate task manager is started with it's configurations.
 3.  The task manager sorts through the passed in commands to find out what commands were passed in.
