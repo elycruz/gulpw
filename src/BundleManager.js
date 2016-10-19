@@ -2,6 +2,11 @@
  * Created by elydelacruz on 10/18/16.
  */
 
+let sjl = require('sjl'),
+    gwUtils = require('./Utils'),
+    path = require('path'),
+    Bundle = require('./Bundle'),
+    contextName = 'gulpw.BundleManager';
 
 class BundleManager extends Map {
 
@@ -42,29 +47,29 @@ class BundleManager extends Map {
             return Promise.resolve(super.get(bundleName));
         }
 
-        return this.hasPathForBundle(bundleName)
+        return this._hasPathForBundle(bundleName)
         .then(bundlePath => {
-            return this.getBundleFromPath(bundlePath);
+            return this._getBundleFromPath(bundlePath);
         })
         .catch(error => {
 
         });
     }
 
-    set (bundleName) {
-        super.set(bundleName);
+    set (bundleName, value) {
+        super.set(bundleName, value);
         return this;
     }
 
-    hasPathForBundle (bundleName) {
-        return gwUtils.pathExists(this.bundlePath(bundleName));
+    _hasPathForBundle (bundleName) {
+        return gwUtils.isPathReadable(this._bundleNameToBundlePath(bundleName));
     }
 
-    bundleNameToBundlePath (bundleName) {
+    _bundleNameToBundlePath (bundleName) {
         return path.join(this.bundlesPath, bundleName);
     }
 
-    getBundleFromPath (filePath) {
+    _getBundleFromPath (filePath) {
         return gwUtils.loadConfigFile(filePath);
     }
 

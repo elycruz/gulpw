@@ -183,4 +183,3 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
 }
 
 module.exports = GulpwConfigTaskAdapter;
-

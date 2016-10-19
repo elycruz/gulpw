@@ -206,7 +206,13 @@ module.exports = {
         }(_argv_));
     },
 
-    pathExists (filePath) {
+
+    /**
+     * Checks to see if path is readable via fs.access.
+     * @param filePath
+     * @returns {Promise}
+     */
+    isPathReadable (filePath) {
         return new Promise ((resolve, reject) => {
             fs.access(filePath, fs.constants.R_OK, (err) => {
                 !sjl.empty(err) ? reject(err) : resolve(filePath);
