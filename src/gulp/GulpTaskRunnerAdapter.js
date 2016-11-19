@@ -9,8 +9,6 @@ let sjl = require('sjljs'),
     chalk = require('chalk'),
     TaskRunnerAdapter = require('../TaskRunnerAdapter');
 
-var log;
-
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
     constructor (taskRunner, taskManager) {
@@ -43,7 +41,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         return this.taskRunner.task(taskName, depsOrCallback, callback);
     }
 
-    setTask(taskName, depsOrFunc, func) {
+    setTask(/*taskName, depsOrFunc, func*/) {
 
         return this;
     }

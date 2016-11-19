@@ -24,16 +24,16 @@ describe('TaskManagerConfig', function () {
 
     describe ('Construction', function () {
         it ('Should be an instanceof `sjl.stdlib.Config`.', function () {
-            expect(new TaskManagerConfig()).to.be.instanceof(sjl.stdlib.Config);
+            expect(new TaskManagerConfig()).to.be.instanceof(sjl.ns.stdlib.Config);
         });
     });
 
 
     describe ('Properties', function () {
-        let SjlMap = sjl.stdlib.SjlMap,
+        let SjlMap = sjl.ns.stdlib.SjlMap,
             propertyAndTypeMap = {
                 bundleConfigsPath: String,
-                bundleConfigFormats: sjl.stdlib.SjlSet,
+                bundleConfigFormats: sjl.ns.stdlib.SjlSet,
                 localConfigPath: String,
                 localConfigBackupPath: String,
                 localHelpDocsPath: String,

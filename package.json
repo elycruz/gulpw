@@ -32,7 +32,7 @@
     "gulp-jshint": "^2.0.4",
     "gulp-minify-html": "^1.0.6",
     "gulp-minify-inline": "^0.2.1",
-    "gulp-mocha": "^3.1.2",
+    "gulp-mocha": "^3.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-sftp": "~0.1.2",
@@ -51,7 +51,7 @@
     "mocha": "^2.5.3",
     "open": "0.0.5",
     "requirejs": "^2.1.15",
-    "sjljs": "^6.2.0",
+    "sjljs": "^6.3.1",
     "vinyl": "^2.0.1",
     "yargs": "^6.0.4"
   },

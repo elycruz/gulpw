@@ -76,7 +76,7 @@ gulp.task('eslint', function () {
     return gulp.src(srcs)
         .pipe(eslint({useEslintrc: true}))
         .pipe(eslint.format('stylish'))
-        .pipe(eslint.failAfterError());
+        .pipe(eslint.failOnError());
 });
 
 gulp.task('version', function(){

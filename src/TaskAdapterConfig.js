@@ -4,7 +4,7 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    Config = sjl.stdlib.Config;
+    Config = sjl.ns.stdlib.Config;
 
 class TaskAdapterConfig extends Config {
     constructor(/**...options {Object}**/) {

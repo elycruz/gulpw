@@ -16,8 +16,10 @@ describe('TaskAdapter', function () {
 
     describe ('properties', function () {
         let taskAdapter = new TaskAdapter();
-        ['config', 'taskManager'].forEach((key) => {
-            expect(taskAdapter.hasOwnProperty(key)).to.equal(true);
+        it ('should have the required properties', function () {
+            ['config', 'taskManager'].forEach((key) => {
+                expect(taskAdapter.hasOwnProperty(key)).to.equal(true);
+            });
         });
     });
 

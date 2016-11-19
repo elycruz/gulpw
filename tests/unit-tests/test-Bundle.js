@@ -7,7 +7,7 @@ let chai =      require('chai'),
     expect =    chai.expect,
     sjl =       require('sjljs'),
     Bundle =    require('./../../src/Bundle'),
-    Config =    sjl.stdlib.Config;
+    Config =    sjl.ns.stdlib.Config;
 
 describe ('Bundle', function () {
     describe ('Construction', function () {

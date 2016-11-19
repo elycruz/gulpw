@@ -4,8 +4,7 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    contextName = 'TaskRunnerAdapter',
-    TaskManager = require('./TaskManager');
+    contextName = 'TaskRunnerAdapter';
 
 class TaskRunnerAdapter {
 
@@ -29,7 +28,7 @@ class TaskRunnerAdapter {
                     return _taskManager;
                 },
                 set: function (value) {
-                    sjl.throwTypeErrorIfNotOfType(contextName, 'taskManager', value, sjl.stdlib.Config);
+                    sjl.throwTypeErrorIfNotOfType(contextName, 'taskManager', value, sjl.ns.stdlib.Config);
                     _taskManager = value;
                 }
             }

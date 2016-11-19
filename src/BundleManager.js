@@ -2,6 +2,8 @@
  * Created by elydelacruz on 10/18/16.
  */
 
+'use strict';
+
 let sjl = require('sjl'),
     gwUtils = require('./Utils'),
     path = require('path'),
@@ -38,7 +40,7 @@ class BundleManager extends Map {
                     _bundlesPath = value;
                 },
                 enumerable: true
-            },
+            }
         });
     }
 
@@ -51,9 +53,7 @@ class BundleManager extends Map {
         .then(bundlePath => {
             return this._getBundleFromPath(bundlePath);
         })
-        .catch(error => {
-
-        });
+        .catch(console.log);
     }
 
     set (bundleName, value) {
@@ -74,3 +74,5 @@ class BundleManager extends Map {
     }
 
 }
+
+module.exports = BundleManager;

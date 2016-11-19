@@ -7,28 +7,27 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var BaseStaticTaskAdapter = require('./BaseStaticTaskAdapter'),
+let sjl = require('sjljs'),
+    BaseStaticTaskAdapter = require('./../../StaticTaskAdapter'),
     fs = require('fs'),
     path = require('path'),
-    //yaml = require('js-yaml'),
-    //inquirer = require('inquirer'),
     chalk = require('chalk');
 
-module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter (/*options*/) {
-    BaseStaticTaskAdapter.apply(this, arguments);
-}, {
+module.exports = class HelpTaskAdapter extends BaseStaticTaskAdapter {
 
-    register: function (taskManager) {
+    register(taskManager) {
         var self = this,
             //helpSectionPaths = self.getHelpSectionPaths(taskManager),
             helpSectionPathKeys = self.getHelpSectionPathKeys(taskManager),
             helpSection = taskManager.argv.section || null;
 
-        gulp.task('help', function () {
+        taskManager.taskRunnerAdapter.task('help', function () {
             if (!sjl.isset(helpSection)) {
                 taskManager.log(chalk.cyan('Help via this console is available for the ' +
-                                'following sections:\n'), '--mandatory');
-                taskManager.log(helpSectionPathKeys.map(function (key) { return '- ' + key; }).join('\n'), '--mandatory');
+                    'following sections:\n'), '--mandatory');
+                taskManager.log(helpSectionPathKeys.map(function (key) {
+                    return '- ' + key;
+                }).join('\n'), '--mandatory');
                 return Promise.reject();
             }
             else if (helpSectionPathKeys.indexOf(helpSection) > -1) {
@@ -37,16 +36,16 @@ module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter (/*option
             return Promise.resolve();
         });
 
-    }, // end of register task
+    }
 
-    getHelpSectionPaths: function (taskManager) {
+    getHelpSectionPaths(taskManager) {
         if (!sjl.isset(this.helpSectionPaths)) {
             this.helpSectionPaths = fs.readdirSync(path.join(taskManager.pwd, 'docs'));
         }
         return this.helpSectionPaths;
-    },
+    }
 
-    getHelpSectionPathKeys: function (taskManager) {
+    getHelpSectionPathKeys(taskManager) {
         if (!sjl.isset(this.helpSectionPathKeys)) {
             this.helpSectionPathKeys = this.getHelpSectionPaths(taskManager).map(function (key) {
                 return path.basename(key, '.md');
@@ -55,4 +54,4 @@ module.exports = BaseStaticTaskAdapter.extend(function HelpTaskAdapter (/*option
         return this.helpSectionPathKeys;
     }
 
-});
+};

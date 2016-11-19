@@ -21,7 +21,7 @@ class GulpTaskManager extends TaskManager {
         return this;
     }
 
-    launchTasksSync (taskCommands) {
+    launchTasksSync (/*taskCommands*/) {
         this.taskRunnerAdapter.launchTasksSync();
         return this;
     }

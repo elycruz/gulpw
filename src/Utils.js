@@ -156,7 +156,8 @@ module.exports = {
         exts.some((ext) => {
             try {
                 file = this.loadConfigFile(filePath + ext);
-            } catch (e) {
+            }
+            catch (e) {
                 // silent
             }
             return file !== null;

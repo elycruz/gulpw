@@ -7,7 +7,7 @@
 
 'use strict';
 
-var sjl = require('sjljs'),
+let sjl = require('sjljs'),
     gwUtils = require('./src/Utils'),
     Liftoff = require('liftoff'),
     argv = require('yargs')
@@ -148,5 +148,7 @@ function init () {
 }
 
 init ();
+
+process.on('uncaughtException', console.log);
 
 module.exports = gulp;

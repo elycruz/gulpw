@@ -116,7 +116,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
 
         taskManager.taskRunnerAdapter.task('bundle', function () {
 
-            return new Promise(function (fulfill, reject) {
+            return new Promise(function (fulfill/*, reject*/) {
 
                 console.log(chalk.cyan('Running "bundle" task.\n\n'));
 
@@ -177,7 +177,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                 taskManager.log(
                     chalk.red('\nFailure!'), '  ',
                     'Bundle config file could not be written to: ',
-                    chalk.dim('"' + bundlePath + '"' ), '\n',
+                    chalk.dim('"bundlePath"' ), '\n',
                     error
                 );
             });
