@@ -1,0 +1,25 @@
+alias: "example-page-1" # Dash or underscore separated bundle alias
+version: "0.0.0" # Semver version string
+description: "Example page bundle." # description goes here
+
+files:
+  js:
+    - ./public/js/example-feature-1.js
+    - ./public/js/example-feature-2.js
+  css:
+    - ./public/css/example-feature-1.css
+    - ./public/css/example-feature-2.css
+  html:
+    - ./fe-dev/html-fragments/doc-top.html
+    - ./fe-dev/html-fragments/head-meta.html
+    - ./fe-dev/html-fragments/head-links.html
+    - ./fe-dev/html-fragments/head-scripts.html
+    - ./fe-dev/html-fragments/example-page-1/head-links.html
+    - ./fe-dev/html-fragments/doc-middle.html
+    - ./fe-dev/html-fragments/example-page-1/index.html
+    - ./fe-dev/html-fragments/doc-bottom.html
+
+relatedBundles:
+  processBefore:
+    - example-feature-1
+    - example-feature-2

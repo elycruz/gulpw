@@ -1,0 +1,53 @@
+alias: "amd-outfile" # Dash or underscore separated bundle alias
+version: "0.0.0" # Semver version string
+description: "Example feature 1 bundle." # description goes here
+
+files:
+  html:
+    - ./fe-dev/amd.html
+  css:
+    - ./fe-dev/css/global/normalize.css
+    - ./fe-dev/css/global/main.css
+
+requirejs:
+  options:
+    name: init
+    baseUrl: ./fe-dev/js/src/amd
+    out: ./public/js/amd-outfile/outfile.js
+#    optimize: uglify
+#    keepBuildDir: true,
+#    mainConfigFile: ./fe-dev/js/src/amd/init.js
+
+    # Paths are relative to the `appDir`
+    shims:
+      amplify:
+        deps:
+          - jquery
+    uglify:
+      no_mangle: true
+    paths:
+      lib: lib/
+      amplify: ../../../bower_components/amplify/lib/amplify.core
+      jquery: ../../../bower_components/jquery/dist/jquery
+      modernizr: ../../../bower_components/modernizr/modernizr
+      text: ../../../bower_components/requirejs-text/text
+      sjl: ../../../bower_components/sjljs/sjl
+    include:
+      - modernizr
+      - jquery
+      - amplify
+      - sjl
+      - main
+      - modules/application/ApplicationModule
+      - modules/webgl-experiments/WebGlExperimentsModule
+
+deploy:
+  otherFiles:
+    relative:
+      - ./public/js/vendors/require.js
+      - ./public/js/amd/init.js
+
+copy:
+  files:
+    ./fe-dev/bower_components/requirejs/require.js: ./public/js/vendors/require.js
+

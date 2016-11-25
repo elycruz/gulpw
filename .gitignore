@@ -1,5 +1,7 @@
-.idea
-.project
-nbproject
-node_modules
+.idea/
+.project/
+.sass*/
+nbproject/
+**/node_modules/
+**/bower_components/
 npm-debug.log

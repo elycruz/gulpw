@@ -1,0 +1,1450 @@
+/*
+    Document   : reusable-short-hand-classes
+    Created on : May 18, 2013, 4:07:34 PM
+    Author     : ElyDeLaCruz
+    Description:
+    Purpose of the stylesheet follows.
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+*/
+/** Mixins
+======================================================================**/
+/*
+    Document   : _overflow
+    Created on : Aug 21, 2013, 11:09:16 AM
+    Author     : edelacruz
+    Description:
+    This mixin generates overflow-(x|y) for all browsers
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+*/
+/*
+    Document   : mixins
+    Created on : May 18, 2013, 5:14:54 PM
+    Author     : ElyDeLaCruz
+    Description:
+    Purpose of the stylesheet follows.
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+*/
+/** Common Classes
+======================================================================**/
+/* line 8, ../../bower_components/common-classes/sass/common-classes/_clearfix.scss */
+.clearfix:before,
+.clearfix:after,
+.grid-container:before,
+.grid-container:after,
+.grid-100:before,
+.grid-100:after,
+.mobile-grid-100:before,
+.mobile-grid-100:after {
+  content: ".";
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  font-size: 0;
+  line-height: 0;
+  width: 0;
+  height: 0;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/_clearfix.scss */
+.clearfix:after,
+.grid-container:after,
+.grid-100:after,
+.mobile-grid-100:after {
+  clear: both;
+}
+
+/* line 29, ../../bower_components/common-classes/sass/common-classes/_clearfix.scss */
+.clearfix,
+.grid-container,
+.grid-100,
+.mobile-grid-100 {
+  zoom: 1;
+}
+
+/* line 33, ../../bower_components/common-classes/sass/common-classes/_clearfix.scss */
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+/** Display
+--------------------------------------------------**/
+/* line 4, ../../bower_components/common-classes/sass/common-classes/_display.scss */
+.display-none,
+.none {
+  display: none !important;
+}
+
+/* line 8, ../../bower_components/common-classes/sass/common-classes/_display.scss */
+.display-block,
+.block {
+  display: block;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_display.scss */
+.display-inline,
+.inline {
+  display: inline;
+}
+
+/* line 16, ../../bower_components/common-classes/sass/common-classes/_display.scss */
+.display-inline-block,
+.inline-block {
+  display: inline-block;
+}
+
+/** Floats
+--------------------------------------------------**/
+/* line 3, ../../bower_components/common-classes/sass/common-classes/_float.scss */
+.fl, .float-left {
+  float: left !important;
+}
+
+/* line 6, ../../bower_components/common-classes/sass/common-classes/_float.scss */
+.fr, .float-right {
+  float: right !important;
+}
+
+/* line 9, ../../bower_components/common-classes/sass/common-classes/_float.scss */
+.cl, .clear-left {
+  clear: left !important;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_float.scss */
+.cr, .clear-right {
+  clear: right !important;
+}
+
+/* line 15, ../../bower_components/common-classes/sass/common-classes/_float.scss */
+.cb, .clear-both {
+  clear: both !important;
+}
+
+/*
+    Document   : grayscale
+    Created on : May 18, 2013, 12:18:29 PM
+    Author     : ElyDeLaCruz
+    Description:
+    Simple Grayscale colors from #000000 to #FFFFFF
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+*/
+/* Generate numerical section */
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-0 {
+  color: #000000;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-0 {
+  background-color: #000000;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-1 {
+  color: #111111;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-1 {
+  background-color: #111111;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-2 {
+  color: #222222;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-2 {
+  background-color: #222222;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-3 {
+  color: #333333;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-3 {
+  background-color: #333333;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-4 {
+  color: #444444;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-4 {
+  background-color: #444444;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-5 {
+  color: #555555;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-5 {
+  background-color: #555555;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-6 {
+  color: #666666;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-6 {
+  background-color: #666666;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-7 {
+  color: #777777;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-7 {
+  background-color: #777777;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-8 {
+  color: #888888;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-8 {
+  background-color: #888888;
+}
+
+/* line 11, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-9 {
+  color: #999999;
+}
+
+/* line 12, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-9 {
+  background-color: #999999;
+}
+
+/* Generate alpha section */
+/* line 18, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-A {
+  color: #AAAAAA;
+}
+
+/* line 19, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-A {
+  background-color: #AAAAAA;
+}
+
+/* line 18, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-B {
+  color: #BBBBBB;
+}
+
+/* line 19, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-B {
+  background-color: #BBBBBB;
+}
+
+/* line 18, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-C {
+  color: #CCCCCC;
+}
+
+/* line 19, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-C {
+  background-color: #CCCCCC;
+}
+
+/* line 18, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-D {
+  color: #DDDDDD;
+}
+
+/* line 19, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-D {
+  background-color: #DDDDDD;
+}
+
+/* line 18, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-E {
+  color: #EEEEEE;
+}
+
+/* line 19, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-E {
+  background-color: #EEEEEE;
+}
+
+/* line 18, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.c-F {
+  color: #FFFFFF;
+}
+
+/* line 19, ../../bower_components/common-classes/sass/common-classes/_grayscale.scss */
+.bg-F {
+  background-color: #FFFFFF;
+}
+
+/****/
+/* line 2, ../../bower_components/common-classes/sass/common-classes/_key-value-pair.scss */
+.key-value-pair {
+  font-size: 12px;
+}
+/* line 5, ../../bower_components/common-classes/sass/common-classes/_key-value-pair.scss */
+.key-value-pair label,
+.key-value-pair .key {
+  display: inline-block;
+  font-weight: bold;
+  margin-right: 5px !important;
+}
+/* line 13, ../../bower_components/common-classes/sass/common-classes/_key-value-pair.scss */
+.key-value-pair div,
+.key-value-pair span,
+.key-value-pair output,
+.key-value-pair .value {
+  font-weight: normal;
+  color: #777;
+}
+
+/*
+    Document   : margins-and-padding
+    Created on : May 18, 2013, 2:21:21 PM
+    Author     : ElyDeLaCruz
+    Description:
+    Shorthand Margin and Padding classes:
+        for each in defined numbers
+        for each in defined lables (direction labels (top right left bottom))
+        for top and bottom
+        for left and right
+    Syntax recommendation http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+    @requires mixins/margin-and-padding-mixins
+*/
+/** Margin
+-----------------------------------------------------------------------------*/
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m0 {
+  margin: 0px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m1px {
+  margin: 1px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m3px {
+  margin: 3px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m5px {
+  margin: 5px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m8px {
+  margin: 8px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m10px {
+  margin: 10px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m13px {
+  margin: 13px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m15px {
+  margin: 15px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m20px {
+  margin: 20px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m30px {
+  margin: 30px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m38px {
+  margin: 38px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m40px {
+  margin: 40px;
+}
+
+/** Margin for each direction (top, right, bottom, left)
+-----------------------------------------------------------------------------*/
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT0 {
+  margin-top: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT1px {
+  margin-top: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT3px {
+  margin-top: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT5px {
+  margin-top: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT8px {
+  margin-top: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT10px {
+  margin-top: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT13px {
+  margin-top: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT15px {
+  margin-top: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT20px {
+  margin-top: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT30px {
+  margin-top: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT38px {
+  margin-top: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mT40px {
+  margin-top: 40px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR0 {
+  margin-right: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR1px {
+  margin-right: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR3px {
+  margin-right: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR5px {
+  margin-right: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR8px {
+  margin-right: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR10px {
+  margin-right: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR13px {
+  margin-right: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR15px {
+  margin-right: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR20px {
+  margin-right: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR30px {
+  margin-right: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR38px {
+  margin-right: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mR40px {
+  margin-right: 40px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB0 {
+  margin-bottom: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB1px {
+  margin-bottom: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB3px {
+  margin-bottom: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB5px {
+  margin-bottom: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB8px {
+  margin-bottom: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB10px {
+  margin-bottom: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB13px {
+  margin-bottom: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB15px {
+  margin-bottom: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB20px {
+  margin-bottom: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB30px {
+  margin-bottom: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB38px {
+  margin-bottom: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mB40px {
+  margin-bottom: 40px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL0 {
+  margin-left: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL1px {
+  margin-left: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL3px {
+  margin-left: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL5px {
+  margin-left: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL8px {
+  margin-left: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL10px {
+  margin-left: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL13px {
+  margin-left: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL15px {
+  margin-left: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL20px {
+  margin-left: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL30px {
+  margin-left: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL38px {
+  margin-left: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mL40px {
+  margin-left: 40px;
+}
+
+/** Margin left and right
+-----------------------------------------------------------------------------*/
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR0 {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR1px {
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR3px {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR5px {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR8px {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR10px {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR13px {
+  margin-left: 13px;
+  margin-right: 13px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR15px {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR20px {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR30px {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR38px {
+  margin-left: 38px;
+  margin-right: 38px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mLR40px {
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+/** Margin top and bottom
+-----------------------------------------------------------------------------*/
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB0 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB1px {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB3px {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB5px {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB8px {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB10px {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB13px {
+  margin-top: 13px;
+  margin-bottom: 13px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB15px {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB20px {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB30px {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB38px {
+  margin-top: 38px;
+  margin-bottom: 38px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.mTB40px {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+/** Margin in percents
+-----------------------------------------------------------------------------*/
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m0 {
+  margin: 0%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m1p {
+  margin: 1%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m3p {
+  margin: 3%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m5p {
+  margin: 5%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m8p {
+  margin: 8%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m10p {
+  margin: 10%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m13p {
+  margin: 13%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m15p {
+  margin: 15%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m20p {
+  margin: 20%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m30p {
+  margin: 30%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m38p {
+  margin: 38%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.m40p {
+  margin: 40%;
+}
+
+/** Padding
+-----------------------------------------------------------------------------*/
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p0 {
+  px: 0px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p1padding {
+  px: 1px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p3padding {
+  px: 3px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p5padding {
+  px: 5px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p8padding {
+  px: 8px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p10padding {
+  px: 10px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p13padding {
+  px: 13px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p15padding {
+  px: 15px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p20padding {
+  px: 20px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p30padding {
+  px: 30px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p38padding {
+  px: 38px;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p40padding {
+  px: 40px;
+}
+
+/** Padding for each direction (top, right, bottom, left)
+-----------------------------------------------------------------------------*/
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT0 {
+  padding-top: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT1px {
+  padding-top: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT3px {
+  padding-top: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT5px {
+  padding-top: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT8px {
+  padding-top: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT10px {
+  padding-top: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT13px {
+  padding-top: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT15px {
+  padding-top: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT20px {
+  padding-top: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT30px {
+  padding-top: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT38px {
+  padding-top: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pT40px {
+  padding-top: 40px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR0 {
+  padding-right: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR1px {
+  padding-right: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR3px {
+  padding-right: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR5px {
+  padding-right: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR8px {
+  padding-right: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR10px {
+  padding-right: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR13px {
+  padding-right: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR15px {
+  padding-right: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR20px {
+  padding-right: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR30px {
+  padding-right: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR38px {
+  padding-right: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pR40px {
+  padding-right: 40px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB0 {
+  padding-bottom: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB1px {
+  padding-bottom: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB3px {
+  padding-bottom: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB5px {
+  padding-bottom: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB8px {
+  padding-bottom: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB10px {
+  padding-bottom: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB13px {
+  padding-bottom: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB15px {
+  padding-bottom: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB20px {
+  padding-bottom: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB30px {
+  padding-bottom: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB38px {
+  padding-bottom: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pB40px {
+  padding-bottom: 40px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL0 {
+  padding-left: 0px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL1px {
+  padding-left: 1px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL3px {
+  padding-left: 3px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL5px {
+  padding-left: 5px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL8px {
+  padding-left: 8px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL10px {
+  padding-left: 10px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL13px {
+  padding-left: 13px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL15px {
+  padding-left: 15px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL20px {
+  padding-left: 20px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL30px {
+  padding-left: 30px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL38px {
+  padding-left: 38px;
+}
+
+/* line 41, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pL40px {
+  padding-left: 40px;
+}
+
+/** Padding left and right
+-----------------------------------------------------------------------------*/
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR0 {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR1px {
+  padding-left: 1px;
+  padding-right: 1px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR3px {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR5px {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR8px {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR10px {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR13px {
+  padding-left: 13px;
+  padding-right: 13px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR15px {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR20px {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR30px {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR38px {
+  padding-left: 38px;
+  padding-right: 38px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pLR40px {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+/** Padding top and bottom
+-----------------------------------------------------------------------------*/
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB0 {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB1px {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB3px {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB5px {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB8px {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB10px {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB13px {
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB15px {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB20px {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB30px {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB38px {
+  padding-top: 38px;
+  padding-bottom: 38px;
+}
+
+/* line 58, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.pTB40px {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+/** Padding in percents
+-----------------------------------------------------------------------------*/
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p0 {
+  margin: 0%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p1p {
+  margin: 1%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p3p {
+  margin: 3%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p5p {
+  margin: 5%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p8p {
+  margin: 8%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p10p {
+  margin: 10%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p13p {
+  margin: 13%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p15p {
+  margin: 15%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p20p {
+  margin: 20%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p30p {
+  margin: 30%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p38p {
+  margin: 38%;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/mixins/_value-and-prop-mixins.scss */
+.p40p {
+  margin: 40%;
+}
+
+/** Position
+--------------------------------------------------**/
+/* line 3, ../../bower_components/common-classes/sass/common-classes/_position.scss */
+.pos-rel {
+  position: relative;
+}
+
+/* line 4, ../../bower_components/common-classes/sass/common-classes/_position.scss */
+.pos-abs {
+  position: absolute;
+}
+
+/* line 5, ../../bower_components/common-classes/sass/common-classes/_position.scss */
+.pos-fix {
+  position: fixed;
+}
+
+/** Text Align
+-------------------------------------------------------------*/
+/* line 3, ../../bower_components/common-classes/sass/common-classes/_text.scss */
+.tl, .text-left {
+  text-align: left;
+}
+
+/* line 6, ../../bower_components/common-classes/sass/common-classes/_text.scss */
+.tc, .text-center {
+  text-align: center;
+}
+
+/* line 9, ../../bower_components/common-classes/sass/common-classes/_text.scss */
+.tj, .text-justify {
+  text-align: justify;
+}
+
+/** Text Size
+-------------------------------------------------------------*/
+/* line 15, ../../bower_components/common-classes/sass/common-classes/_text.scss */
+.tsml, .text-small {
+  line-height: 10px;
+  font-size: 10px;
+}
+
+/* line 19, ../../bower_components/common-classes/sass/common-classes/_text.scss */
+.tbld, .text-bold {
+  font-weight: bold;
+}
+
+/* line 22, ../../bower_components/common-classes/sass/common-classes/_text.scss */
+.tnml, .text-normal {
+  font-weight: normal;
+}
+
+/** Text Decoration
+-------------------------------------------------------------*/
+/* line 28, ../../bower_components/common-classes/sass/common-classes/_text.scss */
+.text-decor-underline {
+  text-decoration: underline;
+}
+
+/** Menus horizontal and vertical menus
+-------------------------------------------------------------*/
+/* line 7, ../../bower_components/common-classes/sass/common-classes/_ul-menu.scss */
+ul.horiz-menu-left,
+ul.horiz-menu-left ul,
+ul.vert-menu-left,
+ul.vert-menu-left ul,
+ul.vert-menu-left li {
+  margin: 0;
+  padding: 0;
+  float: left;
+  clear: both;
+  width: 100%;
+}
+
+/* line 14, ../../bower_components/common-classes/sass/common-classes/_ul-menu.scss */
+ul.horiz-menu-left li {
+  float: left;
+  clear: none;
+}
+
+/* line 18, ../../bower_components/common-classes/sass/common-classes/_ul-menu.scss */
+ul.horiz-menu-left ul li {
+  clear: both;
+}
+
+/* line 24, ../../bower_components/common-classes/sass/common-classes/_ul-menu.scss */
+ul.horiz-menu-left li,
+ul.horiz-menu-left li a span,
+ul.vert-menu-left li,
+ul.vert-menu-left li a span {
+  display: block;
+}

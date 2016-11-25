@@ -1,0 +1,8 @@
+alias: "mocha-tests"
+version: "0.0.0"
+description: "Global mocha-tests package."
+
+mocha:
+  files: ./fe-dev/js/src/mocha-tests/for-server/**/*
+  options:
+    reporter: spec

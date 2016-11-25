@@ -1,0 +1,40 @@
+# Domains to develop:
+domainsToDevelop:
+
+  # Hostname to develop for:
+  gulpw-sample.elycruz.com:
+
+    # Servers where user can develop for `domainToDevelopFor` (in the case that this domain is the one chosen
+    # for development (in the `gulpw deploy-config` prompt then `domainToDevelopFor` is equal to the
+    # value of `gulpw-sample.somedomain.com`)
+    hostnames: # slots/hosts
+      - -devslot1.gulpw-sample.elycruz.com
+      - -devslot2.gulpw-sample.elycruz.com
+      - -devslot3.gulpw-sample.elycruz.com
+
+    # All website instance prefixes represent the same website just different
+    # instances of the website.
+
+    # Array of possible prefixes per `hostname` (in above `hostnames`)
+    hostnamePrefixes:
+      - web1
+      - web2
+      - web3
+
+    # If set will be passed to all/any of the following template vars: `deployRootFolder`,
+    # `deployRootFoldersByFileType[x]` (where `x` is the 'key' of a key within the hash map);
+    hostnamePrefixFolders: null
+      #web1: website1
+      #web2: website2
+      #web3: website3
+
+    # Host name prefix folder (determined by `gulpw deploy-config`) can be set to a default though.
+    hostnamePrefixFolder: null
+
+    # Root folder on the server to use for deployments (used as a prefix path for file paths being deployed)
+    # example: sites/<%= hostnamePrefix %><%= hostname %> (recieves the `deploy` has from this config)
+    deployRootFolder: sites/<%= hostnamePrefix %><%= hostname %>
+
+    # Deploy roots by file types;  E.g., File types can have different deploy roots or can be deployed to
+    # any directory within the remote server's file system via this hash map.
+    deployRootFoldersByFileType: null
