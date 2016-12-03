@@ -293,7 +293,7 @@ class TaskManager extends TaskManagerConfig {
             }
         }
         else {
-            throw new Error ('`' + contextName + '.getTaskAdapter` doesn\'t have a task ' +
+            throw new Error ('`' + this.construct.name + '.getTaskAdapter` doesn\'t have a task ' +
                 'available for task name "' + taskName + '".  Available task names: \n - ' +
                 sjl.implode(this.availableTaskNames, '\n - ') + '.');
         }
@@ -313,7 +313,7 @@ class TaskManager extends TaskManagerConfig {
             }
         }
         else {
-            throw new Error ('`' + contextName + '.getStaticTaskAdapter` doesn\'t have a task ' +
+            throw new Error ('`' + this.constructor.name + '.getStaticTaskAdapter` doesn\'t have a task ' +
                 'available for task name "' + taskName + '".  Available task names: \n - ' +
                 sjl.implode(this.availableStaticTaskNames, '\n - ') + '.');
         }
