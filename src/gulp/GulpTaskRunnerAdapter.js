@@ -12,7 +12,7 @@ let sjl = require('sjljs'),
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
     constructor (taskRunner, taskManager) {
-        super(gulp, taskManager);
+        super(gulp, taskRunner, taskManager);
     }
 
     getTask(key) {
@@ -25,7 +25,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
     hasCompletedTask(key) {
         var taskObj = this.getTask(key);
-        return taskObj && taskObj.done === true;
+        return taskObj && taskObj.done && taskObj.done === true;
     }
 
     runTask(key) {
@@ -33,109 +33,99 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         return this;
     }
 
-    registerTask (taskName, depsOrCallback, callback) {
-        return this.task(taskName, depsOrCallback, callback);
-    }
-
     task (taskName, depsOrCallback, callback) {
-        return this.taskRunner.task(taskName, depsOrCallback, callback);
-    }
-
-    setTask(/*taskName, depsOrFunc, func*/) {
-
+        this.taskRunner.task.apply(this.taskRunner, arguments);
         return this;
     }
 
-    setMultiTask(taskName, tasks, deps, taskManager, taskRunner) {
-        let self = this;
-        taskManager = taskManager || self.taskManager;
-        taskRunner = taskRunner || self.taskRunner;
-        if (deps) {
-            taskRunner.task(taskName, deps, function () {
+    multiTask (taskName, tasks, deps, taskManager, taskRunner) {
+        let multiTaskCallback  = () => {
                 var method = !taskManager.argv.async ? 'launchTasksSync' : 'launchTasks';
-                return self[method](tasks, taskRunner);
-            });
-        }
-        else {
-            taskRunner.task(taskName, function () {
-                var method = !taskManager.argv.async ? 'launchTasksSync' : 'launchTasks';
-                return self[method](tasks, taskRunner);
-            });
-        }
-        return self;
+                return this[method](tasks, taskRunner);
+            };
+        taskManager = taskManager || this.taskManager;
+        taskRunner = taskRunner || this.taskRunner;
+        return deps ?
+            this.task(taskName, deps, multiTaskCallback) :
+            this.task(taskName, multiTaskCallback);
     }
 
     launchTasks(tasks) {
-
-        var self = this,
-            taskManager = self.taskManager,
-            taskRunner = self.taskRunner;
+        let taskManager = this.taskManager,
+            knownTasksAndUnknownTasks;
 
         //taskManager.log('gulp tasks: \n', nodeUtils.inspect(gulp.tasks, {depth: 10}), '--debug');
 
         if (sjl.empty(tasks)) {
             taskManager.log('No tasks to run found.');
-            return Promise.reject('`Wrangler.prototype.launchTasks` recieved an empty tasks list.');
+            return Promise.reject('`TaskManager.prototype.launchTasks` recieved an empty tasks list.');
         }
 
+        // Get knowns and unknowns
+        knownTasksAndUnknownTasks = this._getKnownAndUnknownTasks(tasks);
+
         // Ensure only registered tasks get run
-        tasks = self._onlyRegisteredTasks(tasks);
+        let {knownTasks, unknownTasks} = knownTasksAndUnknownTasks;
+
+        // Warn about any tasks that we don't know how to run
+        this._warnAboutUnknownTasks(unknownTasks);
 
         // Return a promise that will fulfill when all tasks are finished
-        return new Promise(function (fulfill, reject) {
-            var intervalSpeed = 100,
-                completedTasks,
+        return new Promise( (fulfill, reject) => {
+            let intervalSpeed = 100;
+            var completedTasks,
                 completionInterval = null;
 
             // Kick off each task
-            self._runTasks(tasks, fulfill, reject, self);
+            this._runTasks(knownTasks, fulfill, reject);
 
+            // Wait for all tasks to complete before calling `fulfill`
             completionInterval = setInterval(function () {
-                completedTasks = tasks.filter(function (key) {
-                    return sjl.isset(taskRunner.tasks[key]) && taskRunner.tasks[key].done && taskRunner.tasks[key].done === true;
-                });
-
-                if (completedTasks.length === tasks.length) {
+                completedTasks = knownTasks.filter(key => this.hasCompletedTask(key));
+                if (completedTasks.length === knownTasks.length) {
                     fulfill();
                     //taskList = tasks.map(function (key) { return '\n - `' + key + '`'; }).join('');
                     clearInterval(completionInterval);
                 }
-
             }, intervalSpeed);
 
-        }); // end of promise
+        });
     }
 
-    _onlyRegisteredTasks (tasks) {
-        return tasks.filter(function (task) {
-            var retVal;
-            if (this.hasTask(task)) {
-                retVal = true;
-            }
-            else {
-                this.taskManager.log(chalk.yellow(' ! Could not run the task "' + task + '".  Task not defined.'));
-                retVal = false;
-            }
-            return retVal;
-        }, this);
+    launchTasksSync (tasks) {
+        return Promise.resolve(true);
     }
 
-    _runTasks (tasks, fulfill, reject, self) {
-        let taskManager = this.taskManager;
-        // Start each task
-        tasks.forEach(function (item) {
-            // Run task
+    _getKnownAndUnknownTasks (tasks) {
+        return {
+            knownTasks: tasks.filter(task => this.hasTask(task)),
+            unknownTasks: tasks.filter(task => !this.hasTask(task))
+        };
+    }
+
+    _warnAboutUnknownTasks (unknownTasks) {
+        unknownTasks.forEach(task => {
+            this.taskManager.log(chalk.yellow(' ! Could not run the task "' + task + '".  Task not defined.'));
+        });
+    }
+
+    _runTasks (tasks, fulfill, reject) {
+        tasks.forEach(item => {
             try {
-                taskManager.log(chalk.grey('- Launching gulp task "' + item + '".'), '--debug');
-                self.runTask(item);
+                // Log 'launching task'
+                this.taskManager.log(chalk.grey('- Launching gulp task "' + item + '".'), '--debug');
+                // Try to run task
+                this.runTask(item);
             }
             catch (e) {
-                taskManager.log(chalk.red('`Wrangler.launchTasks` encountered the following error:\n'),
+                // Log error occurred
+                this.taskManager.log(chalk.red('`TaskManager.launchTasks` encountered the following error:\n'),
                     chalk.grey(e.message), chalk.grey(e.lineNumber), chalk.grey(e.stack));
-                reject('`Wrangler.launchTasks` encountered the following error:' + e);
+                // Reject promise
+                reject('`TaskManager.launchTasks` encountered the following error:' + e);
             }
         });
-        return self;
+        return this;
     }
 
 }

@@ -3,12 +3,13 @@
  */
 'use strict';
 
-let sjl = require('sjljs'),
-    contextName = 'TaskRunnerAdapter';
+let sjl = require('sjljs');
 
 class TaskRunnerAdapter {
 
     constructor (taskRunner, taskManager) {
+        let contextName = this.constructor.name;
+
         var _taskRunner,
             _taskManager;
 
@@ -69,12 +70,32 @@ class TaskRunnerAdapter {
         return this;
     }
 
-    registerTask (taskKey) {
+    task (taskName, depsOrCallback, callback) {
+        return this;
+    }
+
+    registerTask (taskName, depsOrCallback, callback) {
+        return this.task.apply(this.taskRunner, arguments);
+    }
+
+    registerMultiTask (taskName, tasks, deps, taskManager, taskRunner) {
+        return this.multiTask.apply(this, arguments);
+    }
+
+    multiTask (taskName, tasks, deps, taskManager, taskRunner) {
         return this;
     }
 
     getTask (key) {
         return {};
+    }
+
+    launchTasks (tasks) {
+        return Promise.reject(this.constructor.name + '.launchTasks isn\'t impelemented');
+    }
+
+    launchTasksSync (tasks) {
+        return Promise.reject(this.constructor.name + '.launchTasks isn\'t impelemented');
     }
 
 }

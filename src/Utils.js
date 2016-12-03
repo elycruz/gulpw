@@ -3,7 +3,7 @@
  */
 /**
  * Created by edelacruz on 6/9/2015.
- * @todo replace all usages of Wrangler.prototype.clone with sjl.jsonClone
+ * @todo replace all usages of TaskManager.prototype.clone with sjl.jsonClone
  */
 
 'use strict';
@@ -13,7 +13,8 @@ var sjl = require('sjljs'),
     os = require('os'),
     glob = require('glob'),
     mkdirp = require('mkdirp'),
-    yaml = require('js-yaml');
+    yaml = require('js-yaml'),
+    log = console.log.bind(console);
 
 module.exports = {
 
@@ -67,8 +68,19 @@ module.exports = {
      */
     ensurePathExists: function (dirPath) {
         return new Promise((resolve, reject) => {
-            mkdirp(dirPath, (err) => {
-                !sjl.empty(err) ? reject(err) : resolve(dirPath);
+            mkdirp(dirPath, err => !sjl.empty(err) ? reject(err) : resolve(dirPath));
+        });
+    },
+
+    /**
+     * Checks to see if path is readable via fs.access.
+     * @param filePath
+     * @returns {Promise}
+     */
+    isPathReadable (filePath) {
+        return new Promise ((resolve, reject) => {
+            fs.access(filePath, (err) => {
+                !sjl.empty(err) ? reject(err) : resolve(filePath);
             });
         });
     },
@@ -153,7 +165,7 @@ module.exports = {
     loadConfigFileFromSupportedExts: function (filePath, exts) {
         exts = exts || this.supportedExts;
         var file = null;
-        exts.some((ext) => {
+        exts.some(ext => {
             try {
                 file = this.loadConfigFile(filePath + ext);
             }
@@ -173,52 +185,43 @@ module.exports = {
     bundleNameFromFileName: function (fileName, exts) {
         exts = exts || this.supportedExts;
         var bundleName = null;
-        exts.some((ext) => {
+        exts.some(ext => {
             let lastIndexOfExt = fileName.lastIndexOf(ext),
                 expectedLastIndexOfPos = fileName.length - ext.length - 2;
             if (lastIndexOfExt !== expectedLastIndexOfPos) {
                 return false;
             }
             bundleName = fileName.split(new RegExp('\\' + ext + '$'))[0];
+            return true;
         });
         return bundleName;
     },
 
-    logger: function (_argv_, context) {
-        let self = context || this;
-        return (function (argv) {
-            return function (...args) {
-                var possibleFlag = args.length > 0 ? args[args.length - 1] : '',
-                    lastArg;
-                if (sjl.classOfIs(possibleFlag, 'String') && possibleFlag.indexOf('--') === 0) {
-                    lastArg = args.pop();
-                    if (argv.debug && lastArg === '--debug') {
-                        console.log(...args);
-                    }
-                    else if (argv.verbose && lastArg === '--verbose') {
-                        console.log(...args);
-                    }
-                }
-                else {
-                    console.log(...args);
-                }
-                return self;
-            };
-        }(_argv_));
-    },
-
-
     /**
-     * Checks to see if path is readable via fs.access.
-     * @param filePath
-     * @returns {Promise}
+     * Takes argv and context and generates a `log` function (console.log wrapped in some conditions).
+     * @param argv {Object}
+     * @param context {Object|undefined}
+     * @returns {Function}
      */
-    isPathReadable (filePath) {
-        return new Promise ((resolve, reject) => {
-            fs.access(filePath, fs.constants.R_OK, (err) => {
-                !sjl.empty(err) ? reject(err) : resolve(filePath);
-            });
-        });
+    logger: function (argv, context) {
+        let self = context || this,
+            {debug, verbose} = argv;
+        return function (...args) {
+            let possibleFlag = args.length > 0 ? args[args.length - 1] : '';
+            if (sjl.isString(possibleFlag) && possibleFlag.indexOf('--') === 0) {
+                let lastArg = args.pop();
+                if (debug && lastArg === '--debug') {
+                    log.apply(console, args);
+                }
+                else if (verbose && lastArg === '--verbose') {
+                    log.apply(console, args);
+                }
+            }
+            else {
+                log.apply(console, args);
+            }
+            return self;
+        };
     }
 
 };

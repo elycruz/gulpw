@@ -5,12 +5,12 @@
 'use strict';
 
 let sjl = require('sjljs'),
-    TaskAdapterConfig = require('./TaskAdapterConfig'),
-    contextName = 'TaskAdapter';
+    TaskAdapterConfig = require('./TaskAdapterConfig');
 
 class TaskAdapter {
 
     constructor (config, taskManager) {
+        let contextName = this.constructor.name;
         var _config = {};
         Object.defineProperties(this, {
             taskManager: {
@@ -51,6 +51,7 @@ class TaskAdapter {
     canRegisterBundle (bundle, taskManager) {
         return true;
     }
+
 }
 
 module.exports = TaskAdapter;

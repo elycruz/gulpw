@@ -47,7 +47,7 @@ class Bundle extends Config {
                 enumerable: true
             }
         });
-        sjl.extend.call(sjl, true, this, ...options);
+        this.set.apply(this, options);
     }
 }
 

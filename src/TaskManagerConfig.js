@@ -7,8 +7,7 @@
 let sjl = require('sjljs'),
     SjlMap = sjl.ns.stdlib.SjlMap,
     SjlSet = sjl.ns.stdlib.SjlSet,
-    Config = sjl.ns.stdlib.Config,
-    contextName = 'TaskManagerConfig';
+    Config = sjl.ns.stdlib.Config;
 
 class TaskManagerConfig extends Config {
 
@@ -16,10 +15,11 @@ class TaskManagerConfig extends Config {
 
         super();
 
-        var self = this,
+        let self = this,
+            contextName = this.constructor.name;
 
         // Private props
-            _bundleConfigsPath = '',
+        var _bundleConfigsPath = '',
             _bundleConfigFormats = new SjlSet(),
             _localConfigPath = '',
             _localConfigBackupPath = '',

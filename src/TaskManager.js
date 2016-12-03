@@ -15,21 +15,21 @@ let TaskAdapter = require('./TaskAdapter'),
     gwUtils = require('./Utils'),
     chalk = require('chalk'),
     path = require('path'),
-    fs = require('fs'),
-    contextName = 'TaskManager';
+    fs = require('fs');
 
 var log;
-
-function errorIfNotString (propName, value, hint) {
-    sjl.throwTypeErrorIfNotOfType(contextName, propName, value, String, hint);
-}
 
 class TaskManager extends TaskManagerConfig {
 
     constructor(config) {
         super();
-        var self = this,
-            _defaultConfig      = gwUtils.loadConfigFile(path.join(__dirname, '/../configs/gulpw-config.yaml')),
+        let self = this,
+            contextName = this.constructor.name,
+            errorIfNotString =  (propName, value, hint) => {
+                sjl.throwTypeErrorIfNotOfType(contextName, propName, value, String, hint);
+            };
+
+        var _defaultConfig      = gwUtils.loadConfigFile(path.join(__dirname, '/../configs/gulpw-config.yaml')), // @todo move this config path outward
             _argv               = {},
             _configBase         = '',
             _configPath         = '',
@@ -46,8 +46,8 @@ class TaskManager extends TaskManagerConfig {
                 set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(contextName, 'argv', value, Object);
                     if (!sjl.issetAndOfType(value._, 'Array')) {
-                        throw new Error ('`' + contextName + '.argv` requires an object with a `_` prop of type of array' +
-                            'array.  Type of `_` received: "' + sjl.classOf(value._)) + '".';
+                        throw new Error ('`' + contextName + '.argv` requires an object with a `_` property of type Array' +
+                            '.  Type received: "' + sjl.classOf(value._)) + '".';
                     }
                     _argv = value;
                 },
@@ -77,6 +77,32 @@ class TaskManager extends TaskManagerConfig {
                 value: new SjlSet(),
                 enumerable: true
             },
+            sessionTaskNames: {
+                value: new SjlSet(),
+                enumerable: true
+            },
+            sessionStaticTaskNames: {
+                value: new SjlSet(),
+                enumerable: true
+            },
+            staticTaskAdapters: {
+                value: new SjlMap(),
+                enumerable: true
+            },
+            taskAdapters: {
+                value: new SjlMap(),
+                enumerable: true
+            },
+            cwd: {
+                get: function ()  {
+                    return _cwd;
+                },
+                set: function (value)  {
+                    errorIfNotString('_cwd', value);
+                    _cwd = value;
+                },
+                enumerable: true
+            },
             configBase: {
                 get: function ()  {
                     return _configBase;
@@ -92,6 +118,10 @@ class TaskManager extends TaskManagerConfig {
             },
             commands: {
                 value: new SjlSet(),
+                enumerable: true
+            },
+            splitCommands: {
+                value: new SjlMap(),
                 enumerable: true
             },
             configPath: {
@@ -111,6 +141,10 @@ class TaskManager extends TaskManagerConfig {
                 value: _joinedConfig,
                 enumerable: true
             },
+            durationReports: {
+                value: new SjlMap(),
+                enumerable: true
+            },
             errorReports: {
                 value: new SjlMap(),
                 enumerable: true
@@ -119,28 +153,14 @@ class TaskManager extends TaskManagerConfig {
                 value: new SjlMap(),
                 enumerable: true
             },
-            durationReports: {
-                value: new SjlMap(),
-                enumerable: true
-            },
-            taskAdapters: {
-                value: new SjlMap(),
-                enumerable: true
-            },
-            sessionTaskNames: {
-                value: new SjlSet(),
-                enumerable: true
-            },
-            splitCommands: {
-                value: new SjlMap(),
-                enumerable: true
-            },
-            staticTaskAdapters: {
-                value: new SjlMap(),
-                enumerable: true
-            },
-            sessionStaticTaskNames: {
-                value: new SjlSet(),
+            pwd: {
+                get: function ()  {
+                    return _pwd;
+                },
+                set: function (value)  {
+                    errorIfNotString('_pwd', value);
+                    _pwd = value;
+                },
                 enumerable: true
             },
             taskRunnerAdapter: {
@@ -157,26 +177,6 @@ class TaskManager extends TaskManagerConfig {
                     }
                 },
                 enumerable: true
-            },
-            cwd: {
-                get: function ()  {
-                    return _cwd;
-                },
-                set: function (value)  {
-                    errorIfNotString('_cwd', value);
-                    _cwd = value;
-                },
-                enumerable: true
-            },
-            pwd: {
-                get: function ()  {
-                    return _pwd;
-                },
-                set: function (value)  {
-                    errorIfNotString('_pwd', value);
-                    _pwd = value;
-                },
-                enumerable: true
             }
         });
 
@@ -190,7 +190,7 @@ class TaskManager extends TaskManagerConfig {
         this.bundleFileNames.addFromArray(fs.readdirSync(this.bundlesPath));
         this.availableTaskNames.addFromArray(Object.keys(this.config.tasks));
         this.availableStaticTaskNames.addFromArray(Object.keys(this.config.staticTasks));
-        this.availableBundleNames.addFromArray(this.bundleFileNames._values.map((fileName) => {
+        this.availableBundleNames.addFromArray(this.bundleFileNames._values.map(fileName => {
                 return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
             }));
 
@@ -242,7 +242,7 @@ class TaskManager extends TaskManagerConfig {
             // Task Names
             if (isPopulatedTaskName && isTask && !addedTaskNames.has(taskName)) {
                 addedTaskNames.add(taskName);
-                taskAdapter = this._initTaskAdapter(taskName, this.config.tasks[taskName]);
+                taskAdapter = this._initTaskAdapter(taskName, sjl.jsonClone(this.config.tasks[taskName]));
             }
             else if (!isStaticTask) {
                 throw new Error('An error occurred before registering task name "' + taskName + '".' +
@@ -332,8 +332,8 @@ class TaskManager extends TaskManagerConfig {
         return this;
     }
 
-    log () {
-        return log (...arguments);
+    log (...args) {
+        return log (...args);
     }
 
     _initTaskAdapter(taskName, taskConfig) {
@@ -348,32 +348,22 @@ class TaskManager extends TaskManagerConfig {
         let isAvailableBundleName = this.availableBundleNames.has(bundleName),
             isBundleNameInSession = this.bundles.has(bundleName);
 
-        var retVal = null;
-
         // Check if we should register this `bundleName`
         if (isAvailableBundleName && !isBundleNameInSession) {
 
             // Create bundle obj
             let bundlePath = path.join(this.cwd, this.bundlesPath, bundleName),
                 bundleConfig = gwUtils.loadConfigFileFromSupportedExts(bundlePath),
-
-                // Build bundle
-                bundleObj = retVal = this._createBundle(bundleName, bundleConfig);
+                bundleObj = this._createBundle(bundleName, bundleConfig);
 
             // Store bundle
             this.bundles.set(bundleName, bundleObj);
         }
-        else if (isBundleNameInSession) {
-            retVal = this.bundles.get(bundleName);
-        }
         else if (!isAvailableBundleName) {
             throw new Error('An error occurred before registering bundle name "' + bundleName + '".' +
                 '  Either the bundle name is empty, not of the correct type, or the bundle was not found in ' +
-                '`available bundles`.');
+                '`available bundles` path and object.');
         }
-
-        // Return result of operation
-        return retVal;
     }
 
     _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
