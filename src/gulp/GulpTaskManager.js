@@ -12,7 +12,12 @@ class GulpTaskManager extends TaskManager {
     constructor (config) {
         super(config);
         this.taskRunnerAdapter = new GulpTaskRunnerAdapter(gulp, this);
-        this.init()
+        this.init();
+    }
+
+    task  (taskName, deps, callback) {
+        this.taskRunnerAdapter.task.apply(this.taskRunnerAdapter, arguments);
+        return this;
     }
 
     launchTasks (taskCommands) {

@@ -7,8 +7,8 @@
 
 'use strict';
 
-let sjl = require('sjljs'),
-    TaskAdapterConfig = require('./TaskAdapterConfig'),
+let //sjl = require('sjljs'),
+    //TaskAdapterConfig = require('./TaskAdapterConfig'),
     TaskAdapter = require('./TaskAdapter');
 
 class StaticTaskAdapter extends TaskAdapter {

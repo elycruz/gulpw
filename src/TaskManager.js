@@ -224,7 +224,7 @@ class TaskManager extends TaskManagerConfig {
             return this;
         }
 
-        log(chalk.grey('Passed in tasks:', this.argv._), '--debug');
+        log(chalk.grey('Passed in tasks:'), this.argv._, '--debug');
 
         var splitCommandOn = ':',
             bundleFileNames             = this.bundleFileNames,
@@ -335,6 +335,10 @@ class TaskManager extends TaskManagerConfig {
     }
 
     launchTasks (taskCommands) {
+        return this;
+    }
+
+    task (taskName, deps, callback) {
         return this;
     }
 

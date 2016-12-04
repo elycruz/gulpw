@@ -19,8 +19,8 @@ class TaskManagerConfig extends Config {
             contextName = this.constructor.name;
 
         // Private props
-        var _bundleConfigsPath = '',
-            _bundleConfigFormats = new SjlSet(),
+        var _bundlesPath = '',
+            _configFormats = new SjlSet(),
             _localConfigPath = '',
             _localConfigBackupPath = '',
             _localHelpDocsPath = '',
@@ -30,26 +30,26 @@ class TaskManagerConfig extends Config {
 
         // Define props
         Object.defineProperties(self, {
-            bundleConfigsPath: {
+            bundlesPath: {
                 get: function ()  {
-                    return _bundleConfigsPath;
+                    return _bundlesPath;
                 },
                 set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
                         contextName, '_bundlesConfigPath', value, String,
                         'Only strings allowed for self property');
-                    _bundleConfigsPath = value;
+                    _bundlesPath = value;
                 },
                 enumerable: true
             },
-            bundleConfigFormats: {
+            configFormats: {
                 set: function (value)  {
                     sjl.throwTypeErrorIfNotOfType(
-                        contextName, '_bundleConfigFormats', value, Array);
-                    _bundleConfigFormats.addFromArray(value);
+                        contextName, '_configFormats', value, Array);
+                    _configFormats.addFromArray(value);
                 },
                 get: function ()  {
-                    return _bundleConfigFormats;
+                    return _configFormats;
                 },
                 enumerable: true
             },

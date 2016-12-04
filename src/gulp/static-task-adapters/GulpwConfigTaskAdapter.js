@@ -15,169 +15,140 @@ let sjl = require('sjljs'),
     yaml = require('js-yaml'),
     inquirer = require('inquirer'),
     gwUtils = require('../../Utils'),
-    chalk = require('chalk');
+    chalk = require('chalk'),
+
+    backupOldConfig = taskManager => {
+        let oldConfig = gwUtils.isPathAccessibleSync(taskManager.configPath) ?
+                gwUtils.loadConfigFile(taskManager.configPath) : null,
+            oldFileName = path.basename(taskManager.configPath),
+            oldFileExt = path.extname(oldFileName),
+            backupPath = path.join(process.cwd(), taskManager.localConfigBackupPath),
+            backupFilePath = path.join(backupPath, oldFileName);
+
+        // If no old config exit function
+        if (sjl.empty(oldConfig)) {
+            return;
+        }
+
+        // Message
+        taskManager.log('Backing up old config...');
+
+        // Ensure backup file path exists
+        gwUtils.ensurePathExists(backupPath);
+
+        // If backup file already exists create a timestamped version name
+        if (gwUtils.isPathAccessibleSync(backupFilePath)) {
+            backupFilePath = path.join(backupPath,
+                path.basename(oldFileName, oldFileExt) + '--' +
+                gwUtils.dateToDashSeparatedTimestamp() + oldFileExt);
+        }
+
+        // Backup current config file
+        gwUtils.writeConfigFile(backupFilePath, oldConfig);
+
+        // 'Backup complete' message
+        console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
+    };
 
 class GulpwConfigTaskAdapter extends StaticTaskAdapter {
 
+    constructor (config) {
+        super(config);
+    }
+
     register (taskManager) {
-        var self = this,
+        let self = this,
             config = self.config,
-            unconfigurableTasks = self.config.unconfigurableTasks,
-            taskKeys = Object.keys(taskManager.tasks).filter(function (key) {
-                return unconfigurableTasks.indexOf(key) === -1 ? true : false;
-            }),
+            configFormats = sjl.setToArray(taskManager.configFormats).map(element => element[0]),
+            unconfigurableTasks = new Set(self.config.unconfigurableTasks),
+            taskKeys = sjl.setToArray(taskManager.availableTaskNames).map(element => element[0])
+                .filter(key => !unconfigurableTasks.has(key)),
+            staticTaskKeys = sjl.setToArray(taskManager.availableStaticTaskNames).map(element => element[0])
+                .filter(key => !unconfigurableTasks.has(key)),
+            otherConfigKeys = config.otherConfigKeys,
             questions = [
                 {
                     name: 'configFormat',
                     type: 'list',
                     message: 'In what format would you like your config outputted?',
-                    choices: [
-                        '.json',
-                        '.yaml'
-                    ]
+                    choices: configFormats
                 },
                 {
                     name: 'tasks',
                     type: 'checkbox',
-                    message: 'Please select the tasks you would like to configure from your newly generated taskManager config file:',
+                    message: 'Select tasks you would like to configure from your config:',
                     choices: taskKeys
+                },
+                {
+                    name: 'staticTasks',
+                    type: 'checkbox',
+                    message: 'Select static tasks you would like to configure from your config:',
+                    choices: staticTaskKeys
+                },
+                {
+                    name: 'otherConfigKeys',
+                    type: 'checkbox',
+                    message: 'Select any other keys to include in config:',
+                    choices: otherConfigKeys
                 }
             ];
 
-        taskManager.taskRunnerAdapter.task('config', function () {
-            return new Promise(function (fulfill, reject) {
+        // Define task
+        taskManager.task(config.alternateTaskName, () => {
 
-                console.log(chalk.cyan('Running "config" task.\n\n') +
-                chalk.dim('** Note ** - Any existing config will be backed up to "' + taskManager.localConfigBackupPath + '" before generating a new one. \n'));
+            // Notify of running task
+            console.log(chalk.cyan('Running "config" task.\n\n') +
+                chalk.dim('** Note ** - Any existing config will be backed up to "' +
+                    taskManager.localConfigBackupPath +
+                    '" before generating a new one. \n'));
+
+            // Run config inquiry for config options
+            return new Promise((resolve, reject) => {
 
                 inquirer.prompt(questions).then(answers => {
-                    var newConfig = gwUtils.loadConfigFile(path.join(taskManager.pwd, 'configs', config.defaultConfigFilename + '.yaml')),
-                        newConfigPath,
-                        oldConfig = fs.existsSync(taskManager.configPath) ? gwUtils.loadConfigFile(taskManager.configPath) : null,
-                        oldFileName = path.basename(taskManager.configPath),
-                        oldFileExt = path.extname(oldFileName),
-                        backupPath = path.join(process.cwd(), taskManager.localConfigBackupPath),
-                        backupFilePath = path.join(backupPath, oldFileName),
-                        tmpFileName,
-                        tmpPathName,
-                        jsonSpace = '     ',
-                        date,
-                        month;
 
-                    // If old config is not empty back it up
-                    if (!sjl.empty(oldConfig)) {
+                    let {defaultConfigFilePath, defaultConfigBasename} = config,
+                        baseConfig = gwUtils.loadConfigFile(path.join(taskManager.pwd, defaultConfigFilePath)),
+                        jsonSpace = taskManager.config.jsonIndentation,
+                        {staticTasks: chosenStaticTaskKeys,
+                            otherConfigKeys: chosenOtherConfigKeys,
+                            tasks: chosenTaskKeys,
+                            configFormat} = answers,
+                        selectedTaskKeys = gwUtils.arrayDiff(chosenTaskKeys, unconfigurableTasks),
+                        selectedStaticTaskKeys = gwUtils.arrayDiff(chosenStaticTaskKeys, unconfigurableTasks),
+                        newConfig,
+                        newFilePath;
 
-                        // Message
-                        taskManager.log('Backing up old config...');
+                    // Backup old config if any
+                    // backupOldConfig(taskManager);
 
-                        // Ensure backup file path exists
-                        gwUtils.ensurePathExists(backupPath);
-
-                        // If backup file already exists create a timestamped version name
-                        if (fs.existsSync(backupFilePath)) {
-                            date = new Date();
-                            month = date.getMonth() + 1;
-                            month = month < 10 ? '0' + month : month;
-                            date = [date.getFullYear(), month, date.getDate(), date.getHours(), date.getMinutes(), date.getMilliseconds()].join('-');
-                            tmpFileName = path.basename(oldFileName, oldFileExt);
-                            tmpFileName += '--' + date;
-                            backupFilePath = path.join(backupPath, tmpFileName + (oldFileExt === '.json' || oldFileExt === '.js' ? '.json' : '.yaml'));
-                        }
-
-                        // Get the content to backup based on file type
-                        if (oldFileExt === '.json' || oldFileExt === '.js') {
-                            oldConfig = JSON.stringify(oldConfig, null, jsonSpace);
-                        }
-                        else {
-                            oldConfig = yaml.safeDump(oldConfig);
-                        }
-
-                        // Backup current config file
-                        fs.writeFileSync(backupFilePath, oldConfig);
-
-                        // 'Backup complete' message
-                        console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
-                    }
-
-                    // Remove sections that were not specified to be kept by the user
-                    self.cleanUpNewTasksList(taskKeys, answers.tasks, newConfig.tasks, self);
-
-                    // If empty tasks object then remove it
-                    if (sjl.empty(newConfig.tasks)) {
-                        newConfig.tasks = null;
-                        delete newConfig.tasks;
-                    }
-
-                    // Delete static tasks key
-                    delete newConfig.staticTasks;
-
-                    // Delete unconfigurable keys
-                    unconfigurableTasks.forEach(function (key) {
-                        delete newConfig.tasks[key];
+                    // New Config
+                    newConfig = chosenOtherConfigKeys.reduce((agg, key) => {
+                        agg[key] = baseConfig[key];
+                        return agg;
+                    },{
+                        tasks: selectedTaskKeys,
+                        staticTasks: selectedStaticTaskKeys
                     });
 
-                    // Delete other properties from config
-                    newConfig.localHelpPath = newConfig.helpPath = null;
-                    delete newConfig.localHelpPath;
-                    delete newConfig.helpPath;
-
-                    // Remove emptyBundle //@todo remove this one off deletion for a better alternative
-                    //newConfig.staticTasks.bundle.emptyBundleFile = null;
-                    //delete newConfig.staticTasks.bundle.emptyBundleFile;
-
-                    // Get new config's contents
-                    newConfig = answers.configFormat === '.json' ?
-                        JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
-
                     // Get new config path
-                    tmpPathName = path.dirname(taskManager.configPath);
-                    tmpFileName = taskManager.staticTasks.config.defaultConfigFilename; //path.basename(taskManager.configPath, answers.configFormat);
-                    newConfigPath = path.join(tmpPathName, tmpFileName + answers.configFormat);
+                    newFilePath = path.join(path.dirname(taskManager.configPath), defaultConfigBasename + configFormat);
 
                     // Write new config file
-                    fs.writeFileSync(newConfigPath, newConfig);
+                    gwUtils.writeConfigFile(newFilePath, newConfig, jsonSpace);
 
                     // 'New config written successfully' message
-                    console.log(chalk.dim('\nNew config file written to "' + newConfigPath + '".'));
+                    console.log(chalk.dim('\nNew config file written to "' + newFilePath + '".'));
 
-                    // Fullfill promise
-                    fulfill();
-
+                    resolve();
                 })
-                .catch(error => {
-
-                    reject(error);
-
-                }); // end of inquiry
-
-            }); // end of promise
-
-        }); // end of task
-
-    } // end of register 'config' task
-
-    removeUnWantedKeysFromTaskOptions (taskOptions, self) {
-        Object.keys(taskOptions).forEach(function (taskItemInnerKey) {
-            if (self.config.notAllowedInnerKeys.indexOf(taskItemInnerKey) > -1) {
-                taskOptions[taskItemInnerKey] = null;
-                delete taskOptions[taskItemInnerKey];
-            }
+                    .catch(reject);
+            })
+                .catch(taskManager.log);
         });
-        return self;
-    }
 
-    cleanUpNewTasksList (taskKeys, taskKeysToKeep, tasksList, self) {
-        taskKeys.forEach(function (key) {
-            // Remove tasks not listed in answers.tasks
-            if (taskKeysToKeep.indexOf(key) === -1) {
-                tasksList[key] = null;
-                delete tasksList[key];
-            }
-            else {
-                self.removeUnWantedKeysFromTaskOptions(tasksList[key], self);
-            }
-        });
-        return self;
+        // Define alias for task
+        taskManager.task('gulpw-config', [config.alternateTaskName]);
     }
 
 }

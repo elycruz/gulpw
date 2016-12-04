@@ -66,7 +66,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         knownTasksAndUnknownTasks = self._getKnownAndUnknownTasks(tasks);
 
         // Ensure only registered tasks get run
-        let {knownTasks, unknownTasks} = knownTasksAndUnknownTasks;
+        var {knownTasks, unknownTasks} = knownTasksAndUnknownTasks;
 
         // Warn about any tasks that we don't know how to run
         this._warnAboutUnknownTasks(unknownTasks);

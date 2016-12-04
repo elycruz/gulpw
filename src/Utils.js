@@ -64,7 +64,7 @@ module.exports = {
     /**
      * Forces creation of a path (deeply) if it doesn't exist.
      * @param dirPath {String} - Path to ensure existence on.
-     * @returns {*}
+     * @returns {Promise}
      */
     ensurePathExists: function (dirPath) {
         return new Promise((resolve, reject) => {
@@ -75,30 +75,25 @@ module.exports = {
     /**
      * Checks to see if path is readable via fs.access.
      * @param filePath
+     * @param [mode]
      * @returns {Promise}
      */
-    isPathReadable (filePath) {
+    isPathAccessible (filePath, mode) {
         return new Promise ((resolve, reject) => {
-            fs.access(filePath, (err) => {
+            fs.access(filePath, mode, err => {
                 !sjl.empty(err) ? reject(err) : resolve(filePath);
             });
         });
     },
 
-    isFilePathAccessible (filePath) {
-        return new Promise ((resolve, reject) => {
-            fs.access(filePath, (err) => {
-                !sjl.empty(err) ? reject(err) : resolve(filePath);
-            });
-        });
-    },
-
-    isPathReadableSync (filePath) {
-        return new Promise((resolve, reject) => {
-            fs.access(filePath, (err) => {
-                !sjl.empty(err) ? reject(err) : resolve(filePath);
-            });
-        });
+    /**
+     * Tells you if file is accessible.
+     * @param filePath {String}
+     * @param [mode]
+     * @returns {Boolean}
+     */
+    isPathAccessibleSync (filePath, mode) {
+        return fs.accessSync(filePath, mode);
     },
 
     /**
@@ -154,13 +149,14 @@ module.exports = {
 
     /**
      * Writes a configuration file depending on file extension in the `filePath` parameter.
-     * @param obj {Object} - Object to convert to file.
      * @param filePath {String} - File path to write `obj` to.
+     * @param obj {Object} - Object to convert to file.
+     * @param [indentationString = '    ']
      * @returns {exports}
      */
-    writeConfigFile: function (obj, filePath) {
+    writeConfigFile: function (filePath, obj, indentationString) {
         if (filePath.lastIndexOf('.json') === filePath.length - 5) {
-            obj = JSON.stringify(obj, null, '    ');
+            obj = JSON.stringify(obj, null, indentationString);
         }
         else if (filePath.lastIndexOf('.yaml') === filePath.length - 5
             || filePath.lastIndexOf('.yml') === filePath.length - 4) {
@@ -238,6 +234,35 @@ module.exports = {
             }
             return self;
         };
-    }
+    },
 
+    arrayDiff: function (array1, array2) {
+        return array1.reduce((agg, element) => {
+            if (array2.indexOf(element) === -1) {
+                agg.push(element);
+            }
+            return agg;
+        }, []);
+    },
+
+    // arraySum: function (array1, array2) {
+    //     return array1.reduce((agg, element) => {
+    //         if (array1.indexOf(element) > -1) {
+    //             agg.push(element);
+    //         }
+    //         return agg;
+    //     }, []);
+    // }
+
+    dateToDashSeparatedTimestamp: (date) => {
+        date = date instanceof Date ? date : new Date();
+        var month = date.getMonth() + 1;
+        month = month < 10 ? '0' + month : month;
+        return [
+            date.getFullYear(), month, date.getDate(),
+            date.getHours(), date.getMinutes(),
+            date.getMilliseconds()
+        ]
+            .join('-');
+    }
 };

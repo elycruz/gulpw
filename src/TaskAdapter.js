@@ -40,14 +40,31 @@ class TaskAdapter {
         }
     }
 
+    /**
+     * @param bundle {Object}
+     * @param [taskManager]
+     * @param [config]
+     * @returns {TaskAdapter}
+     */
     registerBundle (bundle, taskManager, config) {
         return this;
     }
 
+    /**
+     * @param bundles {Array}
+     * @param [taskManager]
+     * @param [config]
+     * @returns {TaskAdapter}
+     */
     registerBundles (bundles, taskManager, config) {
         return this;
     }
 
+    /**
+     * @param bundle {Object}
+     * @param [taskManager]
+     * @returns {boolean}
+     */
     canRegisterBundle (bundle, taskManager) {
         return true;
     }

@@ -161,7 +161,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                     // console.log(newConfig);
 
                     // Write new config file
-                    gwUtils.writeConfigFile(newConfig, bundlePath);
+                    gwUtils.writeConfigFile(bundlePath, newConfig);
 
                     // Bundle config creation success messages
                     taskManager.log('\nSuccess!  Bundle config file written to: ', chalk.dim('"' + bundlePath + '"' ), '\n');

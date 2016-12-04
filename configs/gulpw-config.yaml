@@ -3,12 +3,16 @@
 # Path to bundle configurations
 bundlesPath: ./gulpw-bundles/
 
+# Indentation to use through application for JSON output
+jsonIndentation: "    "
+
 # Default config format to use for outputting all kind of configurations when format/file-type is not passed in
 defaultConfigFormat: .json
 
 # Allowed configuration formats/file-types for all generated configurations
-bundleConfigFormats:
+configFormats:
   - .yaml
+  - .yml
   - .js
   - .json
 
@@ -31,12 +35,23 @@ staticTasks:
 
   "gulpw-config":
     constructorLocation: ./src/gulp/static-task-adapters/GulpwConfigTaskAdapter
+    alternateTaskName: 'config'
+    otherConfigKeys:
+      - bundlesPath
+      - defaultConfigFormat
+      - configFormats
+      - localConfigPath
+      - localConfigBackupPath
+      - localHelpPath
+      - helpPath
+      - jsonIndentation
     unconfigurableTasks:
       - copy
     notAllowedInnerKeys:
       - priority
       - constructorLocation
-    defaultConfigFilename: 'gulpw-config'
+    defaultConfigBasename: 'gulpw-config'
+    defaultConfigFilePath: './configs/gulpw-config.yaml'
 
   "deploy-config":
     constructorLocation: ./src/static-task-adapters/DeployConfigTaskAdapter
