@@ -10,7 +10,8 @@ let sjl = require('sjljs'),
     throwErrorIfNotString = (alias, value) => throwErrorIfNotType(alias, value, String);
 
 class Bundle extends Config {
-    constructor(...options) {
+
+    constructor(...config) {
         super();
         var _alias = '',
             _description = '',
@@ -47,8 +48,14 @@ class Bundle extends Config {
                 enumerable: true
             }
         });
-        this.set.apply(this, options);
+        this.set.apply(this, config);
+    }
+
+    static isValidBundleName (name) {
+        return Bundle.validBundleRegex.test(name);
     }
 }
+
+sjl.defineEnumProp(Bundle, 'validBundleRegex', /^[a-z][a-z\-\d_]{0,89}$/i);
 
 module.exports = Bundle;

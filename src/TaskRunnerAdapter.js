@@ -29,7 +29,7 @@ class TaskRunnerAdapter {
                     return _taskManager;
                 },
                 set: function (value) {
-                    sjl.throwTypeErrorIfNotOfType(contextName, 'taskManager', value, sjl.ns.stdlib.Config);
+                    sjl.throwTypeErrorIfNotOfType(contextName, 'taskManager', value, Object);
                     _taskManager = value;
                 }
             }

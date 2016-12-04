@@ -1,5 +1,6 @@
 /**
  * Created by elydelacruz on 2/3/16.
+ * @note Ported from older version.  May be due for a refactor.
  */
 
 'use strict';
@@ -12,15 +13,19 @@ let sjl = require('sjljs'),
     inquirer = require('inquirer'),
     chalk = require('chalk'),
     gwUtils = require('../../Utils'),
+    Bundle = require('../../Bundle'),
     StaticTaskAdapter = require('./../../StaticTaskAdapter');
 
+/**
+ * @class BundleConfigTaskAdapter
+ */
 class BundleConfigTaskAdapter extends StaticTaskAdapter {
 
     constructor(config) {
         super();
 
-        var contextName = 'gulpw.gulp.static-task-adapters.BundleConfigTaskAdapter',
-            _emptyBundleFilePath = '',
+        let contextName = 'gulpw.gulp.static-task-adapters.BundleConfigTaskAdapter';
+         var _emptyBundleFilePath = '',
             _allowedTaskNames = [];
 
         // Augment config
@@ -46,13 +51,14 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
         });
 
         // Set config
-        sjl.extend(true, this.config, config);
+        this.config = config;
     }
 
     register (taskManager) {
+        console.log(process.argv);
         var config = this.config,
-            otherTaskKeys = config.allowedTaskNames,
-            defaultBundleName = process.argv.length === 4 ? process.argv[3] : 'bundle',
+            otherTaskKeys = config.allowedTaskNames.filter(taskName => taskManager.availableTaskNames.has(taskName)),
+            defaultBundleName = process.argv.length >= 5 ? process.argv[4] : 'bundle',
             questions = [
                 {
                     name: 'configFormat',
@@ -60,7 +66,9 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                     message: 'Choose a bundle config format:',
                     choices: [
                         '.json',
-                        '.yaml'
+                        '.yaml',
+                        '.yml',
+                        '.js'
                     ]
                 },
                 {
@@ -69,11 +77,10 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                     message: 'Input name for bundle file:',
                     default: defaultBundleName,
                     validate: function (alias) {
-                        if (!/^[a-z]+[a-z\-\d_]+$/i.test(alias)) {
+                        if (!Bundle.isValidBundleName(alias)) {
                             return 'The bundle name format is invalid.  Only [a-z,0-9,-,_,.] allowed.  Value received: ' + alias;
                         }
-                        else if (fs.existsSync(path.join(taskManager.bundlesPath, alias + '.json'))
-                            || fs.existsSync(path.join(taskManager.bundlesPath, alias + '.yaml'))) {
+                        else if (taskManager.availableBundleNames.has(alias)) {
                             return 'A bundle file with that name "' + alias + '" already exists.  Try a different file name.';
                         }
                         return true;
@@ -111,31 +118,25 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
     }
 
     _registerTaskWithTaskRunner(taskManager, questions) {
-
         var self = this;
 
         taskManager.taskRunnerAdapter.task('bundle', function () {
 
             return new Promise(function (fulfill/*, reject*/) {
 
-                console.log(chalk.cyan('Running "bundle" task.\n\n'));
+                taskManager.log(chalk.cyan('Running "bundle" task.\n\n'));
 
                 inquirer.prompt(questions).then(function (answers) {
+                    let {alias, description, configFormat, otherTasks} = answers,
+                        {pwd, cwdBundlesPath} = taskManager;
 
-                    var newConfig = {
-                            alias: answers.alias,
-                            version: '0.0.0',
-                            description: ''
-                        },
-                        exampleConfig = gwUtils.loadConfigFile(path.join(taskManager.pwd, self.config.emptyBundleFilePath)),
+                    var newConfig = { alias, description },
+                        exampleConfig = gwUtils.loadConfigFile(path.join(pwd, self.config.emptyBundleFilePath)),
                         jsonSpace = '     ',
-                        bundlePath = path.join(taskManager.bundlesPath, answers.alias + answers.configFormat);
-
-                    // Set description
-                    newConfig.description = answers.description;
+                        bundlePath = path.join(cwdBundlesPath, alias + configFormat);
 
                     // Ensure bundles path exists
-                    gwUtils.ensurePathExists(taskManager.bundlesPath);
+                    gwUtils.ensurePathExists(cwdBundlesPath);
 
                     // Files hash
                     //if (answers.useMinifyAndConcat &&
@@ -148,22 +149,24 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                     //}
 
                     // Other tasks
-                    if (answers.otherTasks && answers.otherTasks.length > 0) {
-                       answers.otherTasks.forEach(function (key) {
-                           newConfig[key] = exampleConfig[key];
+                    if (otherTasks && otherTasks.length > 0) {
+                       otherTasks.forEach(function (key) {
+                           if (exampleConfig[key]) {
+                               newConfig[key] = exampleConfig[key];
+                           }
                        });
                     }
 
-                    // Get new config's contents
-                    newConfig = answers.configFormat === '.json' ?
-                        JSON.stringify(newConfig, null, jsonSpace) : yaml.safeDump(newConfig);
+                    console.log(taskManager.availableTaskNames.toJSON());
+                    console.log(otherTasks);
+                    console.log(newConfig);
 
                     // Write new config file
-                    fs.writeFileSync(bundlePath, newConfig);
+                    gwUtils.writeConfigFile(newConfig, bundlePath);
 
                     // Bundle config creation success messages
                     taskManager.log('\nSuccess!  Bundle config file written to: ', chalk.dim('"' + bundlePath + '"' ), '\n');
-                    taskManager.log('Generated file output (format:' + answers.configFormat + '):\n', '--verbose');
+                    taskManager.log('Generated file output (format:' + configFormat + '):\n', '--verbose');
                     taskManager.log(chalk.dim(newConfig), '\n', '--verbose');
 
                     // Fullfill promise
@@ -190,4 +193,3 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
 }
 
 module.exports = BundleConfigTaskAdapter;
-

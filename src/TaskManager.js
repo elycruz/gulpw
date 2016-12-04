@@ -35,6 +35,7 @@ class TaskManager extends TaskManagerConfig {
             _configPath         = '',
             _cwd                = '',
             _pwd                = '',
+            _cwdBundlesPath     = '',
             _taskRunnerAdapter  = null,
             _joinedConfig = sjl.extend(true, _defaultConfig, config);
 
@@ -100,6 +101,16 @@ class TaskManager extends TaskManagerConfig {
                 set: function (value)  {
                     errorIfNotString('_cwd', value);
                     _cwd = value;
+                },
+                enumerable: true
+            },
+            cwdBundlesPath: {
+                get: function () {
+                    return _cwdBundlesPath;
+                },
+                set: function (value) {
+                    errorIfNotString('cwdBundlesPath', value);
+                    _cwdBundlesPath = value;
                 },
                 enumerable: true
             },
@@ -184,7 +195,7 @@ class TaskManager extends TaskManagerConfig {
         this.set(_joinedConfig);
 
         // Set bundles path
-        this.bundlesPath = path.join(this.configBase, this.bundlesPath);
+        this.cwdBundlesPath = this.bundlesPath = path.join(this.configBase, this.bundlesPath);
 
         // Populate some of our names
         this.bundleFileNames.addFromArray(fs.readdirSync(this.bundlesPath));
@@ -275,9 +286,8 @@ class TaskManager extends TaskManagerConfig {
 
         // Ensure globally called tasks adapters are invoked globally as well
         this._ensureInvokedGlobalTasks();
-        this.launchTasks(this.argv._);
-
-        return this;
+        return this.launchTasks(this.argv._);
+        // return this;
     }
 
     getTaskAdapter(taskName) {

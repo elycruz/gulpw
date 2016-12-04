@@ -27,6 +27,7 @@ helpPath: ./help-docs/
 staticTasks:
   "help":
     constructorLocation: ./src/gulp/static-task-adapters/HelpTaskAdapter
+    helpPath: ./md-docs/
 
   "gulpw-config":
     constructorLocation: ./src/gulp/static-task-adapters/GulpwConfigTaskAdapter
@@ -69,9 +70,9 @@ tasks:
   #
 
   # Browserify Defaults
-#  browserify:
-#    constructorLocation: ./src/bundle-task-adapters/BrowserifyAdapter
-#    priority: 92
+  #  browserify:
+  #    constructorLocation: ./src/bundle-task-adapters/BrowserifyAdapter
+  #    priority: 92
 
   # Build Task (Looks through {bundle-alias}.yaml file and runs
   # all tasks that are not in the `ignoredTasks` array in this config.

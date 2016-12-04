@@ -85,6 +85,22 @@ module.exports = {
         });
     },
 
+    isFilePathAccessible (filePath) {
+        return new Promise ((resolve, reject) => {
+            fs.access(filePath, (err) => {
+                !sjl.empty(err) ? reject(err) : resolve(filePath);
+            });
+        });
+    },
+
+    isPathReadableSync (filePath) {
+        return new Promise((resolve, reject) => {
+            fs.access(filePath, (err) => {
+                !sjl.empty(err) ? reject(err) : resolve(filePath);
+            });
+        });
+    },
+
     /**
      * Replaces backslashes in path to forward slashes.
      * @param filePath {String}

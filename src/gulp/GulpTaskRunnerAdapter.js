@@ -12,7 +12,7 @@ let sjl = require('sjljs'),
 class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
     constructor (taskRunner, taskManager) {
-        super(gulp, taskRunner, taskManager);
+        super(taskRunner, taskManager);
     }
 
     getTask(key) {
@@ -51,7 +51,8 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     }
 
     launchTasks(tasks) {
-        let taskManager = this.taskManager,
+        let self = this,
+            taskManager = self.taskManager,
             knownTasksAndUnknownTasks;
 
         //taskManager.log('gulp tasks: \n', nodeUtils.inspect(gulp.tasks, {depth: 10}), '--debug');
@@ -62,7 +63,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         }
 
         // Get knowns and unknowns
-        knownTasksAndUnknownTasks = this._getKnownAndUnknownTasks(tasks);
+        knownTasksAndUnknownTasks = self._getKnownAndUnknownTasks(tasks);
 
         // Ensure only registered tasks get run
         let {knownTasks, unknownTasks} = knownTasksAndUnknownTasks;
@@ -81,7 +82,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
             // Wait for all tasks to complete before calling `fulfill`
             completionInterval = setInterval(function () {
-                completedTasks = knownTasks.filter(key => this.hasCompletedTask(key));
+                completedTasks = knownTasks.filter(key => self.hasCompletedTask(key));
                 if (completedTasks.length === knownTasks.length) {
                     fulfill();
                     //taskList = tasks.map(function (key) { return '\n - `' + key + '`'; }).join('');
@@ -89,7 +90,8 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
                 }
             }, intervalSpeed);
 
-        });
+        })
+            .catch(taskManager.log);
     }
 
     launchTasksSync (tasks) {

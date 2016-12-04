@@ -88,12 +88,16 @@ gulp.task('version', function(){
 // Watch
 gulp.task('watch', ['eslint'], function () {
     gulp.watch(srcs, ['eslint']);
-    //gulp.watch('./docs/*.md', ['readme']);
+    //gulp.watch('./md-docs/*.md', ['readme']);
 });
 
-gulp.task('tests', function () {
+gulp.task('unit-tests', function () {
     return gulp.src('./tests/unit-tests/*.js', {read: false})
         .pipe(mocha({reporter: 'nyan'}));
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', [
+    'eslint',
+    'unit-tests',
+    'watch'
+]);
