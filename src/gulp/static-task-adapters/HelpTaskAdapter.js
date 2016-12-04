@@ -6,19 +6,18 @@
 
 require('sjljs');
 
-// Import base task proxy to extend
+// Import  task proxy to extend
 let sjl = require('sjljs'),
-    BaseStaticTaskAdapter = require('./../../StaticTaskAdapter'),
+    StaticTaskAdapter = require('./../../StaticTaskAdapter'),
     fs = require('fs'),
     path = require('path'),
     chalk = require('chalk'),
     renderListToColumns = require('../../console/renderListToColumns');
 
-module.exports = class HelpTaskAdapter extends BaseStaticTaskAdapter {
+class HelpTaskAdapter extends StaticTaskAdapter {
 
     register(taskManager) {
         let self = this,
-            //helpSectionPaths = self.getHelpSectionPaths(taskManager),
             helpSectionPathKeys = self.getHelpSectionPathKeys(taskManager),
             helpSection = taskManager.argv.section || null;
 
@@ -32,8 +31,12 @@ module.exports = class HelpTaskAdapter extends BaseStaticTaskAdapter {
             }
             else if (helpSectionPathKeys.indexOf(helpSection) > -1) {
                 let filePath = path.join(taskManager.pwd, self.config.helpPath, helpSection + '.md');
-                console.log('hereio', filePath);
                 taskManager.log('\n', fs.readFileSync(filePath, {encoding: 'utf8'}), '\n');
+            }
+            else {
+                taskManager.log('No help found for help section: ' + chalk.cyan('"' + helpSection + '"') + '.\n');
+                taskManager.log(chalk.cyan('Available help sections:\n'));
+                taskManager.log(renderListToColumns(helpSectionPathKeys));
             }
             return Promise.resolve();
         });
@@ -47,4 +50,6 @@ module.exports = class HelpTaskAdapter extends BaseStaticTaskAdapter {
         return this.getHelpSectionPaths(taskManager).map( key => path.basename(key, '.md'));
     }
 
-};
+}
+
+module.exports = HelpTaskAdapter;

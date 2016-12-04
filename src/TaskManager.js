@@ -392,7 +392,7 @@ class TaskManager extends TaskManagerConfig {
     _ensureInvokedGlobalTasks () {
         // Ensure globally called tasks are called
         this.splitCommands.forEach(function (commandMeta) {
-            log(commandMeta, this.sessionTaskNames.size);
+            // log(commandMeta, this.sessionTaskNames.size);
             if (commandMeta.bundle || !this.sessionStaticTaskNames.has(commandMeta.taskAlias)) {
                 return;
             }

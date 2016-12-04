@@ -157,9 +157,9 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                        });
                     }
 
-                    console.log(taskManager.availableTaskNames.toJSON());
-                    console.log(otherTasks);
-                    console.log(newConfig);
+                    // console.log(taskManager.availableTaskNames.toJSON());
+                    // console.log(otherTasks);
+                    // console.log(newConfig);
 
                     // Write new config file
                     gwUtils.writeConfigFile(newConfig, bundlePath);
