@@ -160,14 +160,14 @@ module.exports = {
      */
     writeConfigFile: function (obj, filePath) {
         if (filePath.lastIndexOf('.json') === filePath.length - 5) {
-            obj = JSON.stringify(obj, '    ');
+            obj = JSON.stringify(obj, null, '    ');
         }
         else if (filePath.lastIndexOf('.yaml') === filePath.length - 5
             || filePath.lastIndexOf('.yml') === filePath.length - 4) {
             obj = yaml.safeDump(obj);
         }
         else if (filePath.lastIndexOf('.js') === filePath.length - 3) {
-            obj = '\'use strict\'; module.exports = ' + JSON.stringify(obj, '    ') + ';';
+            obj = '\'use strict\';\nmodule.exports = ' + JSON.stringify(obj, null, '    ') + ';';
         }
         fs.writeFileSync(filePath, obj);
         return this;

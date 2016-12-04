@@ -132,7 +132,6 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
 
                     var newConfig = { alias, description },
                         exampleConfig = gwUtils.loadConfigFile(path.join(pwd, self.config.emptyBundleFilePath)),
-                        jsonSpace = '     ',
                         bundlePath = path.join(cwdBundlesPath, alias + configFormat);
 
                     // Ensure bundles path exists

@@ -4,7 +4,7 @@
  * along with it's tab space to make sure words can fit in view and then formatting should occur so that all the columns
  * space out evenly (may have to even restart/recalculate num items per columns and num columns again effectively retriggering
  * all the other calculations again.
- * @note Functions ending with '$' are side effectual.
+ * @note Functions ending with '$' have side effects.
  */
 
 'use strict';
