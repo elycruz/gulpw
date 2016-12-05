@@ -16,6 +16,7 @@ let sjl = require('sjljs'),
     inquirer = require('inquirer'),
     gwUtils = require('../../Utils'),
     chalk = require('chalk'),
+    log = console.log.bind(console),
 
     backupOldConfig = taskManager => {
         let oldConfig = gwUtils.isPathAccessibleSync(taskManager.configPath) ?
@@ -30,25 +31,25 @@ let sjl = require('sjljs'),
             return;
         }
 
+        // Check if file exists
+        // If backup file already exists create a timestamped version name
+        if (gwUtils.isPathAccessibleSync(backupFilePath)) {
+            backupFilePath = path.join(backupPath,
+                path.basename(oldFileName, oldFileExt) + '--' +
+                gwUtils.dateToDashSeparatedTimestamp() + oldFileExt);
+        }
+
         // Message
-        taskManager.log('Backing up old config...');
+        taskManager.log('Backing up old config...', backupPath);
 
         // Ensure backup file path exists
-        return gwUtils.ensurePathExists(backupPath).then(() => {
+        gwUtils.ensurePathExists(backupPath).catch(log);
 
-            // If backup file already exists create a timestamped version name
-            if (gwUtils.isPathAccessibleSync(backupFilePath)) {
-                backupFilePath = path.join(backupPath,
-                    path.basename(oldFileName, oldFileExt) + '--' +
-                    gwUtils.dateToDashSeparatedTimestamp() + oldFileExt);
-            }
+        // Backup current config file
+        gwUtils.writeConfigFile(backupFilePath, oldConfig);
 
-            // Backup current config file
-            gwUtils.writeConfigFile(backupFilePath, oldConfig);
-
-            // 'Backup complete' message
-            console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
-        });
+        // 'Backup complete' message
+        console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'))
     };
 
 class GulpwConfigTaskAdapter extends StaticTaskAdapter {
@@ -61,7 +62,7 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
         let self = this,
             config = self.config,
             configFormats = sjl.setToArray(taskManager.configFormats).map(element => element[0]),
-            unconfigurableTasks = self.config.unconfigurableTasks,
+            {unconfigurableTasks, notAllowedInnerKeys} = self.config,
             unconfigurableTasksSet = new Set(unconfigurableTasks),
             taskKeys = sjl.setToArray(taskManager.availableTaskNames).map(element => element[0])
                 .filter(key => !unconfigurableTasksSet.has(key)),
@@ -116,6 +117,10 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
                      configFormat} = answers,
                     selectedTaskKeys = gwUtils.arrayDiff(chosenTaskKeys, unconfigurableTasks),
                     selectedStaticTaskKeys = gwUtils.arrayDiff(chosenStaticTaskKeys, unconfigurableTasks),
+                    notAllowedInnerKeysObj = notAllowedInnerKeys.reduce((agg, key) => {
+                        agg[key] = null;
+                        return agg;
+                    }, {}),
                     newConfig,
                     newFilePath;
 
@@ -126,10 +131,19 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
                 newConfig = chosenOtherConfigKeys.reduce((agg, key) => {
                     agg[key] = baseConfig[key];
                     return agg;
-                }, {
-                    tasks: selectedTaskKeys,
-                    staticTasks: selectedStaticTaskKeys
-                });
+                }, {});
+
+                newConfig.tasks = selectedTaskKeys.reduce((agg, taskKey) => {
+                        agg[taskKey] = gwUtils.objDiff(baseConfig.tasks[taskKey], notAllowedInnerKeysObj);
+                        return agg;
+                    }, {}
+                );
+
+                newConfig.staticTasks = selectedStaticTaskKeys.reduce((agg, taskKey) => {
+                        agg[taskKey] = gwUtils.objDiff(baseConfig.staticTasks[taskKey], notAllowedInnerKeysObj);
+                        return agg;
+                    }, {}
+                );
 
                 // Get new config path
                 newFilePath = path.join(path.dirname(taskManager.configPath), defaultConfigBasename + configFormat);

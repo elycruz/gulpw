@@ -1,7 +1,7 @@
 # @todo add friendly task/static-task key lookup (will allow alternate key names to be used in bundle configs in a more friendly/extensible manner
 
 # Path to bundle configurations
-bundlesPath: ./gulpw-bundles/
+bundlesPath: ./gulpw-bundle-configs/
 
 # Indentation to use through application for JSON output
 jsonIndentation: "    "
@@ -43,7 +43,6 @@ staticTasks:
       - localConfigPath
       - localConfigBackupPath
       - localHelpPath
-      - helpPath
       - jsonIndentation
     unconfigurableTasks:
       - copy

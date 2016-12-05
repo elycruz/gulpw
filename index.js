@@ -9,47 +9,10 @@
 
 let sjl = require('sjljs'),
     gwUtils = require('./src/Utils'),
+    initArgv = require('./init-argv-defaults'),
     Liftoff = require('liftoff'),
-    argv = require('yargs')
-
-        // @todo move these to ./configs/gulpw-config.yaml
-        // Default param values
-        .default('verbose',         false)
-        .default('debug',           false)
-        .default('skip-artifacts',  false)
-        .default('bundle',          null)
-        .default('async',           false)
-        .default('force',           false)
-        .default('out',             null)
-
-        // @todo move these to ./configs/gulpw-config.yaml
-        // Command line param alias
-        .alias('o',                 'out')
-        .alias('a',                 'async')
-        .alias('d',                 'dev')
-        .alias('f',                 'force')
-        .alias('g',                 'topLevelConfig')
-        .alias('v',                 'verbose')
-        .alias('skip-css-hint',     'skip-css-linting')
-        .alias('skip-css-lint',     'skip-css-linting')
-        .alias('skip-css-hinting',  'skip-css-linting')
-        .alias('skip-js-hint',      'skip-js-linting')
-        .alias('skip-js-lint',      'skip-js-linting')
-        .alias('skip-js-hinting',   'skip-js-linting')
-        .alias('skip-hinting',      'skip-linting')
-        .alias('skip-hint',         'skip-linting')
-        .alias('skip-lint',         'skip-linting')
-        .alias('skip-jasmine',      'skip-jasmine-tests')
-        .alias('skip-mocha',        'skip-mocha-tests')
-        .alias('skip-testing',      'skip-tests')
-        .alias('skip-hashing',      'skip-hashes')
-        .alias('skip-related',      'skip-related-bundles')
-        .alias('show-files',        'show-file-sizes')
-        .alias('filetypes',         'file-types')
-        .alias('filetype',          'file-types')
-        .alias('ext',               'file-types')
-        .argv,
-
+    yargs = require('yargs'),
+    argv = initArgv(yargs),
     gulp =  require('gulp'),
     path =  require('path'),
     fs =    require('fs'),
@@ -66,7 +29,7 @@ let sjl = require('sjljs'),
         }
     }),
     GulpTaskManager = require('./src/gulp/GulpTaskManager'),
-    defaultConfig = gwUtils.loadConfigFile(path.join(__dirname, '/configs/gulpw-config.yaml')),
+    // defaultConfig = gwUtils.loadConfigFile(path.join(__dirname, '/configs/gulpw-config.yaml')),
     userConfig, taskManager;
 
 function logPertinent (env) {
@@ -98,12 +61,12 @@ function calledWithAllowedTaskNames () {
 function initializeTaskManager (userConfig, env) {
     try {
         taskManager = new GulpTaskManager(sjl.extend(true, {
-            argv: argv,
+            argv: argv,                 // Passed in args
             env: env,                   // Currently only added to facilitate tests
-            pwd: __dirname,
-            configPath: env.configPath,
-            configBase: env.configBase  // users cwd
-        }, userConfig))
+            pwd: __dirname,             // Gulpw's pwd
+            configPath: env.configPath, // Path of user's 'gulpw-config'
+            configBase: env.configBase  // user's cwd
+        }, userConfig));
     }
     catch (e) {
         console.log('Uncaught Error: \n',

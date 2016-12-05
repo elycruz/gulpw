@@ -80,10 +80,10 @@ module.exports = {
      */
     isPathAccessible: (filePath) => {
         return new Promise ((resolve, reject) => {
-            fs.access(filePath, err => {
+            fs.access(filePath, fs.constants.F_OK, err => {
                 !sjl.empty(err) ? reject(err) : resolve(filePath);
             });
-        }).catch(log);
+        });
     },
 
     /**
@@ -164,7 +164,7 @@ module.exports = {
             obj = yaml.safeDump(obj);
         }
         else if (filePath.lastIndexOf('.js') === filePath.length - 3) {
-            obj = '\'use strict\';\nmodule.exports = ' + JSON.stringify(obj, null, '    ') + ';';
+            obj = '\'use strict\';\nmodule.exports = ' + JSON.stringify(obj, null, indentationString) + ';\n';
         }
         fs.writeFileSync(filePath, obj);
         return this;
@@ -245,6 +245,15 @@ module.exports = {
             }
             return agg;
         }, []);
+    },
+
+    objDiff: (obj1, obj2) => {
+        return Object.keys(obj1).reduce((agg, key) => {
+            if (!obj2.hasOwnProperty(key)) {
+                agg[key] = obj1[key];
+            }
+            return agg;
+        }, {});
     },
 
     // arraySum: function (array1, array2) {
