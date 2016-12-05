@@ -149,6 +149,8 @@ function init () {
 
 init ();
 
+process.on('error', console.log);
 process.on('uncaughtException', console.log);
+process.on('unhandledRejection', console.log);
 
 module.exports = gulp;

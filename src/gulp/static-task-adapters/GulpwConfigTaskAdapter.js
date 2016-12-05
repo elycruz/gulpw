@@ -34,20 +34,21 @@ let sjl = require('sjljs'),
         taskManager.log('Backing up old config...');
 
         // Ensure backup file path exists
-        gwUtils.ensurePathExists(backupPath);
+        return gwUtils.ensurePathExists(backupPath).then(() => {
 
-        // If backup file already exists create a timestamped version name
-        if (gwUtils.isPathAccessibleSync(backupFilePath)) {
-            backupFilePath = path.join(backupPath,
-                path.basename(oldFileName, oldFileExt) + '--' +
-                gwUtils.dateToDashSeparatedTimestamp() + oldFileExt);
-        }
+            // If backup file already exists create a timestamped version name
+            if (gwUtils.isPathAccessibleSync(backupFilePath)) {
+                backupFilePath = path.join(backupPath,
+                    path.basename(oldFileName, oldFileExt) + '--' +
+                    gwUtils.dateToDashSeparatedTimestamp() + oldFileExt);
+            }
 
-        // Backup current config file
-        gwUtils.writeConfigFile(backupFilePath, oldConfig);
+            // Backup current config file
+            gwUtils.writeConfigFile(backupFilePath, oldConfig);
 
-        // 'Backup complete' message
-        console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
+            // 'Backup complete' message
+            console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'));
+        });
     };
 
 class GulpwConfigTaskAdapter extends StaticTaskAdapter {
@@ -60,11 +61,12 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
         let self = this,
             config = self.config,
             configFormats = sjl.setToArray(taskManager.configFormats).map(element => element[0]),
-            unconfigurableTasks = new Set(self.config.unconfigurableTasks),
+            unconfigurableTasks = self.config.unconfigurableTasks,
+            unconfigurableTasksSet = new Set(unconfigurableTasks),
             taskKeys = sjl.setToArray(taskManager.availableTaskNames).map(element => element[0])
-                .filter(key => !unconfigurableTasks.has(key)),
+                .filter(key => !unconfigurableTasksSet.has(key)),
             staticTaskKeys = sjl.setToArray(taskManager.availableStaticTaskNames).map(element => element[0])
-                .filter(key => !unconfigurableTasks.has(key)),
+                .filter(key => !unconfigurableTasksSet.has(key)),
             otherConfigKeys = config.otherConfigKeys,
             questions = [
                 {
@@ -91,63 +93,56 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
                     message: 'Select any other keys to include in config:',
                     choices: otherConfigKeys
                 }
-            ];
+            ],
+            log = taskManager.log;
 
-        // Define task
+        // Define task with alternate task name
         taskManager.task(config.alternateTaskName, () => {
 
             // Notify of running task
-            console.log(chalk.cyan('Running "config" task.\n\n') +
+            log(chalk.cyan('Running "config" task.\n\n') +
                 chalk.dim('** Note ** - Any existing config will be backed up to "' +
-                    taskManager.localConfigBackupPath +
-                    '" before generating a new one. \n'));
+                    taskManager.localConfigBackupPath + '" before generating a new one. \n'));
 
             // Run config inquiry for config options
-            return new Promise((resolve, reject) => {
+            return inquirer.prompt(questions).then(answers => {
 
-                inquirer.prompt(questions).then(answers => {
+                let {defaultConfigFilePath, defaultConfigBasename} = config,
+                    baseConfig = gwUtils.loadConfigFile(path.join(taskManager.pwd, defaultConfigFilePath)),
+                    jsonSpace = taskManager.config.jsonIndentation,
+                    {staticTasks: chosenStaticTaskKeys,
+                     otherConfigKeys: chosenOtherConfigKeys,
+                     tasks: chosenTaskKeys,
+                     configFormat} = answers,
+                    selectedTaskKeys = gwUtils.arrayDiff(chosenTaskKeys, unconfigurableTasks),
+                    selectedStaticTaskKeys = gwUtils.arrayDiff(chosenStaticTaskKeys, unconfigurableTasks),
+                    newConfig,
+                    newFilePath;
 
-                    let {defaultConfigFilePath, defaultConfigBasename} = config,
-                        baseConfig = gwUtils.loadConfigFile(path.join(taskManager.pwd, defaultConfigFilePath)),
-                        jsonSpace = taskManager.config.jsonIndentation,
-                        {staticTasks: chosenStaticTaskKeys,
-                            otherConfigKeys: chosenOtherConfigKeys,
-                            tasks: chosenTaskKeys,
-                            configFormat} = answers,
-                        selectedTaskKeys = gwUtils.arrayDiff(chosenTaskKeys, unconfigurableTasks),
-                        selectedStaticTaskKeys = gwUtils.arrayDiff(chosenStaticTaskKeys, unconfigurableTasks),
-                        newConfig,
-                        newFilePath;
+                // Backup old config if any
+                backupOldConfig(taskManager);
 
-                    // Backup old config if any
-                    // backupOldConfig(taskManager);
+                // New Config
+                newConfig = chosenOtherConfigKeys.reduce((agg, key) => {
+                    agg[key] = baseConfig[key];
+                    return agg;
+                }, {
+                    tasks: selectedTaskKeys,
+                    staticTasks: selectedStaticTaskKeys
+                });
 
-                    // New Config
-                    newConfig = chosenOtherConfigKeys.reduce((agg, key) => {
-                        agg[key] = baseConfig[key];
-                        return agg;
-                    },{
-                        tasks: selectedTaskKeys,
-                        staticTasks: selectedStaticTaskKeys
-                    });
+                // Get new config path
+                newFilePath = path.join(path.dirname(taskManager.configPath), defaultConfigBasename + configFormat);
 
-                    // Get new config path
-                    newFilePath = path.join(path.dirname(taskManager.configPath), defaultConfigBasename + configFormat);
+                // Write new config file
+                gwUtils.writeConfigFile(newFilePath, newConfig, jsonSpace);
 
-                    // Write new config file
-                    gwUtils.writeConfigFile(newFilePath, newConfig, jsonSpace);
-
-                    // 'New config written successfully' message
-                    console.log(chalk.dim('\nNew config file written to "' + newFilePath + '".'));
-
-                    resolve();
-                })
-                    .catch(reject);
-            })
-                .catch(taskManager.log);
+                // 'New config written successfully' message
+                console.log(chalk.dim('\nNew config file written to "' + newFilePath + '".'));
+            });
         });
 
-        // Define alias for task
+        // Define task
         taskManager.task('gulpw-config', [config.alternateTaskName]);
     }
 

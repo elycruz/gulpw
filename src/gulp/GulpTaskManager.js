@@ -15,14 +15,13 @@ class GulpTaskManager extends TaskManager {
         this.init();
     }
 
-    task  (taskName, deps, callback) {
-        this.taskRunnerAdapter.task.apply(this.taskRunnerAdapter, arguments);
+    task (taskName, deps, callback) {
+        this.taskRunnerAdapter.task(taskName, deps, callback);
         return this;
     }
 
     launchTasks (taskCommands) {
-        console.log(taskCommands);
-        this.taskRunnerAdapter.launchTasks(taskCommands);
+        this.taskRunnerAdapter.launchTasks(taskCommands).catch(this.log);
         return this;
     }
 

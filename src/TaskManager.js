@@ -23,6 +23,7 @@ class TaskManager extends TaskManagerConfig {
 
     constructor(config) {
         super();
+
         let self = this,
             contextName = this.constructor.name,
             errorIfNotString =  (propName, value, hint) => {
@@ -287,7 +288,6 @@ class TaskManager extends TaskManagerConfig {
         // Ensure globally called tasks adapters are invoked globally as well
         this._ensureInvokedGlobalTasks();
         return this.launchTasks(this.argv._);
-        // return this;
     }
 
     getTaskAdapter(taskName) {

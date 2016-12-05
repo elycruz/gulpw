@@ -68,7 +68,7 @@ module.exports = {
      */
     ensurePathExists: function (dirPath) {
         return new Promise((resolve, reject) => {
-            mkdirp(dirPath, err => !sjl.empty(err) ? reject(err) : resolve(dirPath));
+            mkdirp(dirPath, err => sjl.empty(err) ? resolve() : reject);
         });
     },
 
@@ -78,12 +78,12 @@ module.exports = {
      * @param [mode]
      * @returns {Promise}
      */
-    isPathAccessible (filePath, mode) {
+    isPathAccessible: (filePath) => {
         return new Promise ((resolve, reject) => {
-            fs.access(filePath, mode, err => {
+            fs.access(filePath, err => {
                 !sjl.empty(err) ? reject(err) : resolve(filePath);
             });
-        });
+        }).catch(log);
     },
 
     /**
@@ -92,8 +92,8 @@ module.exports = {
      * @param [mode]
      * @returns {Boolean}
      */
-    isPathAccessibleSync (filePath, mode) {
-        return fs.accessSync(filePath, mode);
+    isPathAccessibleSync: (filePath) => {
+        return fs.accessSync(filePath);
     },
 
     /**
@@ -155,6 +155,7 @@ module.exports = {
      * @returns {exports}
      */
     writeConfigFile: function (filePath, obj, indentationString) {
+        indentationString = indentationString || '    ';
         if (filePath.lastIndexOf('.json') === filePath.length - 5) {
             obj = JSON.stringify(obj, null, indentationString);
         }
@@ -237,6 +238,7 @@ module.exports = {
     },
 
     arrayDiff: function (array1, array2) {
+        console.log(array1, array2);
         return array1.reduce((agg, element) => {
             if (array2.indexOf(element) === -1) {
                 agg.push(element);
