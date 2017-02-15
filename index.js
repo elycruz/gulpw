@@ -7,7 +7,7 @@
 
 'use strict';
 
-let sjl = require('sjljs'),
+let fjl = require('fjl'),
     gwUtils = require('./src/Utils'),
     initArgv = require('./init-argv-defaults'),
     Liftoff = require('liftoff'),
@@ -60,7 +60,7 @@ function calledWithAllowedTaskNames () {
 
 function initializeTaskManager (userConfig, env) {
     try {
-        taskManager = new GulpTaskManager(sjl.extend(true, {
+        taskManager = new GulpTaskManager(fjl.assignDeep({
             argv: argv,                 // Passed in args
             env: env,                   // Currently only added to facilitate tests
             pwd: __dirname,             // Gulpw's pwd
@@ -84,11 +84,11 @@ function cliInit(env) {
     env.pwd = __dirname;
 
     // If the config path is empty
-    if (sjl.empty(env.configPath) || !calledWithAllowedTaskNames()) {
+    if (fjl.isEmpty(env.configPath) || !calledWithAllowedTaskNames()) {
         // Write message to user
         console.log(chalk.yellow('\nNo \'gulpw-config.*\' file found.\n'));
     }
-    else if (!sjl.empty(env.configPath)) {
+    else if (!fjl.isEmpty(env.configPath)) {
 
         // Change to config's path
         process.chdir(env.configBase);

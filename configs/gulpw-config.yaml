@@ -1,7 +1,7 @@
 # @todo add friendly task/static-task key lookup (will allow alternate key names to be used in bundle configs in a more friendly/extensible manner
 
 # Path to bundle configurations
-bundlesPath: ./gulpw-bundle-configs/
+bundleConfigsPath: ./gulpw-bundle-configs/
 
 # Indentation to use through application for JSON output
 jsonIndentation: "    "
@@ -23,10 +23,10 @@ localConfigPath: ./.gulpw/
 localConfigBackupPath: ./.gulpw/backups/
 
 # Path where user would store help files for their custom tasks (if necessary @see `tasks` section)
-localHelpPath: ./help-docs/
+localHelpDocsPath: ./help-docs/
 
 # Wrangler help docs
-helpPath: ./help-docs/
+helpDocsPath: ./help-docs/
 
 staticTasks:
   "help":

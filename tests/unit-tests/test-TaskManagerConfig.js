@@ -10,7 +10,7 @@ let chai = require('chai'),
     TaskManagerConfig = require('./../../src/TaskManagerConfig'),
     config = {
         bundleConfigsPath: './some-bundles/config-path',
-        bundleConfigFormats: ['.js', '.json', '.yaml'],
+        configFormats: ['.js', '.json', '.yaml'],
         localConfigPath: 'gulpw-configs/',
         localConfigBackupPath: '.gulpw/gulpw-configs',
         localHelpDocsPath: 'gulpw-help-docs/',
@@ -33,7 +33,7 @@ describe('TaskManagerConfig', function () {
         let SjlMap = sjl.ns.stdlib.SjlMap,
             propertyAndTypeMap = {
                 bundleConfigsPath: String,
-                bundleConfigFormats: sjl.ns.stdlib.SjlSet,
+                configFormats: sjl.ns.stdlib.SjlSet,
                 localConfigPath: String,
                 localConfigBackupPath: String,
                 localHelpDocsPath: String,

@@ -30,7 +30,7 @@ class TaskManagerConfig extends Config {
 
         // Define props
         Object.defineProperties(self, {
-            bundlesPath: {
+            bundleConfigsPath: {
                 get: function ()  {
                     return _bundlesPath;
                 },

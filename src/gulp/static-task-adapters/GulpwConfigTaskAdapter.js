@@ -16,7 +16,6 @@ let sjl = require('sjljs'),
     inquirer = require('inquirer'),
     gwUtils = require('../../Utils'),
     chalk = require('chalk'),
-    log = console.log.bind(console),
 
     backupOldConfig = taskManager => {
         let oldConfig = gwUtils.isPathAccessibleSync(taskManager.configPath) ?
@@ -24,7 +23,8 @@ let sjl = require('sjljs'),
             oldFileName = path.basename(taskManager.configPath),
             oldFileExt = path.extname(oldFileName),
             backupPath = path.join(process.cwd(), taskManager.localConfigBackupPath),
-            backupFilePath = path.join(backupPath, oldFileName);
+            backupFilePath = path.join(backupPath, oldFileName),
+            log = taskManager.log;
 
         // If no old config exit function
         if (sjl.empty(oldConfig)) {
@@ -40,7 +40,7 @@ let sjl = require('sjljs'),
         }
 
         // Message
-        taskManager.log('Backing up old config...', backupPath);
+        log('Backing up old config...', backupPath);
 
         // Ensure backup file path exists
         gwUtils.ensurePathExists(backupPath).catch(log);
@@ -49,7 +49,7 @@ let sjl = require('sjljs'),
         gwUtils.writeConfigFile(backupFilePath, oldConfig);
 
         // 'Backup complete' message
-        console.log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'))
+        log(chalk.dim('\nOld config backed up successfully to "' + backupFilePath + '".\n'))
     };
 
 class GulpwConfigTaskAdapter extends StaticTaskAdapter {
@@ -152,7 +152,7 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
                 gwUtils.writeConfigFile(newFilePath, newConfig, jsonSpace);
 
                 // 'New config written successfully' message
-                console.log(chalk.dim('\nNew config file written to "' + newFilePath + '".'));
+                log(chalk.dim('\nNew config file written to "' + newFilePath + '".'));
             });
         });
 

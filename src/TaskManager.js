@@ -17,7 +17,7 @@ let TaskAdapter = require('./TaskAdapter'),
     path = require('path'),
     fs = require('fs');
 
-var log;
+var logger;
 
 class TaskManager extends TaskManagerConfig {
 
@@ -207,10 +207,10 @@ class TaskManager extends TaskManagerConfig {
             }));
 
         // Set log function
-        log = gwUtils.logger(this.argv, this);
+        logger = gwUtils.logger(this.argv, this);
 
         // Log before setting config(s)
-        log (chalk.cyan('\n"' + TaskManager.name + '" initiated.\nWith `config`:\n'),
+        logger (chalk.cyan('\n"' + TaskManager.name + '" initiated.\nWith `config`:\n'),
             chalk.cyan('\nConsole params:\n'), this.argv, '--debug');
     }
 
@@ -221,11 +221,11 @@ class TaskManager extends TaskManagerConfig {
 
         // If no CLI arguments supplied exit,
         if (sjl.empty(this.argv)) {
-            log(chalk.yellow('! No arguments supplied.'));
+            logger(chalk.yellow('! No arguments supplied.'));
             return this;
         }
 
-        log(chalk.grey('Passed in tasks:'), this.argv._, '--debug');
+        logger(chalk.grey('Passed in tasks:'), this.argv._, '--debug');
 
         var splitCommandOn = ':',
             bundleFileNames             = this.bundleFileNames,
@@ -347,7 +347,7 @@ class TaskManager extends TaskManagerConfig {
     }
 
     log (...args) {
-        return log (...args);
+        return logger (...args);
     }
 
     _initTaskAdapter(taskName, taskConfig) {
@@ -396,7 +396,7 @@ class TaskManager extends TaskManagerConfig {
     _ensureInvokedGlobalTasks () {
         // Ensure globally called tasks are called
         this.splitCommands.forEach(function (commandMeta) {
-            // log(commandMeta, this.sessionTaskNames.size);
+            // logger(commandMeta, this.sessionTaskNames.size);
             if (commandMeta.bundle || !this.sessionStaticTaskNames.has(commandMeta.taskAlias)) {
                 return;
             }
