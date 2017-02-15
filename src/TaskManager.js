@@ -200,8 +200,8 @@ class TaskManager extends TaskManagerConfig {
 
         // Populate some of our names
         this.bundleFileNames.addFromArray(fs.readdirSync(this.bundlesPath));
-        this.availableTaskNames.addFromArray(Object.keys(this.config.tasks));
-        this.availableStaticTaskNames.addFromArray(Object.keys(this.config.staticTasks));
+        this.availableTaskNames.addFromArray(Object.keys(this.config.taskConfigs));
+        this.availableStaticTaskNames.addFromArray(Object.keys(this.config.staticTaskConfigs));
         this.availableBundleNames.addFromArray(this.bundleFileNames._values.map(fileName => {
                 return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
             }));
@@ -254,7 +254,7 @@ class TaskManager extends TaskManagerConfig {
             // Task Names
             if (isPopulatedTaskName && isTask && !addedTaskNames.has(taskName)) {
                 addedTaskNames.add(taskName);
-                taskAdapter = this._initTaskAdapter(taskName, sjl.jsonClone(this.config.tasks[taskName]));
+                taskAdapter = this._initTaskAdapter(taskName, sjl.jsonClone(this.config.taskConfigs[taskName]));
             }
             else if (!isStaticTask) {
                 throw new Error('An error occurred before registering task name "' + taskName + '".' +
@@ -296,7 +296,7 @@ class TaskManager extends TaskManagerConfig {
             taskNameNotRegistered = this.sessionTaskNames.has(taskName);
         if (hasTaskName) {
             if (taskNameNotRegistered) {
-                taskAdapter = this._initTaskAdapter(taskName, this.config.tasks[taskName]);
+                taskAdapter = this._initTaskAdapter(taskName, this.config.taskConfigs[taskName]);
             }
             else {
                 taskAdapter = this.taskAdapters.get(taskName);

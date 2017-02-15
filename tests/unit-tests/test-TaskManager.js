@@ -9,6 +9,7 @@ let chai = require('chai'),
     path = require('path'),
     gulp = require('gulp'),
     sjl = require('sjljs'),
+    fjl = require('fjl'),
 
     // To get test project path
     packageJson = require('./../../package.json'),
@@ -31,7 +32,7 @@ describe('TaskManager', () => {
 
     it ('Should be an instanceof `TaskManagerConfig` class should be pass construction' +
         ' with qualifying configuration.', () => {
-        let config = sjl.extend(true, {}, defaultConfig, requiredConfig, userConfig);
+        let config = fjl.assignDeep({}, defaultConfig, requiredConfig, userConfig);
         expect((new TaskManager(config)) instanceof TaskManagerConfig).to.equal(true);
     });
 

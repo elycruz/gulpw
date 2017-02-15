@@ -28,7 +28,7 @@ localHelpDocsPath: ./help-docs/
 # Wrangler help docs
 helpDocsPath: ./help-docs/
 
-staticTasks:
+staticTaskConfigs:
   "help":
     constructorLocation: ./src/gulp/static-task-adapters/HelpTaskAdapter
     helpPath: ./md-docs/
@@ -72,7 +72,7 @@ staticTasks:
       - vulcan
       - watch
 
-tasks:
+taskConfigs:
 
   # task:
   #   localConstructor: constructor/path/to/your/task's/constructor.{extension-here}
