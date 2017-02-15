@@ -21,7 +21,7 @@ module.exports = BaseStaticTaskAdapter.extend(function DeployConfigTaskAdapter (
 
     registerStaticTask: function (gulp, taskManager) {
 
-        if (taskManager.tasks.deploy.notConfiguredByUser) {
+        if (taskManager.taskConfigs.deploy.notConfiguredByUser) {
             return;
         }
 
@@ -29,7 +29,7 @@ module.exports = BaseStaticTaskAdapter.extend(function DeployConfigTaskAdapter (
                 || process.env.USERPROFILE,
             userIdRsaPath = path.normalize(userPath + '/.ssh/id_rsa'),
             questions = [],
-            domainsToDevelop = taskManager.tasks.deploy.domainsToDevelop;
+            domainsToDevelop = taskManager.taskConfigs.deploy.domainsToDevelop;
 
         questions.push({
             name: 'developingDomain',

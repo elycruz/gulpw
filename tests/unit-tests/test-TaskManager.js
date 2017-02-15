@@ -36,4 +36,8 @@ describe('TaskManager', () => {
         expect((new TaskManager(config)) instanceof TaskManagerConfig).to.equal(true);
     });
 
+    it ('should have the expected methods.', function () {
+
+    });
+
 });

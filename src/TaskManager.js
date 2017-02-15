@@ -21,7 +21,7 @@ var logger;
 
 class TaskManager extends TaskManagerConfig {
 
-    constructor(config) {
+    constructor (config) {
         super();
 
         let self = this,
@@ -210,8 +210,15 @@ class TaskManager extends TaskManagerConfig {
         logger = gwUtils.logger(this.argv, this);
 
         // Log before setting config(s)
-        logger (chalk.cyan('\n"' + TaskManager.name + '" initiated.\nWith `config`:\n'),
-            chalk.cyan('\nConsole params:\n'), this.argv, '--debug');
+        logger (
+            chalk.cyan(
+                '\n"' + TaskManager.name + '" initiated.' +
+                '\nWith `config`:\n'
+            ),
+            chalk.cyan('\nConsole params:\n'),
+            this.argv,
+            '--debug'
+        );
     }
 
     /**
@@ -268,7 +275,7 @@ class TaskManager extends TaskManagerConfig {
                 && availableStaticTaskNames.has(command)
                 && !addedStaticTaskNames.has(command)) {
                 addedStaticTaskNames.add(command);
-                staticTaskAdapter = this._initStaticTaskAdapter(taskName, sjl.jsonClone(this.config.staticTasks[taskName]));
+                staticTaskAdapter = this._initStaticTaskAdapter(taskName, sjl.jsonClone(this.config.staticTaskConfigs[taskName]));
             }
             else {
                 throw new Error('An error occurred before registering staticTaskName name "' + taskName + '".' +
@@ -290,7 +297,7 @@ class TaskManager extends TaskManagerConfig {
         return this.launchTasks(this.argv._);
     }
 
-    getTaskAdapter(taskName) {
+    getTaskAdapter (taskName) {
         var taskAdapter,
             hasTaskName = this.availableTaskNames.has(taskName),
             taskNameNotRegistered = this.sessionTaskNames.has(taskName);
@@ -316,7 +323,7 @@ class TaskManager extends TaskManagerConfig {
             taskNameNotRegistered = this.sessionStaticTaskNames.has(taskName);
         if (hasStaticTaskName) {
             if (taskNameNotRegistered) {
-                taskAdapter = this._initStaticTaskAdapter(taskName, sjl.jsonClone(this.config.staticTasks[taskName]));
+                taskAdapter = this._initStaticTaskAdapter(taskName, sjl.jsonClone(this.config.staticTaskConfigs[taskName]));
             }
             else {
                 taskAdapter = this.taskAdapters.get(taskName);

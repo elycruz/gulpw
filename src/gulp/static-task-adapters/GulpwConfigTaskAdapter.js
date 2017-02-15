@@ -133,14 +133,14 @@ class GulpwConfigTaskAdapter extends StaticTaskAdapter {
                     return agg;
                 }, {});
 
-                newConfig.tasks = selectedTaskKeys.reduce((agg, taskKey) => {
-                        agg[taskKey] = gwUtils.objDiff(baseConfig.tasks[taskKey], notAllowedInnerKeysObj);
+                newConfig.taskConfigs = selectedTaskKeys.reduce((agg, taskKey) => {
+                        agg[taskKey] = gwUtils.objDiff(baseConfig.taskConfigs[taskKey], notAllowedInnerKeysObj);
                         return agg;
                     }, {}
                 );
 
-                newConfig.staticTasks = selectedStaticTaskKeys.reduce((agg, taskKey) => {
-                        agg[taskKey] = gwUtils.objDiff(baseConfig.staticTasks[taskKey], notAllowedInnerKeysObj);
+                newConfig.staticTaskConfigs = selectedStaticTaskKeys.reduce((agg, taskKey) => {
+                        agg[taskKey] = gwUtils.objDiff(baseConfig.staticTaskConfigs[taskKey], notAllowedInnerKeysObj);
                         return agg;
                     }, {}
                 );
