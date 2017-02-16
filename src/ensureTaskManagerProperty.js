@@ -14,7 +14,7 @@ module.exports = function ensureTaskManagerProperty(obj, taskManager) {
         return obj;
     }
 
-    var _taskManager;
+    let _taskManager;
     const out = Object.defineProperty(obj, 'taskManager', {
         get: function () {
             return _taskManager;

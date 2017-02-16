@@ -29,7 +29,7 @@ function renderFormattedColumns (columns, columnSpacing, longestWordPerColumn) {
     let numColumns = columns.length,
     longestColumnLen = columns.reduce((agg, column) => agg > column.length ? agg : column.length, 0),
         tab = ' '.repeat(columnSpacing);
-    var out = '', i;
+    let out = '', i;
     while (longestColumnLen) {
         for (i = 0; i < numColumns; i += 1) {
             out += (shift$(columns[i]) || ''.repeat(longestWordPerColumn.length)) +
@@ -48,7 +48,7 @@ function renderListToColumns(list, numColumns = 3, itemPrefix = '- ', columnSpac
     }
 
     // reduce to columns
-    var columns = list.sort().reduce((agg, str) => {
+    let columns = list.sort().reduce((agg, str) => {
             const tailEndItem = tailEnd(agg);
             if (tailEndItem.length < itemsPerColumn) {
                 tailEndItem.push(str);

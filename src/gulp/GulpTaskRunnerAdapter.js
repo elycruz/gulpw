@@ -24,7 +24,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
     }
 
     hasCompletedTask(key) {
-        var taskObj = this.getTask(key);
+        let taskObj = this.getTask(key);
         return taskObj && taskObj.done && taskObj.done === true;
     }
 
@@ -40,7 +40,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
     multiTask (taskName, tasks, deps, taskManager, taskRunner) {
         let multiTaskCallback  = () => {
-                var method = !taskManager.argv.async ? 'launchTasksSync' : 'launchTasks';
+                let method = !taskManager.argv.async ? 'launchTasksSync' : 'launchTasks';
                 return this[method](tasks, taskRunner);
             };
         taskManager = taskManager || this.taskManager;
@@ -66,7 +66,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         knownTasksAndUnknownTasks = self._getKnownAndUnknownTasks(tasks);
 
         // Ensure only registered tasks get run
-        var {knownTasks, unknownTasks} = knownTasksAndUnknownTasks;
+        let {knownTasks, unknownTasks} = knownTasksAndUnknownTasks;
 
         // Warn about any tasks that we don't know how to run
         this._warnAboutUnknownTasks(unknownTasks);
@@ -74,7 +74,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
         // Return a promise that will fulfill when all tasks are finished
         return new Promise( (fulfill, reject) => {
             let intervalSpeed = 100;
-            var completedTasks,
+            let completedTasks,
                 completionInterval = null;
 
             // Kick off each task

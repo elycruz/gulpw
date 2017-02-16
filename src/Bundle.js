@@ -13,7 +13,7 @@ class Bundle extends Config {
 
     constructor(...config) {
         super();
-        var _alias = '',
+        let _alias = '',
             _description = '',
             _version = '';
         Object.defineProperties(this, {

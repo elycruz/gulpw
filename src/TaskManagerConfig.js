@@ -19,7 +19,7 @@ class TaskManagerConfig extends Config {
             contextName = this.constructor.name;
 
         // Private props
-        var _bundleConfigsPath = '',
+        let _bundleConfigsPath = '',
             _configFormats = new SjlSet(),
             _localConfigPath = '',
             _localConfigBackupPath = '',
@@ -106,7 +106,7 @@ class TaskManagerConfig extends Config {
                     return _taskConfigs;
                 },
                 set: function (value)  {
-                    var classOfValue = sjl.classOf(value);
+                    let classOfValue = sjl.classOf(value);
                     if (classOfValue === 'Object') {
                         _taskConfigs = new SjlMap(value);
                     }
@@ -125,7 +125,7 @@ class TaskManagerConfig extends Config {
                     return _staticTaskConfigs;
                 },
                 set: function (value)  {
-                    var classOfValue = sjl.classOf(value);
+                    let classOfValue = sjl.classOf(value);
                     if (classOfValue === 'Object') {
                         _staticTaskConfigs = new SjlMap(value);
                     }

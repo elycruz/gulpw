@@ -8,7 +8,7 @@
 require('sjljs');
 
 // Import base task proxy to extend
-var BaseStaticTaskAdapter = require('./BaseStaticTaskAdapter'),
+let BaseStaticTaskAdapter = require('./BaseStaticTaskAdapter'),
     fs = require('fs'),
     path = require('path'),
     yaml = require('js-yaml'),
@@ -25,7 +25,7 @@ module.exports = BaseStaticTaskAdapter.extend(function DeployConfigTaskAdapter (
             return;
         }
 
-        var userPath = process.env.HOME || process.env.HOMEPATH
+        let userPath = process.env.HOME || process.env.HOMEPATH
                 || process.env.USERPROFILE,
             userIdRsaPath = path.normalize(userPath + '/.ssh/id_rsa'),
             questions = [],
@@ -39,7 +39,7 @@ module.exports = BaseStaticTaskAdapter.extend(function DeployConfigTaskAdapter (
         });
 
         Object.keys(domainsToDevelop).forEach(function (domainToDevelopKey) {
-            var domainToDevelop = domainsToDevelop[domainToDevelopKey];
+            let domainToDevelop = domainsToDevelop[domainToDevelopKey];
 
             questions.push({
                 name: 'hostname',
@@ -132,7 +132,7 @@ module.exports = BaseStaticTaskAdapter.extend(function DeployConfigTaskAdapter (
 
             return new Promise(function (fulfill/*, reject*/) {
                 inquirer.prompt(questions, function (answers) {
-                    var developingDomain = answers.developingDomain || null,
+                    let developingDomain = answers.developingDomain || null,
                         domainToDevelop = domainsToDevelop[developingDomain],
                         hostnamePrefixFolders = developingDomain ? domainToDevelop.hostnamePrefixFolders : null,
                         hostnamePrefixFolder = domainToDevelop.hostnamePrefixFolder || '',

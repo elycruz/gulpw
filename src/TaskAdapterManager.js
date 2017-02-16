@@ -2,7 +2,7 @@
  * Created by u067265 on 2/16/17.
  */
 
-let sjl = require('sjljs'),
+const sjl = require('sjljs'),
     Config = sjl.stdlib.Config,
     fjl = require('fjl'),
     ensureTaskMangerProperty = require('./ensureTaskManagerProperty'),
@@ -13,7 +13,7 @@ class TaskAdapterManager extends Config {
     constructor (config, taskManager) {
         super();
 
-        var _knownAdapterNames;
+        let _knownAdapterNames;
 
         ensureTaskMangerProperty(this, taskManager);
 
@@ -42,7 +42,7 @@ class TaskAdapterManager extends Config {
 
     create (taskName, taskConfig) {
         taskConfig.alias = taskName;
-        var FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),
+        let FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),
             taskAdapter = new FetchedTaskAdapterClass(taskConfig, this);
         return taskAdapter;
     }
@@ -64,5 +64,9 @@ class TaskAdapterManager extends Config {
     }
 
 }
+
+TaskAdapterManager.prototoype.delete = function (taskAdapter) {
+
+};
 
 module.exports = TaskAdapterManager;

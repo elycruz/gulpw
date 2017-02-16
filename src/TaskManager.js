@@ -30,7 +30,7 @@ class TaskManager extends TaskManagerConfig {
                 sjl.throwTypeErrorIfNotOfType(contextName, propName, value, String, hint);
             };
 
-        var _argv               = {},
+        let _argv               = {},
             _configBase         = '',
             _configPath         = '',
             _cwd                = '',
@@ -308,7 +308,7 @@ class TaskManager extends TaskManagerConfig {
     }
 
     getTaskAdapter (taskName) {
-        var taskAdapter,
+        let taskAdapter,
             hasTaskName = this.availableTaskNames.has(taskName),
             taskNameNotRegistered = this.sessionTaskNames.has(taskName);
         if (hasTaskName) {
@@ -328,7 +328,7 @@ class TaskManager extends TaskManagerConfig {
     }
 
     getStaticTaskAdapter (taskName) {
-        var taskAdapter,
+        let taskAdapter,
             hasStaticTaskName = this.availableStaticTaskNames.has(taskName),
             taskNameNotRegistered = this.sessionStaticTaskNames.has(taskName);
         if (hasStaticTaskName) {
@@ -373,7 +373,7 @@ class TaskManager extends TaskManagerConfig {
 
     _initTaskAdapter(taskName, taskConfig) {
         taskConfig.alias = taskName;
-        var FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),
+        let FetchedTaskAdapterClass = require(path.join(this.cwd, taskConfig.constructorLocation)),
             taskAdapter = new FetchedTaskAdapterClass(taskConfig, this);
         this.taskAdapters.set(taskName, taskAdapter);
         return taskAdapter;
@@ -403,7 +403,7 @@ class TaskManager extends TaskManagerConfig {
 
     _initStaticTaskAdapter(staticTaskName, staticTaskConfig) {
         staticTaskConfig.alias = staticTaskName;
-        var FetchedStaticTaskAdapterClass = require(path.join(this.pwd, staticTaskConfig.constructorLocation)),
+        let FetchedStaticTaskAdapterClass = require(path.join(this.pwd, staticTaskConfig.constructorLocation)),
             staticTaskAdapter = new FetchedStaticTaskAdapterClass(staticTaskConfig, this);
         this.staticTaskAdapters.set(staticTaskName, staticTaskAdapter);
         return staticTaskAdapter;

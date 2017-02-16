@@ -25,7 +25,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
         super();
 
         let contextName = 'gulpw.gulp.static-task-adapters.BundleConfigTaskAdapter';
-         var _emptyBundleFilePath = '',
+         let _emptyBundleFilePath = '',
             _allowedTaskNames = [];
 
         // Augment config
@@ -56,7 +56,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
 
     register (taskManager) {
         console.log(process.argv);
-        var config = this.config,
+        let config = this.config,
             otherTaskKeys = config.allowedTaskNames.filter(taskName => taskManager.availableTaskNames.has(taskName)),
             defaultBundleName = process.argv.length >= 5 ? process.argv[4] : 'bundle',
             questions = [
@@ -118,7 +118,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
     }
 
     _registerTaskWithTaskRunner(taskManager, questions) {
-        var self = this;
+        let self = this;
 
         taskManager.taskRunnerAdapter.task('bundle', function () {
 
@@ -130,7 +130,7 @@ class BundleConfigTaskAdapter extends StaticTaskAdapter {
                     let {alias, description, configFormat, otherTasks} = answers,
                         {pwd, cwdBundlesPath} = taskManager;
 
-                    var newConfig = { alias, description },
+                    let newConfig = { alias, description },
                         exampleConfig = gwUtils.loadConfigFile(path.join(pwd, self.config.emptyBundleFilePath)),
                         bundlePath = path.join(cwdBundlesPath, alias + configFormat);
 

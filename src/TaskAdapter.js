@@ -11,7 +11,7 @@ class TaskAdapter {
 
     constructor (config, taskManager) {
         let contextName = this.constructor.name;
-        var _config = {};
+        let _config = {};
         Object.defineProperties(this, {
             taskManager: {
                 value: taskManager,
@@ -19,7 +19,7 @@ class TaskAdapter {
             },
             config: {
                 set: function (value)  {
-                    var classOfValue = sjl.classOf(value);
+                    let classOfValue = sjl.classOf(value);
                     if (classOfValue === 'Object') {
                         _config = value instanceof TaskAdapterConfig ? value :
                             new TaskAdapterConfig(value);

@@ -11,7 +11,7 @@ class TaskRunnerAdapter {
     constructor (taskRunner, taskManager) {
         let contextName = this.constructor.name;
 
-        var _taskRunner,
+        let _taskRunner,
             _taskManager;
 
         Object.defineProperties(this, {
@@ -47,7 +47,7 @@ class TaskRunnerAdapter {
      */
     splitCommand (command, splitOnChar) {
         splitOnChar = sjl.isEmptyOrNotOfType(splitOnChar, String) ? ':' : splitOnChar;
-        var out = {command: command, taskAlias: command, bundle: null, params: null},
+        let out = {command: command, taskAlias: command, bundle: null, params: null},
             bundle, taskAlias, params, args;
         if (command.indexOf(splitOnChar)) {
             args = command.split(splitOnChar);

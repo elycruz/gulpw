@@ -8,7 +8,7 @@
 
 'use strict';
 
-var sjl = require('sjljs'),
+let sjl = require('sjljs'),
     fs = require('fs'),
     os = require('os'),
     glob = require('glob'),
@@ -34,7 +34,7 @@ module.exports = {
      * @returns {Array|String} - See description above.
      */
     explodeGlob: function (string) {
-        var out = string;
+        let out = string;
         if (glob.hasMagic(string)) {
             out = glob.sync(string);
         }
@@ -47,10 +47,10 @@ module.exports = {
      * @returns {Array} - Array of file paths with globs replaced by actual file entries.
      */
     explodeGlobs: function (fileList) {
-        var self = this,
+        let self = this,
             out = [];
         fileList.forEach(function (file) {
-            var value = self.explodeGlob(file);
+            let value = self.explodeGlob(file);
             if (Array.isArray(value)) {
                 out = out.concat(value);
             }
@@ -118,7 +118,7 @@ module.exports = {
      * @returns {Array}
      */
     getTaskAliasesFromArray: function (list) {
-        var out  = [];
+        let out  = [];
         list = list || this.argv._;
         list.forEach(function (arg) {
             out.push(arg.indexOf(':') ? arg.split(':')[0] : arg);
@@ -177,7 +177,7 @@ module.exports = {
      */
     loadConfigFileFromSupportedExts: function (filePath, exts) {
         exts = exts || this.supportedExts;
-        var file = null;
+        let file = null;
         exts.some(ext => {
             try {
                 file = this.loadConfigFile(filePath + ext);
@@ -197,7 +197,7 @@ module.exports = {
      */
     bundleNameFromFileName: function (fileName, exts) {
         exts = exts || this.supportedExts;
-        var bundleName = null;
+        let bundleName = null;
         exts.some(ext => {
             let lastIndexOfExt = fileName.lastIndexOf(ext),
                 expectedLastIndexOfPos = fileName.length - ext.length - 2;
@@ -267,7 +267,7 @@ module.exports = {
 
     dateToDashSeparatedTimestamp: (date) => {
         date = date instanceof Date ? date : new Date();
-        var month = date.getMonth() + 1;
+        let month = date.getMonth() + 1;
         month = month < 10 ? '0' + month : month;
         return [
             date.getFullYear(), month, date.getDate(),
