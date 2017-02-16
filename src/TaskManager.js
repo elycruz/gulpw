@@ -17,8 +17,6 @@ let TaskAdapter = require('./TaskAdapter'),
     path = require('path'),
     fs = require('fs');
 
-var logger;
-
 class TaskManager extends TaskManagerConfig {
 
     constructor (config) {
@@ -30,15 +28,13 @@ class TaskManager extends TaskManagerConfig {
                 sjl.throwTypeErrorIfNotOfType(contextName, propName, value, String, hint);
             };
 
-        var _defaultConfig      = gwUtils.loadConfigFile(path.join(__dirname, '/../configs/gulpw-config.yaml')), // @todo move this config path outward
-            _argv               = {},
+        var _argv               = {},
             _configBase         = '',
             _configPath         = '',
             _cwd                = '',
             _pwd                = '',
             _cwdBundlesPath     = '',
-            _taskRunnerAdapter  = null,
-            _joinedConfig = sjl.extend(true, _defaultConfig, config);
+            _taskRunnerAdapter  = null;
 
         Object.defineProperties(self, {
             argv: {
@@ -150,7 +146,7 @@ class TaskManager extends TaskManagerConfig {
                 enumerable: true
             },
             config: {
-                value: _joinedConfig,
+                value: config,
                 enumerable: true
             },
             durationReports: {
@@ -192,8 +188,12 @@ class TaskManager extends TaskManagerConfig {
             }
         });
 
+        if (!config) {
+            return;
+        }
+
         // Inject the passed in configuration
-        this.set(_joinedConfig);
+        this.set(config);
 
         // Set bundles path
         this.cwdBundlesPath = this.bundlesPath = path.join(this.configBase, this.bundlesPath);
@@ -207,10 +207,10 @@ class TaskManager extends TaskManagerConfig {
             }));
 
         // Set log function
-        logger = gwUtils.logger(this.argv, this);
+        this.logger = gwUtils.logger(this.argv, this);
 
         // Log before setting config(s)
-        logger (
+        this.log (
             chalk.cyan(
                 '\n"' + TaskManager.name + '" initiated.' +
                 '\nWith `config`:\n'
@@ -228,11 +228,11 @@ class TaskManager extends TaskManagerConfig {
 
         // If no CLI arguments supplied exit,
         if (sjl.empty(this.argv)) {
-            logger(chalk.yellow('! No arguments supplied.'));
+            this.log(chalk.yellow('! No arguments supplied.'));
             return this;
         }
 
-        logger(chalk.grey('Passed in tasks:'), this.argv._, '--debug');
+        log(chalk.grey('Passed in tasks:'), this.argv._, '--debug');
 
         var splitCommandOn = ':',
             bundleFileNames             = this.bundleFileNames,
@@ -354,7 +354,7 @@ class TaskManager extends TaskManagerConfig {
     }
 
     log (...args) {
-        return logger (...args);
+        return this.logger (...args);
     }
 
     _initTaskAdapter(taskName, taskConfig) {
@@ -403,7 +403,7 @@ class TaskManager extends TaskManagerConfig {
     _ensureInvokedGlobalTasks () {
         // Ensure globally called tasks are called
         this.splitCommands.forEach(function (commandMeta) {
-            // logger(commandMeta, this.sessionTaskNames.size);
+            // this.log(commandMeta, this.sessionTaskNames.size);
             if (commandMeta.bundle || !this.sessionStaticTaskNames.has(commandMeta.taskAlias)) {
                 return;
             }

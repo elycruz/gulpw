@@ -3,7 +3,8 @@
  */
 'use strict';
 
-let sjl = require('sjljs');
+let sjl = require('sjljs'),
+    fjl = require('fjl');
 
 class TaskRunnerAdapter {
 
@@ -53,7 +54,7 @@ class TaskRunnerAdapter {
             taskAlias = args.shift();
             bundle = args.length > 1 ? args.shift() : null;
             params = args.length > 0 ? args : null;
-            out = sjl.extend(out, {taskAlias: taskAlias, bundle: bundle, params: params});
+            out = fjl.assign(out, {taskAlias: taskAlias, bundle: bundle, params: params});
         }
         return out;
     }
@@ -75,7 +76,7 @@ class TaskRunnerAdapter {
     }
 
     registerTask (taskName, depsOrCallback, callback) {
-        return this.task.apply(this.taskRunner, arguments);
+        return this.task.apply(this, arguments);
     }
 
     registerMultiTask (taskName, tasks, deps, taskManager, taskRunner) {
@@ -95,7 +96,7 @@ class TaskRunnerAdapter {
     }
 
     launchTasksSync (tasks) {
-        return Promise.reject(this.constructor.name + '.launchTasks isn\'t impelemented');
+        return Promise.reject(this.constructor.name + '.launchTaskSync isn\'t impelemented');
     }
 
 }

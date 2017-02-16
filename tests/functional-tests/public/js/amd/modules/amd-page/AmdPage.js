@@ -1,1 +1,0 @@
-define(["jquery"],function(){console.log("On amd-page."),$("#main-content").append("<h3>Welcome to the &quo;Amd Page&quo;.</h3>")});

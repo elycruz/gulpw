@@ -29,7 +29,7 @@ let fjl = require('fjl'),
         }
     }),
     GulpTaskManager = require('./src/gulp/GulpTaskManager'),
-    // defaultConfig = gwUtils.loadConfigFile(path.join(__dirname, '/configs/gulpw-config.yaml')),
+    defaultConfig = gwUtils.loadConfigFile(path.join(__dirname, '/configs/gulpw-config.yaml')),
     userConfig, taskManager;
 
 function logPertinent (env) {
@@ -60,7 +60,7 @@ function calledWithAllowedTaskNames () {
 
 function initializeTaskManager (userConfig, env) {
     try {
-        taskManager = new GulpTaskManager(fjl.assignDeep({
+        taskManager = new GulpTaskManager(fjl.assignDeep(defaultConfig, {
             argv: argv,                 // Passed in args
             env: env,                   // Currently only added to facilitate tests
             pwd: __dirname,             // Gulpw's pwd

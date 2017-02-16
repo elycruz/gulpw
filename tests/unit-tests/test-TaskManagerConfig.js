@@ -28,7 +28,6 @@ describe('TaskManagerConfig', function () {
         });
     });
 
-
     describe ('Properties', function () {
         let SjlMap = sjl.ns.stdlib.SjlMap,
             propertyAndTypeMap = {

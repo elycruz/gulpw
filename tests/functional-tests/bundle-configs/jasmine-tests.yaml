@@ -1,6 +1,0 @@
-alias: "jasmine-tests"
-version: "0.0.0"
-description: "Global mocha-tests package."
-
-jasmine:
-  files: ./fe-dev/js/src/jasmine-tests/for-server/**/*

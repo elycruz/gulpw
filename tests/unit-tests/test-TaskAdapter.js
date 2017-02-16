@@ -10,7 +10,8 @@
 let chai = require('chai'),
     expect = chai.expect,
     sjl = require('sjljs'),
-    TaskAdapter = require('./../../src/TaskAdapter');
+    TaskAdapter = require('./../../src/TaskAdapter'),
+    hasOwnProperty = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
 describe('TaskAdapter', function () {
 
@@ -18,7 +19,7 @@ describe('TaskAdapter', function () {
         let taskAdapter = new TaskAdapter();
         it ('should have the required properties', function () {
             ['config', 'taskManager'].forEach((key) => {
-                expect(taskAdapter.hasOwnProperty(key)).to.equal(true);
+                expect(hasOwnProperty(taskAdapter, key)).to.equal(true);
             });
         });
     });
