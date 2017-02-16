@@ -1,6 +1,7 @@
 /**
  * Created by elydelacruz on 10/4/15.
  * @todo Figure out if we need to create an `TaskManagerEnv` object to enforce that the inner used properties are set
+ * @todo add unknown bundle-name, task-name, and static-task-name warnings
  */
 
 'use strict';
@@ -10,6 +11,7 @@ let TaskAdapter = require('./TaskAdapter'),
     TaskRunnerAdapter = require('./TaskRunnerAdapter'),
     Bundle = require('./Bundle'),
     sjl = require('sjljs'),
+    fjl = require('fjl'),
     SjlSet = sjl.ns.stdlib.SjlSet,
     SjlMap = sjl.ns.stdlib.SjlMap,
     gwUtils = require('./Utils'),
@@ -193,55 +195,62 @@ class TaskManager extends TaskManagerConfig {
         }
 
         // Inject the passed in configuration
-        this.set(config);
+        this.set(config)
+            .initLogger()
+            .initBundlesPath()
+            .initAvailableNames()
+            // Log before setting config(s)
+            .log (
+                chalk.cyan(
+                    '\n"' + TaskManager.name + '" initiated.' +
+                    '\nWith `config`:\n'
+                ),
+                chalk.cyan('\nConsole params:\n'),
+                this.argv,
+                '--debug'
+            );
+    }
 
-        // Set bundles path
-        this.cwdBundlesPath = this.bundlesPath = path.join(this.configBase, this.bundlesPath);
-
-        // Populate some of our names
+    initAvailableNames () {
         this.bundleFileNames.addFromArray(fs.readdirSync(this.bundlesPath));
         this.availableTaskNames.addFromArray(Object.keys(this.config.taskConfigs));
         this.availableStaticTaskNames.addFromArray(Object.keys(this.config.staticTaskConfigs));
-        this.availableBundleNames.addFromArray(this.bundleFileNames._values.map(fileName => {
-                return fileName.split(/\.(?:json|js|yaml|yml)$/)[0];
-            }));
-
-        // Set log function
-        this.logger = gwUtils.logger(this.argv, this);
-
-        // Log before setting config(s)
-        this.log (
-            chalk.cyan(
-                '\n"' + TaskManager.name + '" initiated.' +
-                '\nWith `config`:\n'
-            ),
-            chalk.cyan('\nConsole params:\n'),
-            this.argv,
-            '--debug'
+        this.availableBundleNames.addFromArray(
+            this.bundleFileNames._values.map(
+                fileName => fileName.split(/\.(?:json|js|yaml|yml)$/)[0]
+            )
         );
+        return this;
     }
 
-    /**
-     * @todo add unknown bundle-name, task-name, and static-task-name warnings
-     */
+    initBundlesPath () {
+        this.cwdBundlesPath = this.bundlesPath = path.join(this.configBase, this.bundlesPath);
+        return this;
+    }
+
+    initLogger () {
+        this.logger = gwUtils.logger(this.argv, this);
+        return this;
+    }
+
     init () {
 
         // If no CLI arguments supplied exit,
-        if (sjl.empty(this.argv)) {
+        if (fjl.isEmpty(this.argv)) {
             this.log(chalk.yellow('! No arguments supplied.'));
             return this;
         }
 
         log(chalk.grey('Passed in tasks:'), this.argv._, '--debug');
 
-        var splitCommandOn = ':',
+        const splitCommandOn = ':',
             bundleFileNames             = this.bundleFileNames,
             availableTaskNames          = this.availableTaskNames,
             availableStaticTaskNames    = this.availableStaticTaskNames,
             availableBundleNames        = this.availableBundleNames,
-            addedBundleNames            = this.sessionBundleNames,
-            addedTaskNames              = this.sessionTaskNames,
-            addedStaticTaskNames        = this.sessionStaticTaskNames;
+            sessionBundleNames            = this.sessionBundleNames,
+            sessionTaskNames              = this.sessionTaskNames,
+            sessionStaticTaskNames        = this.sessionStaticTaskNames;
 
         // Get split commands
         this.argv._.forEach(function (value)  {
@@ -251,7 +260,7 @@ class TaskManager extends TaskManagerConfig {
                 command = splitCommand.command,
                 taskName = splitCommand.taskAlias,
 
-                isPopulatedTaskName = sjl.notEmptyAndOfType(taskName, String),
+                isPopulatedTaskName = fjl.notEmptyAndOfType(taskName, String),
                 isStaticTask = availableStaticTaskNames.has(taskName),
                 isTask = availableTaskNames.has(taskName),
 
@@ -259,8 +268,8 @@ class TaskManager extends TaskManagerConfig {
                 staticTaskAdapter;
 
             // Task Names
-            if (isPopulatedTaskName && isTask && !addedTaskNames.has(taskName)) {
-                addedTaskNames.add(taskName);
+            if (isPopulatedTaskName && isTask && !sessionTaskNames.has(taskName)) {
+                sessionTaskNames.add(taskName);
                 taskAdapter = this._initTaskAdapter(taskName, sjl.jsonClone(this.config.taskConfigs[taskName]));
             }
             else if (!isStaticTask) {
@@ -273,8 +282,8 @@ class TaskManager extends TaskManagerConfig {
             if (isPopulatedTaskName && command.indexOf(splitCommandOn) === -1
                 && isStaticTask
                 && availableStaticTaskNames.has(command)
-                && !addedStaticTaskNames.has(command)) {
-                addedStaticTaskNames.add(command);
+                && !sessionStaticTaskNames.has(command)) {
+                sessionStaticTaskNames.add(command);
                 staticTaskAdapter = this._initStaticTaskAdapter(taskName, sjl.jsonClone(this.config.staticTaskConfigs[taskName]));
             }
             else {
@@ -294,6 +303,7 @@ class TaskManager extends TaskManagerConfig {
 
         // Ensure globally called tasks adapters are invoked globally as well
         this._ensureInvokedGlobalTasks();
+
         return this.launchTasks(this.argv._);
     }
 
@@ -341,15 +351,19 @@ class TaskManager extends TaskManagerConfig {
         return this.taskRunnerAdapter.hasTask(task);
     }
 
+    launchTasksAsync (taskCommands) {
+        return this;
+    }
+
+    launchTasksSync (taskCommands) {
+        return this;
+    }
+
     launchTasks (taskCommands) {
         return this;
     }
 
     task (taskName, deps, callback) {
-        return this;
-    }
-
-    launchTasksSync (taskCommands) {
         return this;
     }
 
@@ -402,13 +416,13 @@ class TaskManager extends TaskManagerConfig {
 
     _ensureInvokedGlobalTasks () {
         // Ensure globally called tasks are called
-        this.splitCommands.forEach(function (commandMeta) {
+        this.splitCommands.forEach(commandMeta => {
             // this.log(commandMeta, this.sessionTaskNames.size);
             if (commandMeta.bundle || !this.sessionStaticTaskNames.has(commandMeta.taskAlias)) {
                 return;
             }
             this.getStaticTaskAdapter(commandMeta.taskAlias).register(this);
-        }, this);
+        });
         return this;
     }
 

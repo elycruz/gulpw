@@ -45,8 +45,8 @@ describe('TaskManager', function () {
             let taskManager = new TaskManager();
             [
                 'init', 'getTaskAdapter', 'getStaticTaskAdapter',
-                'isTaskRegistered', 'launchTasks', 'task',
-                'launchTasksSync', 'log'
+                'isTaskRegistered', 'launchTasks', 'launchTasksAsync',
+                'launchTasksSync', 'task', 'log'
             ]
                 .forEach(key => expectFunction(taskManager[key]));
         });
