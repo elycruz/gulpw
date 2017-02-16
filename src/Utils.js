@@ -172,7 +172,7 @@ module.exports = {
 
     /**
      * @param filePath {String}
-     * @param exts {Array|undefined}
+     * @param [exts] {Array|undefined}
      * @returns {*|null} - Null if no file found else file contents.
      */
     loadConfigFileFromSupportedExts: function (filePath, exts) {

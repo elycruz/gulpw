@@ -50,7 +50,7 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
             this.task(taskName, multiTaskCallback);
     }
 
-    launchTasks(tasks) {
+    launchTasks (tasks) {
         let self = this,
             taskManager = self.taskManager,
             knownTasksAndUnknownTasks;
@@ -92,6 +92,10 @@ class GulpTaskRunnerAdapter extends TaskRunnerAdapter {
 
         })
             .catch(taskManager.log);
+    }
+
+    launchTasksAsync (tasks) {
+
     }
 
     launchTasksSync (tasks) {

@@ -42,8 +42,8 @@ class TaskAdapter {
 
     /**
      * @param bundle {Object}
-     * @param [taskManager]
-     * @param [config]
+     * @param [taskManager] {TaskManager}
+     * @param [config] {Object|undefined}
      * @returns {TaskAdapter}
      */
     registerBundle (bundle, taskManager, config) {
@@ -52,7 +52,7 @@ class TaskAdapter {
 
     /**
      * @param bundles {Array}
-     * @param [taskManager]
+     * @param [taskManager] {TaskManager}
      * @param [config]
      * @returns {TaskAdapter}
      */
@@ -62,7 +62,7 @@ class TaskAdapter {
 
     /**
      * @param bundle {Object}
-     * @param [taskManager]
+     * @param [taskManager] {TaskManager}
      * @returns {boolean}
      */
     canRegisterBundle (bundle, taskManager) {
