@@ -23,14 +23,9 @@ class GulpTaskManager extends TaskManager {
     launchTasks (taskCommands) {
         return (
             this.runningInMode === TaskManager.RUNNING_MODE_ASYNC ?
-                this.launchTasksAsync(taskCommands) :
-                    this.launchTasksSync(taskCommands)
+                this.taskRunnerAdapter.launchTasksAsync(taskCommands) :
+                    this.taskRunnerAdapter.launchTasksSync(taskCommands)
         ).catch(this.log);
-    }
-
-    launchTasksAsync (/*taskCommands*/) {
-        this.taskRunnerAdapter.launchTasksAsync();
-        return this;
     }
 
 }
